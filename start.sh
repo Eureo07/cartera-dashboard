@@ -1,5 +1,5 @@
 #!/bin/sh
-# Regenerate dashboard on each container start (prices may have changed)
-python generate_dashboard.py
-# Then start the server
+# Regenerate dashboard in background (takes ~30s, don't block server start)
+python generate_dashboard.py &
+# Start server immediately
 exec python server.py

@@ -5,8 +5,8 @@
   },
   "deploy": {
     "startCommand": "./start.sh",
-    "healthcheckPath": "/dashboard.html",
-    "healthcheckTimeout": 60,
+    "healthcheckPath": "/",
+    "healthcheckTimeout": 120,
     "restartPolicyType": "ON_FAILURE"
   }
 }
