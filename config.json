@@ -1,0 +1,53 @@
+{
+    "base_dir": ".",
+    "portfolio": [
+        {"ticker": "ENR.DE", "db_ticker": "ENR.DE", "name": "Siemens Energy", "shares": 5, "entry": 170.76, "commission": 4.90, "stop": 129.83, "entry_date": "14/04/2026"},
+        {"ticker": "NVD.DE", "db_ticker": "NVDA", "name": "NVIDIA", "shares": 5, "entry": 182.34, "commission": 3.90, "stop": 140.20, "entry_date": "27/04/2026"},
+        {"ticker": "RRU.DE", "db_ticker": "RR.L", "name": "Rolls-Royce", "shares": 90, "entry": 16.47, "commission": 3.90, "stop": 12.15, "entry_date": "17/06/2026"},
+        {"ticker": "DANR.MI", "db_ticker": null, "name": "Danieli", "shares": 18, "entry": 48.72, "commission": 4.90, "stop": 38.82, "entry_date": "06/05/2026"}
+    ],
+    "email": {
+        "gmail_user": "franlopez.ef@gmail.com",
+        "smtp_server": "smtp.gmail.com",
+        "smtp_port": 587
+    },
+    "screener": {
+        "max_results": 20,
+        "score_threshold": 0.5,
+        "cache_ttl_hours": 24
+    },
+    "paths": {
+        "excel": "fin_data_final.xlsx",
+        "dashboard": "dashboard.html",
+        "price_history": "price_history.csv",
+        "tickers_universe": "tickers_universo.json",
+        "radar_prev": "radar_prev.json",
+        "logs": "logs"
+    },
+    "thesis": {
+        "ENR.DE": {
+            "fecha_entrada": "14/04/2026",
+            "motivo": "Transición energética europea, backlog récord, recuperación post-problemas en turbinas de viento",
+            "precio_objetivo": 200.64,
+            "condicion_venta": "Si pierde contratos clave de hidrógeno o PER forward supera 40"
+        },
+        "NVD.DE": {
+            "fecha_entrada": "27/04/2026",
+            "motivo": "Monopolio de facto en GPUs para IA, ciclo de inversión en centros de datos sin techo visible",
+            "precio_objetivo": 214.25,
+            "condicion_venta": "Si AMD supera 25% de cuota en IA o regulación antimonopolio"
+        },
+        "RRU.DE": {
+            "fecha_entrada": "17/06/2026",
+            "motivo": "Turnaround completado, contratos TotalCare con visibilidad a largo plazo, exposición a aviación y defensa",
+            "precio_objetivo": 19.35,
+            "condicion_venta": "Si márgenes EBIT caen por debajo del 10%"
+        },
+        "DANR.MI": {
+            "fecha_entrada": "06/05/2026",
+            "motivo": "Empresa familiar italiana infravalorada, P/B bajo, especialista en acerías con cartera de pedidos sólida",
+            "precio_objetivo": 57.25,
+            "condicion_venta": "Si el ciclo del acero se deteriora significativamente"
+        }
+    }
+}

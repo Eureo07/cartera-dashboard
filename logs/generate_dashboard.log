@@ -1,0 +1,308 @@
+[2026-06-18 08:38:26] INFO Fetching valuation data...
+[2026-06-18 08:38:41] INFO   ENR.DE: PER=None, DivY=None
+[2026-06-18 08:38:41] INFO   NVD.DE: PER=None, DivY=None
+[2026-06-18 08:38:41] INFO   RRU.DE: PER=None, DivY=None
+[2026-06-18 08:38:41] INFO   DANR.MI: PER=None, DivY=None
+[2026-06-18 10:47:27] INFO Fetching valuation data...
+[2026-06-18 10:47:28] INFO   ENR.DE: PER=65.32284, DivY=None
+[2026-06-18 10:47:29] INFO   NVD.DE: PER=31.9254, DivY=None
+[2026-06-18 10:47:30] INFO   RRU.DE: PER=20.252499, DivY=None
+[2026-06-18 10:47:31] INFO   DANR.MI: PER=16.003134, DivY=None
+[2026-06-18 10:47:34] INFO Fetching benchmark data...
+[2026-06-18 10:47:35] INFO   ^STOXX50E: 5985 -> 6297 (+5.22%)
+[2026-06-18 10:47:35] INFO Computing correlation matrix...
+[2026-06-18 10:47:36] INFO   Correlation matrix OK
+[2026-06-18 10:47:38] INFO Evolution chart: 0 data points
+[2026-06-18 10:48:57] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (44,474 bytes)
+[2026-06-18 10:53:29] INFO Downloading price histories...
+[2026-06-18 10:53:32] INFO   Histórico guardado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\price_history.csv (188 filas)
+[2026-06-18 10:53:32] INFO Fetching valuation data...
+[2026-06-18 10:53:32] INFO   ENR.DE: PER=65.2126, DivY=None
+[2026-06-18 10:53:33] INFO   NVD.DE: PER=31.95737, DivY=None
+[2026-06-18 10:53:33] INFO   RRU.DE: PER=20.225, DivY=None
+[2026-06-18 10:53:34] INFO   DANR.MI: PER=16.06583, DivY=None
+[2026-06-18 10:53:35] INFO Fetching benchmark data...
+[2026-06-18 10:53:35] INFO   ^STOXX50E: 5985 -> 6299 (+5.26%)
+[2026-06-18 10:53:35] INFO Computing correlation matrix...
+[2026-06-18 10:53:37] INFO   Correlation matrix OK
+[2026-06-18 10:53:37] INFO Evolution chart: 0 data points
+[2026-06-18 10:54:36] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (44,474 bytes)
+[2026-06-18 10:54:55] INFO Downloading price histories...
+[2026-06-18 10:54:56] INFO   Histórico guardado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\price_history.csv (188 filas)
+[2026-06-18 10:54:56] INFO Fetching valuation data...
+[2026-06-18 10:54:57] INFO   ENR.DE: PER=65.244095, DivY=None
+[2026-06-18 10:54:57] INFO   NVD.DE: PER=31.975134, DivY=None
+[2026-06-18 10:54:58] INFO   RRU.DE: PER=20.225, DivY=None
+[2026-06-18 10:54:59] INFO   DANR.MI: PER=16.06583, DivY=None
+[2026-06-18 10:55:00] INFO Fetching benchmark data...
+[2026-06-18 10:55:01] INFO   ^STOXX50E: 5985 -> 6298 (+5.24%)
+[2026-06-18 10:55:01] INFO Computing correlation matrix...
+[2026-06-18 10:55:03] INFO   Correlation matrix OK
+[2026-06-18 10:55:03] ERROR   Evolution chart error: Timestamp('2026-04-14 00:00:00')
+[2026-06-18 10:55:59] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (44,504 bytes)
+[2026-06-18 10:56:21] INFO Downloading price histories...
+[2026-06-18 10:56:23] INFO   Histórico guardado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\price_history.csv (188 filas)
+[2026-06-18 10:56:23] INFO Fetching valuation data...
+[2026-06-18 10:56:23] INFO   ENR.DE: PER=65.22835, DivY=None
+[2026-06-18 10:56:24] INFO   NVD.DE: PER=31.95737, DivY=None
+[2026-06-18 10:56:24] INFO   RRU.DE: PER=20.225, DivY=None
+[2026-06-18 10:56:25] INFO   DANR.MI: PER=16.06583, DivY=None
+[2026-06-18 10:56:26] INFO Fetching benchmark data...
+[2026-06-18 10:56:27] INFO   ^STOXX50E: 5985 -> 6299 (+5.25%)
+[2026-06-18 10:56:27] INFO Computing correlation matrix...
+[2026-06-18 10:56:29] INFO   Correlation matrix OK
+[2026-06-18 10:56:29] ERROR   Evolution chart error: Timestamp('2026-04-14 00:00:00')
+[2026-06-18 10:57:44] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (44,505 bytes)
+[2026-06-18 10:58:04] INFO Downloading price histories...
+[2026-06-18 10:58:06] INFO   Histórico guardado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\price_history.csv (188 filas)
+[2026-06-18 10:58:06] INFO Fetching valuation data...
+[2026-06-18 10:58:07] INFO   ENR.DE: PER=65.18898, DivY=None
+[2026-06-18 10:58:08] INFO   NVD.DE: PER=31.975134, DivY=None
+[2026-06-18 10:58:08] INFO   RRU.DE: PER=20.2125, DivY=None
+[2026-06-18 10:58:09] INFO   DANR.MI: PER=16.018808, DivY=None
+[2026-06-18 10:58:10] INFO Fetching benchmark data...
+[2026-06-18 10:58:10] INFO   ^STOXX50E: 5985 -> 6296 (+5.20%)
+[2026-06-18 10:58:10] INFO Computing correlation matrix...
+[2026-06-18 10:58:12] INFO   Correlation matrix OK
+[2026-06-18 10:58:12] ERROR   Evolution chart error: Traceback (most recent call last):
+  File "C:\Users\franl\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\indexes\datetimes.py", line 944, in _disallow_mismatched_indexing
+    self._data._assert_tzawareness_compat(key)
+  File "C:\Users\franl\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\arrays\datetimes.py", line 800, in _assert_tzawareness_compat
+    raise TypeError(
+TypeError: Cannot compare tz-naive and tz-aware datetime-like objects
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<string>", line 487, in <module>
+  File "C:\Users\franl\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\indexing.py", line 1207, in __getitem__
+    return self._getitem_axis(maybe_callable, axis=axis)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\franl\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\indexing.py", line 1449, in _getitem_axis
+    return self._get_label(key, axis=axis)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\franl\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\indexing.py", line 1399, in _get_label
+    return self.obj.xs(label, axis=axis)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\franl\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\generic.py", line 4253, in xs
+    loc = index.get_loc(key)
+          ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\franl\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\indexes\datetimes.py", line 964, in get_loc
+    self._disallow_mismatched_indexing(key)
+  File "C:\Users\franl\AppData\Local\Programs\Python\Python312\Lib\site-packages\pandas\core\indexes\datetimes.py", line 946, in _disallow_mismatched_indexing
+    raise KeyError(key) from err
+KeyError: Timestamp('2026-04-14 00:00:00')
+
+[2026-06-18 10:59:19] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (44,503 bytes)
+[2026-06-18 10:59:56] INFO Downloading price histories...
+[2026-06-18 10:59:58] INFO   Histórico guardado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\price_history.csv (188 filas)
+[2026-06-18 10:59:58] INFO Fetching valuation data...
+[2026-06-18 10:59:59] INFO   ENR.DE: PER=65.173225, DivY=None
+[2026-06-18 11:00:00] INFO   NVD.DE: PER=31.968027, DivY=None
+[2026-06-18 11:00:00] INFO   RRU.DE: PER=20.234999, DivY=None
+[2026-06-18 11:00:01] INFO   DANR.MI: PER=16.018808, DivY=None
+[2026-06-18 11:00:03] INFO Fetching benchmark data...
+[2026-06-18 11:00:03] INFO   ^STOXX50E: 5985 -> 6295 (+5.19%)
+[2026-06-18 11:00:03] INFO Computing correlation matrix...
+[2026-06-18 11:00:05] INFO   Correlation matrix OK
+[2026-06-18 11:00:05] INFO Evolution chart: 47 data points
+[2026-06-18 11:01:18] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (46,710 bytes)
+[2026-06-18 11:05:23] INFO Downloading price histories...
+[2026-06-18 11:05:25] INFO   Histórico guardado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\price_history.csv (188 filas)
+[2026-06-18 11:05:25] INFO Fetching valuation data...
+[2026-06-18 11:05:26] INFO   ENR.DE: PER=65.15748, DivY=None
+[2026-06-18 11:05:26] INFO   NVD.DE: PER=31.960924, DivY=None
+[2026-06-18 11:05:27] INFO   RRU.DE: PER=20.202501, DivY=None
+[2026-06-18 11:05:27] INFO   DANR.MI: PER=16.081505, DivY=None
+[2026-06-18 11:05:29] INFO Fetching benchmark data...
+[2026-06-18 11:05:29] INFO   ^STOXX50E: 5985 -> 6291 (+5.12%)
+[2026-06-18 11:05:29] INFO Computing correlation matrix...
+[2026-06-18 11:05:31] INFO   Correlation matrix OK
+[2026-06-18 11:05:31] INFO Evolution chart: 47 data points
+[2026-06-18 11:06:24] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (46,716 bytes)
+[2026-06-18 11:08:07] INFO Downloading price histories...
+[2026-06-18 11:08:17] INFO   Histórico guardado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\price_history.csv (188 filas)
+[2026-06-18 11:08:17] INFO Fetching valuation data...
+[2026-06-18 11:08:18] INFO   ENR.DE: PER=65.05512, DivY=None
+[2026-06-18 11:08:19] INFO   NVD.DE: PER=31.953817, DivY=None
+[2026-06-18 11:08:20] INFO   RRU.DE: PER=20.199999, DivY=None
+[2026-06-18 11:08:21] INFO   DANR.MI: PER=16.050158, DivY=None
+[2026-06-18 11:08:23] INFO Fetching benchmark data...
+[2026-06-18 11:08:23] INFO   ^STOXX50E: 5985 -> 6288 (+5.07%)
+[2026-06-18 11:08:23] INFO Computing correlation matrix...
+[2026-06-18 11:08:25] INFO   Correlation matrix OK
+[2026-06-18 11:08:25] INFO Evolution chart: 47 data points
+[2026-06-18 11:09:52] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (46,712 bytes)
+[2026-06-18 11:09:59] INFO Downloading price histories...
+[2026-06-18 11:10:01] INFO   Histórico guardado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\price_history.csv (188 filas)
+[2026-06-18 11:10:01] INFO Fetching valuation data...
+[2026-06-18 11:10:02] INFO   ENR.DE: PER=65.00787, DivY=None
+[2026-06-18 11:10:02] INFO   NVD.DE: PER=31.975134, DivY=None
+[2026-06-18 11:10:03] INFO   RRU.DE: PER=20.199999, DivY=None
+[2026-06-18 11:10:04] INFO   DANR.MI: PER=16.081505, DivY=None
+[2026-06-18 11:10:06] INFO Fetching benchmark data...
+[2026-06-18 11:10:06] INFO   ^STOXX50E: 5985 -> 6290 (+5.10%)
+[2026-06-18 11:10:06] INFO Computing correlation matrix...
+[2026-06-18 11:10:07] INFO   Correlation matrix OK
+[2026-06-18 11:10:07] INFO Evolution chart: 47 data points
+[2026-06-18 11:11:11] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (46,714 bytes)
+[2026-06-18 11:11:11] INFO Ejecutando screener...
+[2026-06-18 11:11:27] INFO Downloading price histories...
+[2026-06-18 11:11:29] INFO   Histórico guardado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\price_history.csv (188 filas)
+[2026-06-18 11:11:29] INFO Fetching valuation data...
+[2026-06-18 11:11:30] INFO   ENR.DE: PER=65.07087, DivY=None
+[2026-06-18 11:11:31] INFO   NVD.DE: PER=31.982237, DivY=None
+[2026-06-18 11:11:31] INFO   RRU.DE: PER=20.199999, DivY=None
+[2026-06-18 11:11:32] INFO   DANR.MI: PER=16.097178, DivY=None
+[2026-06-18 11:11:34] INFO Fetching benchmark data...
+[2026-06-18 11:11:34] INFO   ^STOXX50E: 5985 -> 6290 (+5.11%)
+[2026-06-18 11:11:34] INFO Computing correlation matrix...
+[2026-06-18 11:11:36] INFO   Correlation matrix OK
+[2026-06-18 11:11:36] INFO Evolution chart: 47 data points
+[2026-06-18 11:12:44] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (46,711 bytes)
+[2026-06-18 11:12:44] INFO Ejecutando screener...
+[2026-06-18 11:13:09] INFO Downloading price histories...
+[2026-06-18 11:13:11] INFO   Histórico guardado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\price_history.csv (188 filas)
+[2026-06-18 11:13:11] INFO Fetching valuation data...
+[2026-06-18 11:13:11] INFO   ENR.DE: PER=65.031494, DivY=None
+[2026-06-18 11:13:12] INFO   NVD.DE: PER=31.982237, DivY=None
+[2026-06-18 11:13:12] INFO   RRU.DE: PER=20.16, DivY=None
+[2026-06-18 11:13:13] INFO   DANR.MI: PER=16.097178, DivY=None
+[2026-06-18 11:13:14] INFO Fetching benchmark data...
+[2026-06-18 11:13:15] INFO   ^STOXX50E: 5985 -> 6285 (+5.03%)
+[2026-06-18 11:13:15] INFO Computing correlation matrix...
+[2026-06-18 11:13:16] INFO   Correlation matrix OK
+[2026-06-18 11:13:16] INFO Evolution chart: 47 data points
+[2026-06-18 11:14:23] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (46,714 bytes)
+[2026-06-18 11:14:23] INFO Ejecutando screener...
+[2026-06-18 11:14:51] INFO Screener completado.
+[2026-06-18 11:20:02] INFO Downloading price histories...
+[2026-06-18 11:20:06] INFO   Histórico guardado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\price_history.csv (188 filas)
+[2026-06-18 11:20:06] INFO Fetching valuation data...
+[2026-06-18 11:20:07] INFO   ENR.DE: PER=65.173225, DivY=None
+[2026-06-18 11:20:08] INFO   NVD.DE: PER=31.95737, DivY=None
+[2026-06-18 11:20:08] INFO   RRU.DE: PER=20.1425, DivY=None
+[2026-06-18 11:20:09] INFO   DANR.MI: PER=16.097178, DivY=None
+[2026-06-18 11:20:12] INFO Fetching benchmark data...
+[2026-06-18 11:20:13] INFO   ^STOXX50E: 5985 -> 6292 (+5.13%)
+[2026-06-18 11:20:13] INFO Computing correlation matrix...
+[2026-06-18 11:20:15] INFO   Correlation matrix OK
+[2026-06-18 11:20:15] INFO Evolution chart: 47 data points
+[2026-06-18 11:21:29] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (46,195 bytes)
+[2026-06-18 11:21:29] INFO Ejecutando screener...
+[2026-06-18 11:22:05] INFO Screener completado.
+[2026-06-18 11:27:33] INFO Downloading price histories...
+[2026-06-18 11:27:35] INFO   Histórico guardado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\price_history.csv (188 filas)
+[2026-06-18 11:27:35] INFO Fetching valuation data...
+[2026-06-18 11:27:35] INFO   ENR.DE: PER=65.40945, DivY=None
+[2026-06-18 11:27:36] INFO   NVD.DE: PER=31.95737, DivY=None
+[2026-06-18 11:27:37] INFO   RRU.DE: PER=20.2125, DivY=None
+[2026-06-18 11:27:37] INFO   DANR.MI: PER=16.097178, DivY=None
+[2026-06-18 11:27:40] INFO Fetching benchmark data...
+[2026-06-18 11:27:42] INFO   ^STOXX50E: 5985 -> 6296 (+5.20%)
+[2026-06-18 11:27:42] INFO Computing correlation matrix...
+[2026-06-18 11:27:45] INFO   Correlation matrix OK
+[2026-06-18 11:27:45] INFO Evolution chart: 47 data points
+[2026-06-18 11:29:01] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (46,327 bytes)
+[2026-06-18 11:29:01] INFO Ejecutando screener...
+[2026-06-18 11:29:30] INFO Screener completado.
+[2026-06-18 11:30:11] INFO Downloading price histories...
+[2026-06-18 11:30:13] INFO   Histórico guardado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\price_history.csv (188 filas)
+[2026-06-18 11:30:13] INFO Fetching valuation data...
+[2026-06-18 11:30:17] INFO   ENR.DE: PER=65.57481, DivY=None
+[2026-06-18 11:30:18] INFO   NVD.DE: PER=31.989344, DivY=None
+[2026-06-18 11:30:18] INFO   RRU.DE: PER=20.2125, DivY=None
+[2026-06-18 11:30:19] INFO   DANR.MI: PER=16.097178, DivY=None
+[2026-06-18 11:30:21] INFO Fetching benchmark data...
+[2026-06-18 11:30:22] INFO   ^STOXX50E: 5985 -> 6303 (+5.32%)
+[2026-06-18 11:30:22] INFO Computing correlation matrix...
+[2026-06-18 11:30:24] INFO   Correlation matrix OK
+[2026-06-18 11:30:24] INFO Evolution chart: 47 data points
+[2026-06-18 11:31:51] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (46,326 bytes)
+[2026-06-18 11:31:51] INFO Ejecutando screener...
+[2026-06-18 11:32:23] INFO Screener completado.
+[2026-06-18 11:33:32] INFO Downloading price histories...
+[2026-06-18 11:33:34] INFO   Histórico guardado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\price_history.csv (188 filas)
+[2026-06-18 11:33:34] INFO Fetching valuation data...
+[2026-06-18 11:33:35] INFO   ENR.DE: PER=65.67717, DivY=None
+[2026-06-18 11:33:36] INFO   NVD.DE: PER=31.992893, DivY=None
+[2026-06-18 11:33:36] INFO   RRU.DE: PER=20.25, DivY=None
+[2026-06-18 11:33:37] INFO   DANR.MI: PER=16.128527, DivY=None
+[2026-06-18 11:33:38] INFO Fetching benchmark data...
+[2026-06-18 11:33:39] INFO   ^STOXX50E: 5985 -> 6305 (+5.35%)
+[2026-06-18 11:33:39] INFO Computing correlation matrix...
+[2026-06-18 11:33:40] INFO   Correlation matrix OK
+[2026-06-18 11:33:40] INFO Evolution chart: 47 data points
+[2026-06-18 11:35:07] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (46,328 bytes)
+[2026-06-18 11:35:07] INFO Ejecutando screener...
+[2026-06-18 11:35:36] INFO Screener completado.
+[2026-06-18 11:36:21] INFO Downloading price histories...
+[2026-06-18 11:36:23] INFO   Histórico guardado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\price_history.csv (188 filas)
+[2026-06-18 11:36:23] INFO Fetching valuation data...
+[2026-06-18 11:36:24] INFO   ENR.DE: PER=65.645676, DivY=None
+[2026-06-18 11:36:25] INFO   NVD.DE: PER=31.978683, DivY=None
+[2026-06-18 11:36:26] INFO   RRU.DE: PER=20.227499, DivY=None
+[2026-06-18 11:36:26] INFO   DANR.MI: PER=16.128527, DivY=None
+[2026-06-18 11:36:28] INFO Fetching benchmark data...
+[2026-06-18 11:36:28] INFO   ^STOXX50E: 5985 -> 6303 (+5.32%)
+[2026-06-18 11:36:28] INFO Computing correlation matrix...
+[2026-06-18 11:36:29] INFO   Correlation matrix OK
+[2026-06-18 11:36:29] INFO Evolution chart: 47 data points
+[2026-06-18 11:37:34] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (46,331 bytes)
+[2026-06-18 11:37:34] INFO Ejecutando screener...
+[2026-06-18 11:46:47] INFO Downloading price histories...
+[2026-06-18 11:46:51] INFO   Histórico guardado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\price_history.csv (188 filas)
+[2026-06-18 11:46:51] INFO Fetching valuation data...
+[2026-06-18 11:46:51] INFO   ENR.DE: PER=66.0, DivY=None
+[2026-06-18 11:46:52] INFO   NVD.DE: PER=32.01421, DivY=None
+[2026-06-18 11:46:52] INFO   RRU.DE: PER=20.275, DivY=None
+[2026-06-18 11:46:53] INFO   DANR.MI: PER=16.128527, DivY=None
+[2026-06-18 11:46:54] INFO Fetching benchmark data...
+[2026-06-18 11:46:54] INFO   ^STOXX50E: 5985 -> 6304 (+5.34%)
+[2026-06-18 11:46:54] INFO Computing correlation matrix...
+[2026-06-18 11:46:55] INFO   Correlation matrix OK
+[2026-06-18 11:46:55] INFO Evolution chart: 47 data points
+[2026-06-18 11:47:55] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (46,326 bytes)
+[2026-06-18 11:47:55] INFO Ejecutando screener...
+[2026-06-18 11:48:23] INFO Screener completado.
+[2026-06-18 11:52:08] INFO Downloading price histories...
+[2026-06-18 11:52:10] INFO   Histórico guardado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\price_history.csv (188 filas)
+[2026-06-18 11:52:10] INFO Fetching valuation data...
+[2026-06-18 11:52:10] INFO   ENR.DE: PER=66.09449, DivY=None
+[2026-06-18 11:52:11] INFO   NVD.DE: PER=32.007103, DivY=None
+[2026-06-18 11:52:11] INFO   RRU.DE: PER=20.25, DivY=None
+[2026-06-18 11:52:12] INFO   DANR.MI: PER=16.144201, DivY=None
+[2026-06-18 11:52:14] INFO Fetching benchmark data...
+[2026-06-18 11:52:14] INFO   ^STOXX50E: 5985 -> 6303 (+5.32%)
+[2026-06-18 11:52:14] INFO Computing correlation matrix...
+[2026-06-18 11:52:15] INFO   Correlation matrix OK
+[2026-06-18 11:52:15] INFO Evolution chart: 47 data points
+[2026-06-18 11:53:12] INFO Dashboard generado: C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html (46,703 bytes)
+[2026-06-18 11:53:12] INFO Ejecutando screener...
+[2026-06-18 11:53:37] INFO Screener completado.
+[2026-06-18 20:04:24] INFO Downloading price histories...
+[2026-06-18 20:04:53] INFO   Histórico guardado: .\price_history.csv (141 filas)
+[2026-06-18 20:04:53] INFO Fetching valuation data...
+[2026-06-18 20:04:56] INFO   ENR.DE: PER=66.66929, DivY=None
+[2026-06-18 20:04:57] INFO   NVD.DE: PER=32.2984, DivY=None
+[2026-06-18 20:04:58] INFO   RRU.DE: PER=20.269999, DivY=None
+[2026-06-18 20:04:59] INFO   DANR.MI: PER=16.159874, DivY=None
+[2026-06-18 20:05:00] INFO Fetching benchmark data...
+[2026-06-18 20:05:00] INFO   ^STOXX50E: 5985 -> 6323 (+5.66%)
+[2026-06-18 20:05:00] INFO Computing correlation matrix...
+[2026-06-18 20:05:02] INFO   Correlation matrix OK
+[2026-06-18 20:05:02] INFO Evolution chart: 47 data points
+[2026-06-18 20:05:57] INFO Dashboard generado: .\dashboard.html (46,698 bytes)
+[2026-06-18 20:09:50] INFO Downloading price histories...
+[2026-06-18 20:09:51] INFO   Histórico guardado: .\price_history.csv (188 filas)
+[2026-06-18 20:09:51] INFO Fetching valuation data...
+[2026-06-18 20:09:52] INFO   ENR.DE: PER=66.66929, DivY=None
+[2026-06-18 20:09:52] INFO   NVD.DE: PER=32.2984, DivY=None
+[2026-06-18 20:09:53] INFO   RRU.DE: PER=20.269999, DivY=None
+[2026-06-18 20:09:54] INFO   DANR.MI: PER=16.159874, DivY=None
+[2026-06-18 20:09:55] INFO Fetching benchmark data...
+[2026-06-18 20:09:55] INFO   ^STOXX50E: 5985 -> 6323 (+5.66%)
+[2026-06-18 20:09:55] INFO Computing correlation matrix...
+[2026-06-18 20:09:56] INFO   Correlation matrix OK
+[2026-06-18 20:09:56] INFO Evolution chart: 47 data points
+[2026-06-18 20:10:54] INFO Dashboard generado: .\dashboard.html (46,700 bytes)

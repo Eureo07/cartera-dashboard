@@ -1,0 +1,255 @@
+[2026-06-18 10:49:39] INFO ==================================================
+[2026-06-18 10:49:39] INFO SCREENER — Radar de Oportunidades
+[2026-06-18 10:49:39] INFO ==================================================
+[2026-06-18 10:49:39] INFO Cargando datos financieros...
+[2026-06-18 10:49:39] INFO   258 empresas en el universo con datos financieros
+[2026-06-18 10:49:39] INFO   Descargando datos de 257 tickers (paralelo)...
+[2026-06-18 10:50:05] INFO   Datos descargados. Evaluando criterios...
+[2026-06-18 10:50:05] INFO   18 oportunidades encontradas (Score > 0.5)
+[2026-06-18 10:50:05] INFO 
+Top 18 oportunidades:
+[2026-06-18 10:50:05] INFO   1. ExxonMobil (XOM) — Score: 1.000, PER: 13.2, Rent.1A: +28.3%
+[2026-06-18 10:50:05] INFO   2. Honeywell (HON) — Score: 1.000, PER: 20.0, Rent.1A: +11.7%
+[2026-06-18 10:50:05] INFO   3. Altria (MO) — Score: 1.000, PER: 11.7, Rent.1A: +23.8%
+[2026-06-18 10:50:05] INFO   4. Qualcomm (QCOM) — Score: 0.996, PER: 20.0, Rent.1A: +41.5%
+[2026-06-18 10:50:05] INFO   5. Indra (IDR.MC) — Score: 0.970, PER: 17.9, Rent.1A: +59.4%
+[2026-06-18 10:50:05] INFO   6. Vinci (DG.PA) — Score: 0.836, PER: 12.9, Rent.1A: +9.5%
+[2026-06-18 10:50:05] INFO   7. Amgen (AMGN) — Score: 0.746, PER: 14.6, Rent.1A: +21.5%
+[2026-06-18 10:50:05] INFO   8. Bristol-Myers Squibb (BMY) — Score: 0.701, PER: 9.0, Rent.1A: +23.9%
+[2026-06-18 10:50:05] INFO   9. PepsiCo (PEP) — Score: 0.697, PER: 15.5, Rent.1A: +14.0%
+[2026-06-18 10:50:05] INFO   10. Broadcom (AVGO) — Score: 0.694, PER: 20.3, Rent.1A: +57.6%
+[2026-06-18 10:50:05] INFO   11. Eli Lilly (LLY) — Score: 0.677, PER: 25.0, Rent.1A: +42.7%
+[2026-06-18 10:50:05] INFO   12. Smith & Nephew (SN.L) — Score: 0.667, PER: 12.0, Rent.1A: +4.2%
+[2026-06-18 10:50:05] INFO   13. InterContinental Hotels (IHG.L) — Score: 0.613, PER: 26.6, Rent.1A: +54.7%
+[2026-06-18 10:50:05] INFO   14. Deere & Company (DE) — Score: 0.610, PER: 25.7, Rent.1A: +13.6%
+[2026-06-18 10:50:05] INFO   15. Target (TGT) — Score: 0.605, PER: 14.4, Rent.1A: +40.2%
+[2026-06-18 10:50:05] INFO   16. Naturgy (NTGY.MC) — Score: 0.580, PER: 14.1, Rent.1A: +15.1%
+[2026-06-18 10:50:05] INFO   17. Siemens (SIE.DE) — Score: 0.564, PER: 21.5, Rent.1A: +32.5%
+[2026-06-18 10:50:05] INFO   18. UnitedHealth Group (UNH) — Score: 0.524, PER: 19.1, Rent.1A: +33.5%
+[2026-06-18 10:50:06] INFO Sección Radar añadida a C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html
+[2026-06-18 10:50:06] INFO Hecho.
+[2026-06-18 11:05:23] INFO ==================================================
+[2026-06-18 11:05:23] INFO SCREENER — Radar de Oportunidades
+[2026-06-18 11:05:23] INFO ==================================================
+[2026-06-18 11:05:23] INFO Cargando datos financieros...
+[2026-06-18 11:05:23] INFO   258 empresas en el universo con datos financieros
+[2026-06-18 11:05:23] INFO   Descargando datos de 257 tickers (paralelo)...
+[2026-06-18 11:05:48] INFO   Datos descargados. Evaluando criterios...
+[2026-06-18 11:05:48] INFO   18 oportunidades encontradas (Score > 0.5)
+[2026-06-18 11:05:48] INFO 
+Top 18 oportunidades:
+[2026-06-18 11:05:48] INFO   1. ExxonMobil (XOM) — Score: 1.000, PER: 13.2, Rent.1A: +28.3%
+[2026-06-18 11:05:48] INFO   2. Honeywell (HON) — Score: 1.000, PER: 20.0, Rent.1A: +11.7%
+[2026-06-18 11:05:48] INFO   3. Altria (MO) — Score: 1.000, PER: 11.7, Rent.1A: +23.8%
+[2026-06-18 11:05:48] INFO   4. Qualcomm (QCOM) — Score: 0.996, PER: 20.0, Rent.1A: +41.5%
+[2026-06-18 11:05:48] INFO   5. Indra (IDR.MC) — Score: 0.970, PER: 17.8, Rent.1A: +58.4%
+[2026-06-18 11:05:48] INFO   6. AstraZeneca (AZN.L) — Score: 0.836, PER: 15.5, Rent.1A: +27.2%
+[2026-06-18 11:05:48] INFO   7. Amgen (AMGN) — Score: 0.746, PER: 14.6, Rent.1A: +21.5%
+[2026-06-18 11:05:48] INFO   8. Bristol-Myers Squibb (BMY) — Score: 0.701, PER: 9.0, Rent.1A: +23.9%
+[2026-06-18 11:05:48] INFO   9. PepsiCo (PEP) — Score: 0.697, PER: 15.5, Rent.1A: +14.0%
+[2026-06-18 11:05:48] INFO   10. Broadcom (AVGO) — Score: 0.694, PER: 20.3, Rent.1A: +57.6%
+[2026-06-18 11:05:48] INFO   11. Eli Lilly (LLY) — Score: 0.677, PER: 25.0, Rent.1A: +42.7%
+[2026-06-18 11:05:48] INFO   12. Smith & Nephew (SN.L) — Score: 0.667, PER: 12.0, Rent.1A: +4.1%
+[2026-06-18 11:05:48] INFO   13. InterContinental Hotels (IHG.L) — Score: 0.613, PER: 26.6, Rent.1A: +54.7%
+[2026-06-18 11:05:48] INFO   14. Deere & Company (DE) — Score: 0.610, PER: 25.7, Rent.1A: +13.6%
+[2026-06-18 11:05:48] INFO   15. Target (TGT) — Score: 0.605, PER: 14.4, Rent.1A: +40.2%
+[2026-06-18 11:05:48] INFO   16. Naturgy (NTGY.MC) — Score: 0.580, PER: 14.1, Rent.1A: +15.1%
+[2026-06-18 11:05:48] INFO   17. Siemens (SIE.DE) — Score: 0.564, PER: 21.4, Rent.1A: +32.4%
+[2026-06-18 11:05:48] INFO   18. UnitedHealth Group (UNH) — Score: 0.524, PER: 19.1, Rent.1A: +33.5%
+[2026-06-18 11:05:48] INFO Sección Radar añadida a C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html
+[2026-06-18 11:05:48] INFO Hecho.
+[2026-06-18 11:14:25] INFO ==================================================
+[2026-06-18 11:14:25] INFO SCREENER — Radar de Oportunidades
+[2026-06-18 11:14:25] INFO ==================================================
+[2026-06-18 11:14:25] INFO Cargando datos financieros...
+[2026-06-18 11:14:26] INFO   258 empresas en el universo con datos financieros
+[2026-06-18 11:14:26] INFO   Descargando datos de 257 tickers (paralelo)...
+[2026-06-18 11:14:51] INFO   Datos descargados. Evaluando criterios...
+[2026-06-18 11:14:51] INFO   18 oportunidades encontradas (Score > 0.5)
+[2026-06-18 11:14:51] INFO 
+Top 18 oportunidades:
+[2026-06-18 11:14:51] INFO   1. ExxonMobil (XOM) — Score: 1.000, PER: 13.2, Rent.1A: +28.3%
+[2026-06-18 11:14:51] INFO   2. Honeywell (HON) — Score: 1.000, PER: 20.0, Rent.1A: +11.7%
+[2026-06-18 11:14:51] INFO   3. Altria (MO) — Score: 1.000, PER: 11.7, Rent.1A: +23.8%
+[2026-06-18 11:14:51] INFO   4. Qualcomm (QCOM) — Score: 0.996, PER: 20.0, Rent.1A: +41.5%
+[2026-06-18 11:14:51] INFO   5. Indra (IDR.MC) — Score: 0.970, PER: 17.7, Rent.1A: +58.3%
+[2026-06-18 11:14:51] INFO   6. Vinci (DG.PA) — Score: 0.836, PER: 12.8, Rent.1A: +8.8%
+[2026-06-18 11:14:51] INFO   7. Amgen (AMGN) — Score: 0.746, PER: 14.6, Rent.1A: +21.5%
+[2026-06-18 11:14:51] INFO   8. Bristol-Myers Squibb (BMY) — Score: 0.701, PER: 9.0, Rent.1A: +23.9%
+[2026-06-18 11:14:51] INFO   9. PepsiCo (PEP) — Score: 0.697, PER: 15.5, Rent.1A: +14.0%
+[2026-06-18 11:14:51] INFO   10. Broadcom (AVGO) — Score: 0.694, PER: 20.3, Rent.1A: +57.6%
+[2026-06-18 11:14:51] INFO   11. Eli Lilly (LLY) — Score: 0.677, PER: 25.0, Rent.1A: +42.7%
+[2026-06-18 11:14:51] INFO   12. Smith & Nephew (SN.L) — Score: 0.667, PER: 12.0, Rent.1A: +4.1%
+[2026-06-18 11:14:51] INFO   13. InterContinental Hotels (IHG.L) — Score: 0.613, PER: 26.6, Rent.1A: +54.6%
+[2026-06-18 11:14:51] INFO   14. Deere & Company (DE) — Score: 0.610, PER: 25.7, Rent.1A: +13.6%
+[2026-06-18 11:14:51] INFO   15. Target (TGT) — Score: 0.605, PER: 14.4, Rent.1A: +40.2%
+[2026-06-18 11:14:51] INFO   16. Naturgy (NTGY.MC) — Score: 0.580, PER: 14.1, Rent.1A: +15.1%
+[2026-06-18 11:14:51] INFO   17. Siemens (SIE.DE) — Score: 0.564, PER: 21.4, Rent.1A: +32.2%
+[2026-06-18 11:14:51] INFO   18. UnitedHealth Group (UNH) — Score: 0.524, PER: 19.1, Rent.1A: +33.5%
+[2026-06-18 11:14:51] INFO Sección Radar añadida a C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html
+[2026-06-18 11:14:51] INFO Hecho.
+[2026-06-18 11:21:31] INFO ==================================================
+[2026-06-18 11:21:31] INFO SCREENER — Radar de Oportunidades
+[2026-06-18 11:21:31] INFO ==================================================
+[2026-06-18 11:21:31] INFO Cargando datos financieros...
+[2026-06-18 11:21:32] INFO   258 empresas en el universo con datos financieros
+[2026-06-18 11:21:32] INFO   Descargando datos de 257 tickers (paralelo)...
+[2026-06-18 11:22:04] INFO   Datos descargados. Evaluando criterios...
+[2026-06-18 11:22:04] INFO   14 oportunidades encontradas (Score > 0.5)
+[2026-06-18 11:22:04] INFO 
+Top 14 oportunidades:
+[2026-06-18 11:22:04] INFO   1. Eli Lilly (LLY) — Score: 1.000, PER: 25.0, Rent.1A: +42.7%
+[2026-06-18 11:22:04] INFO   2. Johnson & Johnson (JNJ) — Score: 1.000, PER: 18.4, Rent.1A: +59.3%
+[2026-06-18 11:22:04] INFO   3. ExxonMobil (XOM) — Score: 1.000, PER: 13.2, Rent.1A: +28.3%
+[2026-06-18 11:22:04] INFO   4. Indra (IDR.MC) — Score: 0.970, PER: 17.8, Rent.1A: +58.6%
+[2026-06-18 11:22:04] INFO   5. Gilead Sciences (GILD) — Score: 0.853, PER: 13.0, Rent.1A: +19.2%
+[2026-06-18 11:22:04] INFO   6. Vinci (DG.PA) — Score: 0.836, PER: 12.8, Rent.1A: +9.0%
+[2026-06-18 11:22:04] INFO   7. Cisco (CSCO) — Score: 0.746, PER: 24.6, Rent.1A: +82.3%
+[2026-06-18 11:22:04] INFO   8. Micron Technology (MU) — Score: 0.694, PER: 9.1, Rent.1A: +758.4%
+[2026-06-18 11:22:04] INFO   9. Smith & Nephew (SN.L) — Score: 0.667, PER: 12.1, Rent.1A: +4.4%
+[2026-06-18 11:22:04] INFO   10. Coca-Cola HBC (CCH.L) — Score: 0.613, PER: 16.5, Rent.1A: +16.1%
+[2026-06-18 11:22:04] INFO   11. Target (TGT) — Score: 0.605, PER: 14.4, Rent.1A: +40.2%
+[2026-06-18 11:22:04] INFO   12. Naturgy (NTGY.MC) — Score: 0.580, PER: 14.1, Rent.1A: +15.0%
+[2026-06-18 11:22:04] INFO   13. Siemens (SIE.DE) — Score: 0.564, PER: 21.4, Rent.1A: +32.4%
+[2026-06-18 11:22:04] INFO   14. Alphabet A (GOOGL) — Score: 0.524, PER: 25.1, Rent.1A: +110.5%
+[2026-06-18 11:22:05] INFO Sección Radar añadida a C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html
+[2026-06-18 11:22:05] INFO Hecho.
+[2026-06-18 11:29:03] INFO ==================================================
+[2026-06-18 11:29:03] INFO SCREENER — Radar de Oportunidades
+[2026-06-18 11:29:03] INFO ==================================================
+[2026-06-18 11:29:03] INFO Cargando datos financieros...
+[2026-06-18 11:29:04] INFO   258 empresas en el universo con datos financieros
+[2026-06-18 11:29:04] INFO   Descargando datos de 257 tickers (paralelo)...
+[2026-06-18 11:29:29] INFO   Datos descargados. Evaluando criterios...
+[2026-06-18 11:29:29] INFO   13 oportunidades encontradas (Score > 0.5)
+[2026-06-18 11:29:29] INFO 
+Top 13 oportunidades:
+[2026-06-18 11:29:29] INFO   1. Johnson & Johnson (JNJ) — Score: 1.000, PER: 18.4, Rent.1A: +59.3%
+[2026-06-18 11:29:29] INFO   2. ExxonMobil (XOM) — Score: 1.000, PER: 13.2, Rent.1A: +28.3%
+[2026-06-18 11:29:29] INFO   3. Lockheed Martin (LMT) — Score: 1.000, PER: 16.6, Rent.1A: +16.7%
+[2026-06-18 11:29:29] INFO   4. Indra (IDR.MC) — Score: 0.970, PER: 17.8, Rent.1A: +58.7%
+[2026-06-18 11:29:29] INFO   5. Bristol-Myers Squibb (BMY) — Score: 0.853, PER: 9.0, Rent.1A: +23.9%
+[2026-06-18 11:29:29] INFO   6. Vinci (DG.PA) — Score: 0.836, PER: 12.8, Rent.1A: +9.2%
+[2026-06-18 11:29:29] INFO   7. Cisco (CSCO) — Score: 0.746, PER: 24.6, Rent.1A: +82.3%
+[2026-06-18 11:29:29] INFO   8. Qualcomm (QCOM) — Score: 0.694, PER: 20.0, Rent.1A: +41.5%
+[2026-06-18 11:29:29] INFO   9. Smith & Nephew (SN.L) — Score: 0.667, PER: 12.1, Rent.1A: +4.6%
+[2026-06-18 11:29:29] INFO   10. Coca-Cola HBC (CCH.L) — Score: 0.613, PER: 16.5, Rent.1A: +16.2%
+[2026-06-18 11:29:29] INFO   11. Naturgy (NTGY.MC) — Score: 0.580, PER: 14.0, Rent.1A: +14.9%
+[2026-06-18 11:29:29] INFO   12. Siemens (SIE.DE) — Score: 0.564, PER: 21.5, Rent.1A: +32.7%
+[2026-06-18 11:29:29] INFO   13. Alphabet A (GOOGL) — Score: 0.524, PER: 25.1, Rent.1A: +110.5%
+[2026-06-18 11:29:29] INFO Sección Radar añadida a C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html
+[2026-06-18 11:29:29] INFO Hecho.
+[2026-06-18 11:31:52] INFO ==================================================
+[2026-06-18 11:31:52] INFO SCREENER — Radar de Oportunidades
+[2026-06-18 11:31:52] INFO ==================================================
+[2026-06-18 11:31:52] INFO Cargando datos financieros...
+[2026-06-18 11:31:53] INFO   258 empresas en el universo con datos financieros
+[2026-06-18 11:31:53] INFO   Descargando datos de 257 tickers (paralelo)...
+[2026-06-18 11:32:23] INFO   Datos descargados. Evaluando criterios...
+[2026-06-18 11:32:23] INFO   13 oportunidades encontradas (Score > 0.5)
+[2026-06-18 11:32:23] INFO 
+Top 13 oportunidades:
+[2026-06-18 11:32:23] INFO   1. Johnson & Johnson (JNJ) — Score: 1.000, PER: 18.4, Rent.1A: +59.3%
+[2026-06-18 11:32:23] INFO   2. ExxonMobil (XOM) — Score: 1.000, PER: 13.2, Rent.1A: +28.3%
+[2026-06-18 11:32:23] INFO   3. Lockheed Martin (LMT) — Score: 1.000, PER: 16.6, Rent.1A: +16.7%
+[2026-06-18 11:32:23] INFO   4. Indra (IDR.MC) — Score: 0.970, PER: 17.8, Rent.1A: +58.8%
+[2026-06-18 11:32:23] INFO   5. Bristol-Myers Squibb (BMY) — Score: 0.853, PER: 9.0, Rent.1A: +23.9%
+[2026-06-18 11:32:23] INFO   6. Vinci (DG.PA) — Score: 0.836, PER: 12.8, Rent.1A: +9.2%
+[2026-06-18 11:32:23] INFO   7. Cisco (CSCO) — Score: 0.746, PER: 24.6, Rent.1A: +82.3%
+[2026-06-18 11:32:23] INFO   8. Qualcomm (QCOM) — Score: 0.694, PER: 20.0, Rent.1A: +41.5%
+[2026-06-18 11:32:23] INFO   9. Smith & Nephew (SN.L) — Score: 0.667, PER: 12.1, Rent.1A: +4.6%
+[2026-06-18 11:32:23] INFO   10. Coca-Cola HBC (CCH.L) — Score: 0.613, PER: 16.5, Rent.1A: +16.3%
+[2026-06-18 11:32:23] INFO   11. Naturgy (NTGY.MC) — Score: 0.580, PER: 14.1, Rent.1A: +15.0%
+[2026-06-18 11:32:23] INFO   12. Siemens (SIE.DE) — Score: 0.564, PER: 21.5, Rent.1A: +32.7%
+[2026-06-18 11:32:23] INFO   13. Alphabet A (GOOGL) — Score: 0.524, PER: 25.1, Rent.1A: +110.5%
+[2026-06-18 11:32:23] INFO Sección Radar añadida a C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html
+[2026-06-18 11:32:23] INFO Hecho.
+[2026-06-18 11:35:09] INFO ==================================================
+[2026-06-18 11:35:09] INFO SCREENER — Radar de Oportunidades
+[2026-06-18 11:35:09] INFO ==================================================
+[2026-06-18 11:35:09] INFO Cargando datos financieros...
+[2026-06-18 11:35:09] INFO   258 empresas en el universo con datos financieros
+[2026-06-18 11:35:09] INFO   Descargando datos de 257 tickers (paralelo)...
+[2026-06-18 11:35:36] INFO   Datos descargados. Evaluando criterios...
+[2026-06-18 11:35:36] INFO   13 oportunidades encontradas (Score > 0.5)
+[2026-06-18 11:35:36] INFO 
+Top 13 oportunidades:
+[2026-06-18 11:35:36] INFO   1. Johnson & Johnson (JNJ) — Score: 1.000, PER: 18.4, Rent.1A: +59.3%
+[2026-06-18 11:35:36] INFO   2. ExxonMobil (XOM) — Score: 1.000, PER: 13.2, Rent.1A: +28.3%
+[2026-06-18 11:35:36] INFO   3. Lockheed Martin (LMT) — Score: 1.000, PER: 16.6, Rent.1A: +16.7%
+[2026-06-18 11:35:36] INFO   4. Indra (IDR.MC) — Score: 0.970, PER: 17.8, Rent.1A: +59.0%
+[2026-06-18 11:35:36] INFO   5. Bristol-Myers Squibb (BMY) — Score: 0.853, PER: 9.0, Rent.1A: +23.9%
+[2026-06-18 11:35:36] INFO   6. Vinci (DG.PA) — Score: 0.836, PER: 12.8, Rent.1A: +9.3%
+[2026-06-18 11:35:36] INFO   7. Cisco (CSCO) — Score: 0.746, PER: 24.6, Rent.1A: +82.3%
+[2026-06-18 11:35:36] INFO   8. Qualcomm (QCOM) — Score: 0.694, PER: 20.0, Rent.1A: +41.5%
+[2026-06-18 11:35:36] INFO   9. Smith & Nephew (SN.L) — Score: 0.667, PER: 12.1, Rent.1A: +4.7%
+[2026-06-18 11:35:36] INFO   10. Coca-Cola HBC (CCH.L) — Score: 0.613, PER: 16.5, Rent.1A: +16.4%
+[2026-06-18 11:35:36] INFO   11. Naturgy (NTGY.MC) — Score: 0.580, PER: 14.1, Rent.1A: +15.1%
+[2026-06-18 11:35:36] INFO   12. Siemens (SIE.DE) — Score: 0.564, PER: 21.5, Rent.1A: +32.8%
+[2026-06-18 11:35:36] INFO   13. Alphabet A (GOOGL) — Score: 0.524, PER: 25.1, Rent.1A: +110.5%
+[2026-06-18 11:35:36] INFO Defensive candidates found: 0
+[2026-06-18 11:35:36] INFO No hay candidatos defensivos en Radar
+[2026-06-18 11:35:36] INFO Sección Radar añadida a C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html
+[2026-06-18 11:35:36] INFO Hecho.
+[2026-06-18 11:37:35] INFO ==================================================
+[2026-06-18 11:37:35] INFO SCREENER — Radar de Oportunidades
+[2026-06-18 11:37:35] INFO ==================================================
+[2026-06-18 11:37:35] INFO Cargando datos financieros...
+[2026-06-18 11:37:36] INFO   258 empresas en el universo con datos financieros
+[2026-06-18 11:37:36] INFO   Descargando datos de 257 tickers (paralelo)...
+[2026-06-18 11:47:56] INFO ==================================================
+[2026-06-18 11:47:56] INFO SCREENER — Radar de Oportunidades
+[2026-06-18 11:47:56] INFO ==================================================
+[2026-06-18 11:47:56] INFO Cargando datos financieros...
+[2026-06-18 11:47:56] INFO   258 empresas en el universo con datos financieros
+[2026-06-18 11:47:56] INFO   Descargando datos de 257 tickers (paralelo)...
+[2026-06-18 11:48:22] INFO   Datos descargados. Evaluando criterios...
+[2026-06-18 11:48:22] INFO   13 oportunidades encontradas (Score > 0.5)
+[2026-06-18 11:48:22] INFO 
+Top 13 oportunidades:
+[2026-06-18 11:48:22] INFO   1. Johnson & Johnson (JNJ) — Score: 1.000, PER: 18.4, Rent.1A: +59.3%
+[2026-06-18 11:48:22] INFO   2. ExxonMobil (XOM) — Score: 1.000, PER: 13.2, Rent.1A: +28.3%
+[2026-06-18 11:48:22] INFO   3. Lockheed Martin (LMT) — Score: 1.000, PER: 16.6, Rent.1A: +16.7%
+[2026-06-18 11:48:22] INFO   4. Indra (IDR.MC) — Score: 0.970, PER: 17.8, Rent.1A: +59.1%
+[2026-06-18 11:48:22] INFO   5. Bristol-Myers Squibb (BMY) — Score: 0.853, PER: 9.0, Rent.1A: +23.9%
+[2026-06-18 11:48:22] INFO   6. Vinci (DG.PA) — Score: 0.836, PER: 12.9, Rent.1A: +9.5%
+[2026-06-18 11:48:22] INFO   7. Cisco (CSCO) — Score: 0.746, PER: 24.6, Rent.1A: +82.3%
+[2026-06-18 11:48:22] INFO   8. Qualcomm (QCOM) — Score: 0.694, PER: 20.0, Rent.1A: +41.5%
+[2026-06-18 11:48:22] INFO   9. Smith & Nephew (SN.L) — Score: 0.667, PER: 12.1, Rent.1A: +4.8%
+[2026-06-18 11:48:22] INFO   10. Coca-Cola HBC (CCH.L) — Score: 0.613, PER: 16.5, Rent.1A: +16.4%
+[2026-06-18 11:48:22] INFO   11. Naturgy (NTGY.MC) — Score: 0.580, PER: 14.0, Rent.1A: +14.9%
+[2026-06-18 11:48:22] INFO   12. Siemens (SIE.DE) — Score: 0.564, PER: 21.5, Rent.1A: +32.9%
+[2026-06-18 11:48:22] INFO   13. Alphabet A (GOOGL) — Score: 0.524, PER: 25.1, Rent.1A: +110.5%
+[2026-06-18 11:48:22] INFO Defensive candidates found: 4
+[2026-06-18 11:48:22] INFO   Johnson & Johnson (JNJ) - Salud
+[2026-06-18 11:48:22] INFO   Bristol-Myers Squibb (BMY) - Salud
+[2026-06-18 11:48:22] INFO   Smith & Nephew (SN.L) - Salud
+[2026-06-18 11:48:22] INFO   Alphabet A (GOOGL) - Comunicaciones
+[2026-06-18 11:48:22] INFO Sugerencia defensiva insertada
+[2026-06-18 11:48:22] INFO Sección Radar añadida a C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html
+[2026-06-18 11:48:22] INFO Hecho.
+[2026-06-18 11:53:13] INFO ==================================================
+[2026-06-18 11:53:13] INFO SCREENER — Radar de Oportunidades
+[2026-06-18 11:53:13] INFO ==================================================
+[2026-06-18 11:53:13] INFO Cargando datos financieros...
+[2026-06-18 11:53:13] INFO   258 empresas en el universo con datos financieros
+[2026-06-18 11:53:13] INFO   Descargando datos de 257 tickers (paralelo)...
+[2026-06-18 11:53:36] INFO   Datos descargados. Evaluando criterios...
+[2026-06-18 11:53:36] INFO   13 oportunidades encontradas (Score > 0.5)
+[2026-06-18 11:53:36] INFO 
+Top 13 oportunidades:
+[2026-06-18 11:53:36] INFO   1. Johnson & Johnson (JNJ) — Score: 1.000, PER: 18.4, Rent.1A: +59.3%
+[2026-06-18 11:53:36] INFO   2. ExxonMobil (XOM) — Score: 1.000, PER: 13.2, Rent.1A: +28.3%
+[2026-06-18 11:53:36] INFO   3. Lockheed Martin (LMT) — Score: 1.000, PER: 16.6, Rent.1A: +16.7%
+[2026-06-18 11:53:36] INFO   4. Indra (IDR.MC) — Score: 0.970, PER: 17.8, Rent.1A: +59.0%
+[2026-06-18 11:53:36] INFO   5. Bristol-Myers Squibb (BMY) — Score: 0.853, PER: 9.0, Rent.1A: +23.9%
+[2026-06-18 11:53:36] INFO   6. Vinci (DG.PA) — Score: 0.836, PER: 12.9, Rent.1A: +9.4%
+[2026-06-18 11:53:36] INFO   7. Cisco (CSCO) — Score: 0.746, PER: 24.6, Rent.1A: +82.3%
+[2026-06-18 11:53:36] INFO   8. Qualcomm (QCOM) — Score: 0.694, PER: 20.0, Rent.1A: +41.5%
+[2026-06-18 11:53:36] INFO   9. Smith & Nephew (SN.L) — Score: 0.667, PER: 12.1, Rent.1A: +4.8%
+[2026-06-18 11:53:36] INFO   10. Coca-Cola HBC (CCH.L) — Score: 0.613, PER: 16.5, Rent.1A: +16.5%
+[2026-06-18 11:53:36] INFO   11. Naturgy (NTGY.MC) — Score: 0.580, PER: 14.0, Rent.1A: +14.8%
+[2026-06-18 11:53:36] INFO   12. Siemens (SIE.DE) — Score: 0.564, PER: 21.5, Rent.1A: +33.0%
+[2026-06-18 11:53:36] INFO   13. Alphabet A (GOOGL) — Score: 0.524, PER: 25.1, Rent.1A: +110.5%
+[2026-06-18 11:53:36] INFO Sección Radar añadida a C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026\dashboard.html
+[2026-06-18 11:53:36] INFO Hecho.
