@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+logs/
+fin_data_complete.*
+fin_data_mega.*
+.env
+.venv/
+venv/
