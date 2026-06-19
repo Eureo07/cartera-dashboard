@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys, os, subprocess
-import time as _time
-os.environ['TZ'] = 'Europe/Madrid'
-try:
-    _time.tzset()
-except:
-    pass
+from zoneinfo import ZoneInfo
 _PROJ_DIR = "C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026"
 if _PROJ_DIR not in sys.path:
     sys.path.insert(0, _PROJ_DIR)
@@ -502,7 +497,7 @@ evol_benchmark_json = json.dumps(evol_benchmark)
 sector_alts_data = {}
 
 # ========== BUILD HTML ==========
-now_str = datetime.now().strftime("%d/%m/%Y %H:%M")
+now_str = datetime.now(ZoneInfo("Europe/Madrid")).strftime("%d/%m/%Y %H:%M")
 total_cls = "green" if total_pnl >= 0 else "red"
 
 html = f"""<!DOCTYPE html>
