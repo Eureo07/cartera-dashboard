@@ -17,10 +17,9 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from config_loader import CFG, get_logger
 
-# Force yfinance session with proper User-Agent to avoid Invalid Crumb errors
-_yf_sesh = requests.Session()
-_yf_sesh.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
-yf.shared._session = _yf_sesh
+# Shared session for yfinance requests (avoids Invalid Crumb issues)
+_YF_SESSION = requests.Session()
+_YF_SESSION.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
 
 log = get_logger("screener")
 anomaly_log = get_logger("anomalias_screener")
@@ -55,7 +54,7 @@ def get_valuation(t):
     if t in _yf_cache:
         return _yf_cache[t]
     try:
-        stock = yf.Ticker(t)
+        stock = yf.Ticker(t, session=_YF_SESSION)
         info = stock.info
         result = {
             "per": info.get("trailingPE"),
@@ -75,7 +74,7 @@ def get_1y_return(t):
     if t in _rent_cache:
         return _rent_cache[t]
     try:
-        stock = yf.Ticker(t)
+        stock = yf.Ticker(t, session=_YF_SESSION)
         hist = stock.history(period="1y")
         if len(hist) < 2:
             _rent_cache[t] = None

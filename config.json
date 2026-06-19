@@ -13,7 +13,7 @@
     },
     "screener": {
         "max_results": 20,
-        "score_threshold": 0.5,
+        "score_threshold": 0.3,
         "cache_ttl_hours": 24
     },
     "paths": {
