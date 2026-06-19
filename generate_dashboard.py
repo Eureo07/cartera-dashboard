@@ -85,7 +85,7 @@ for p in portfolio:
     tk = p["ticker"]
     try:
         stock = yf.Ticker(tk)
-        hist = stock.history(start=bench_start_dt, end=datetime.now())
+        hist = stock.history(start=bench_start_dt, end=datetime.now(), auto_adjust=False)
         if len(hist) > 2:
             price_hist[tk] = hist["Close"]
             p["current"] = float(hist["Close"].iloc[-1])
@@ -101,7 +101,7 @@ for p in portfolio:
 # Benchmark
 try:
     bm = yf.Ticker("^STOXX50E")
-    bm_h = bm.history(start=bench_start_dt, end=datetime.now())
+    bm_h = bm.history(start=bench_start_dt, end=datetime.now(), auto_adjust=False)
     if len(bm_h) > 2:
         bench_hist = bm_h["Close"]
 except:
@@ -147,7 +147,7 @@ def get_1y_return(t):
     if t in _rent_cache:
         return _rent_cache[t]
     try:
-        hist = yf.download(t, period="1y", progress=False)
+        hist = yf.download(t, period="1y", progress=False, auto_adjust=False)
         if hist is not None and not hist.empty:
             if isinstance(hist.columns, pd.MultiIndex):
                 close = hist.xs(t, level=1, axis=1)["Close"]
@@ -398,7 +398,7 @@ entry_dates = [datetime.strptime(p["entry_date"], "%d/%m/%Y") for p in portfolio
 bench_start = min(entry_dates).strftime("%Y-%m-%d")
 benchmark_return = None
 try:
-    stoxx = yf.download("^STOXX50E", start=bench_start, progress=False)
+    stoxx = yf.download("^STOXX50E", start=bench_start, progress=False, auto_adjust=False)
     if stoxx is not None and not stoxx.empty:
         if isinstance(stoxx.columns, pd.MultiIndex):
             stoxx_close = stoxx.xs("^STOXX50E", level=1, axis=1)["Close"]
@@ -418,7 +418,7 @@ corr_data = {}
 corr_html_rows = ""
 try:
     for t in corr_tickers:
-        hist = yf.download(t, period="1y", progress=False)
+        hist = yf.download(t, period="1y", progress=False, auto_adjust=False)
         if hist is not None and not hist.empty:
             if isinstance(hist.columns, pd.MultiIndex):
                 c = hist.xs(t, level=1, axis=1)["Close"]

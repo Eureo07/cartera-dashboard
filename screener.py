@@ -75,7 +75,7 @@ def get_1y_return(t):
         return _rent_cache[t]
     try:
         stock = yf.Ticker(t, session=_YF_SESSION)
-        hist = stock.history(period="1y")
+        hist = stock.history(period="1y", auto_adjust=False)
         if len(hist) < 2:
             _rent_cache[t] = None
             return None
