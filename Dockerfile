@@ -1,6 +1,10 @@
 # syntax=docker/dockerfile:1
 FROM python:3.12-slim
 
+ENV TZ=Europe/Madrid
+RUN apt-get update && apt-get install -y --no-install-recommends tzdata && \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Install Python deps (prebuilt wheels, no gcc needed)

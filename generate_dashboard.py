@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 import sys, os, subprocess
-_PROJ_DIR = "C:/Users/franl/OneDrive/Escritorio/Inversi\u00f3n/OpenCode/2026"
+import time as _time
+os.environ['TZ'] = 'Europe/Madrid'
+try:
+    _time.tzset()
+except:
+    pass
+_PROJ_DIR = "C:/Users/franl/OneDrive/Escritorio/Inversión/OpenCode/2026"
 if _PROJ_DIR not in sys.path:
     sys.path.insert(0, _PROJ_DIR)
 import pandas as pd
