@@ -67,12 +67,17 @@ def get_valuation(t):
         return {}
 
 _rent_cache = {}
+_rent_debug = 0
 def get_1y_return(t):
+    global _rent_debug
     if t in _rent_cache:
         return _rent_cache[t]
     try:
         hist = yf.download(t, period="1y", progress=False, auto_adjust=False)
         if hist is None or hist.empty:
+            if _rent_debug < 3:
+                print(f"  DEBUG rentNone {t}: hist=None/empty ({yf.__version__})")
+                _rent_debug += 1
             _rent_cache[t] = None
             return None
         if isinstance(hist.columns, pd.MultiIndex):
@@ -80,13 +85,19 @@ def get_1y_return(t):
         else:
             close = hist["Close"] if "Close" in hist.columns else hist.iloc[:, 0]
         close = close.dropna()
+        if _rent_debug < 3:
+            print(f"  DEBUG rent {t}: hist.shape={hist.shape}, close_nonan={close.notna().sum()}/{len(close)}, yf={yf.__version__}")
+            _rent_debug += 1
         if len(close) < 2:
             _rent_cache[t] = None
             return None
         ret = (float(close.iloc[-1]) - float(close.iloc[0])) / float(close.iloc[0]) * 100
         _rent_cache[t] = ret
         return ret
-    except:
+    except Exception as e:
+        if _rent_debug < 3:
+            print(f"  DEBUG rentNone {t}: exception={e} ({yf.__version__})")
+            _rent_debug += 1
         _rent_cache[t] = None
         return None
 
