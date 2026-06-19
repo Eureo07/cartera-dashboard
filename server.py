@@ -1,25 +1,48 @@
 # -*- coding: utf-8 -*-
 """
-Servidor local del dashboard.
-Sirve dashboard.html en http://localhost:5000
-API /api/price/<ticker> devuelve precio actual desde Yahoo Finance.
-Ejecutar: python server.py
-Luego abrir: http://localhost:5000
+Servidor del dashboard con autenticación HTTP Basic.
+Usuario y contraseña desde variables de entorno:
+  DASHBOARD_USER (defecto: "admin")
+  DASHBOARD_PASSWORD (obligatorio en Railway, defecto: "cartera2026")
 """
 import http.server
 import urllib.request
 import json
 import os
 import re
+import base64
 
 PORT = int(os.environ.get("PORT", "5000"))
 DIR = os.path.dirname(os.path.abspath(__file__))
+
+AUTH_USER = os.environ.get("DASHBOARD_USER", "admin")
+AUTH_PASS = os.environ.get("DASHBOARD_PASSWORD", "cartera2026")
+
+def check_auth(headers):
+    auth = headers.get("Authorization", "")
+    if not auth.startswith("Basic "):
+        return False
+    try:
+        decoded = base64.b64decode(auth[6:]).decode("utf-8")
+        user, pwd = decoded.split(":", 1)
+        return user == AUTH_USER and pwd == AUTH_PASS
+    except:
+        return False
+
+def send_401(handler):
+    handler.send_response(401)
+    handler.send_header("WWW-Authenticate", 'Basic realm="Dashboard Cartera"')
+    handler.send_header("Content-Type", "text/plain")
+    handler.end_headers()
+    handler.wfile.write(b"Autenticacion requerida")
 
 class DashboardHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIR, **kwargs)
 
     def do_GET(self):
+        if not check_auth(self.headers):
+            return send_401(self)
         # API endpoint for live price
         m = re.match(r"/api/price/([A-Za-z0-9.=-]+)", self.path)
         if m:
@@ -58,8 +81,11 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
         print(f"[{self.address_string()}] {args[0]} {args[1]} {args[2]}")
 
-print(f"Servidor iniciado en http://localhost:{PORT}")
+print(f"Servidor iniciado en puerto {PORT}")
 print(f"Sirviendo: {DIR}")
-print(f"Abre http://localhost:{PORT}/dashboard.html en tu navegador")
-print("Presiona Ctrl+C para detener")
+print(f"Dashboard: http://localhost:{PORT}/dashboard.html")
+if "DASHBOARD_PASSWORD" in os.environ:
+    print(f"Autenticación: usuario={AUTH_USER} (desde DASHBOARD_PASSWORD)")
+else:
+    print(f"! DASHBOARD_PASSWORD no definida, usando contraseña por defecto: {AUTH_PASS}")
 http.server.HTTPServer(("", PORT), DashboardHandler).serve_forever()
