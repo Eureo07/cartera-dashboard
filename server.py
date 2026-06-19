@@ -41,6 +41,13 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         super().__init__(*args, directory=DIR, **kwargs)
 
     def do_GET(self):
+        # Healthcheck endpoint (no auth required)
+        if self.path == "/health":
+            self.send_response(200)
+            self.send_header("Content-Type", "text/plain")
+            self.end_headers()
+            self.wfile.write(b"OK")
+            return
         if not check_auth(self.headers):
             return send_401(self)
         # API endpoint for live price
@@ -88,4 +95,4 @@ if "DASHBOARD_PASSWORD" in os.environ:
     print(f"Autenticación: usuario={AUTH_USER} (desde DASHBOARD_PASSWORD)")
 else:
     print(f"! DASHBOARD_PASSWORD no definida, usando contraseña por defecto: {AUTH_PASS}")
-http.server.HTTPServer(("", PORT), DashboardHandler).serve_forever()
+http.server.HTTPServer(("0.0.0.0", PORT), DashboardHandler).serve_forever()
