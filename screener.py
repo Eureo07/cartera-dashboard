@@ -11,15 +11,12 @@ if _PROJ_DIR not in sys.path:
     sys.path.insert(0, _PROJ_DIR)
 import pandas as pd
 import yfinance as yf
-import requests
 import json, math, re
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from config_loader import CFG, get_logger
 
-# Shared session for yfinance requests (avoids Invalid Crumb issues)
-_YF_SESSION = requests.Session()
-_YF_SESSION.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+
 
 log = get_logger("screener")
 anomaly_log = get_logger("anomalias_screener")
@@ -54,7 +51,7 @@ def get_valuation(t):
     if t in _yf_cache:
         return _yf_cache[t]
     try:
-        stock = yf.Ticker(t, session=_YF_SESSION)
+        stock = yf.Ticker(t)
         info = stock.info
         result = {
             "per": info.get("trailingPE"),
@@ -74,13 +71,15 @@ def get_1y_return(t):
     if t in _rent_cache:
         return _rent_cache[t]
     try:
-        stock = yf.Ticker(t, session=_YF_SESSION)
-        hist = stock.history(period="1y", auto_adjust=False)
-        if len(hist) < 2:
+        hist = yf.download(t, period="1y", progress=False, auto_adjust=False)
+        if hist is None or hist.empty:
             _rent_cache[t] = None
             return None
-        # Use Adj Close; drop trailing NaN (yfinance bug with US stocks)
-        close = hist["Adj Close"].dropna()
+        if isinstance(hist.columns, pd.MultiIndex):
+            close = hist.xs(t, level=1, axis=1)["Close"]
+        else:
+            close = hist["Close"] if "Close" in hist.columns else hist.iloc[:, 0]
+        close = close.dropna()
         if len(close) < 2:
             _rent_cache[t] = None
             return None
