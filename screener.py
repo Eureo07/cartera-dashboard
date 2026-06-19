@@ -220,14 +220,21 @@ def run_screener():
     def cached_rent(t):
         return rent_cache.get(t)
     results = []
+    cnt_total = 0; cnt_port = 0; cnt_rent_none = 0; cnt_rent_neg = 0; cnt_per = 0; cnt_eva_fcf = 0; cnt_roe = 0; cnt_eva_neg = 0
     for _, row in df_u.iterrows():
         ticker = str(row["Ticker"]).strip()
         name = str(row["Empresa"]).strip()
         sector = str(row[sec_col]).strip()
+        cnt_total += 1
         if is_in_portfolio(ticker, name):
+            cnt_port += 1
             continue
         rent_1a = cached_rent(ticker)
-        if rent_1a is None or rent_1a <= 0:
+        if rent_1a is None:
+            cnt_rent_none += 1
+            continue
+        if rent_1a <= 0:
+            cnt_rent_neg += 1
             continue
         if rent_1a > 200:
             anomaly_log.warning(f"Rent.1A > 200% excluido: {ticker} ({name}) — Rent.1A: {rent_1a:+.1f}%")
@@ -237,18 +244,22 @@ def run_screener():
         if eper is None:
             per_missing = True
         elif not (0 <= eper <= 30):
+            cnt_per += 1
             continue
         roe = val_metric(row["2026 ROE"], -500, 500)
         eva = val_metric(row["2026 EVA"], -1e12, 1e12)
         fcf = val_metric(row["2026 FCN"], -1e12, 1e12)
         if eva is None or fcf is None:
+            cnt_eva_fcf += 1
             continue
         roe_missing = False
         if roe is None:
             roe_missing = True
         elif roe <= 0:
+            cnt_roe += 1
             continue
         if eva <= 0:
+            cnt_eva_neg += 1
             continue
         results.append({
             "ticker": ticker, "name": name, "sector": sector,
@@ -256,6 +267,7 @@ def run_screener():
             "eper": eper, "per_missing": per_missing, "rent_1a": rent_1a,
             "_sec_key": sector,
         })
+    log.info(f"  Filtros: total={cnt_total}, port={cnt_port}, rentNone={cnt_rent_none}, rentNeg={cnt_rent_neg}, PER={cnt_per}, evaFcf={cnt_eva_fcf}, roe={cnt_roe}, evaNeg={cnt_eva_neg}, passed={len(results)}")
     if not results:
         log.info("  No se encontraron candidatos")
         return []
