@@ -91,23 +91,33 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(b"Forbidden")
                 return
-            import time
-            t0 = time.time()
-            try:
-                r = subprocess.run(
-                    ["python", "generate_dashboard.py"],
-                    cwd=DIR, capture_output=True, timeout=180)
-                elapsed = time.time() - t0
-                out = r.stdout.decode(errors="replace")[-2000:]
-                err = r.stderr.decode(errors="replace")[-2000:]
-                msg = f"rc={r.returncode} elapsed={elapsed:.1f}s\n=== STDOUT ===\n{out}\n=== STDERR ===\n{err}"
-            except Exception as e:
-                elapsed = time.time() - t0
-                msg = f"EXCEPTION after {elapsed:.1f}s: {e}"
-            self.send_response(200)
-            self.send_header("Content-Type", "text/plain")
-            self.end_headers()
-            self.wfile.write(msg.encode())
+            # debug=1 => synchronous with output, else async for cron
+            q_parts = self.path.split("?", 1)
+            has_debug = len(q_parts) > 1 and "debug=1" in q_parts[1]
+            if has_debug:
+                import time as _t
+                t0 = _t.time()
+                try:
+                    r = subprocess.run(
+                        ["python", "generate_dashboard.py"],
+                        cwd=DIR, capture_output=True, timeout=180)
+                    el = _t.time() - t0
+                    out = r.stdout.decode(errors="replace")[-2000:]
+                    err = r.stderr.decode(errors="replace")[-2000:]
+                    msg = f"rc={r.returncode} elapsed={el:.1f}s\n=== STDOUT ===\n{out}\n=== STDERR ===\n{err}"
+                except Exception as e:
+                    el = _t.time() - t0
+                    msg = f"EXCEPTION after {el:.1f}s: {e}"
+                self.send_response(200)
+                self.send_header("Content-Type", "text/plain")
+                self.end_headers()
+                self.wfile.write(msg.encode())
+            else:
+                regenerate()
+                self.send_response(200)
+                self.send_header("Content-Type", "text/plain")
+                self.end_headers()
+                self.wfile.write(b"Regenerating dashboard...")
             return
         if self.path == "/api/status":
             self.send_response(200)
