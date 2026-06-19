@@ -11,12 +11,15 @@ import json
 import os
 import re
 import base64
+import subprocess
+import threading
 
 PORT = int(os.environ.get("PORT", "5000"))
 DIR = os.path.dirname(os.path.abspath(__file__))
 
 AUTH_USER = os.environ.get("DASHBOARD_USER", "admin")
 AUTH_PASS = os.environ.get("DASHBOARD_PASSWORD", "cartera2026")
+REGENERATE_KEY = os.environ.get("REGENERATE_KEY", "")
 
 def check_auth(headers):
     auth = headers.get("Authorization", "")
@@ -36,6 +39,15 @@ def send_401(handler):
     handler.end_headers()
     handler.wfile.write(b"Autenticacion requerida")
 
+def regenerate():
+    def task():
+        try:
+            subprocess.run(["python", "generate_dashboard.py", "skip_screener"],
+                           cwd=DIR, capture_output=True, timeout=120)
+        except:
+            pass
+    threading.Thread(target=task, daemon=True).start()
+
 class DashboardHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIR, **kwargs)
@@ -47,6 +59,29 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Content-Type", "text/plain")
             self.end_headers()
             self.wfile.write(b"OK")
+            return
+        # Regenerate endpoint (cron trigger, no auth)
+        if self.path.startswith("/api/regenerate"):
+            q = self.path.split("?", 1)
+            key = ""
+            if len(q) > 1:
+                params = q[1].split("&")
+                for p in params:
+                    if "=" in p:
+                        k, v = p.split("=", 1)
+                        if k == "key":
+                            key = v
+            if REGENERATE_KEY and key != REGENERATE_KEY:
+                self.send_response(403)
+                self.send_header("Content-Type", "text/plain")
+                self.end_headers()
+                self.wfile.write(b"Forbidden")
+                return
+            regenerate()
+            self.send_response(200)
+            self.send_header("Content-Type", "text/plain")
+            self.end_headers()
+            self.wfile.write(b"Regenerating dashboard...")
             return
         if not check_auth(self.headers):
             return send_401(self)
