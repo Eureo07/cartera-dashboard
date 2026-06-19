@@ -79,7 +79,12 @@ def get_1y_return(t):
         if len(hist) < 2:
             _rent_cache[t] = None
             return None
-        ret = (hist["Close"].iloc[-1] - hist["Close"].iloc[0]) / hist["Close"].iloc[0] * 100
+        # Use Adj Close; drop trailing NaN (yfinance bug with US stocks)
+        close = hist["Adj Close"].dropna()
+        if len(close) < 2:
+            _rent_cache[t] = None
+            return None
+        ret = (float(close.iloc[-1]) - float(close.iloc[0])) / float(close.iloc[0]) * 100
         _rent_cache[t] = ret
         return ret
     except:

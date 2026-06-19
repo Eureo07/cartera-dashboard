@@ -87,8 +87,11 @@ for p in portfolio:
         stock = yf.Ticker(tk)
         hist = stock.history(start=bench_start_dt, end=datetime.now(), auto_adjust=False)
         if len(hist) > 2:
-            price_hist[tk] = hist["Close"]
-            p["current"] = float(hist["Close"].iloc[-1])
+            close = hist["Close"].dropna()
+            if len(close) < 2:
+                continue
+            price_hist[tk] = close
+            p["current"] = float(close.iloc[-1])
     except:
         pass
     # Fallback for current price
@@ -103,7 +106,7 @@ try:
     bm = yf.Ticker("^STOXX50E")
     bm_h = bm.history(start=bench_start_dt, end=datetime.now(), auto_adjust=False)
     if len(bm_h) > 2:
-        bench_hist = bm_h["Close"]
+        bench_hist = bm_h["Close"].dropna()
 except:
     pass
 # Save to CSV
@@ -153,6 +156,9 @@ def get_1y_return(t):
                 close = hist.xs(t, level=1, axis=1)["Close"]
             else:
                 close = hist["Close"] if "Close" in hist.columns else hist.iloc[:, 0]
+            close = close.dropna()
+            if len(close) < 2:
+                return None
             r = (float(close.iloc[-1]) - float(close.iloc[0])) / float(close.iloc[0]) * 100
             _rent_cache[t] = r
             return r
@@ -404,6 +410,9 @@ try:
             stoxx_close = stoxx.xs("^STOXX50E", level=1, axis=1)["Close"]
         else:
             stoxx_close = stoxx["Close"] if "Close" in stoxx.columns else stoxx.iloc[:, 0]
+        stoxx_close = stoxx_close.dropna()
+        if len(stoxx_close) < 2:
+            raise ValueError("Insufficient benchmark data")
         bench_start_px = float(stoxx_close.iloc[0])
         bench_end_px = float(stoxx_close.iloc[-1])
         benchmark_return = (bench_end_px / bench_start_px - 1) * 100
@@ -424,7 +433,9 @@ try:
                 c = hist.xs(t, level=1, axis=1)["Close"]
             else:
                 c = hist["Close"] if "Close" in hist.columns else hist.iloc[:, 0]
-            corr_data[t] = c
+            c = c.dropna()
+            if len(c) > 2:
+                corr_data[t] = c
     if len(corr_data) >= 2:
         corr_df = pd.DataFrame(corr_data).pct_change().dropna()
         if len(corr_df) > 5:
