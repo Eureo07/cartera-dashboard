@@ -11,10 +11,16 @@ if _PROJ_DIR not in sys.path:
     sys.path.insert(0, _PROJ_DIR)
 import pandas as pd
 import yfinance as yf
+import requests
 import json, math, re
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from config_loader import CFG, get_logger
+
+# Force yfinance session with proper User-Agent to avoid Invalid Crumb errors
+_yf_sesh = requests.Session()
+_yf_sesh.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+yf.shared._session = _yf_sesh
 
 log = get_logger("screener")
 anomaly_log = get_logger("anomalias_screener")
