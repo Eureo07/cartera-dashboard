@@ -77,20 +77,20 @@ tr:last-child td { border-bottom: none; }
 <div class="header">
   <div>
     <h1>Dashboard Cartera</h1>
-    <div class="date">Actualizado: 18/06/2026 20:09</div>
+    <div class="date">Actualizado: 19/06/2026 12:23</div>
   </div>
 </div>
 
 <div class="summary-cards">
   <div class="card"><div class="label">Inversión Total</div><div class="value" id="total-cost">4,142.36 €</div></div>
-  <div class="card"><div class="label">Valor Actual</div><div class="value" id="total-value">4,143.24 €</div></div>
-  <div class="card"><div class="label">Resultado</div><div class="value green" id="total-pnl">+0.88 €</div></div>
-  <div class="card"><div class="label">Rentabilidad</div><div class="value green" id="total-pnlpct">+0.02%</div></div>
-  <div class="card"><div class="label">vs Euro Stoxx 50</div><div class="value red">-5.64%</div><div class="small">Cartera +0.02% vs Índice +5.66%</div></div>
+  <div class="card"><div class="label">Valor Actual</div><div class="value" id="total-value">4,149.80 €</div></div>
+  <div class="card"><div class="label">Resultado</div><div class="value green" id="total-pnl">+7.44 €</div></div>
+  <div class="card"><div class="label">Rentabilidad</div><div class="value green" id="total-pnlpct">+0.18%</div></div>
+  <div class="card"><div class="label">vs Euro Stoxx 50</div><div class="value red">-5.47%</div><div class="small">Cartera +0.18% vs Índice +5.65%</div></div>
   <div class="card card-wide" id="best-alt-card">
   <div class="label">Mejores Alternativas por Sector</div>
   <div class="best-alt-value" id="best-alt-value">
-    <div class="sect-row"><span class="sect-name">Energía</span> → <strong>Naturgy</strong> (NTGY.MC)<br><span class="sect-meta">Score: 0.730 · PER: 14.0 · Rent.1A: +14.9%</span></div><div class="sect-row"><span class="sect-name">Tecnología</span> → <strong>Verisk Analytics</strong> (VRSK)<br><span class="sect-meta">Score: 0.582 · PER: 20.5 · Rent.1A: -41.4%</span> <span class="sect-warn">(sin momentum positivo en el sector)</span></div><div class="sect-row"><span class="sect-name">Aeroespacial</span> → <strong>Safran</strong> (SAF.PA)<br><span class="sect-meta">Score: 0.565 · PER: 27.1 · Rent.1A: +28.7%</span></div><div class="sect-row"><span class="sect-name">Industrials</span> → <span class="sect-none">Sin alternativas</span></div>
+    <div class="sect-row"><span class="sect-name">Energía</span> → <strong>Naturgy</strong> (NTGY.MC)<br><span class="sect-meta">Score: 0.730 · PER: 14.0 · Rent.1A: +13.7%</span></div><div class="sect-row"><span class="sect-name">Tecnología</span> → <strong>Verisk Analytics</strong> (VRSK)<br><span class="sect-meta">Score: 0.582 · PER: 20.1 · Rent.1A: +nan%</span> <span class="sect-warn">(sin momentum positivo en el sector)</span></div><div class="sect-row"><span class="sect-name">Aeroespacial</span> → <strong>Safran</strong> (SAF.PA)<br><span class="sect-meta">Score: 0.565 · PER: 27.3 · Rent.1A: +31.3%</span></div><div class="sect-row"><span class="sect-name">Industrials</span> → <span class="sect-none">Sin alternativas</span></div>
   </div>
   <div class="best-alt-btns" id="best-alt-btns">
     <button class="btn-alt active" data-mode="score">Score</button>
@@ -100,7 +100,7 @@ tr:last-child td { border-bottom: none; }
 </div>
 <script>
 (function() {
-  const DATA = {"Energía": {"ours": "Siemens Energy", "peers": [{"name": "Naturgy", "ticker": "NTGY.MC", "score": 0.73, "per": 14.0, "rent_1a": 14.9, "is_ours": false}, {"name": "ExxonMobil", "ticker": "XOM", "score": 0.698, "per": 12.9, "rent_1a": 25.3, "is_ours": false}, {"name": "Solaria", "ticker": "SLR.MC", "score": 0.645, "per": 13.6, "rent_1a": 137.4, "is_ours": false}, {"name": "Shell", "ticker": "SHEL.L", "score": 0.64, "per": 8.2, "rent_1a": 11.1, "is_ours": false}, {"name": "TotalEnergies", "ticker": "TTE.PA", "score": 0.623, "per": 8.4, "rent_1a": 36.5, "is_ours": false}, {"name": "Siemens Energy", "ticker": "ENR.DE", "score": 0.564, "per": 28.2, "rent_1a": 93.6, "is_ours": true}, {"name": "ConocoPhillips", "ticker": "COP", "score": 0.556, "per": 11.8, "rent_1a": 19.1, "is_ours": false}, {"name": "Enagás", "ticker": "ENG.MC", "score": 0.537, "per": 16.8, "rent_1a": 26.9, "is_ours": false}, {"name": "Repsol", "ticker": "REP.MC", "score": 0.363, "per": 6.4, "rent_1a": 82.2, "is_ours": false}, {"name": "Chevron", "ticker": "CVX", "score": 0.325, "per": 13.8, "rent_1a": 21.7, "is_ours": false}, {"name": "BP", "ticker": "BP.L", "score": 0.193, "per": 9.5, "rent_1a": 26.9, "is_ours": false}]}, "Tecnología": {"ours": "NVIDIA", "peers": [{"name": "Nvidia", "ticker": "NVDA", "score": 0.673, "per": 16.5, "rent_1a": 44.4, "is_ours": true}, {"name": "Verisk Analytics", "ticker": "VRSK", "score": 0.582, "per": 20.5, "rent_1a": -41.4, "is_ours": false}, {"name": "Rightmove", "ticker": "RMV.L", "score": 0.534, "per": 12.5, "rent_1a": -45.2, "is_ours": false}, {"name": "Microsoft", "ticker": "MSFT", "score": 0.467, "per": 19.6, "rent_1a": -20.4, "is_ours": false}, {"name": "Adobe", "ticker": "ADBE", "score": 0.261, "per": 7.1, "rent_1a": -48.1, "is_ours": false}, {"name": "Automatic Data Processing", "ticker": "ADP", "score": 0.251, "per": 17.9, "rent_1a": -26.7, "is_ours": false}, {"name": "Oracle", "ticker": "ORCL", "score": 0.236, "per": 17.1, "rent_1a": -10.7, "is_ours": false}, {"name": "IBM", "ticker": "IBM", "score": 0.216, "per": 18.7, "rent_1a": -8.8, "is_ours": false}, {"name": "Cisco", "ticker": "CSCO", "score": 0.207, "per": 25.1, "rent_1a": 86.2, "is_ours": false}, {"name": "Paychex", "ticker": "PAYX", "score": 0.202, "per": 16.7, "rent_1a": -31.8, "is_ours": false}, {"name": "Autodesk", "ticker": "ADSK", "score": 0.198, "per": 13.6, "rent_1a": -34.5, "is_ours": false}, {"name": "Salesforce", "ticker": "CRM", "score": 0.188, "per": 9.9, "rent_1a": -40.1, "is_ours": false}, {"name": "SAP", "ticker": "SAP.DE", "score": 0.185, "per": 15.8, "rent_1a": -45.8, "is_ours": false}, {"name": "Intuit", "ticker": "INTU", "score": 0.183, "per": 9.7, "rent_1a": -64.6, "is_ours": false}, {"name": "Amadeus IT", "ticker": "AMS.MC", "score": 0.182, "per": 13.4, "rent_1a": -24.8, "is_ours": false}, {"name": "Indra", "ticker": "IDR.MC", "score": 0.174, "per": 16.7, "rent_1a": 49.0, "is_ours": false}, {"name": "ServiceNow", "ticker": "NOW", "score": 0.167, "per": 19.1, "rent_1a": -51.1, "is_ours": false}, {"name": "Cognizant", "ticker": "CTSH", "score": 0.166, "per": 7.2, "rent_1a": -42.2, "is_ours": false}, {"name": "Capgemini", "ticker": "CAP.PA", "score": 0.161, "per": 6.5, "rent_1a": -37.8, "is_ours": false}, {"name": "Dassault Systèmes", "ticker": "DSY.PA", "score": 0.16, "per": 12.2, "rent_1a": -44.9, "is_ours": false}, {"name": "Teleperformance", "ticker": "TEP.PA", "score": 0.157, "per": 4.0, "rent_1a": -28.0, "is_ours": false}, {"name": "Workday", "ticker": "WDAY", "score": 0.155, "per": 9.4, "rent_1a": -49.8, "is_ours": false}, {"name": "DoorDash", "ticker": "DASH", "score": 0.153, "per": 22.1, "rent_1a": -21.7, "is_ours": false}, {"name": "Synopsys", "ticker": "SNPS", "score": 0.142, "per": 26.4, "rent_1a": -3.7, "is_ours": false}, {"name": "Atlassian", "ticker": "TEAM", "score": 0.11, "per": 13.5, "rent_1a": -57.3, "is_ours": false}, {"name": "Sandisk", "ticker": "SNDK", "score": 0.104, "per": 11.9, "rent_1a": 4576.1, "is_ours": false}, {"name": "VeriSign", "ticker": "VRSN", "score": 0.082, "per": 24.8, "rent_1a": -4.4, "is_ours": false}, {"name": "Baidu", "ticker": "BIDU", "score": 0.061, "per": 12.2, "rent_1a": 32.2, "is_ours": false}]}, "Aeroespacial": {"ours": "Rolls-Royce", "peers": [{"name": "Rolls-Royce", "ticker": "RR.L", "score": 0.921, "per": 32.6, "rent_1a": 58.2, "is_ours": true}, {"name": "Safran", "ticker": "SAF.PA", "score": 0.565, "per": 27.1, "rent_1a": 28.7, "is_ours": false}, {"name": "MTU Aero Engines", "ticker": "MTX.DE", "score": 0.0, "per": 16.8, "rent_1a": -5.7, "is_ours": false}]}, "Industrials": {"ours": "Danieli", "peers": []}};
+  const DATA = {"Energía": {"ours": "Siemens Energy", "peers": [{"name": "Naturgy", "ticker": "NTGY.MC", "score": 0.73, "per": 14.0, "rent_1a": 13.7, "is_ours": false}, {"name": "ExxonMobil", "ticker": "XOM", "score": 0.698, "per": 12.9, "rent_1a": NaN, "is_ours": false}, {"name": "Solaria", "ticker": "SLR.MC", "score": 0.645, "per": 13.7, "rent_1a": 128.5, "is_ours": false}, {"name": "Shell", "ticker": "SHEL.L", "score": 0.64, "per": 8.2, "rent_1a": 11.0, "is_ours": false}, {"name": "TotalEnergies", "ticker": "TTE.PA", "score": 0.623, "per": 8.6, "rent_1a": 35.9, "is_ours": false}, {"name": "Siemens Energy", "ticker": "ENR.DE", "score": 0.564, "per": 28.2, "rent_1a": 96.4, "is_ours": true}, {"name": "ConocoPhillips", "ticker": "COP", "score": 0.556, "per": 11.7, "rent_1a": NaN, "is_ours": false}, {"name": "Enagás", "ticker": "ENG.MC", "score": 0.537, "per": 16.7, "rent_1a": 27.3, "is_ours": false}, {"name": "Repsol", "ticker": "REP.MC", "score": 0.363, "per": 6.5, "rent_1a": 81.5, "is_ours": false}, {"name": "Chevron", "ticker": "CVX", "score": 0.325, "per": 13.8, "rent_1a": NaN, "is_ours": false}, {"name": "BP", "ticker": "BP.L", "score": 0.193, "per": 9.6, "rent_1a": 26.9, "is_ours": false}]}, "Tecnología": {"ours": "NVIDIA", "peers": [{"name": "Nvidia", "ticker": "NVDA", "score": 0.673, "per": 16.6, "rent_1a": NaN, "is_ours": true}, {"name": "Verisk Analytics", "ticker": "VRSK", "score": 0.582, "per": 20.1, "rent_1a": NaN, "is_ours": false}, {"name": "Rightmove", "ticker": "RMV.L", "score": 0.534, "per": 12.5, "rent_1a": -44.9, "is_ours": false}, {"name": "Microsoft", "ticker": "MSFT", "score": 0.467, "per": 19.6, "rent_1a": NaN, "is_ours": false}, {"name": "Adobe", "ticker": "ADBE", "score": 0.261, "per": 7.1, "rent_1a": NaN, "is_ours": false}, {"name": "Automatic Data Processing", "ticker": "ADP", "score": 0.251, "per": 17.9, "rent_1a": NaN, "is_ours": false}, {"name": "Oracle", "ticker": "ORCL", "score": 0.236, "per": 16.9, "rent_1a": NaN, "is_ours": false}, {"name": "IBM", "ticker": "IBM", "score": 0.216, "per": 18.5, "rent_1a": NaN, "is_ours": false}, {"name": "Cisco", "ticker": "CSCO", "score": 0.207, "per": 25.0, "rent_1a": NaN, "is_ours": false}, {"name": "Paychex", "ticker": "PAYX", "score": 0.202, "per": 16.7, "rent_1a": NaN, "is_ours": false}, {"name": "Autodesk", "ticker": "ADSK", "score": 0.198, "per": 13.6, "rent_1a": NaN, "is_ours": false}, {"name": "Salesforce", "ticker": "CRM", "score": 0.188, "per": 9.8, "rent_1a": NaN, "is_ours": false}, {"name": "SAP", "ticker": "SAP.DE", "score": 0.185, "per": 15.9, "rent_1a": -44.3, "is_ours": false}, {"name": "Intuit", "ticker": "INTU", "score": 0.183, "per": 9.8, "rent_1a": NaN, "is_ours": false}, {"name": "Amadeus IT", "ticker": "AMS.MC", "score": 0.182, "per": 13.3, "rent_1a": -23.4, "is_ours": false}, {"name": "Indra", "ticker": "IDR.MC", "score": 0.174, "per": 17.0, "rent_1a": 61.1, "is_ours": false}, {"name": "ServiceNow", "ticker": "NOW", "score": 0.167, "per": 18.9, "rent_1a": NaN, "is_ours": false}, {"name": "Cognizant", "ticker": "CTSH", "score": 0.166, "per": 7.1, "rent_1a": NaN, "is_ours": false}, {"name": "Capgemini", "ticker": "CAP.PA", "score": 0.161, "per": 6.5, "rent_1a": -36.5, "is_ours": false}, {"name": "Dassault Systèmes", "ticker": "DSY.PA", "score": 0.16, "per": 12.2, "rent_1a": -43.6, "is_ours": false}, {"name": "Teleperformance", "ticker": "TEP.PA", "score": 0.157, "per": 4.0, "rent_1a": -24.6, "is_ours": false}, {"name": "Workday", "ticker": "WDAY", "score": 0.155, "per": 9.3, "rent_1a": NaN, "is_ours": false}, {"name": "DoorDash", "ticker": "DASH", "score": 0.153, "per": 22.2, "rent_1a": NaN, "is_ours": false}, {"name": "Synopsys", "ticker": "SNPS", "score": 0.142, "per": 26.4, "rent_1a": NaN, "is_ours": false}, {"name": "Atlassian", "ticker": "TEAM", "score": 0.11, "per": 13.3, "rent_1a": NaN, "is_ours": false}, {"name": "Sandisk", "ticker": "SNDK", "score": 0.104, "per": 11.9, "rent_1a": NaN, "is_ours": false}, {"name": "VeriSign", "ticker": "VRSN", "score": 0.082, "per": 24.8, "rent_1a": NaN, "is_ours": false}, {"name": "Baidu", "ticker": "BIDU", "score": 0.061, "per": 12.2, "rent_1a": NaN, "is_ours": false}]}, "Aeroespacial": {"ours": "Rolls-Royce", "peers": [{"name": "Rolls-Royce", "ticker": "RR.L", "score": 0.921, "per": 32.5, "rent_1a": 59.4, "is_ours": true}, {"name": "Safran", "ticker": "SAF.PA", "score": 0.565, "per": 27.3, "rent_1a": 31.3, "is_ours": false}, {"name": "MTU Aero Engines", "ticker": "MTX.DE", "score": 0.0, "per": 16.8, "rent_1a": -6.0, "is_ours": false}]}, "Industrials": {"ours": "Danieli", "peers": []}};
   function selectBestAlt(peers, mode) {
     var nonOurs = peers.filter(function(q) { return !q.is_ours; });
     var oursList = peers.filter(function(q) { return q.is_ours; });
@@ -187,20 +187,21 @@ tr:last-child td { border-bottom: none; }
 </script>
 </div>
 <div class="alert-box"><div class="a-title">Alertas</div>
-<div class="a-item"><span class="alert-red">⚠ Rolls-Royce: peso elevado (35.2% de la cartera)</span></div>
-<div class="a-item">Siemens Energy: PER alto (66.7)</div>
-<div class="a-item">Siemens Energy: P/B elevado (13.56)</div>
-<div class="a-item">NVIDIA: PER alto (32.3)</div>
-<div class="a-item">NVIDIA: P/B elevado (26.07)</div>
-<div class="a-item">Rolls-Royce: P/B elevado (43.08)</div>
+<div class="a-item"><span class="alert-red">⚠ Rolls-Royce: peso elevado (35.3% de la cartera)</span></div>
+<div class="a-item">Siemens Energy: PER alto (66.6)</div>
+<div class="a-item">Siemens Energy: P/B elevado (13.54)</div>
+<div class="a-item">NVIDIA: PER alto (32.4)</div>
+<div class="a-item">NVIDIA: P/B elevado (26.17)</div>
+<div class="a-item">Rolls-Royce: P/B elevado (43.25)</div>
 </div>
 <div class="divers-box">
   <h2>Diversificación</h2>
   <div class="div-row">
-    <div class="div-item"><span class="div-icon">🔴</span> <span>Concentración crítica (Rolls-Royce 35.2%)</span></div>
+    <div class="div-item"><span class="div-icon">🔴</span> <span>Concentración crítica (Rolls-Royce 35.3%)</span></div>
     <div class="div-item"><span class="div-icon">🔴</span> <span>Ninguna posición en sectores defensivos</span></div>
     <div class="div-item"><span class="div-icon">🟡</span> <span>Misma divisa (EUR) pero empresas de distintos países</span></div>
-  </div>
+  
+<div class="div-suggestion">💡 Sugerencia: añadir posición en sector defensivo. Top candidatas: UnitedHealth Group (UNH, Score: 1.000), Colgate-Palmolive (CL, Score: 0.771)</div></div>
 </div>
 
 <div class="charts-row">
@@ -221,19 +222,19 @@ tr:last-child td { border-bottom: none; }
 <script>
 new Chart(document.getElementById('piePos'), {
     type: 'pie',
-    data: { labels: ["Siemens Energy", "NVIDIA", "Rolls-Royce", "Danieli"], datasets: [{ data: [20.4, 21.9, 35.2, 22.4], backgroundColor: ["#22c55e", "#3b82f6", "#eab308", "#ef4444", "#a855f7", "#ec4899"] }] },
+    data: { labels: ["Siemens Energy", "NVIDIA", "Rolls-Royce", "Danieli"], datasets: [{ data: [20.4, 22.0, 35.3, 22.3], backgroundColor: ["#22c55e", "#3b82f6", "#eab308", "#ef4444", "#a855f7", "#ec4899"] }] },
     options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
 });
 new Chart(document.getElementById('pieSec'), {
     type: 'pie',
-    data: { labels: ["Energ\u00eda", "Tecnolog\u00eda", "Aeroespacial", "Industrials"], datasets: [{ data: [20.4, 21.9, 35.2, 22.4], backgroundColor: ["#22c55e", "#3b82f6", "#eab308", "#ef4444", "#a855f7", "#ec4899"] }] },
+    data: { labels: ["Energ\u00eda", "Tecnolog\u00eda", "Aeroespacial", "Industrials"], datasets: [{ data: [20.4, 22.0, 35.3, 22.3], backgroundColor: ["#22c55e", "#3b82f6", "#eab308", "#ef4444", "#a855f7", "#ec4899"] }] },
     options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
 });
 var evolCtx = document.getElementById('chartEvol');
 if (evolCtx) {
-  var evolDates = ["2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18"];
-  var evolPort = [5638.039855957031, 5487.0, 5517.679801940918, 5694.679801940918, 5645.120018005371, 5597.91983795166, 5590.840126037598, 5616.799819946289, 5538.91983795166, 5487.0, 5461.039855957031, 5527.120018005371, 5645.120018005371, 5458.679801940918, 5645.120018005371, 5734.799819946289, 5706.480072021484, 5630.960144042969, 5546.0, 5515.320198059082, 5623.879981994629, 5659.279891967773, 5543.639945983887, 5550.720108032227, 5461.039855957031, 5777.279891967773, 5645.120018005371, 5859.879981994629, 5941.299819946289, 5988.5, 5941.299819946289, 5959.0, 5900.0, 5917.700180053711, 6071.1000900268555, 5941.299819946289, 5845.720108032227, 5805.6000900268555, 5852.799819946289, 5713.559783935547, 5682.879981994629, 5770.200180053711, 5982.6000900268555, 6018.0, 5941.299819946289, 6088.799819946289, 6082.8999099731445];
-  var evolBm = [5984.509765625, 5940.33984375, 5933.27978515625, 6057.7099609375, 5982.6298828125, 5930.25, 5906.22021484375, 5894.72998046875, 5883.47998046875, 5860.31982421875, 5836.10009765625, 5816.47998046875, 5881.509765625, 5763.60986328125, 5869.6298828125, 6027.1298828125, 5972.64990234375, 5911.52978515625, 5895.4501953125, 5808.4501953125, 5861.06982421875, null, 5827.759765625, 5849.0, 5851.16015625, 5976.06982421875, 5960.31982421875, 6019.4501953125, null, 6064.14990234375, 6070.5400390625, 6055.10986328125, 6050.5400390625, 6034.9501953125, 6107.85009765625, 6053.56982421875, 6103.330078125, 6062.06982421875, 6062.2900390625, 6049.740234375, 6009.9501953125, 6056.9599609375, 6187.6298828125, 6229.43017578125, 6257.419921875, 6300.06982421875, 6323.27001953125];
+  var evolDates = ["2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19"];
+  var evolPort = [5638.039855957031, 5487.0, 5517.679801940918, 5694.679801940918, 5645.120018005371, 5597.91983795166, 5590.840126037598, 5616.799819946289, 5538.91983795166, 5487.0, 5461.039855957031, 5527.120018005371, 5645.120018005371, 5458.679801940918, 5645.120018005371, 5734.799819946289, 5706.480072021484, 5630.960144042969, 5546.0, 5515.320198059082, 5623.879981994629, 5659.279891967773, 5543.639945983887, 5550.720108032227, 5461.039855957031, 5777.279891967773, 5645.120018005371, 5859.879981994629, 5941.299819946289, 5988.5, 5941.299819946289, 5959.0, 5900.0, 5917.700180053711, 6071.1000900268555, 5941.299819946289, 5845.720108032227, 5805.6000900268555, 5852.799819946289, 5713.559783935547, 5682.879981994629, 5770.200180053711, 5982.6000900268555, 6018.0, 5941.299819946289, 6088.799819946289, 6082.8999099731445, 6071.1000900268555];
+  var evolBm = [5984.509765625, 5940.33984375, 5933.27978515625, 6057.7099609375, 5982.6298828125, 5930.25, 5906.22021484375, 5894.72998046875, 5883.47998046875, 5860.31982421875, 5836.10009765625, 5816.47998046875, 5881.509765625, 5763.60986328125, 5869.6298828125, 6027.1298828125, 5972.64990234375, 5911.52978515625, 5895.4501953125, 5808.4501953125, 5861.06982421875, null, 5827.759765625, 5849.0, 5851.16015625, 5976.06982421875, 5960.31982421875, 6019.4501953125, null, 6064.14990234375, 6070.5400390625, 6055.10986328125, 6050.5400390625, 6034.9501953125, 6107.85009765625, 6053.56982421875, 6103.330078125, 6062.06982421875, 6062.2900390625, 6049.740234375, 6009.9501953125, 6056.9599609375, 6187.6298828125, 6229.43017578125, 6257.419921875, 6300.06982421875, null, 6322.8798828125];
   if (evolDates.length > 0) {
     var normPort = evolPort.map(function(v) { return (v / evolPort[0] - 1) * 100; });
     var firstBm = evolBm.filter(function(v) { return v !== null; })[0] || 1;
@@ -264,17 +265,17 @@ if (evolCtx) {
   <td>5</td>
   <td>14/04/2026</td>
   <td>170.76</td>
-  <td id="price-1">169.3400</td>
+  <td id="price-1">169.1200</td>
   <td>858.70</td>
-  <td id="val-1">846.70</td>
-  <td id="pnl-1" class="red">-12.00</td>
-  <td id="pnlpct-1" class="red">-1.40%</td>
-  <td>-7.6%</td>
+  <td id="val-1">845.60</td>
+  <td id="pnl-1" class="red">-13.10</td>
+  <td id="pnlpct-1" class="red">-1.53%</td>
+  <td>-8.2%</td>
   <td>20.4%</td>
   <td>129.83</td>
-  <td id="dist-1"><span class="badge green">23.3%</span><br><span class="bar-bg"><span class="bar-fill green" style="width:23.33175693417094%"></span></span></td>
+  <td id="dist-1"><span class="badge green">23.2%</span><br><span class="bar-bg"><span class="bar-fill green" style="width:23.23202238148272%"></span></span></td>
   <td>200.64</td>
-  <td class="green">169.3319</td>
+  <td class="red">169.3275</td>
 </tr>
 <tr>
   <td>2</td>
@@ -283,17 +284,17 @@ if (evolCtx) {
   <td>5</td>
   <td>27/04/2026</td>
   <td>182.34</td>
-  <td id="price-2">181.8400</td>
+  <td id="price-2">182.5800</td>
   <td>915.60</td>
-  <td id="val-2">909.20</td>
-  <td id="pnl-2" class="red">-6.40</td>
-  <td id="pnlpct-2" class="red">-0.70%</td>
-  <td>-4.8%</td>
-  <td>21.9%</td>
+  <td id="val-2">912.90</td>
+  <td id="pnl-2" class="red">-2.70</td>
+  <td id="pnlpct-2" class="red">-0.29%</td>
+  <td>-2.0%</td>
+  <td>22.0%</td>
   <td>140.20</td>
-  <td id="dist-2"><span class="badge green">22.9%</span><br><span class="bar-bg"><span class="bar-fill green" style="width:22.89925053700299%"></span></span></td>
+  <td id="dist-2"><span class="badge green">23.2%</span><br><span class="bar-bg"><span class="bar-fill green" style="width:23.21174356777028%"></span></span></td>
   <td>214.25</td>
-  <td class="green">180.7675</td>
+  <td class="green">180.8052</td>
 </tr>
 <tr>
   <td>3</td>
@@ -302,17 +303,17 @@ if (evolCtx) {
   <td>90</td>
   <td>17/06/2026</td>
   <td>16.47</td>
-  <td id="price-3">16.2160</td>
+  <td id="price-3">16.2800</td>
   <td>1,486.20</td>
-  <td id="val-3">1,459.44</td>
-  <td id="pnl-3" class="red">-26.76</td>
-  <td id="pnlpct-3" class="red">-1.80%</td>
+  <td id="val-3">1,465.20</td>
+  <td id="pnl-3" class="red">-21.00</td>
+  <td id="pnlpct-3" class="red">-1.41%</td>
   <td>- (*período < 1 mes)</td>
-  <td>35.2%</td>
+  <td>35.3%</td>
   <td>12.15</td>
-  <td id="dist-3"><span class="badge green">25.1%</span><br><span class="bar-bg"><span class="bar-fill green" style="width:25.073999153596375%"></span></span></td>
+  <td id="dist-3"><span class="badge green">25.4%</span><br><span class="bar-bg"><span class="bar-fill green" style="width:25.36855351629898%"></span></span></td>
   <td>19.35</td>
-  <td class="green">14.3300</td>
+  <td class="green">14.3706</td>
 </tr>
 <tr>
   <td>4</td>
@@ -321,25 +322,25 @@ if (evolCtx) {
   <td>18</td>
   <td>06/05/2026</td>
   <td>48.72</td>
-  <td id="price-4">51.5500</td>
+  <td id="price-4">51.4500</td>
   <td>881.86</td>
-  <td id="val-4">927.90</td>
-  <td id="pnl-4" class="green">+46.04</td>
-  <td id="pnlpct-4" class="green">+5.22%</td>
-  <td>54.1%</td>
-  <td>22.4%</td>
+  <td id="val-4">926.10</td>
+  <td id="pnl-4" class="green">+44.24</td>
+  <td id="pnlpct-4" class="green">+5.02%</td>
+  <td>50.1%</td>
+  <td>22.3%</td>
   <td>38.82</td>
-  <td id="dist-4"><span class="badge green">24.7%</span><br><span class="bar-bg"><span class="bar-fill green" style="width:24.69447027248187%"></span></span></td>
+  <td id="dist-4"><span class="badge green">24.5%</span><br><span class="bar-bg"><span class="bar-fill green" style="width:24.548106075125883%"></span></span></td>
   <td>57.25</td>
-  <td class="green">48.5485</td>
+  <td class="green">48.6090</td>
 </tr>
 </tbody></table><h2>Benchmark</h2>
 <table>
 <thead><tr><th>Indicador</th><th>Valor</th></tr></thead>
 <tbody>
-<tr><td><strong>Euro Stoxx 50 (2026-04-14 - hoy)</strong></td><td>+5.66%</td></tr>
-<tr><td><strong>Cartera (mismo periodo)</strong></td><td class="green">+0.02%</td></tr>
-<tr><td><strong>Diferencia</strong></td><td class="red">-5.64%</td></tr>
+<tr><td><strong>Euro Stoxx 50 (2026-04-14 - hoy)</strong></td><td>+5.65%</td></tr>
+<tr><td><strong>Cartera (mismo periodo)</strong></td><td class="green">+0.18%</td></tr>
+<tr><td><strong>Diferencia</strong></td><td class="red">-5.47%</td></tr>
 </tbody></table>
 <h2>Riesgo</h2>
 <table>
@@ -349,14 +350,14 @@ if (evolCtx) {
 <tbody>
 <tr>
   <td><strong>Siemens Energy</strong></td>
-  <td>169.3400</td>
+  <td>169.1200</td>
   <td>129.83</td>
   <td><div class="db-wrap" id="dist-1">
   <div class="db-track">
     <div class="db-left" style="width:57.800121446627%"></div>
     <div class="db-right" style="width:42.199878553373%"></div>
     <div class="db-center" style="left:57.800121446627%"></div>
-    <div class="db-current" style="left:55.794834758999926%">&#x25BC;</div>
+    <div class="db-current" style="left:55.48415561717127%">&#x25BC;</div>
   </div>
   <div class="db-labels">
     <span class="db-l-red">129.83</span>
@@ -364,19 +365,19 @@ if (evolCtx) {
     <span class="db-l-green">200.64</span>
   </div>
 </div></td>
-  <td class="red">+198 €</td>
+  <td class="red">+196 €</td>
   <td>191.66</td>
   <td>83.32</td>
 </tr><tr>
   <td><strong>NVIDIA</strong></td>
-  <td>181.8400</td>
+  <td>182.5800</td>
   <td>140.20</td>
   <td><div class="db-wrap" id="dist-2">
   <div class="db-track">
     <div class="db-left" style="width:56.90787918892093%"></div>
     <div class="db-right" style="width:43.09212081107907%"></div>
     <div class="db-center" style="left:56.90787918892093%"></div>
-    <div class="db-current" style="left:56.232650237868754%">&#x25BC;</div>
+    <div class="db-current" style="left:57.23198918433573%">&#x25BC;</div>
   </div>
   <div class="db-labels">
     <span class="db-l-red">140.20</span>
@@ -384,19 +385,19 @@ if (evolCtx) {
     <span class="db-l-green">214.25</span>
   </div>
 </div></td>
-  <td class="red">+208 €</td>
+  <td class="red">+212 €</td>
   <td>201.90</td>
   <td>123.90</td>
 </tr><tr>
   <td><strong>Rolls-Royce</strong></td>
-  <td>16.2160</td>
+  <td>16.2800</td>
   <td>12.15</td>
   <td><div class="db-wrap" id="dist-3">
   <div class="db-track">
     <div class="db-left" style="width:59.98125585754451%"></div>
     <div class="db-right" style="width:40.01874414245549%"></div>
     <div class="db-center" style="left:59.98125585754451%"></div>
-    <div class="db-current" style="left:56.45457465752348%">&#x25BC;</div>
+    <div class="db-current" style="left:57.3432008975738%">&#x25BC;</div>
   </div>
   <div class="db-labels">
     <span class="db-l-red">12.15</span>
@@ -404,19 +405,19 @@ if (evolCtx) {
     <span class="db-l-green">19.35</span>
   </div>
 </div></td>
-  <td class="red">+366 €</td>
+  <td class="red">+372 €</td>
   <td>16.47</td>
   <td>10.30</td>
 </tr><tr>
   <td><strong>Danieli</strong></td>
-  <td>51.5500</td>
+  <td>51.4500</td>
   <td>38.82</td>
   <td><div class="db-wrap" id="dist-4">
   <div class="db-track">
     <div class="db-left" style="width:53.728427222403106%"></div>
     <div class="db-right" style="width:46.271572777596894%"></div>
     <div class="db-center" style="left:53.728427222403106%"></div>
-    <div class="db-current" style="left:69.08715530804595%">&#x25BC;</div>
+    <div class="db-current" style="left:68.54445220307962%">&#x25BC;</div>
   </div>
   <div class="db-labels">
     <span class="db-l-red">38.82</span>
@@ -424,7 +425,7 @@ if (evolCtx) {
     <span class="db-l-green">57.25</span>
   </div>
 </div></td>
-  <td class="red">+229 €</td>
+  <td class="red">+227 €</td>
   <td>52.40</td>
   <td>24.48</td>
 </tr></tbody></table><h2>Valoración</h2>
@@ -435,41 +436,41 @@ if (evolCtx) {
 <tbody>
 <tr>
   <td><strong>Siemens Energy</strong></td>
-  <td class="red">66.7</td>
+  <td class="red">66.6</td>
   <td>28.2</td>
-  <td class="red">13.56</td>
+  <td class="red">13.54</td>
   <td class="red">34.5</td>
-  <td>144,082,698,240</td>
+  <td>143,895,511,040</td>
   <td>2.54</td>
   <td>3.59</td>
   <td>N/D</td>
 </tr><tr>
   <td><strong>NVIDIA</strong></td>
-  <td class="red">32.3</td>
+  <td class="red">32.4</td>
   <td>N/D</td>
-  <td class="red">26.07</td>
+  <td class="red">26.17</td>
   <td class="red">26.2</td>
-  <td>4,404,346,355,712</td>
+  <td>4,422,270,189,568</td>
   <td>5.63</td>
-  <td>17.37</td>
+  <td>17.45</td>
   <td>N/D</td>
 </tr><tr>
   <td><strong>Rolls-Royce</strong></td>
-  <td class="yellow">20.3</td>
+  <td class="yellow">20.4</td>
   <td>N/D</td>
-  <td class="red">43.08</td>
+  <td class="red">43.25</td>
   <td class="red">28.9</td>
-  <td>134,443,769,856</td>
+  <td>134,974,390,272</td>
   <td>0.80</td>
-  <td>6.34</td>
+  <td>6.36</td>
   <td>N/D</td>
 </tr><tr>
   <td><strong>Danieli</strong></td>
-  <td class="green">16.2</td>
-  <td>11.8</td>
+  <td class="green">16.1</td>
+  <td>11.7</td>
   <td class="green">1.35</td>
   <td class="green">2.8</td>
-  <td>3,689,574,912</td>
+  <td>3,682,417,664</td>
   <td>3.19</td>
   <td>0.93</td>
   <td>N/D</td>
@@ -638,10 +639,10 @@ if (evolCtx) {
   <td class="green">21.6%</td>
   <td class="green">434,947,943</td>
   <td class="green">2,376,000,000</td>
-  <td class="green">12.9</td>
+  <td class="green">12.8</td>
   <td class="green">14.0</td>
-  <td class="yellow">3.31</td>
-  <td class="red">+14.9%</td>
+  <td class="yellow">3.29</td>
+  <td class="red">+13.7%</td>
 </tr><tr>
   <td>2</td>
   <td>ExxonMobil</td>
@@ -650,10 +651,10 @@ if (evolCtx) {
   <td class="yellow">11.1%</td>
   <td class="green">66,905,787</td>
   <td class="green">23,612,000,000</td>
-  <td class="yellow">23.1</td>
+  <td class="yellow">23.2</td>
   <td class="green">12.9</td>
-  <td class="green">2.21</td>
-  <td class="yellow">+25.3%</td>
+  <td class="green">2.22</td>
+  <td class="yellow">+nan%</td>
 </tr><tr>
   <td>3</td>
   <td>Solaria</td>
@@ -663,9 +664,9 @@ if (evolCtx) {
   <td class="green">12,457,041</td>
   <td class="red">-260,098,000</td>
   <td class="yellow">19.9</td>
-  <td class="green">13.6</td>
-  <td class="yellow">3.76</td>
-  <td class="green">+137.4%</td>
+  <td class="green">13.7</td>
+  <td class="yellow">3.77</td>
+  <td class="green">+128.5%</td>
 </tr><tr>
   <td>4</td>
   <td>Shell</td>
@@ -674,10 +675,10 @@ if (evolCtx) {
   <td class="yellow">10.2%</td>
   <td class="red">-2,028,914,027</td>
   <td class="green">23,916,000,000</td>
-  <td class="green">12.4</td>
+  <td class="green">12.5</td>
   <td class="green">8.2</td>
-  <td class="green">1.28</td>
-  <td class="red">+11.1%</td>
+  <td class="green">1.30</td>
+  <td class="red">+11.0%</td>
 </tr><tr>
   <td>5</td>
   <td>TotalEnergies</td>
@@ -686,13 +687,13 @@ if (evolCtx) {
   <td class="yellow">11.4%</td>
   <td class="green">2,875,890,000</td>
   <td class="green">10,390,000,000</td>
-  <td class="green">12.1</td>
-  <td class="green">8.4</td>
-  <td class="green">1.41</td>
-  <td class="yellow">+36.5%</td>
+  <td class="green">12.3</td>
+  <td class="green">8.6</td>
+  <td class="green">1.44</td>
+  <td class="yellow">+35.9%</td>
 </tr><tr style="background:#f0f0f0;font-weight:700;">
   <td colspan="3">Mediana del sector (11 empresas)</td>
-  <td colspan="8">+26.9%</td>
+  <td colspan="8">+35.9%</td>
 </tr></tbody></table><h3>NVIDIA · Tecnología (27 empresas)</h3>
 <table>
 <thead><tr>
@@ -707,10 +708,10 @@ if (evolCtx) {
   <td class="green">76.3%</td>
   <td class="green">106,315,646,964</td>
   <td class="green">96,676,000,000</td>
-  <td class="red">32.1</td>
-  <td class="yellow">16.5</td>
-  <td class="red">26.00</td>
-  <td class="green">+44.4%</td>
+  <td class="red">32.3</td>
+  <td class="yellow">16.6</td>
+  <td class="red">26.11</td>
+  <td class="yellow">+nan%</td>
 </tr><tr>
   <td>2</td>
   <td>Verisk Analytics</td>
@@ -719,10 +720,10 @@ if (evolCtx) {
   <td class="green">293.9%</td>
   <td class="green">729,210,654</td>
   <td class="green">1,191,900,000</td>
-  <td class="red">27.1</td>
-  <td class="yellow">20.5</td>
-  <td class="red">79.63</td>
-  <td class="red">-41.4%</td>
+  <td class="red">26.5</td>
+  <td class="yellow">20.1</td>
+  <td class="red">77.83</td>
+  <td class="yellow">+nan%</td>
 </tr><tr>
   <td>3</td>
   <td>Rightmove</td>
@@ -733,8 +734,8 @@ if (evolCtx) {
   <td class="green">226,120,000</td>
   <td class="yellow">15.1</td>
   <td class="green">12.5</td>
-  <td class="red">39.22</td>
-  <td class="red">-45.2%</td>
+  <td class="red">39.23</td>
+  <td class="yellow">-44.9%</td>
 </tr><tr>
   <td>4</td>
   <td>Microsoft</td>
@@ -745,8 +746,8 @@ if (evolCtx) {
   <td class="green">71,611,000,000</td>
   <td class="yellow">22.6</td>
   <td class="yellow">19.6</td>
-  <td class="red">6.79</td>
-  <td class="yellow">-20.4%</td>
+  <td class="red">6.80</td>
+  <td class="yellow">+nan%</td>
 </tr><tr>
   <td>5</td>
   <td>Adobe</td>
@@ -757,11 +758,11 @@ if (evolCtx) {
   <td class="green">9,852,000,000</td>
   <td class="green">11.2</td>
   <td class="green">7.1</td>
-  <td class="red">6.79</td>
-  <td class="red">-48.1%</td>
+  <td class="red">6.76</td>
+  <td class="yellow">+nan%</td>
 </tr><tr style="background:#f0f0f0;font-weight:700;">
   <td colspan="3">Mediana del sector (28 empresas)</td>
-  <td colspan="8">-29.9%</td>
+  <td colspan="8">+nan%</td>
 </tr></tbody></table><h3>Rolls-Royce · Aeroespacial (2 empresas)</h3>
 <table>
 <thead><tr>
@@ -777,9 +778,9 @@ if (evolCtx) {
   <td class="green">4,583,901,601</td>
   <td class="green">3,580,000,000</td>
   <td class="yellow">20.4</td>
-  <td class="red">32.6</td>
-  <td class="red">43.24</td>
-  <td class="green">+58.2%</td>
+  <td class="red">32.5</td>
+  <td class="red">43.15</td>
+  <td class="green">+59.4%</td>
 </tr><tr>
   <td>2</td>
   <td>Safran</td>
@@ -788,10 +789,10 @@ if (evolCtx) {
   <td class="green">48.4%</td>
   <td class="green">5,739,144,400</td>
   <td class="green">3,921,000,000</td>
-  <td class="yellow">19.4</td>
-  <td class="red">27.1</td>
-  <td class="red">9.37</td>
-  <td class="yellow">+28.7%</td>
+  <td class="yellow">19.5</td>
+  <td class="red">27.3</td>
+  <td class="red">9.41</td>
+  <td class="yellow">+31.3%</td>
 </tr><tr>
   <td>3</td>
   <td>MTU Aero Engines</td>
@@ -800,17 +801,17 @@ if (evolCtx) {
   <td class="green">23.6%</td>
   <td class="green">514,926,314</td>
   <td class="green">333,000,000</td>
-  <td class="yellow">18.5</td>
+  <td class="yellow">18.4</td>
   <td class="yellow">16.8</td>
-  <td class="yellow">4.17</td>
-  <td class="red">-5.7%</td>
+  <td class="yellow">4.16</td>
+  <td class="red">-6.0%</td>
 </tr><tr style="background:#f0f0f0;font-weight:700;">
   <td colspan="3">Mediana del sector (3 empresas)</td>
-  <td colspan="8">+28.7%</td>
+  <td colspan="8">+31.3%</td>
 </tr></tbody></table><h2>Correlación de Precios (252d)</h2>
 <table>
 <tbody>
-<tr><th></th><th>ENR</th><th>NVD</th><th>RRU</th><th>DANR</th></tr><tr><td><strong>ENR</strong></td><td class="red">1.00</td><td class="yellow">0.48</td><td class="yellow">0.53</td><td class="yellow">0.42</td></tr><tr><td><strong>NVD</strong></td><td class="yellow">0.48</td><td class="red">1.00</td><td class="green">0.28</td><td class="green">0.28</td></tr><tr><td><strong>RRU</strong></td><td class="yellow">0.53</td><td class="green">0.28</td><td class="red">1.00</td><td class="yellow">0.39</td></tr><tr><td><strong>DANR</strong></td><td class="yellow">0.42</td><td class="green">0.28</td><td class="yellow">0.39</td><td class="red">1.00</td></tr>
+<tr><th></th><th>ENR</th><th>NVD</th><th>RRU</th><th>DANR</th></tr><tr><td><strong>ENR</strong></td><td class="red">1.00</td><td class="yellow">0.47</td><td class="yellow">0.53</td><td class="yellow">0.42</td></tr><tr><td><strong>NVD</strong></td><td class="yellow">0.47</td><td class="red">1.00</td><td class="green">0.28</td><td class="green">0.28</td></tr><tr><td><strong>RRU</strong></td><td class="yellow">0.53</td><td class="green">0.28</td><td class="red">1.00</td><td class="yellow">0.39</td></tr><tr><td><strong>DANR</strong></td><td class="yellow">0.42</td><td class="green">0.28</td><td class="yellow">0.39</td><td class="red">1.00</td></tr>
 </tbody>
 </table>
 <p class="small"><span class="green">Verde</span> = baja correlación (<0.3) · <span class="yellow">Amarillo</span> = media (0.3-0.7) · <span class="red">Rojo</span> = alta (>0.7)</p>
@@ -927,4 +928,236 @@ window.addEventListener('DOMContentLoaded', liveUpdate);
   <span class="red">Rojo = atención</span><br>
   Precios en vivo al recargar (requiere servidor local: python server.py)
 </p>
+<!-- RADAR SCREENER -->
+<h2>Radar — Oportunidades de Entrada</h2>
+<p class="small">Último análisis: 19/06/2026 12:24 · Criterios: Rent.1A &gt; 0, PER 0-30, Score &gt; 0.5, EVA &gt; 0, ROE &gt; 0 · No en cartera · (*) no disponible</p>
+<table>
+<thead><tr>
+  <th>#</th><th>Empresa</th><th>Ticker</th><th>Sector</th><th>Score</th><th>PER</th><th>Rent.1A</th><th>ROE</th><th>EVA</th><th>FCF</th>
+</tr></thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>UPS</td>
+  <td>UPS</td>
+  <td>Industriales</td>
+  <td>1.000</td>
+  <td>13.1</td>
+  <td class="red">+nan%</td>
+  <td class="green">34.3%</td>
+  <td>1,765,400,000</td>
+  <td>4,765,000,000</td>
+</tr><tr>
+  <td>2</td>
+  <td>Mastercard</td>
+  <td>MA</td>
+  <td>Financiero</td>
+  <td>1.000</td>
+  <td>21.5</td>
+  <td class="red">+nan%</td>
+  <td class="green">193.5%</td>
+  <td>13,038,103,951</td>
+  <td>16,433,000,000</td>
+</tr><tr>
+  <td>3</td>
+  <td>UnitedHealth Group</td>
+  <td>UNH</td>
+  <td>Salud</td>
+  <td>1.000</td>
+  <td>19.2</td>
+  <td class="red">+nan%</td>
+  <td class="yellow">12.8%</td>
+  <td>719,632,113</td>
+  <td>16,075,000,000</td>
+</tr><tr>
+  <td>4</td>
+  <td>Union Pacific</td>
+  <td>UNP</td>
+  <td>Industriales</td>
+  <td>1.000</td>
+  <td>18.7</td>
+  <td class="red">+nan%</td>
+  <td class="green">38.6%</td>
+  <td>2,982,660,537</td>
+  <td>5,499,000,000</td>
+</tr><tr>
+  <td>5</td>
+  <td>Indra</td>
+  <td>IDR.MC</td>
+  <td>Tecnología</td>
+  <td>0.975</td>
+  <td>17.0</td>
+  <td class="green">+61.2%</td>
+  <td class="green">25.1%</td>
+  <td>45,643,185</td>
+  <td>378,457,000</td>
+</tr><tr>
+  <td>6</td>
+  <td>Intuit</td>
+  <td>INTU</td>
+  <td>Tecnología</td>
+  <td>0.839</td>
+  <td>9.8</td>
+  <td class="red">+nan%</td>
+  <td class="green">19.6%</td>
+  <td>1,939,651,974</td>
+  <td>6,083,000,000</td>
+</tr><tr>
+  <td>7</td>
+  <td>Coca-Cola HBC</td>
+  <td>CCH.L</td>
+  <td>Bebidas</td>
+  <td>0.836</td>
+  <td>16.5</td>
+  <td class="green">+18.2%</td>
+  <td class="green">24.5%</td>
+  <td>436,316,335</td>
+  <td>760,900,000</td>
+</tr><tr>
+  <td>8</td>
+  <td>Deere & Company</td>
+  <td>DE</td>
+  <td>Industriales</td>
+  <td>0.771</td>
+  <td>25.8</td>
+  <td class="red">+nan%</td>
+  <td class="green">19.4%</td>
+  <td>1,646,869,592</td>
+  <td>3,231,000,000</td>
+</tr><tr>
+  <td>9</td>
+  <td>Colgate-Palmolive</td>
+  <td>CL</td>
+  <td>Consumo básico</td>
+  <td>0.771</td>
+  <td>22.1</td>
+  <td class="red">+nan%</td>
+  <td class="red">nan% (*)</td>
+  <td>1,700,187,826</td>
+  <td>3,634,000,000</td>
+</tr><tr>
+  <td>10</td>
+  <td>Nike</td>
+  <td>NKE</td>
+  <td>Consumo discrecional</td>
+  <td>0.746</td>
+  <td>24.9</td>
+  <td class="red">+nan%</td>
+  <td class="green">24.4%</td>
+  <td>986,331,429</td>
+  <td>3,268,000,000</td>
+</tr><tr>
+  <td>11</td>
+  <td>Comcast</td>
+  <td>CMCSA</td>
+  <td>Comunicaciones</td>
+  <td>0.732</td>
+  <td>5.9</td>
+  <td class="red">+nan%</td>
+  <td class="green">20.6%</td>
+  <td>3,895,599,745</td>
+  <td>19,235,000,000</td>
+</tr><tr>
+  <td>12</td>
+  <td>Henkel</td>
+  <td>HEN3.DE</td>
+  <td>Consumo</td>
+  <td>0.675</td>
+  <td>12.1</td>
+  <td class="green">+11.0%</td>
+  <td class="yellow">9.9%</td>
+  <td>217,320,704</td>
+  <td>1,842,000,000</td>
+</tr><tr>
+  <td>13</td>
+  <td>Home Depot</td>
+  <td>HD</td>
+  <td>Consumo discrecional</td>
+  <td>0.667</td>
+  <td>20.8</td>
+  <td class="red">+nan%</td>
+  <td class="green">110.5%</td>
+  <td>10,177,836,181</td>
+  <td>12,646,000,000</td>
+</tr><tr>
+  <td>14</td>
+  <td>Adobe</td>
+  <td>ADBE</td>
+  <td>Tecnología</td>
+  <td>0.627</td>
+  <td>7.1</td>
+  <td class="red">+nan%</td>
+  <td class="green">61.3%</td>
+  <td>5,801,020,023</td>
+  <td>9,852,000,000</td>
+</tr><tr>
+  <td>15</td>
+  <td>Honeywell</td>
+  <td>HON</td>
+  <td>Industriales</td>
+  <td>0.613</td>
+  <td>20.0</td>
+  <td class="red">+nan%</td>
+  <td class="green">34.0%</td>
+  <td>1,543,241,899</td>
+  <td>5,422,000,000</td>
+</tr><tr>
+  <td>16</td>
+  <td>Broadcom</td>
+  <td>AVGO</td>
+  <td>Semiconductores</td>
+  <td>0.606</td>
+  <td>21.3</td>
+  <td class="red">+nan%</td>
+  <td class="green">28.4%</td>
+  <td>13,279,691,981</td>
+  <td>26,914,000,000</td>
+</tr><tr>
+  <td>17</td>
+  <td>PayPal</td>
+  <td>PYPL</td>
+  <td>Financiero</td>
+  <td>0.605</td>
+  <td>7.4</td>
+  <td class="red">+nan%</td>
+  <td class="green">25.8%</td>
+  <td>2,901,375,747</td>
+  <td>5,564,000,000</td>
+</tr><tr>
+  <td>18</td>
+  <td>Puig Brands</td>
+  <td>PUIG.MC</td>
+  <td>Consumo</td>
+  <td>0.582</td>
+  <td>13.6</td>
+  <td class="yellow">+0.8%</td>
+  <td class="green">15.2%</td>
+  <td>160,015,937</td>
+  <td>660,560,000</td>
+</tr><tr>
+  <td>19</td>
+  <td>Qualcomm</td>
+  <td>QCOM</td>
+  <td>Semiconductores</td>
+  <td>0.566</td>
+  <td>21.2</td>
+  <td class="red">+nan%</td>
+  <td class="green">26.1%</td>
+  <td>6,715,330,000</td>
+  <td>12,820,000,000</td>
+</tr><tr>
+  <td>20</td>
+  <td>Vinci</td>
+  <td>DG.PA</td>
+  <td>Construcción</td>
+  <td>0.564</td>
+  <td>12.8</td>
+  <td class="green">+11.7%</td>
+  <td class="green">15.9%</td>
+  <td>1,087,060,000</td>
+  <td>8,013,000,000</td>
+</tr>
+</tbody>
+</table>
+<!-- END RADAR -->
 </body></html>

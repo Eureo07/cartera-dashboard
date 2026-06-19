@@ -189,21 +189,19 @@ def run_screener():
     log.info(f"  Descargando datos de {len(all_tickers)} tickers (paralelo)...")
     val_cache = {}
     rent_cache = {}
-    with ThreadPoolExecutor(max_workers=10) as exe:
-        fut_val = {exe.submit(get_valuation, t): t for t in all_tickers}
-        fut_rent = {exe.submit(get_1y_return, t): t for t in all_tickers}
-        for fut in as_completed(fut_val):
-            t = fut_val[fut]
+    def fetch_both(t):
+        v = get_valuation(t)
+        r = get_1y_return(t)
+        return t, v, r
+    with ThreadPoolExecutor(max_workers=3) as exe:
+        futs = {exe.submit(fetch_both, t): t for t in all_tickers}
+        for fut in as_completed(futs):
             try:
-                val_cache[t] = fut.result()
+                t, v, r = fut.result()
+                val_cache[t] = v or {}
+                rent_cache[t] = r
             except:
-                val_cache[t] = {}
-        for fut in as_completed(fut_rent):
-            t = fut_rent[fut]
-            try:
-                rent_cache[t] = fut.result()
-            except:
-                rent_cache[t] = None
+                pass
     log.info(f"  Datos descargados. Evaluando criterios...")
     # Local versions using cache
     def cached_eper(t):
