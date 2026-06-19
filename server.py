@@ -42,10 +42,15 @@ def send_401(handler):
 def regenerate():
     def task():
         try:
-            subprocess.run(["python", "generate_dashboard.py", "skip_screener"],
-                           cwd=DIR, capture_output=True, timeout=120)
-        except:
-            pass
+            r = subprocess.run(["python", "generate_dashboard.py", "skip_screener"],
+                               cwd=DIR, capture_output=True, timeout=120)
+            if r.returncode != 0:
+                print("=== regenerate STDOUT ===")
+                print(r.stdout.decode()[-2000:])
+                print("=== regenerate STDERR ===")
+                print(r.stderr.decode()[-2000:])
+        except Exception as e:
+            print(f"=== regenerate EXCEPTION: {e} ===")
     threading.Thread(target=task, daemon=True).start()
 
 class DashboardHandler(http.server.SimpleHTTPRequestHandler):
