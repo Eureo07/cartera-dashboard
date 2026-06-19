@@ -91,11 +91,23 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(b"Forbidden")
                 return
-            regenerate()
+            import time
+            t0 = time.time()
+            try:
+                r = subprocess.run(
+                    ["python", "generate_dashboard.py"],
+                    cwd=DIR, capture_output=True, timeout=180)
+                elapsed = time.time() - t0
+                out = r.stdout.decode(errors="replace")[-2000:]
+                err = r.stderr.decode(errors="replace")[-2000:]
+                msg = f"rc={r.returncode} elapsed={elapsed:.1f}s\n=== STDOUT ===\n{out}\n=== STDERR ===\n{err}"
+            except Exception as e:
+                elapsed = time.time() - t0
+                msg = f"EXCEPTION after {elapsed:.1f}s: {e}"
             self.send_response(200)
             self.send_header("Content-Type", "text/plain")
             self.end_headers()
-            self.wfile.write(b"Regenerating dashboard...")
+            self.wfile.write(msg.encode())
             return
         if self.path == "/api/status":
             self.send_response(200)
