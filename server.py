@@ -39,18 +39,27 @@ def send_401(handler):
     handler.end_headers()
     handler.wfile.write(b"Autenticacion requerida")
 
+LAST_REGENERATE = {"ok": False, "msg": "", "time": ""}
 def regenerate():
     def task():
+        global LAST_REGENERATE
         try:
-            r = subprocess.run(["python", "generate_dashboard.py", "skip_screener"],
-                               cwd=DIR, capture_output=True, timeout=120)
+            r = subprocess.run(
+                ["python", "generate_dashboard.py", "skip_screener"],
+                cwd=DIR, capture_output=True, timeout=180)
+            LAST_REGENERATE["ok"] = r.returncode == 0
+            LAST_REGENERATE["time"] = os.popen("date 2>nul || date 2>/dev/null").read().strip()
+            out = r.stdout.decode(errors="replace")[-1500:]
+            err = r.stderr.decode(errors="replace")[-1500:]
+            LAST_REGENERATE["msg"] = f"rc={r.returncode}\nSTDOUT:{out}\nSTDERR:{err}"
             if r.returncode != 0:
-                print("=== regenerate STDOUT ===")
-                print(r.stdout.decode()[-2000:])
-                print("=== regenerate STDERR ===")
-                print(r.stderr.decode()[-2000:])
+                print(f"[regenerate] returncode={r.returncode}")
+                print(out[-500:])
+                print(err[-500:])
         except Exception as e:
-            print(f"=== regenerate EXCEPTION: {e} ===")
+            LAST_REGENERATE["ok"] = False
+            LAST_REGENERATE["msg"] = str(e)
+            print(f"[regenerate] EXCEPTION: {e}")
     threading.Thread(target=task, daemon=True).start()
 
 class DashboardHandler(http.server.SimpleHTTPRequestHandler):
@@ -87,6 +96,13 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Content-Type", "text/plain")
             self.end_headers()
             self.wfile.write(b"Regenerating dashboard...")
+            return
+        if self.path == "/api/status":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(json.dumps(LAST_REGENERATE, indent=2).encode())
             return
         if not check_auth(self.headers):
             return send_401(self)
