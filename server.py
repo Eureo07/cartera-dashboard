@@ -45,7 +45,7 @@ def regenerate():
         global LAST_REGENERATE
         try:
             r = subprocess.run(
-                ["python", "generate_dashboard.py", "skip_screener"],
+                ["python", "generate_dashboard.py"],
                 cwd=DIR, capture_output=True, timeout=180)
             LAST_REGENERATE["ok"] = r.returncode == 0
             LAST_REGENERATE["time"] = os.popen("date 2>nul || date 2>/dev/null").read().strip()
