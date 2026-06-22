@@ -11,7 +11,7 @@ if _PROJ_DIR not in sys.path:
     sys.path.insert(0, _PROJ_DIR)
 import pandas as pd
 import yfinance as yf
-import json, math, re
+import json, math, re, time
 from datetime import datetime
 
 from config_loader import CFG, get_logger
@@ -66,40 +66,36 @@ def get_valuation(t):
         _yf_cache[t] = {}
         return {}
 
+_hist_cache = {}
 _rent_cache = {}
-_rent_debug = 0
-def get_1y_return(t):
-    global _rent_debug
-    if t in _rent_cache:
-        return _rent_cache[t]
+def get_1y_return_and_hist(t):
+    """Returns (return_pct, hist_df). Caches both."""
+    if t in _rent_cache and t in _hist_cache:
+        return _rent_cache[t], _hist_cache.get(t)
     try:
-        hist = yf.download(t, period="1y", progress=False, auto_adjust=False)
+        stock = yf.Ticker(t)
+        hist = stock.history(period="1y", auto_adjust=False)
         if hist is None or hist.empty:
-            if _rent_debug < 3:
-                print(f"  DEBUG rentNone {t}: hist=None/empty ({yf.__version__})")
-                _rent_debug += 1
             _rent_cache[t] = None
-            return None
-        if isinstance(hist.columns, pd.MultiIndex):
-            close = hist.xs(t, level=1, axis=1)["Close"]
-        else:
-            close = hist["Close"] if "Close" in hist.columns else hist.iloc[:, 0]
-        close = close.dropna()
-        if _rent_debug < 3:
-            print(f"  DEBUG rent {t}: hist.shape={hist.shape}, close_nonan={close.notna().sum()}/{len(close)}, yf={yf.__version__}")
-            _rent_debug += 1
+            _hist_cache[t] = None
+            return None, None
+        close = hist["Close"].dropna()
         if len(close) < 2:
             _rent_cache[t] = None
-            return None
+            _hist_cache[t] = hist
+            return None, hist
         ret = (float(close.iloc[-1]) - float(close.iloc[0])) / float(close.iloc[0]) * 100
         _rent_cache[t] = ret
-        return ret
-    except Exception as e:
-        if _rent_debug < 3:
-            print(f"  DEBUG rentNone {t}: exception={e} ({yf.__version__})")
-            _rent_debug += 1
+        _hist_cache[t] = hist
+        return ret, hist
+    except:
         _rent_cache[t] = None
-        return None
+        _hist_cache[t] = None
+        return None, None
+
+def get_1y_return(t):
+    r, _ = get_1y_return_and_hist(t)
+    return r
 
 def get_effective_per(t):
     pv = get_valuation(t)
@@ -182,6 +178,44 @@ def get_universe():
     log.info(f"  {len(all_tickers)} tickers guardados en {CACHE_FILE}")
     return all_tickers
 
+# ========== TECHNICAL FILTERS ==========
+def get_entry_types(ticker):
+    """Return list of entry type codes for a ticker (RRA, RR, LT, LTA, PER).
+    Uses cached history from get_1y_return_and_hist."""
+    _, hist = get_1y_return_and_hist(ticker)
+    if hist is None or hist.empty:
+        return []
+    close = hist["Close"].dropna()
+    if len(close) < 2:
+        return []
+    current = float(close.iloc[-1])
+    high52 = float(close.max())
+    low52 = float(close.min())
+    types = []
+    # RRA: current between 95% and 105% of 52W High
+    if 0.95 * high52 <= current <= 1.05 * high52:
+        types.append("RRA")
+    # RR: current above 52W High
+    if current > high52:
+        types.append("RR")
+    # LT: drawdown > 10% from high, but above low52 + 20% of range
+    drawdown = (high52 - current) / high52
+    if drawdown > 0.10 and current > low52 + 0.20 * (high52 - low52):
+        types.append("LT")
+    # LTA: 3-month lows > 6-month lows
+    now = datetime.now()
+    cutoff_3m = now.timestamp() - 90 * 86400
+    cutoff_6m = now.timestamp() - 180 * 86400
+    recent = close[close.index.astype('int64') // 10**9 > cutoff_3m]
+    mid = close[close.index.astype('int64') // 10**9 > cutoff_6m]
+    if not recent.empty and not mid.empty:
+        if float(recent.min()) > float(mid.min()):
+            types.append("LTA")
+    # PER: current between low52 and low52 + 10%
+    if low52 <= current <= low52 * 1.10:
+        types.append("PER")
+    return types
+
 # ========== SCREENING ==========
 def normalized_score(series):
     mn, mx = series.min(), series.max()
@@ -206,6 +240,7 @@ def run_screener():
     for t in all_tickers:
         val_cache[t] = get_valuation(t) or {}
         rent_cache[t] = get_1y_return(t)
+        time.sleep(0.3)
     log.info(f"  Datos descargados. Evaluando criterios...")
     # Local versions using cache
     def cached_eper(t):
@@ -220,7 +255,7 @@ def run_screener():
     def cached_rent(t):
         return rent_cache.get(t)
     results = []
-    cnt_total = 0; cnt_port = 0; cnt_rent_none = 0; cnt_rent_neg = 0; cnt_per = 0; cnt_eva_fcf = 0; cnt_roe = 0; cnt_eva_neg = 0
+    cnt_total = 0; cnt_port = 0; cnt_rent_none = 0; cnt_rent_neg = 0; cnt_per = 0; cnt_eva_fcf = 0; cnt_roe = 0; cnt_eva_neg = 0; cnt_tec = 0
     for _, row in df_u.iterrows():
         ticker = str(row["Ticker"]).strip()
         name = str(row["Empresa"]).strip()
@@ -261,13 +296,17 @@ def run_screener():
         if eva <= 0:
             cnt_eva_neg += 1
             continue
+        entry_types = get_entry_types(ticker)
+        if not entry_types:
+            cnt_tec += 1
+            continue
         results.append({
             "ticker": ticker, "name": name, "sector": sector,
             "roe": roe, "roe_missing": roe_missing, "eva": eva, "fcf": fcf,
             "eper": eper, "per_missing": per_missing, "rent_1a": rent_1a,
-            "_sec_key": sector,
+            "entry_types": entry_types, "_sec_key": sector,
         })
-    log.info(f"  Filtros: total={cnt_total}, port={cnt_port}, rentNone={cnt_rent_none}, rentNeg={cnt_rent_neg}, PER={cnt_per}, evaFcf={cnt_eva_fcf}, roe={cnt_roe}, evaNeg={cnt_eva_neg}, passed={len(results)}")
+    log.info(f"  Filtros: total={cnt_total}, port={cnt_port}, rentNone={cnt_rent_none}, rentNeg={cnt_rent_neg}, PER={cnt_per}, evaFcf={cnt_eva_fcf}, roe={cnt_roe}, evaNeg={cnt_eva_neg}, tec={cnt_tec}, passed={len(results)}")
     if not results:
         log.info("  No se encontraron candidatos")
         return []
@@ -318,6 +357,7 @@ def append_radar(results):
         fcf_str = f"{r['fcf']:,.0f}"
         rent_str = f"{r['rent_1a']:+.1f}%"
         rent_cls = "green" if r['rent_1a'] > 10 else ("yellow" if r['rent_1a'] > 0 else "red")
+        entry_str = ", ".join(r.get("entry_types", []))
         rows_html += f"""<tr>
   <td>{i}</td>
   <td>{r['name']}</td>
@@ -329,13 +369,14 @@ def append_radar(results):
   <td class="{roe_cls}">{roe_str}</td>
   <td>{eva_str}</td>
   <td>{fcf_str}</td>
+  <td>{entry_str}</td>
 </tr>"""
     radar_section = f"""<!-- RADAR SCREENER -->
 <h2>Radar \u2014 Oportunidades de Entrada</h2>
-<p class="small">\u00daltimo an\u00e1lisis: {now_str} · Criterios: Rent.1A &gt; 0, PER 0-30, Score &gt; 0.5, EVA &gt; 0, ROE &gt; 0 · No en cartera · (*) no disponible</p>
+<p class="small">\u00daltimo an\u00e1lisis: {now_str} · Criterios: Rent.1A &gt; 0, PER 0-30, Score &gt; 0.3, EVA &gt; 0, ROE &gt; 0 · No en cartera · Técnico: RRA/RR/LT/LTA/PER · (*) no disponible</p>
 <table>
 <thead><tr>
-  <th>#</th><th>Empresa</th><th>Ticker</th><th>Sector</th><th>Score</th><th>PER</th><th>Rent.1A</th><th>ROE</th><th>EVA</th><th>FCF</th>
+  <th>#</th><th>Empresa</th><th>Ticker</th><th>Sector</th><th>Score</th><th>PER</th><th>Rent.1A</th><th>ROE</th><th>EVA</th><th>FCF</th><th>Tipo Entrada</th>
 </tr></thead>
 <tbody>
 {rows_html}
@@ -379,7 +420,8 @@ if __name__ == "__main__":
         log.info(f"\nTop {len(results)} oportunidades:")
         for i, r in enumerate(results, 1):
             eper_str = f"{r['eper']:.1f}" if r['eper'] is not None else "N/D"
-            log.info(f"  {i}. {r['name']} ({r['ticker']}) — Score: {r['score']:.3f}, PER: {eper_str}, Rent.1A: {r['rent_1a']:+.1f}%")
+            entry_str = ", ".join(r.get("entry_types", []))
+            log.info(f"  {i}. {r['name']} ({r['ticker']}) — Score: {r['score']:.3f}, PER: {eper_str}, Rent.1A: {r['rent_1a']:+.1f}%, Entrada: {entry_str}")
         append_radar(results)
     else:
         log.info("No se encontraron oportunidades que cumplan los criterios.")
