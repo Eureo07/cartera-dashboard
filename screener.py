@@ -11,7 +11,7 @@ if _PROJ_DIR not in sys.path:
     sys.path.insert(0, _PROJ_DIR)
 import pandas as pd
 import yfinance as yf
-import json, math, re, time
+import json, math, re
 from datetime import datetime
 
 from config_loader import CFG, get_logger
@@ -240,7 +240,6 @@ def run_screener():
     for t in all_tickers:
         val_cache[t] = get_valuation(t) or {}
         rent_cache[t] = get_1y_return(t)
-        time.sleep(0.3)
     log.info(f"  Datos descargados. Evaluando criterios...")
     # Local versions using cache
     def cached_eper(t):
