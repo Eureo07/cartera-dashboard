@@ -93,17 +93,22 @@ for p in portfolio:
         if len(hist) > 2:
             close = hist["Close"].dropna()
             if len(close) < 2:
+                log.warning(f"  {tk}: menos de 2 Close validos ({len(close)})")
                 continue
             price_hist[tk] = close
             p["current"] = float(close.iloc[-1])
-    except:
-        pass
+        else:
+            log.warning(f"  {tk}: hist.len={len(hist)} (insuficiente)")
+    except Exception as e:
+        log.error(f"  {tk}: error history ({e})")
     # Fallback for current price
     if "current" not in p or p["current"] is None:
         try:
             info = yf.Ticker(tk, session=_YF_SESSION).info or {}
             p["current"] = info.get("regularMarketPrice") or info.get("previousClose") or info.get("currentPrice") or 0
-        except:
+            log.info(f"  {tk}: fallback price={p['current']}")
+        except Exception as e:
+            log.error(f"  {tk}: fallback error ({e})")
             p["current"] = 0
 # Benchmark
 try:
