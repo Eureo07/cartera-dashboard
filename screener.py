@@ -13,7 +13,7 @@ import pandas as pd
 import yfinance as yf
 import requests
 import json, math, re
-from concurrent.futures import ThreadPoolExecutor, as_completed
+
 
 _YF_SESSION = requests.Session()
 _YF_SESSION.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
@@ -56,7 +56,7 @@ def get_valuation(t):
     if t in _yf_cache:
         return _yf_cache[t]
     try:
-        stock = yf.Ticker(t)
+        stock = yf.Ticker(t, session=_YF_SESSION)
         info = stock.info
         result = {
             "per": info.get("trailingPE"),
@@ -236,23 +236,40 @@ def run_screener():
     df_u = df[df["Ticker"].isin(universe_tickers)].copy()
     df_u = df_u.drop_duplicates(subset="Empresa", keep="first")
     log.info(f"  {len(df_u)} empresas en el universo con datos financieros")
-    # Parallel fetch valuations and 1-year returns
+    # Fetch valuations and 1-year returns
     all_tickers = df_u["Ticker"].unique().tolist()
     all_tickers = [str(t).strip() for t in all_tickers]
-    log.info(f"  Descargando datos de {len(all_tickers)} tickers (paralelo)...")
+    log.info(f"  Descargando datos de {len(all_tickers)} tickers...")
     val_cache = {}
     rent_cache = {}
-    def fetch_both(t):
-        return t, get_valuation(t) or {}, get_1y_return(t)
-    with ThreadPoolExecutor(max_workers=3) as exe:
-        futs = {exe.submit(fetch_both, t): t for t in all_tickers}
-        for fut in as_completed(futs):
-            try:
-                t, v, r = fut.result()
-                val_cache[t] = v
-                rent_cache[t] = r
-            except:
-                pass
+    # Batch download prices via yf.download (single request, much faster on Railway)
+    try:
+        batch = yf.download(" ".join(all_tickers), period="1y", progress=False, auto_adjust=False, session=_YF_SESSION, group_by="ticker")
+        if batch is not None and not batch.empty and isinstance(batch.columns, pd.MultiIndex):
+            for t in all_tickers:
+                try:
+                    if t in batch.columns.get_level_values(0):
+                        close = batch[t]["Close"].dropna()
+                        if len(close) >= 2:
+                            r = (float(close.iloc[-1]) - float(close.iloc[0])) / float(close.iloc[0]) * 100
+                            rent_cache[t] = r
+                        else:
+                            rent_cache[t] = None
+                    else:
+                        rent_cache[t] = None
+                except:
+                    rent_cache[t] = None
+        else:
+            log.warning("  Batch download failed, falling back to individual downloads...")
+            for t in all_tickers:
+                rent_cache[t] = get_1y_return(t)
+    except Exception as e:
+        log.warning(f"  Batch download error: {e}, falling back to individual downloads...")
+        for t in all_tickers:
+            rent_cache[t] = get_1y_return(t)
+    # Fetch valuations individually (stock.info, can't be batched)
+    for t in all_tickers:
+        val_cache[t] = get_valuation(t) or {}
     log.info(f"  Datos descargados. Evaluando criterios...")
     # Local versions using cache
     def cached_eper(t):
