@@ -83,14 +83,13 @@ idx_col_name, sec_col_name = cols_list[3], cols_list[4]
 price_hist = {}
 bench_hist = None
 hist_path = CFG["paths"]["price_history"]
-bench_start_dt = min(datetime.strptime(p["entry_date"], "%d/%m/%Y") for p in portfolio)
 log.info("Downloading price histories...")
 for p in portfolio:
     tk = p["ticker"]
     try:
         stock = yf.Ticker(tk, session=_YF_SESSION)
-        hist = stock.history(start=bench_start_dt, end=datetime.now(), auto_adjust=False)
-        if len(hist) > 2:
+        hist = stock.history(period="6mo", auto_adjust=False)
+        if hist is not None and len(hist) > 2:
             close = hist["Close"].dropna()
             if len(close) < 2:
                 log.warning(f"  {tk}: menos de 2 Close validos ({len(close)})")
@@ -98,7 +97,7 @@ for p in portfolio:
             price_hist[tk] = close
             p["current"] = float(close.iloc[-1])
         else:
-            log.warning(f"  {tk}: hist.len={len(hist)} (insuficiente)")
+            log.warning(f"  {tk}: hist={None if hist is None else len(hist)} (insuficiente)")
     except Exception as e:
         log.error(f"  {tk}: error history ({e})")
     # Fallback for current price
@@ -113,8 +112,8 @@ for p in portfolio:
 # Benchmark
 try:
     bm = yf.Ticker("^STOXX50E", session=_YF_SESSION)
-    bm_h = bm.history(start=bench_start_dt, end=datetime.now(), auto_adjust=False)
-    if len(bm_h) > 2:
+    bm_h = bm.history(period="6mo", auto_adjust=False)
+    if bm_h is not None and len(bm_h) > 2:
         bench_hist = bm_h["Close"].dropna()
 except:
     pass
