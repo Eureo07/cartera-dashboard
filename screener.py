@@ -12,6 +12,7 @@ if _PROJ_DIR not in sys.path:
 import pandas as pd
 import yfinance as yf
 import json, math, re
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 
 from config_loader import CFG, get_logger
@@ -231,15 +232,23 @@ def run_screener():
     df_u = df[df["Ticker"].isin(universe_tickers)].copy()
     df_u = df_u.drop_duplicates(subset="Empresa", keep="first")
     log.info(f"  {len(df_u)} empresas en el universo con datos financieros")
-    # Sequential fetch valuations and 1-year returns (no threading, avoids yfinance thread-safety issues)
+    # Parallel fetch valuations and 1-year returns
     all_tickers = df_u["Ticker"].unique().tolist()
     all_tickers = [str(t).strip() for t in all_tickers]
-    log.info(f"  Descargando datos de {len(all_tickers)} tickers (secuencial)...")
+    log.info(f"  Descargando datos de {len(all_tickers)} tickers (paralelo)...")
     val_cache = {}
     rent_cache = {}
-    for t in all_tickers:
-        val_cache[t] = get_valuation(t) or {}
-        rent_cache[t] = get_1y_return(t)
+    def fetch_both(t):
+        return t, get_valuation(t) or {}, get_1y_return(t)
+    with ThreadPoolExecutor(max_workers=3) as exe:
+        futs = {exe.submit(fetch_both, t): t for t in all_tickers}
+        for fut in as_completed(futs):
+            try:
+                t, v, r = fut.result()
+                val_cache[t] = v
+                rent_cache[t] = r
+            except:
+                pass
     log.info(f"  Datos descargados. Evaluando criterios...")
     # Local versions using cache
     def cached_eper(t):
