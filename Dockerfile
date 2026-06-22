@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt && pip install --upgrade --no-cache-dir "yfinance>=1.3"
 
 # Copy all project files
 COPY config.json config_loader.py generate_dashboard.py server.py screener.py start.sh ./
@@ -16,4 +16,4 @@ RUN chmod +x start.sh
 
 EXPOSE 5000
 CMD ["./start.sh"]
-# railway-rebuild-5
+# rebuild-6
