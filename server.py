@@ -46,7 +46,7 @@ def regenerate():
         try:
             r = subprocess.run(
                 ["python", "generate_dashboard.py"],
-                cwd=DIR, capture_output=True, timeout=300)
+                cwd=DIR, capture_output=True, timeout=600)
             LAST_REGENERATE["ok"] = r.returncode == 0
             LAST_REGENERATE["time"] = os.popen("date 2>nul || date 2>/dev/null").read().strip()
             out = r.stdout.decode(errors="replace")[-1500:]
@@ -100,7 +100,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 try:
                     r = subprocess.run(
                         ["python", "generate_dashboard.py"],
-                        cwd=DIR, capture_output=True, timeout=300)
+                        cwd=DIR, capture_output=True, timeout=600)
                     el = _t.time() - t0
                     out = r.stdout.decode(errors="replace")[-2000:]
                     err = r.stderr.decode(errors="replace")[-2000:]
