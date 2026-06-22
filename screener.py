@@ -11,8 +11,12 @@ if _PROJ_DIR not in sys.path:
     sys.path.insert(0, _PROJ_DIR)
 import pandas as pd
 import yfinance as yf
+import requests
 import json, math, re
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
+_YF_SESSION = requests.Session()
+_YF_SESSION.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
 from datetime import datetime
 
 from config_loader import CFG, get_logger
@@ -74,7 +78,7 @@ def get_1y_return_and_hist(t):
     if t in _rent_cache and t in _hist_cache:
         return _rent_cache[t], _hist_cache.get(t)
     try:
-        stock = yf.Ticker(t)
+        stock = yf.Ticker(t, session=_YF_SESSION)
         hist = stock.history(period="1y", auto_adjust=False)
         if hist is None or hist.empty:
             _rent_cache[t] = None

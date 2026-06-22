@@ -6,9 +6,13 @@ if _PROJ_DIR not in sys.path:
     sys.path.insert(0, _PROJ_DIR)
 import pandas as pd
 import yfinance as yf
+import requests
 import json, math, statistics
 from datetime import datetime, date
 from config_loader import CFG, logger, get_logger
+
+_YF_SESSION = requests.Session()
+_YF_SESSION.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
 
 BASE_DIR = CFG["base_dir"]
 portfolio = CFG["portfolio"]
@@ -84,7 +88,7 @@ log.info("Downloading price histories...")
 for p in portfolio:
     tk = p["ticker"]
     try:
-        stock = yf.Ticker(tk)
+        stock = yf.Ticker(tk, session=_YF_SESSION)
         hist = stock.history(start=bench_start_dt, end=datetime.now(), auto_adjust=False)
         if len(hist) > 2:
             close = hist["Close"].dropna()
@@ -97,13 +101,13 @@ for p in portfolio:
     # Fallback for current price
     if "current" not in p or p["current"] is None:
         try:
-            info = yf.Ticker(tk).info or {}
+            info = yf.Ticker(tk, session=_YF_SESSION).info or {}
             p["current"] = info.get("regularMarketPrice") or info.get("previousClose") or info.get("currentPrice") or 0
         except:
             p["current"] = 0
 # Benchmark
 try:
-    bm = yf.Ticker("^STOXX50E")
+    bm = yf.Ticker("^STOXX50E", session=_YF_SESSION)
     bm_h = bm.history(start=bench_start_dt, end=datetime.now(), auto_adjust=False)
     if len(bm_h) > 2:
         bench_hist = bm_h["Close"].dropna()
@@ -125,7 +129,7 @@ except Exception as e:
 # ========== VALUATION ==========
 def get_valuation(t):
     try:
-        stock = yf.Ticker(t)
+        stock = yf.Ticker(t, session=_YF_SESSION)
         info = stock.info or {}
         ev = info.get("enterpriseValue")
         ebitda = info.get("ebitda")
@@ -150,7 +154,7 @@ def get_1y_return(t):
     if t in _rent_cache:
         return _rent_cache[t]
     try:
-        hist = yf.download(t, period="1y", progress=False, auto_adjust=False)
+        hist = yf.download(t, period="1y", progress=False, auto_adjust=False, session=_YF_SESSION)
         if hist is not None and not hist.empty:
             if isinstance(hist.columns, pd.MultiIndex):
                 close = hist.xs(t, level=1, axis=1)["Close"]
@@ -181,7 +185,7 @@ def rent_1a_class(val, sector_avg):
 def get_fallback_financials(ticker):
     """Extract financial metrics from yfinance for tickers not in the DB."""
     try:
-        stock = yf.Ticker(ticker)
+        stock = yf.Ticker(ticker, session=_YF_SESSION)
         info = stock.info or {}
         bs = stock.balance_sheet
         inc = stock.financials
@@ -348,7 +352,7 @@ def get_diversification_info():
     for p in portfolio:
         ticker = p["ticker"]
         try:
-            stock = yf.Ticker(ticker)
+            stock = yf.Ticker(ticker, session=_YF_SESSION)
             si = stock.info or {}
             sec = si.get("sector", "Desconocido")
             cur = si.get("currency", "EUR")
@@ -404,7 +408,7 @@ entry_dates = [datetime.strptime(p["entry_date"], "%d/%m/%Y") for p in portfolio
 bench_start = min(entry_dates).strftime("%Y-%m-%d")
 benchmark_return = None
 try:
-    stoxx = yf.download("^STOXX50E", start=bench_start, progress=False, auto_adjust=False)
+    stoxx = yf.download("^STOXX50E", start=bench_start, progress=False, auto_adjust=False, session=_YF_SESSION)
     if stoxx is not None and not stoxx.empty:
         if isinstance(stoxx.columns, pd.MultiIndex):
             stoxx_close = stoxx.xs("^STOXX50E", level=1, axis=1)["Close"]
@@ -427,7 +431,7 @@ corr_data = {}
 corr_html_rows = ""
 try:
     for t in corr_tickers:
-        hist = yf.download(t, period="1y", progress=False, auto_adjust=False)
+        hist = yf.download(t, period="1y", progress=False, auto_adjust=False, session=_YF_SESSION)
         if hist is not None and not hist.empty:
             if isinstance(hist.columns, pd.MultiIndex):
                 c = hist.xs(t, level=1, axis=1)["Close"]
@@ -789,7 +793,7 @@ for i, p in enumerate(portfolio, 1):
     high52 = low52 = None
     if p["ticker"]:
         try:
-            sinfo = yf.Ticker(p["ticker"]).info or {}
+            sinfo = yf.Ticker(p["ticker"], session=_YF_SESSION).info or {}
             high52 = sinfo.get("fiftyTwoWeekHigh")
             low52 = sinfo.get("fiftyTwoWeekLow")
         except:
