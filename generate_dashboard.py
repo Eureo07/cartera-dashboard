@@ -75,9 +75,6 @@ def fmt(val, dec=2):
 
 # ========== LOAD DATA ==========
 DF_FILE = EXCEL_FILE
-print(f"DEBUG: Loading Excel from {DF_FILE}", file=sys.stderr, flush=True)
-print(f"DEBUG: CWD={os.getcwd()}", file=sys.stderr, flush=True)
-print(f"DEBUG: file exists={os.path.isfile(DF_FILE)}", file=sys.stderr, flush=True)
 df = pd.read_excel(DF_FILE)
 cols_list = list(df.columns)
 idx_col_name, sec_col_name = cols_list[3], cols_list[4]
@@ -86,13 +83,9 @@ idx_col_name, sec_col_name = cols_list[3], cols_list[4]
 price_hist = {}
 bench_hist = None
 hist_path = CFG["paths"]["price_history"]
-import sys
-print("DEBUG: Starting price download...", file=sys.stderr, flush=True)
-print(f"DEBUG: Portfolio={[p['ticker'] for p in portfolio]}", file=sys.stderr, flush=True)
 log.info("Downloading price histories...")
 for p in portfolio:
     tk = p["ticker"]
-    print(f"DEBUG: Fetching {tk}...", file=sys.stderr, flush=True)
     try:
         stock = yf.Ticker(tk, session=_YF_SESSION)
         hist = stock.history(period="6mo", auto_adjust=False)
@@ -103,7 +96,6 @@ for p in portfolio:
                 continue
             price_hist[tk] = close
             p["current"] = float(close.iloc[-1])
-            print(f"  {tk}: current={p['current']:.4f}, last_close={float(close.iloc[-1]):.4f}, len_close={len(close)}", file=sys.stderr, flush=True)
         else:
             log.warning(f"  {tk}: hist={None if hist is None else len(hist)} (insuficiente)")
     except Exception as e:
