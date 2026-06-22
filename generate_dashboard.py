@@ -103,6 +103,7 @@ for p in portfolio:
                 continue
             price_hist[tk] = close
             p["current"] = float(close.iloc[-1])
+            print(f"  {tk}: current={p['current']:.4f}, last_close={float(close.iloc[-1]):.4f}, len_close={len(close)}", file=sys.stderr, flush=True)
         else:
             log.warning(f"  {tk}: hist={None if hist is None else len(hist)} (insuficiente)")
     except Exception as e:
