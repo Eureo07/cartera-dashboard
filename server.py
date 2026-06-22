@@ -49,8 +49,8 @@ def regenerate():
                 cwd=DIR, capture_output=True, timeout=600)
             LAST_REGENERATE["ok"] = r.returncode == 0
             LAST_REGENERATE["time"] = os.popen("date 2>nul || date 2>/dev/null").read().strip()
-            out = r.stdout.decode(errors="replace")[-1500:]
-            err = r.stderr.decode(errors="replace")[-1500:]
+            out = r.stdout.decode(errors="replace")[-5000:]
+            err = r.stderr.decode(errors="replace")[-5000:]
             LAST_REGENERATE["msg"] = f"rc={r.returncode}\nSTDOUT:{out}\nSTDERR:{err}"
             if r.returncode != 0:
                 print(f"[regenerate] returncode={r.returncode}")
@@ -102,8 +102,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         ["python", "generate_dashboard.py"],
                         cwd=DIR, capture_output=True, timeout=600)
                     el = _t.time() - t0
-                    out = r.stdout.decode(errors="replace")[-2000:]
-                    err = r.stderr.decode(errors="replace")[-2000:]
+                    out = r.stdout.decode(errors="replace")[-5000:]
+                    err = r.stderr.decode(errors="replace")[-5000:]
                     msg = f"rc={r.returncode} elapsed={el:.1f}s\n=== STDOUT ===\n{out}\n=== STDERR ===\n{err}"
                 except Exception as e:
                     el = _t.time() - t0
