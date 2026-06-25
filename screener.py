@@ -385,42 +385,54 @@ def append_radar(results):
     now_str = datetime.now().strftime("%d/%m/%Y %H:%M")
     rows_html = ""
     for i, r in enumerate(results, 1):
-        eper_str = f"{r['eper']:.1f}" if r['eper'] is not None else "N/D"
+        eper_str = f"{r['eper']:.1f}x" if r['eper'] is not None else "N/D"
         if r['eper'] is None:
             eper_str += " (*)"
         roe_str = f"{r['roe']:.1f}%" if r['roe'] is not None else "N/D"
         if r.get("roe_missing"):
             roe_str += " (*)"
-        roe_cls = "green" if r['roe'] and r['roe'] > 15 else ("yellow" if r['roe'] and r['roe'] > 5 else "red")
-        eva_str = f"{r['eva']:,.0f}"
-        fcf_str = f"{r['fcf']:,.0f}"
+        eva_str = f"{r['eva']:,.0f}" if r.get('eva') else "N/D"
+        fcf_str = f"{r['fcf']:,.0f}" if r.get('fcf') else "N/D"
         rent_str = f"{r['rent_1a']:+.1f}%"
-        rent_cls = "green" if r['rent_1a'] > 10 else ("yellow" if r['rent_1a'] > 0 else "red")
-        entry_str = ", ".join(r.get("entry_types", []))
+        rent_col = "#3ecf8e" if r['rent_1a'] > 0 else "#e05050"
+        score_pct = max(1, min(100, r['score'] * 100))
+        score_col = "#3ecf8e" if r['score'] > 0.6 else ("#f0a500" if r['score'] > 0.3 else "#e05050")
+        entry_types = r.get("entry_types", [])
+        entry_badges = "".join(
+            f'<span style="display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:#1a2a3d;color:#5b8def;border:1px solid #5b8def;margin:1px 2px">{t}</span>'
+            for t in entry_types
+        )
         rows_html += f"""<tr>
   <td>{i}</td>
-  <td>{r['name']}</td>
+  <td><strong>{r['name']}</strong></td>
   <td>{r['ticker']}</td>
   <td>{r['sector']}</td>
-  <td>{r['score']:.3f}</td>
+  <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:{score_pct}%;background:{score_col}"></div></div> {r['score']:.3f}</td>
   <td>{eper_str}</td>
-  <td class="{rent_cls}">{rent_str}</td>
-  <td class="{roe_cls}">{roe_str}</td>
+  <td style="color:{rent_col}">{rent_str}</td>
+  <td style="color:{"#3ecf8e" if (r['roe'] or 0) >= 15 else ("#f0a500" if (r['roe'] or 0) >= 5 else "#e05050")}">{roe_str}</td>
   <td>{eva_str}</td>
   <td>{fcf_str}</td>
-  <td>{entry_str}</td>
+  <td>{entry_badges}</td>
 </tr>"""
+    n_total = len(results)
     radar_section = f"""<!-- RADAR SCREENER -->
-<h2>Radar \u2014 Oportunidades de Entrada</h2>
-<p class="small">\u00daltimo an\u00e1lisis: {now_str} · Criterios: Rent.1A &gt; 0, PER 0-30, Score &gt; 0.3, EVA &gt; 0, ROE &gt; 0 · No en cartera · Técnico: RRA/RR/LT/LTA/PER · (*) no disponible</p>
-<table>
-<thead><tr>
-  <th>#</th><th>Empresa</th><th>Ticker</th><th>Sector</th><th>Score</th><th>PER</th><th>Rent.1A</th><th>ROE</th><th>EVA</th><th>FCF</th><th>Tipo Entrada</th>
-</tr></thead>
-<tbody>
+<div class="section-title" style="margin-top:24px">Radar \u2014 Oportunidades de Entrada</div>
+<div style="font-size:11px;color:#9aa0b0;margin-bottom:14px;padding:8px 12px;background:#12151f;border-radius:8px;line-height:1.6">
+  \u00daltimo an\u00e1lisis: {now_str}
+  <span style="color:#5a5f6b;display:block;margin-top:2px;font-size:10px">
+    Criterios: Rent.1A &gt; 0, PER 0\u201330, Score &gt; 0.3, EVA &gt; 0, ROE &gt; 0 · No en cartera · Técnico: RRA/RR/LT/LTA/PER · (*) no disponible
+  </span>
+</div>
+<table class="alt-table">
+  <thead><tr>
+    <th>#</th><th>Empresa</th><th>Ticker</th><th>Sector</th><th>Score</th><th>PER</th><th>Rent.1A</th><th>ROE</th><th>EVA</th><th>FCF</th><th>Tipo Entrada</th>
+  </tr></thead>
+  <tbody>
 {rows_html}
-</tbody>
+  </tbody>
 </table>
+<div class="alt-note">{n_total} oportunidades encontradas. Score ponderado (0\u20131): ROE 50% / EVA 25% / FCF 25%. Rent.1A positiva con PER ≤ 30.</div>
 <!-- END RADAR -->"""
     # Insert before the closing </body> or at the end
     insert_pos = html.find("</body>")
