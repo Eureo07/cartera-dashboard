@@ -4,1160 +4,916 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard Cartera</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; padding: 20px; }
-h1 { font-size: 24px; margin-bottom: 5px; }
-h2 { font-size: 18px; margin: 25px 0 10px; color: #444; }
-h3 { font-size: 14px; margin: 15px 0 8px; color: #555; }
-.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
-.date { color: #888; font-size: 13px; }
-.summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
-.card { background: white; border-radius: 10px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-.card .label { font-size: 11px; text-transform: uppercase; color: #888; }
-.card .value { font-size: 20px; font-weight: 700; margin-top: 5px; }
-.charts-row { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
-.chart-box { background: white; border-radius: 10px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex: 1; min-width: 250px; }
-.chart-box canvas { max-height: 250px; }
-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; }
-th { background: #f8f9fa; text-align: left; padding: 10px 12px; font-size: 11px; text-transform: uppercase; color: #666; border-bottom: 2px solid #eee; }
-td { padding: 10px 12px; border-bottom: 1px solid #eee; font-size: 13px; }
-tr:last-child td { border-bottom: none; }
-.green { color: #166534; background: #dcfce7; }
-.yellow { color: #854d0e; background: #fef9c3; }
-.orange { color: #9a3412; background: #ffedd5; }
-.red { color: #991b1b; background: #fce4e4; }
-.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
-.bar-bg { background: #eee; border-radius: 6px; height: 10px; width: 100px; display: inline-block; vertical-align: middle; }
-.bar-fill { height: 10px; border-radius: 6px; display: block; }
-.db-wrap { width: 240px; }
-.db-track { height: 14px; background: #e5e7eb; border-radius: 7px; position: relative; overflow: hidden; }
-.db-left { height: 100%; background: #ef4444; position: absolute; left: 0; top: 0; border-radius: 7px 0 0 7px; }
-.db-right { height: 100%; background: #22c55e; position: absolute; top: 0; border-radius: 0 7px 7px 0; }
-.db-right.blink { animation: db-blink 0.8s infinite; }
-@keyframes db-blink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
-.db-center { position: absolute; top: 0; width: 2px; height: 100%; background: #1f2937; z-index: 2; }
-.db-current { position: absolute; top: -4px; font-size: 10px; color: #2563eb; transform: translateX(-50%); z-index: 3; line-height: 1; }
-.db-labels { display: flex; justify-content: space-between; margin-top: 2px; font-size: 10px; }
-.db-l-red { color: #dc2626; }
-.db-l-dark { color: #1f2937; font-weight: 600; }
-.db-l-green { color: #16a34a; }
-.small { font-size: 11px; color: #888; }
-.alert-box { background: #fff; border-left: 4px solid #ef4444; padding: 12px 15px; margin-bottom: 15px; border-radius: 0 8px 8px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-.alert-box .a-title { font-weight: 700; font-size: 13px; }
-.alert-box .a-item { font-size: 12px; color: #666; margin-top: 4px; }
-.alert-red { color: #dc2626; font-weight: 600; }
-.alert-yellow { color: #ca8a04; font-weight: 600; }
-.divers-box { background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-.divers-box h2 { margin: 0 0 10px; }
-.div-row { display: flex; flex-wrap: wrap; gap: 12px; }
-.div-item { font-size: 13px; padding: 6px 12px; background: #f8f9fa; border-radius: 6px; flex: 1; min-width: 200px; }
-.div-icon { font-size: 18px; margin-right: 6px; }
-.div-suggestion { font-size: 12px; color: #2563eb; margin-top: 8px; padding: 6px 10px; background: #eff6ff; border-radius: 6px; }
-.btn-alt { border: none; background: #e5e7eb; color: #374151; padding: 2px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; margin-right: 4px; }
-.btn-alt.active { background: #3b82f6; color: white; }
-.btn-alt:hover { background: #d1d5db; }
-.best-alt-btns { margin-top: 6px; }
-.best-alt-value { font-size: 13px; margin-top: 5px; }
-.card-wide { grid-column: span 2; }
-.sect-row { padding: 4px 0; border-bottom: 1px solid #eee; }
-.sect-row:last-child { border-bottom: none; }
-.sect-name { font-weight: 700; color: #555; font-size: 11px; text-transform: uppercase; margin-right: 4px; }
-.sect-meta { color: #888; font-size: 11px; }
-.sect-ours { color: #16a34a; font-size: 12px; }
-.sect-none { color: #999; font-style: italic; }
-.sect-warn { color: #ca8a04; font-size: 11px; }
-
-
-@media (max-width: 600px) { table { font-size: 12px; } td, th { padding: 6px 8px; } }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',-apple-system,Arial,sans-serif}
+.dash{background:#0f1117;color:#e8eaed;padding:20px 30px;min-height:100vh}
+.header{background:linear-gradient(135deg,#1a1d2e,#2a2d3e);border-radius:16px;padding:28px 36px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:24px;font-weight:700;color:#fff}
+.header .sub{color:#9aa0b0;font-size:13px;margin-top:4px}
+.header .date-info{text-align:right;color:#9aa0b0;font-size:12px}
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px}
+.kpi{background:#1a1d2e;border-radius:12px;padding:18px 22px}
+.kpi .label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#9aa0b0;margin-bottom:8px}
+.kpi .value{font-size:22px;font-weight:700;color:#fff}
+.kpi .value.neg{color:#e05050}
+.kpi .value.pos{color:#3ecf8e}
+.kpi .sub{font-size:11px;color:#9aa0b0;margin-top:4px}
+.section-title{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#9aa0b0;margin-bottom:14px;font-weight:600}
+.positions-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.pos-card{background:#1a1d2e;border-radius:12px;padding:20px 24px;border-left:4px solid #3ecf8e}
+.pos-card.neg{border-left-color:#e05050}
+.pos-card .pos-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.pos-card .ticker{font-size:18px;font-weight:700;color:#fff}
+.pos-card .name{font-size:12px;color:#9aa0b0;margin-top:2px}
+.pos-card .price{text-align:right}
+.pos-card .price .current{font-size:20px;font-weight:700}
+.pos-card .price .pnl{font-size:13px;margin-top:2px}
+.pos-card .price .pnl.neg{color:#e05050}
+.pos-card .price .pnl.pos{color:#3ecf8e}
+.signal-badge{display:inline-block;padding:4px 12px;border-radius:6px;font-size:11px;font-weight:700;margin-bottom:12px}
+.signal-badge.compra{background:#1a3d2e;color:#3ecf8e;border:1px solid #3ecf8e}
+.signal-badge.venta{background:#3d1a1a;color:#e05050;border:1px solid #e05050}
+.signal-badge.hold{background:#2d2d1a;color:#f0a500;border:1px solid #f0a500}
+.metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.metric-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px}
+.metric-row .ml{color:#9aa0b0}
+.metric-row .mv{color:#fff;font-weight:600}
+.metric-row .mv.neg{color:#e05050}
+.metric-row .mv.pos{color:#3ecf8e}
+.metric-row .mv.warn{color:#f0a500}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.chart-card{background:#1a1d2e;border-radius:12px;padding:18px 20px}
+.chart-card .ctitle{font-size:12px;color:#9aa0b0;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+.bottom-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
+.info-card{background:#1a1d2e;border-radius:12px;padding:18px 20px}
+.info-card .ctitle{font-size:12px;color:#9aa0b0;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+.alert-item{padding:8px 10px;border-radius:6px;font-size:12px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.alert-item.danger{background:#3d1a1a;color:#e05050}
+.alert-item.warn{background:#2d2a1a;color:#f0a500}
+.alert-item.info{background:#1a1d3d;color:#5b8def}
+.tendencia-row{display:flex;gap:16px;margin-top:8px}
+.tend-item{background:#12151f;border-radius:8px;padding:10px 14px;flex:1}
+.tend-label{font-size:11px;color:#9aa0b0;margin-bottom:6px}
+.tend-val{font-size:13px;font-weight:700}
+.tend-val.alcista{color:#3ecf8e}
+.tend-val.bajista{color:#e05050}
+.corr-table{width:100%;border-collapse:collapse;font-size:12px}
+.corr-table th{color:#9aa0b0;padding:5px 8px;text-align:center;font-weight:500}
+.corr-table td{padding:5px 8px;text-align:center;border-radius:4px;font-weight:600}
+.corr-low{background:#1a3d2e;color:#3ecf8e}
+.corr-mid{background:#2d2d1a;color:#f0a500}
+.corr-high{background:#3d1a1a;color:#e05050}
+.corr-self{background:#12151f;color:#9aa0b0}
+.legend-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#9aa0b0}
+.leg-dot{width:10px;height:10px;border-radius:2px}
+.tesis-item{margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.05)}
+.tesis-item:last-child{border-bottom:none}
+.tesis-ticker{font-size:13px;font-weight:700;color:#fff}
+.tesis-target{font-size:11px;color:#3ecf8e;margin-top:2px}
+.tesis-text{font-size:11px;color:#9aa0b0;margin-top:4px;line-height:1.5}
+.peso-bar{height:6px;border-radius:3px;background:#3ecf8e;margin-top:4px}
+.peso-bar.warn{background:#f0a500}
+.peso-bar.danger{background:#e05050}
+.alt-section{margin-bottom:24px}
+.alt-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px}
+.alt-table th{background:#12151f;color:#9aa0b0;padding:8px 10px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.alt-table td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.05);color:#e8eaed}
+.alt-table tr.excluded td{color:#5a5f6b;font-style:italic}
+.alt-table tr.selected td{background:rgba(62,207,142,0.08);font-weight:600}
+.alt-table tr:last-child td{border-bottom:none}
+.alt-table .badge-tu{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;background:#1a3d2e;color:#3ecf8e;border:1px solid #3ecf8e}
+.alt-table .badge-alt{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;background:#1a2a3d;color:#5b8def;border:1px solid #5b8def}
+.alt-table .badge-excl{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;background:#3d1a1a;color:#e05050;border:1px solid #e05050}
+.score-bar-bg{background:#12151f;border-radius:4px;height:8px;width:80px;display:inline-block;vertical-align:middle;overflow:hidden}
+.score-bar-fill{height:8px;border-radius:4px;display:block}
+.alt-note{font-size:10px;color:#9aa0b0;margin-bottom:20px;padding:8px 12px;background:#12151f;border-radius:8px;line-height:1.5}
+.footer{text-align:center;padding:20px 0;font-size:11px;color:#5a5f6b;border-top:1px solid rgba(255,255,255,0.05);margin-top:30px}
+.footer span{color:#9aa0b0}
 </style>
 </head>
 <body>
-<div class="header">
-  <div>
-    <h1>Dashboard Cartera</h1>
-    <div class="date">Actualizado: 19/06/2026 12:23</div>
+<div class="dash">
+  <div class="header">
+    <div>
+      <h1>Dashboard Cartera</h1>
+      <div class="sub">Siemens Energy · NVIDIA · Rolls-Royce · Danieli</div>
+    </div>
+    <div class="date-info">Actualizado: 25/06/2026 21:53<br><span style="color:#3ecf8e;font-size:13px;">4 posiciones activas</span></div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi"><div class="label">Inversión Total</div><div class="value">4,142 €</div></div>
+    <div class="kpi"><div class="label">Valor Actual</div><div class="value">4,089 €</div></div>
+    <div class="kpi"><div class="label">Resultado</div><div class="value neg">-53.16 €</div></div>
+    <div class="kpi"><div class="label">Rentabilidad</div><div class="value neg">-1.28%</div><div class="sub">Cartera</div></div>
+    <div class="kpi"><div class="label">vs Euro Stoxx 50</div><div class="value neg">-6.01%</div><div class="sub">Índice +4.73%</div></div>
+  </div>
+
+  <div class="section-title">Análisis por posición</div>
+  <div class="positions-grid">
+    <div class="pos-card neg">
+      <div class="pos-header">
+        <div><div class="ticker">ENR.DE — Siemens Energy</div><div class="name">Energía · Entrada 14/04/2026</div></div>
+        <div class="price"><div class="current" style="color:#e05050">163.46 €</div><div class="pnl neg">-41.40 € (-4.82%)</div></div>
+      </div>
+      <div class="signal-badge hold">HOLD (seguimiento)</div>
+      <div class="metrics-grid">
+        <div class="metric-row"><span class="ml">P. Entrada</span><span class="mv">170.76 €</span></div>
+        <div class="metric-row"><span class="ml">Stop Loss</span><span class="mv">129.83 €</span></div>
+        <div class="metric-row"><span class="ml">Distancia stop</span><span class="mv green">20.6%</span></div>
+        <div class="metric-row"><span class="ml">P. Objetivo</span><span class="mv ">200.64 €</span></div>
+        <div class="metric-row"><span class="ml">PER</span><span class="mv warn">64.4x</span></div>
+        <div class="metric-row"><span class="ml">PER Fwd</span><span class="mv">27.2x</span></div>
+        <div class="metric-row"><span class="ml">P/B</span><span class="mv warn">13.09</span></div>
+        <div class="metric-row"><span class="ml">ROE 2026</span><span class="mv warn">13.7%</span></div>
+        <div class="metric-row"><span class="ml">FCF 2026</span><span class="mv pos">4,097,000,000M €</span></div>
+        <div class="metric-row"><span class="ml">Peso cartera</span><span class="mv ">20.0%</span></div>
+      </div>
+      <div class="tendencia-row">
+        <div class="tend-item"><div class="tend-label">Corto Plazo</div><div class="tend-val alcista">ALCISTA</div></div>
+        <div class="tend-item"><div class="tend-label">Largo Plazo</div><div class="tend-val bajista">BAJISTA</div></div>
+      </div>
+      <div style="font-size:11px;color:#9aa0b0;margin-top:10px;line-height:1.5">Transición energética europea, backlog récord, recuperación post-problemas en turbinas de viento</div>
+    </div>
+    <div class="pos-card neg">
+      <div class="pos-header">
+        <div><div class="ticker">NVD.DE — NVIDIA</div><div class="name">Tecnología · Entrada 27/04/2026</div></div>
+        <div class="price"><div class="current" style="color:#e05050">171.80 €</div><div class="pnl neg">-56.60 € (-6.18%)</div></div>
+      </div>
+      <div class="signal-badge venta">VENTA (corrección)</div>
+      <div class="metrics-grid">
+        <div class="metric-row"><span class="ml">P. Entrada</span><span class="mv">182.34 €</span></div>
+        <div class="metric-row"><span class="ml">Stop Loss</span><span class="mv">140.20 €</span></div>
+        <div class="metric-row"><span class="ml">Distancia stop</span><span class="mv green">18.4%</span></div>
+        <div class="metric-row"><span class="ml">P. Objetivo</span><span class="mv ">214.25 €</span></div>
+        <div class="metric-row"><span class="ml">PER</span><span class="mv ">30.0x</span></div>
+        <div class="metric-row"><span class="ml">PER Fwd</span><span class="mv">N/D</span></div>
+        <div class="metric-row"><span class="ml">P/B</span><span class="mv warn">24.40</span></div>
+        <div class="metric-row"><span class="ml">ROE 2026</span><span class="mv pos">76.3%</span></div>
+        <div class="metric-row"><span class="ml">FCF 2026</span><span class="mv pos">96,676,000,000M €</span></div>
+        <div class="metric-row"><span class="ml">Peso cartera</span><span class="mv ">21.0%</span></div>
+      </div>
+      <div class="tendencia-row">
+        <div class="tend-item"><div class="tend-label">Corto Plazo</div><div class="tend-val bajista">BAJISTA</div></div>
+        <div class="tend-item"><div class="tend-label">Largo Plazo</div><div class="tend-val bajista">BAJISTA</div></div>
+      </div>
+      <div style="font-size:11px;color:#9aa0b0;margin-top:10px;line-height:1.5">Monopolio de facto en GPUs para IA, ciclo de inversión en centros de datos sin techo visible</div>
+    </div>
+    <div class="pos-card">
+      <div class="pos-header">
+        <div><div class="ticker">RRU.DE — Rolls-Royce</div><div class="name">Aeroespacial · Entrada 17/06/2026</div></div>
+        <div class="price"><div class="current" style="color:#3ecf8e">16.63 €</div><div class="pnl pos">+10.50 € (+0.71%)</div></div>
+      </div>
+      <div class="signal-badge compra">COMPRA (posición nueva)</div>
+      <div class="metrics-grid">
+        <div class="metric-row"><span class="ml">P. Entrada</span><span class="mv">16.47 €</span></div>
+        <div class="metric-row"><span class="ml">Stop Loss</span><span class="mv">12.15 €</span></div>
+        <div class="metric-row"><span class="ml">Distancia stop</span><span class="mv green">26.9%</span></div>
+        <div class="metric-row"><span class="ml">P. Objetivo</span><span class="mv ">19.35 €</span></div>
+        <div class="metric-row"><span class="ml">PER</span><span class="mv ">20.8x</span></div>
+        <div class="metric-row"><span class="ml">PER Fwd</span><span class="mv">N/D</span></div>
+        <div class="metric-row"><span class="ml">P/B</span><span class="mv warn">44.18</span></div>
+        <div class="metric-row"><span class="ml">ROE 2026</span><span class="mv pos">214.3%</span></div>
+        <div class="metric-row"><span class="ml">FCF 2026</span><span class="mv pos">3,580,000,000M €</span></div>
+        <div class="metric-row"><span class="ml">Peso cartera</span><span class="mv warn">36.6% ⚠</span></div>
+      </div>
+      <div class="tendencia-row">
+        <div class="tend-item"><div class="tend-label">Corto Plazo</div><div class="tend-val alcista">ALCISTA</div></div>
+        <div class="tend-item"><div class="tend-label">Largo Plazo</div><div class="tend-val alcista">ALCISTA</div></div>
+      </div>
+      <div style="font-size:11px;color:#9aa0b0;margin-top:10px;line-height:1.5">Turnaround completado, contratos TotalCare con visibilidad a largo plazo, exposición a aviación y defensa</div>
+    </div>
+    <div class="pos-card">
+      <div class="pos-header">
+        <div><div class="ticker">DANR.MI — Danieli</div><div class="name">Desconocido · Entrada 06/05/2026</div></div>
+        <div class="price"><div class="current" style="color:#3ecf8e">50.90 €</div><div class="pnl pos">+34.34 € (+3.89%)</div></div>
+      </div>
+      <div class="signal-badge hold">HOLD (seguimiento)</div>
+      <div class="metrics-grid">
+        <div class="metric-row"><span class="ml">P. Entrada</span><span class="mv">48.72 €</span></div>
+        <div class="metric-row"><span class="ml">Stop Loss</span><span class="mv">38.82 €</span></div>
+        <div class="metric-row"><span class="ml">Distancia stop</span><span class="mv green">23.7%</span></div>
+        <div class="metric-row"><span class="ml">P. Objetivo</span><span class="mv ">57.25 €</span></div>
+        <div class="metric-row"><span class="ml">PER</span><span class="mv pos">16.0x</span></div>
+        <div class="metric-row"><span class="ml">PER Fwd</span><span class="mv">11.6x</span></div>
+        <div class="metric-row"><span class="ml">P/B</span><span class="mv pos">1.33</span></div>
+        <div class="metric-row"><span class="ml">ROE 2026</span><span class="mv neg">N/D</span></div>
+        <div class="metric-row"><span class="ml">FCF 2026</span><span class="mv neg">N/D</span></div>
+        <div class="metric-row"><span class="ml">Peso cartera</span><span class="mv ">22.4%</span></div>
+      </div>
+      <div class="tendencia-row">
+        <div class="tend-item"><div class="tend-label">Corto Plazo</div><div class="tend-val alcista">ALCISTA</div></div>
+        <div class="tend-item"><div class="tend-label">Largo Plazo</div><div class="tend-val alcista">ALCISTA</div></div>
+      </div>
+      <div style="font-size:11px;color:#9aa0b0;margin-top:10px;line-height:1.5">Empresa familiar italiana infravalorada, P/B bajo, especialista en acerías con cartera de pedidos sólida</div>
+    </div>
+  </div>
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="ctitle">Distribución de cartera</div>
+      <div class="legend-row">
+        <span class="leg-item"><span class="leg-dot" style="background:#2a78d6"></span>ENR 20.0%</span>
+        <span class="leg-item"><span class="leg-dot" style="background:#1baf7a"></span>NVD 21.0%</span>
+        <span class="leg-item"><span class="leg-dot" style="background:#eda100"></span>RRU 36.6%</span>
+        <span class="leg-item"><span class="leg-dot" style="background:#4a3aa7"></span>DANR 22.4%</span>
+      </div>
+      <div style="position:relative;height:200px"><canvas id="chartPeso" role="img" aria-label="Distribución de la cartera por posición"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="ctitle">P&amp;L por posición (€)</div>
+      <div style="position:relative;height:230px"><canvas id="chartPnl" role="img" aria-label="P&L por posición en euros"></canvas></div>
+    </div>
+  </div>
+
+  <div class="bottom-row">
+    <div class="info-card">
+      <div class="ctitle">Alertas</div>
+      <div class="alert-item danger"><span>⚠</span><span><span class="alert-red">⚠ Rolls-Royce: peso elevado (36.6% de la cartera)</span></span></div>
+      <div class="alert-item warn"><span>!</span><span>Siemens Energy: PER alto (64.4)</span></div>
+      <div class="alert-item warn"><span>!</span><span>Siemens Energy: P/B elevado (13.09)</span></div>
+      <div class="alert-item warn"><span>!</span><span>NVIDIA: P/B elevado (24.40)</span></div>
+      <div class="alert-item warn"><span>!</span><span>Rolls-Royce: P/B elevado (44.18)</span></div>
+    </div>
+
+    <div class="info-card">
+      <div class="ctitle">Correlación de precios (252d)</div>
+      <table class="corr-table">
+        <tr><th></th>
+<th>ENR</th>
+<th>NVD</th>
+<th>RRU</th>
+<th>DANR</th>
+        </tr>
+<tr><th></th><th>ENR</th><th>NVD</th><th>RRU</th><th>DANR</th></tr><tr><td><strong>ENR</strong></td><td class="corr-high">1.00</td><td class="corr-mid">0.47</td><td class="corr-mid">0.53</td><td class="corr-mid">0.42</td></tr><tr><td><strong>NVD</strong></td><td class="corr-mid">0.47</td><td class="corr-high">1.00</td><td class="corr-low">0.27</td><td class="corr-low">0.28</td></tr><tr><td><strong>RRU</strong></td><td class="corr-mid">0.53</td><td class="corr-low">0.27</td><td class="corr-high">1.00</td><td class="corr-mid">0.39</td></tr><tr><td><strong>DANR</strong></td><td class="corr-mid">0.42</td><td class="corr-low">0.28</td><td class="corr-mid">0.39</td><td class="corr-high">1.00</td></tr>      </table>
+      <div style="font-size:10px;color:#9aa0b0;margin-top:8px">Verde &lt;0.3 · Amarillo 0.3–0.7 · Rojo &gt;0.7</div>
+    </div>
+
+    <div class="info-card">
+      <div class="ctitle">Tesis de inversión</div>
+      <div class="tesis-item">
+        <div class="tesis-ticker">Siemens Energy</div>
+        <div class="tesis-target">Objetivo: 200.64 € · Venta si Si pierde contratos clave de hidrógeno o PER forward supera 40</div>
+        <div class="tesis-text">Transición energética europea, backlog récord, recuperación post-problemas en turbinas de viento</div>
+      </div>
+      <div class="tesis-item">
+        <div class="tesis-ticker">NVIDIA</div>
+        <div class="tesis-target">Objetivo: 214.25 € · Venta si Si AMD supera 25% de cuota en IA o regulación antimonopolio</div>
+        <div class="tesis-text">Monopolio de facto en GPUs para IA, ciclo de inversión en centros de datos sin techo visible</div>
+      </div>
+      <div class="tesis-item">
+        <div class="tesis-ticker">Rolls-Royce</div>
+        <div class="tesis-target">Objetivo: 19.35 € · Venta si Si márgenes EBIT caen por debajo del 10%</div>
+        <div class="tesis-text">Turnaround completado, contratos TotalCare con visibilidad a largo plazo, exposición a aviación y defensa</div>
+      </div>
+      <div class="tesis-item">
+        <div class="tesis-ticker">Danieli</div>
+        <div class="tesis-target">Objetivo: 57.25 € · Venta si Si el ciclo del acero se deteriora significativamente</div>
+        <div class="tesis-text">Empresa familiar italiana infravalorada, P/B bajo, especialista en acerías con cartera de pedidos sólida</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="ctitle">Métricas de valoración comparadas</div>
+      <div style="position:relative;height:220px"><canvas id="chartVal" role="img" aria-label="Comparativa PER y P/B por posición"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="ctitle">ROE 2026 vs media sectorial</div>
+      <div style="position:relative;height:220px"><canvas id="chartRoe" role="img" aria-label="ROE 2026 por empresa versus media sectorial"></canvas></div>
+    </div>
+  </div>
+  <div class="section-title">Alternativas por sector</div>
+  <div style="font-size:11px;color:#9aa0b0;margin-bottom:14px;padding:8px 12px;background:#12151f;border-radius:8px;line-height:1.6">
+    Filtros activos: PER ≤ 30 <span style="color:#5a5f6b;">|</span> Rentabilidad 1A ≥ +25%
+    <span style="color:#5a5f6b;display:block;margin-top:2px;font-size:10px;">
+      Score = ROE (50%) + EVA (25%) + FCF (25%), normalizado por sector. WACC: 8%.
+    </span>
+  </div>
+  <div style="margin-bottom:20px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <h3 style="color:#e8eaed;font-size:14px;font-weight:600;margin:0">Energía</h3>
+      <span style="color:#9aa0b0;font-size:11px">12 empresas analizadas</span>
+    </div>
+    <table class="alt-table">
+      <thead><tr>
+        <th>Empresa</th><th>Ticker</th><th>Score</th><th>ROE 2026</th><th>PER Fwd</th><th>P/B</th><th>Rent.1A</th><th></th>
+      </tr></thead>
+      <tbody>
+        <tr class="excluded">
+          <td><strong>Naturgy</strong></td>
+          <td>NTGY.MC</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:73.3%;background:#3ecf8e"></div></div> 0.733</td>
+          <td style="color:#3ecf8e">21.6%</td>
+          <td>13.6x</td>
+          <td style="color:#f0a500">3.22</td>
+          <td style="color:#e05050">+4.4%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A +4% <25%)</span></td>
+        </tr>
+        <tr>
+          <td><strong>ExxonMobil</strong></td>
+          <td>XOM</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:69.8%;background:#3ecf8e"></div></div> 0.698</td>
+          <td style="color:#f0a500">11.1%</td>
+          <td>12.8x</td>
+          <td style="color:#3ecf8e">2.21</td>
+          <td style="color:#3ecf8e">+26.6%</td>
+          <td><span class="badge-alt">ALT</span></td>
+        </tr>
+        <tr>
+          <td><strong>Solaria</strong></td>
+          <td>SLR.MC</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:64.8%;background:#3ecf8e"></div></div> 0.648</td>
+          <td style="color:#3ecf8e">19.5%</td>
+          <td>13.3x</td>
+          <td style="color:#f0a500">3.45</td>
+          <td style="color:#3ecf8e">+115.5%</td>
+          <td><span class="badge-alt">ALT</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Shell</strong></td>
+          <td>SHEL.L</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:64.0%;background:#3ecf8e"></div></div> 0.640</td>
+          <td style="color:#f0a500">10.2%</td>
+          <td>8.0x</td>
+          <td style="color:#3ecf8e">1.26</td>
+          <td style="color:#e05050">+14.1%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A +14% <25%)</span></td>
+        </tr>
+        <tr>
+          <td><strong>TotalEnergies</strong></td>
+          <td>TTE.PA</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:62.5%;background:#3ecf8e"></div></div> 0.625</td>
+          <td style="color:#f0a500">11.4%</td>
+          <td>8.2x</td>
+          <td style="color:#3ecf8e">1.39</td>
+          <td style="color:#3ecf8e">+32.5%</td>
+          <td><span class="badge-alt">ALT</span></td>
+        </tr>
+        <tr class="selected">
+          <td><strong>Siemens Energy</strong></td>
+          <td>ENR.DE</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:56.699999999999996%;background:#f0a500"></div></div> 0.567</td>
+          <td style="color:#f0a500">13.7%</td>
+          <td>27.2x</td>
+          <td style="color:#e05050">13.09</td>
+          <td style="color:#3ecf8e">+76.9%</td>
+          <td><span class="badge-tu">TU POS.</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>ConocoPhillips</strong></td>
+          <td>COP</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:55.900000000000006%;background:#f0a500"></div></div> 0.559</td>
+          <td style="color:#f0a500">12.4%</td>
+          <td>11.5x</td>
+          <td style="color:#3ecf8e">2.01</td>
+          <td style="color:#e05050">+19.7%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A +20% <25%)</span></td>
+        </tr>
+        <tr>
+          <td><strong>Enagás</strong></td>
+          <td>ENG.MC</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:54.0%;background:#f0a500"></div></div> 0.540</td>
+          <td style="color:#f0a500">14.7%</td>
+          <td>16.9x</td>
+          <td style="color:#3ecf8e">2.09</td>
+          <td style="color:#3ecf8e">+26.0%</td>
+          <td><span class="badge-alt">ALT</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Acciona Energía</strong></td>
+          <td>ANE.MC</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:44.800000000000004%;background:#f0a500"></div></div> 0.448</td>
+          <td style="color:#f0a500">11.2%</td>
+          <td>34.1x</td>
+          <td style="color:#3ecf8e">1.29</td>
+          <td style="color:#e05050">+19.7%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(PER 34 >30; Rent.1A +20% <25%)</span></td>
+        </tr>
+        <tr>
+          <td><strong>Repsol</strong></td>
+          <td>REP.MC</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:36.6%;background:#f0a500"></div></div> 0.366</td>
+          <td style="color:#f0a500">7.5%</td>
+          <td>6.5x</td>
+          <td style="color:#3ecf8e">1.05</td>
+          <td style="color:#3ecf8e">+71.7%</td>
+          <td><span class="badge-alt">ALT</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Chevron</strong></td>
+          <td>CVX</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:32.6%;background:#f0a500"></div></div> 0.326</td>
+          <td style="color:#f0a500">6.6%</td>
+          <td>13.7x</td>
+          <td style="color:#3ecf8e">1.85</td>
+          <td style="color:#e05050">+20.1%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A +20% <25%)</span></td>
+        </tr>
+        <tr>
+          <td><strong>BP</strong></td>
+          <td>BP.L</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:19.5%;background:#e05050"></div></div> 0.195</td>
+          <td style="color:#e05050">0.1%</td>
+          <td>9.2x</td>
+          <td style="color:#3ecf8e">1.76</td>
+          <td style="color:#3ecf8e">+32.0%</td>
+          <td><span class="badge-alt">ALT</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="alt-note">7 de 12 empresas pasan el filtro (PER ≤ 30 y Rent.1A ≥ +25%). Score: ROE 50% / EVA 25% / FCF 25%.</div>
+  </div>
+  <div style="margin-bottom:20px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <h3 style="color:#e8eaed;font-size:14px;font-weight:600;margin:0">Tecnología</h3>
+      <span style="color:#9aa0b0;font-size:11px">35 empresas analizadas</span>
+    </div>
+    <table class="alt-table">
+      <thead><tr>
+        <th>Empresa</th><th>Ticker</th><th>Score</th><th>ROE 2026</th><th>PER Fwd</th><th>P/B</th><th>Rent.1A</th><th></th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Apple</strong></td>
+          <td>AAPL</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:86.6%;background:#3ecf8e"></div></div> 0.866</td>
+          <td style="color:#3ecf8e">151.9%</td>
+          <td>28.8x</td>
+          <td style="color:#e05050">38.15</td>
+          <td style="color:#3ecf8e">+37.3%</td>
+          <td><span class="badge-alt">ALT</span></td>
+        </tr>
+        <tr class="selected">
+          <td><strong>Nvidia</strong></td>
+          <td>NVDA</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:81.89999999999999%;background:#3ecf8e"></div></div> 0.819</td>
+          <td style="color:#3ecf8e">76.3%</td>
+          <td>15.3x</td>
+          <td style="color:#e05050">24.11</td>
+          <td style="color:#3ecf8e">+26.1%</td>
+          <td><span class="badge-tu">TU POS.</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Microsoft</strong></td>
+          <td>MSFT</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:64.8%;background:#3ecf8e"></div></div> 0.648</td>
+          <td style="color:#3ecf8e">29.6%</td>
+          <td>18.3x</td>
+          <td style="color:#e05050">6.36</td>
+          <td style="color:#e05050">-28.2%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -28% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Verisk Analytics</strong></td>
+          <td>VRSK</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:58.099999999999994%;background:#f0a500"></div></div> 0.581</td>
+          <td style="color:#3ecf8e">293.9%</td>
+          <td>20.4x</td>
+          <td style="color:#e05050">79.48</td>
+          <td style="color:#e05050">-41.7%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -42% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Rightmove</strong></td>
+          <td>RMV.L</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:55.400000000000006%;background:#f0a500"></div></div> 0.554</td>
+          <td style="color:#3ecf8e">263.8%</td>
+          <td>12.8x</td>
+          <td style="color:#e05050">40.14</td>
+          <td style="color:#e05050">-44.3%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -44% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Adobe</strong></td>
+          <td>ADBE</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:42.199999999999996%;background:#f0a500"></div></div> 0.422</td>
+          <td style="color:#3ecf8e">61.3%</td>
+          <td>7.1x</td>
+          <td style="color:#e05050">6.74</td>
+          <td style="color:#e05050">-49.8%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -50% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Automatic Data Processing</strong></td>
+          <td>ADP</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:40.9%;background:#f0a500"></div></div> 0.409</td>
+          <td style="color:#3ecf8e">65.9%</td>
+          <td>17.8x</td>
+          <td style="color:#e05050">13.69</td>
+          <td style="color:#e05050">-27.2%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -27% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Oracle</strong></td>
+          <td>ORCL</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:39.7%;background:#f0a500"></div></div> 0.397</td>
+          <td style="color:#3ecf8e">60.8%</td>
+          <td>14.0x</td>
+          <td style="color:#e05050">13.06</td>
+          <td style="color:#e05050">-27.7%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -28% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>IBM</strong></td>
+          <td>IBM</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:39.6%;background:#f0a500"></div></div> 0.396</td>
+          <td style="color:#3ecf8e">32.5%</td>
+          <td>19.2x</td>
+          <td style="color:#e05050">7.36</td>
+          <td style="color:#e05050">-11.3%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -11% <25%)</span></td>
+        </tr>
+        <tr>
+          <td><strong>Cisco</strong></td>
+          <td>CSCO</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:39.5%;background:#f0a500"></div></div> 0.395</td>
+          <td style="color:#3ecf8e">21.7%</td>
+          <td>24.8x</td>
+          <td style="color:#e05050">9.56</td>
+          <td style="color:#3ecf8e">+74.0%</td>
+          <td><span class="badge-alt">ALT</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Salesforce</strong></td>
+          <td>CRM</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:38.3%;background:#f0a500"></div></div> 0.383</td>
+          <td style="color:#f0a500">12.6%</td>
+          <td>9.7x</td>
+          <td style="color:#f0a500">3.61</td>
+          <td style="color:#e05050">-43.7%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -44% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Paychex</strong></td>
+          <td>PAYX</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:37.8%;background:#f0a500"></div></div> 0.378</td>
+          <td style="color:#3ecf8e">40.1%</td>
+          <td>15.2x</td>
+          <td style="color:#e05050">8.64</td>
+          <td style="color:#e05050">-29.8%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -30% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>SAP</strong></td>
+          <td>SAP.DE</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:37.8%;background:#f0a500"></div></div> 0.378</td>
+          <td style="color:#3ecf8e">16.1%</td>
+          <td>15.7x</td>
+          <td style="color:#f0a500">3.43</td>
+          <td style="color:#e05050">-47.6%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -48% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Autodesk</strong></td>
+          <td>ADSK</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:37.6%;background:#f0a500"></div></div> 0.376</td>
+          <td style="color:#3ecf8e">36.9%</td>
+          <td>13.3x</td>
+          <td style="color:#e05050">12.60</td>
+          <td style="color:#e05050">-37.0%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -37% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Intuit</strong></td>
+          <td>INTU</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:37.3%;background:#f0a500"></div></div> 0.373</td>
+          <td style="color:#3ecf8e">19.6%</td>
+          <td>9.4x</td>
+          <td style="color:#f0a500">3.41</td>
+          <td style="color:#e05050">-66.2%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -66% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Western Digital</strong></td>
+          <td>WDC</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:37.0%;background:#f0a500"></div></div> 0.370</td>
+          <td style="color:#3ecf8e">33.6%</td>
+          <td>37.1x</td>
+          <td style="color:#e05050">32.02</td>
+          <td style="color:#3ecf8e">+971.6%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(PER 37 >30)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Amadeus IT</strong></td>
+          <td>AMS.MC</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:36.6%;background:#f0a500"></div></div> 0.366</td>
+          <td style="color:#3ecf8e">27.5%</td>
+          <td>13.5x</td>
+          <td style="color:#f0a500">4.59</td>
+          <td style="color:#e05050">-24.1%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -24% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Palantir</strong></td>
+          <td>PLTR</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:36.4%;background:#f0a500"></div></div> 0.364</td>
+          <td style="color:#3ecf8e">22.0%</td>
+          <td>51.7x</td>
+          <td style="color:#e05050">30.54</td>
+          <td style="color:#e05050">-24.7%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(PER 52 >30; Rent.1A -25% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>ServiceNow</strong></td>
+          <td>NOW</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:36.1%;background:#f0a500"></div></div> 0.361</td>
+          <td style="color:#f0a500">13.5%</td>
+          <td>17.9x</td>
+          <td style="color:#e05050">7.90</td>
+          <td style="color:#e05050">-55.4%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -55% <25%)</span></td>
+        </tr>
+        <tr>
+          <td><strong>Indra</strong></td>
+          <td>IDR.MC</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:36.1%;background:#f0a500"></div></div> 0.361</td>
+          <td style="color:#3ecf8e">25.1%</td>
+          <td>14.8x</td>
+          <td style="color:#f0a500">4.52</td>
+          <td style="color:#3ecf8e">+44.8%</td>
+          <td><span class="badge-alt">ALT</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Cadence Design</strong></td>
+          <td>CDNS</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:36.0%;background:#f0a500"></div></div> 0.360</td>
+          <td style="color:#3ecf8e">20.3%</td>
+          <td>39.1x</td>
+          <td style="color:#e05050">15.47</td>
+          <td style="color:#e05050">+23.6%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(PER 39 >30; Rent.1A +24% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Cognizant</strong></td>
+          <td>CTSH</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:35.9%;background:#f0a500"></div></div> 0.359</td>
+          <td style="color:#f0a500">14.8%</td>
+          <td>6.3x</td>
+          <td style="color:#3ecf8e">1.23</td>
+          <td style="color:#e05050">-49.1%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -49% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Capgemini</strong></td>
+          <td>CAP.PA</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:35.6%;background:#f0a500"></div></div> 0.356</td>
+          <td style="color:#f0a500">13.7%</td>
+          <td>6.4x</td>
+          <td style="color:#3ecf8e">1.29</td>
+          <td style="color:#e05050">-37.8%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -38% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Dassault Systèmes</strong></td>
+          <td>DSY.PA</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:35.5%;background:#f0a500"></div></div> 0.355</td>
+          <td style="color:#f0a500">13.6%</td>
+          <td>12.5x</td>
+          <td style="color:#3ecf8e">2.51</td>
+          <td style="color:#e05050">-42.8%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -43% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Workday</strong></td>
+          <td>WDAY</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:35.3%;background:#f0a500"></div></div> 0.353</td>
+          <td style="color:#f0a500">8.9%</td>
+          <td>9.0x</td>
+          <td style="color:#f0a500">3.79</td>
+          <td style="color:#e05050">-51.1%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -51% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Teleperformance</strong></td>
+          <td>TEP.PA</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:35.199999999999996%;background:#f0a500"></div></div> 0.352</td>
+          <td style="color:#f0a500">12.1%</td>
+          <td>3.6x</td>
+          <td style="color:#3ecf8e">0.72</td>
+          <td style="color:#e05050">-35.1%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -35% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Shopify</strong></td>
+          <td>SHOP</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:35.199999999999996%;background:#f0a500"></div></div> 0.352</td>
+          <td style="color:#f0a500">9.1%</td>
+          <td>48.0x</td>
+          <td style="color:#e05050">11.65</td>
+          <td style="color:#e05050">-1.8%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(PER 48 >30; Rent.1A -2% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>DoorDash</strong></td>
+          <td>DASH</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:35.0%;background:#f0a500"></div></div> 0.350</td>
+          <td style="color:#f0a500">9.3%</td>
+          <td>22.7x</td>
+          <td style="color:#e05050">7.59</td>
+          <td style="color:#e05050">-23.9%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -24% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Datadog</strong></td>
+          <td>DDOG</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:34.300000000000004%;background:#f0a500"></div></div> 0.343</td>
+          <td style="color:#e05050">2.9%</td>
+          <td>77.8x</td>
+          <td style="color:#e05050">19.82</td>
+          <td style="color:#3ecf8e">+70.6%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(PER 78 >30)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Synopsys</strong></td>
+          <td>SNPS</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:34.300000000000004%;background:#f0a500"></div></div> 0.343</td>
+          <td style="color:#e05050">4.7%</td>
+          <td>26.3x</td>
+          <td style="color:#3ecf8e">2.86</td>
+          <td style="color:#e05050">-6.6%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -7% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Atlassian</strong></td>
+          <td>TEAM</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:32.7%;background:#f0a500"></div></div> 0.327</td>
+          <td style="color:#e05050">-19.1%</td>
+          <td>12.1x</td>
+          <td style="color:#e05050">12.51</td>
+          <td style="color:#e05050">-62.2%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -62% <25%)</span></td>
+        </tr>
+        <tr>
+          <td><strong>Sandisk</strong></td>
+          <td>SNDK</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:32.1%;background:#f0a500"></div></div> 0.321</td>
+          <td style="color:#e05050">-17.8%</td>
+          <td>12.7x</td>
+          <td style="color:#e05050">25.07</td>
+          <td style="color:#3ecf8e">+4822.4%</td>
+          <td><span class="badge-alt">ALT</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>VeriSign</strong></td>
+          <td>VRSN</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:31.3%;background:#f0a500"></div></div> 0.313</td>
+          <td style="color:#e05050">-38.3%</td>
+          <td>24.2x</td>
+          <td style="color:#e05050">N/D</td>
+          <td style="color:#e05050">-10.2%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -10% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Baidu</strong></td>
+          <td>BIDU</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:26.400000000000002%;background:#e05050"></div></div> 0.264</td>
+          <td style="color:#e05050">2.1%</td>
+          <td>11.4x</td>
+          <td style="color:#3ecf8e">0.89</td>
+          <td style="color:#e05050">+19.4%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A +19% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Seagate Technology</strong></td>
+          <td>STX</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:8.200000000000001%;background:#e05050"></div></div> 0.082</td>
+          <td style="color:#e05050">-324.3%</td>
+          <td>37.9x</td>
+          <td style="color:#e05050">N/D</td>
+          <td style="color:#3ecf8e">+639.7%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(PER 38 >30)</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="alt-note">5 de 35 empresas pasan el filtro (PER ≤ 30 y Rent.1A ≥ +25%). Score: ROE 50% / EVA 25% / FCF 25%.</div>
+  </div>
+  <div style="margin-bottom:20px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <h3 style="color:#e8eaed;font-size:14px;font-weight:600;margin:0">Aeroespacial</h3>
+      <span style="color:#9aa0b0;font-size:11px">6 empresas analizadas</span>
+    </div>
+    <table class="alt-table">
+      <thead><tr>
+        <th>Empresa</th><th>Ticker</th><th>Score</th><th>ROE 2026</th><th>PER Fwd</th><th>P/B</th><th>Rent.1A</th><th></th>
+      </tr></thead>
+      <tbody>
+        <tr class="selected">
+          <td><strong>Rolls-Royce</strong></td>
+          <td>RR.L</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:85.1%;background:#3ecf8e"></div></div> 0.851</td>
+          <td style="color:#3ecf8e">214.3%</td>
+          <td>33.1x</td>
+          <td style="color:#e05050">43.93</td>
+          <td style="color:#3ecf8e">+56.2%</td>
+          <td><span class="badge-tu">TU POS.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Safran</strong></td>
+          <td>SAF.PA</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:48.199999999999996%;background:#f0a500"></div></div> 0.482</td>
+          <td style="color:#3ecf8e">48.4%</td>
+          <td>28.0x</td>
+          <td style="color:#e05050">9.66</td>
+          <td style="color:#3ecf8e">+30.3%</td>
+          <td><span class="badge-alt">ALT</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>GE Aerospace</strong></td>
+          <td>GE</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:41.3%;background:#f0a500"></div></div> 0.413</td>
+          <td style="color:#3ecf8e">46.6%</td>
+          <td>42.5x</td>
+          <td style="color:#e05050">21.35</td>
+          <td style="color:#3ecf8e">+47.9%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(PER 43 >30)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Airbus</strong></td>
+          <td>AIR.DE</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:16.400000000000002%;background:#e05050"></div></div> 0.164</td>
+          <td style="color:#3ecf8e">20.0%</td>
+          <td>40.7x</td>
+          <td style="color:#e05050">5.89</td>
+          <td style="color:#e05050">+13.7%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(PER 41 >30; Rent.1A +14% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>MTU Aero Engines</strong></td>
+          <td>MTX.DE</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:10.100000000000001%;background:#e05050"></div></div> 0.101</td>
+          <td style="color:#3ecf8e">23.6%</td>
+          <td>17.8x</td>
+          <td style="color:#f0a500">4.43</td>
+          <td style="color:#e05050">-1.9%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(Rent.1A -2% <25%)</span></td>
+        </tr>
+        <tr class="excluded">
+          <td><strong>Boeing</strong></td>
+          <td>BA</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:5.4%;background:#e05050"></div></div> 0.054</td>
+          <td style="color:#3ecf8e">41.0%</td>
+          <td>52.0x</td>
+          <td style="color:#e05050">28.67</td>
+          <td style="color:#e05050">+9.4%</td>
+          <td><span class="badge-excl">EXCL.</span> <span style="font-size:9px;color:#5a5f6b">(PER 52 >30; Rent.1A +9% <25%)</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="alt-note">2 de 6 empresas pasan el filtro (PER ≤ 30 y Rent.1A ≥ +25%). Score: ROE 50% / EVA 25% / FCF 25%.</div>
+  </div>
+  <div class="footer">
+    Generado automáticamente · <span>yfinance</span> · EVA con WACC 8% · Precios en vivo al recargar
   </div>
 </div>
 
-<div class="summary-cards">
-  <div class="card"><div class="label">Inversión Total</div><div class="value" id="total-cost">4,142.36 €</div></div>
-  <div class="card"><div class="label">Valor Actual</div><div class="value" id="total-value">4,149.80 €</div></div>
-  <div class="card"><div class="label">Resultado</div><div class="value green" id="total-pnl">+7.44 €</div></div>
-  <div class="card"><div class="label">Rentabilidad</div><div class="value green" id="total-pnlpct">+0.18%</div></div>
-  <div class="card"><div class="label">vs Euro Stoxx 50</div><div class="value red">-5.47%</div><div class="small">Cartera +0.18% vs Índice +5.65%</div></div>
-  <div class="card card-wide" id="best-alt-card">
-  <div class="label">Mejores Alternativas por Sector</div>
-  <div class="best-alt-value" id="best-alt-value">
-    <div class="sect-row"><span class="sect-name">Energía</span> → <strong>Naturgy</strong> (NTGY.MC)<br><span class="sect-meta">Score: 0.730 · PER: 14.0 · Rent.1A: +13.7%</span></div><div class="sect-row"><span class="sect-name">Tecnología</span> → <strong>Verisk Analytics</strong> (VRSK)<br><span class="sect-meta">Score: 0.582 · PER: 20.1 · Rent.1A: +nan%</span> <span class="sect-warn">(sin momentum positivo en el sector)</span></div><div class="sect-row"><span class="sect-name">Aeroespacial</span> → <strong>Safran</strong> (SAF.PA)<br><span class="sect-meta">Score: 0.565 · PER: 27.3 · Rent.1A: +31.3%</span></div><div class="sect-row"><span class="sect-name">Industrials</span> → <span class="sect-none">Sin alternativas</span></div>
-  </div>
-  <div class="best-alt-btns" id="best-alt-btns">
-    <button class="btn-alt active" data-mode="score">Score</button>
-    <button class="btn-alt" data-mode="per">PER</button>
-    <button class="btn-alt" data-mode="mom">Momentum</button>
-  </div>
-</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-(function() {
-  const DATA = {"Energía": {"ours": "Siemens Energy", "peers": [{"name": "Naturgy", "ticker": "NTGY.MC", "score": 0.73, "per": 14.0, "rent_1a": 13.7, "is_ours": false}, {"name": "ExxonMobil", "ticker": "XOM", "score": 0.698, "per": 12.9, "rent_1a": NaN, "is_ours": false}, {"name": "Solaria", "ticker": "SLR.MC", "score": 0.645, "per": 13.7, "rent_1a": 128.5, "is_ours": false}, {"name": "Shell", "ticker": "SHEL.L", "score": 0.64, "per": 8.2, "rent_1a": 11.0, "is_ours": false}, {"name": "TotalEnergies", "ticker": "TTE.PA", "score": 0.623, "per": 8.6, "rent_1a": 35.9, "is_ours": false}, {"name": "Siemens Energy", "ticker": "ENR.DE", "score": 0.564, "per": 28.2, "rent_1a": 96.4, "is_ours": true}, {"name": "ConocoPhillips", "ticker": "COP", "score": 0.556, "per": 11.7, "rent_1a": NaN, "is_ours": false}, {"name": "Enagás", "ticker": "ENG.MC", "score": 0.537, "per": 16.7, "rent_1a": 27.3, "is_ours": false}, {"name": "Repsol", "ticker": "REP.MC", "score": 0.363, "per": 6.5, "rent_1a": 81.5, "is_ours": false}, {"name": "Chevron", "ticker": "CVX", "score": 0.325, "per": 13.8, "rent_1a": NaN, "is_ours": false}, {"name": "BP", "ticker": "BP.L", "score": 0.193, "per": 9.6, "rent_1a": 26.9, "is_ours": false}]}, "Tecnología": {"ours": "NVIDIA", "peers": [{"name": "Nvidia", "ticker": "NVDA", "score": 0.673, "per": 16.6, "rent_1a": NaN, "is_ours": true}, {"name": "Verisk Analytics", "ticker": "VRSK", "score": 0.582, "per": 20.1, "rent_1a": NaN, "is_ours": false}, {"name": "Rightmove", "ticker": "RMV.L", "score": 0.534, "per": 12.5, "rent_1a": -44.9, "is_ours": false}, {"name": "Microsoft", "ticker": "MSFT", "score": 0.467, "per": 19.6, "rent_1a": NaN, "is_ours": false}, {"name": "Adobe", "ticker": "ADBE", "score": 0.261, "per": 7.1, "rent_1a": NaN, "is_ours": false}, {"name": "Automatic Data Processing", "ticker": "ADP", "score": 0.251, "per": 17.9, "rent_1a": NaN, "is_ours": false}, {"name": "Oracle", "ticker": "ORCL", "score": 0.236, "per": 16.9, "rent_1a": NaN, "is_ours": false}, {"name": "IBM", "ticker": "IBM", "score": 0.216, "per": 18.5, "rent_1a": NaN, "is_ours": false}, {"name": "Cisco", "ticker": "CSCO", "score": 0.207, "per": 25.0, "rent_1a": NaN, "is_ours": false}, {"name": "Paychex", "ticker": "PAYX", "score": 0.202, "per": 16.7, "rent_1a": NaN, "is_ours": false}, {"name": "Autodesk", "ticker": "ADSK", "score": 0.198, "per": 13.6, "rent_1a": NaN, "is_ours": false}, {"name": "Salesforce", "ticker": "CRM", "score": 0.188, "per": 9.8, "rent_1a": NaN, "is_ours": false}, {"name": "SAP", "ticker": "SAP.DE", "score": 0.185, "per": 15.9, "rent_1a": -44.3, "is_ours": false}, {"name": "Intuit", "ticker": "INTU", "score": 0.183, "per": 9.8, "rent_1a": NaN, "is_ours": false}, {"name": "Amadeus IT", "ticker": "AMS.MC", "score": 0.182, "per": 13.3, "rent_1a": -23.4, "is_ours": false}, {"name": "Indra", "ticker": "IDR.MC", "score": 0.174, "per": 17.0, "rent_1a": 61.1, "is_ours": false}, {"name": "ServiceNow", "ticker": "NOW", "score": 0.167, "per": 18.9, "rent_1a": NaN, "is_ours": false}, {"name": "Cognizant", "ticker": "CTSH", "score": 0.166, "per": 7.1, "rent_1a": NaN, "is_ours": false}, {"name": "Capgemini", "ticker": "CAP.PA", "score": 0.161, "per": 6.5, "rent_1a": -36.5, "is_ours": false}, {"name": "Dassault Systèmes", "ticker": "DSY.PA", "score": 0.16, "per": 12.2, "rent_1a": -43.6, "is_ours": false}, {"name": "Teleperformance", "ticker": "TEP.PA", "score": 0.157, "per": 4.0, "rent_1a": -24.6, "is_ours": false}, {"name": "Workday", "ticker": "WDAY", "score": 0.155, "per": 9.3, "rent_1a": NaN, "is_ours": false}, {"name": "DoorDash", "ticker": "DASH", "score": 0.153, "per": 22.2, "rent_1a": NaN, "is_ours": false}, {"name": "Synopsys", "ticker": "SNPS", "score": 0.142, "per": 26.4, "rent_1a": NaN, "is_ours": false}, {"name": "Atlassian", "ticker": "TEAM", "score": 0.11, "per": 13.3, "rent_1a": NaN, "is_ours": false}, {"name": "Sandisk", "ticker": "SNDK", "score": 0.104, "per": 11.9, "rent_1a": NaN, "is_ours": false}, {"name": "VeriSign", "ticker": "VRSN", "score": 0.082, "per": 24.8, "rent_1a": NaN, "is_ours": false}, {"name": "Baidu", "ticker": "BIDU", "score": 0.061, "per": 12.2, "rent_1a": NaN, "is_ours": false}]}, "Aeroespacial": {"ours": "Rolls-Royce", "peers": [{"name": "Rolls-Royce", "ticker": "RR.L", "score": 0.921, "per": 32.5, "rent_1a": 59.4, "is_ours": true}, {"name": "Safran", "ticker": "SAF.PA", "score": 0.565, "per": 27.3, "rent_1a": 31.3, "is_ours": false}, {"name": "MTU Aero Engines", "ticker": "MTX.DE", "score": 0.0, "per": 16.8, "rent_1a": -6.0, "is_ours": false}]}, "Industrials": {"ours": "Danieli", "peers": []}};
-  function selectBestAlt(peers, mode) {
-    var nonOurs = peers.filter(function(q) { return !q.is_ours; });
-    var oursList = peers.filter(function(q) { return q.is_ours; });
-    var ours = oursList.length > 0 ? oursList[0] : null;
-    var cand, best;
-    if (mode === 'score') {
-      cand = nonOurs.filter(function(q) { return q.per !== null && q.per <= 30 && q.rent_1a !== null && q.rent_1a > 0 && q.score > 0.4; });
-      if (cand.length === 0) {
-        cand = nonOurs.filter(function(q) { return q.per !== null && q.per <= 30 && q.score > 0.4; });
-        if (cand.length > 0) {
-          best = cand.reduce(function(a,b) { return a.score > b.score ? a : b; });
-          return {peer: best, warn: "(sin momentum positivo en el sector)", isOurs: false};
-        }
-        if (ours) return {peer: ours, warn: "no_momentum_ours", isOurs: true};
-        return {peer: null, warn: null, isOurs: false};
-      }
-      best = cand.reduce(function(a,b) { return a.score > b.score ? a : b; });
-      return {peer: best, warn: null, isOurs: false};
-    }
-    if (mode === 'per') {
-      cand = nonOurs.filter(function(q) { return q.score > 0.4 && q.rent_1a !== null && q.rent_1a > 0 && q.per !== null; });
-      if (cand.length === 0) {
-        cand = nonOurs.filter(function(q) { return q.score > 0.4 && q.per !== null; });
-        if (cand.length > 0) {
-          best = cand.reduce(function(a,b) { return a.per < b.per ? a : b; });
-          return {peer: best, warn: "(sin momentum positivo en el sector)", isOurs: false};
-        }
-        if (ours) return {peer: ours, warn: "no_momentum_ours", isOurs: true};
-        return {peer: null, warn: null, isOurs: false};
-      }
-      best = cand.reduce(function(a,b) { return a.per < b.per ? a : b; });
-      return {peer: best, warn: null, isOurs: false};
-    }
-    if (mode === 'mom') {
-      cand = nonOurs.filter(function(q) { return q.score > 0.4 && q.per !== null && q.per <= 30 && q.rent_1a !== null; });
-      if (cand.length === 0) {
-        cand = nonOurs.filter(function(q) { return q.score > 0.4 && q.per !== null; });
-        if (cand.length > 0) {
-          best = cand.reduce(function(a,b) { return a.rent_1a > b.rent_1a ? a : b; });
-          return {peer: best, warn: "(sin momentum positivo en el sector)", isOurs: false};
-        }
-        if (ours) return {peer: ours, warn: "no_momentum_ours", isOurs: true};
-        return {peer: null, warn: null, isOurs: false};
-      }
-      best = cand.reduce(function(a,b) { return a.rent_1a > b.rent_1a ? a : b; });
-      return {peer: best, warn: null, isOurs: false};
-    }
-  }
-  function fmtSector(name, data, mode) {
-    var r = selectBestAlt(data.peers, mode);
-    if (!r.peer) return '<div class="sect-row"><span class="sect-name">' + name + '</span> → <span class="sect-none">Sin alternativas</span></div>';
-    if (r.isOurs) {
-      if (r.warn === 'no_momentum_ours') {
-        return '<div class="sect-row"><span class="sect-name">' + name + '</span> → <span class="sect-warn">Sector sin momentum positivo</span><br><span class="sect-ours">Mejor por score: ' + r.peer.name + ' (ya en cartera)</span></div>';
-      }
-      return '<div class="sect-row"><span class="sect-name">' + name + '</span> → <span class="sect-ours">Ya tienes la mejor opción (' + r.peer.ticker + ')</span></div>';
-    }
-    var rentStr = r.peer.rent_1a !== null ? (r.peer.rent_1a >= 0 ? '+' : '') + r.peer.rent_1a.toFixed(1) + '%' : 'N/D';
-    var perStr = r.peer.per !== null ? r.peer.per.toFixed(1) : 'N/D';
-    var warnStr = r.warn ? ' <span class="sect-warn">' + r.warn + '</span>' : '';
-    return '<div class="sect-row"><span class="sect-name">' + name + '</span> → <strong>' + r.peer.name + '</strong> (' + r.peer.ticker + ')<br><span class="sect-meta">Score: ' + r.peer.score.toFixed(3) + ' · PER: ' + perStr + ' · Rent.1A: ' + rentStr + '</span>' + warnStr + '</div>';
-  }
-  function updateSectorAlts(mode) {
-    var html = '';
-    for (var sec in DATA) {
-      if (DATA.hasOwnProperty(sec)) {
-        html += fmtSector(sec, DATA[sec], mode);
-      }
-    }
-    document.getElementById('best-alt-value').innerHTML = html;
-    var btns = document.querySelectorAll('#best-alt-btns .btn-alt');
-    btns.forEach(function(b) {
-      b.classList.remove('active');
-      if (b.dataset.mode === mode) b.classList.add('active');
-    });
-  }
-  var btns = document.querySelectorAll('#best-alt-btns .btn-alt');
-  btns.forEach(function(b) {
-    b.addEventListener('click', function() {
-      updateSectorAlts(this.dataset.mode);
-    });
-  });
-})();
-</script>
-</div>
-<div class="alert-box"><div class="a-title">Alertas</div>
-<div class="a-item"><span class="alert-red">⚠ Rolls-Royce: peso elevado (35.3% de la cartera)</span></div>
-<div class="a-item">Siemens Energy: PER alto (66.6)</div>
-<div class="a-item">Siemens Energy: P/B elevado (13.54)</div>
-<div class="a-item">NVIDIA: PER alto (32.4)</div>
-<div class="a-item">NVIDIA: P/B elevado (26.17)</div>
-<div class="a-item">Rolls-Royce: P/B elevado (43.25)</div>
-</div>
-<div class="divers-box">
-  <h2>Diversificación</h2>
-  <div class="div-row">
-    <div class="div-item"><span class="div-icon">🔴</span> <span>Concentración crítica (Rolls-Royce 35.3%)</span></div>
-    <div class="div-item"><span class="div-icon">🔴</span> <span>Ninguna posición en sectores defensivos</span></div>
-    <div class="div-item"><span class="div-icon">🟡</span> <span>Misma divisa (EUR) pero empresas de distintos países</span></div>
-  
-<div class="div-suggestion">💡 Sugerencia: añadir posición en sector defensivo. Top candidatas: UnitedHealth Group (UNH, Score: 1.000), Colgate-Palmolive (CL, Score: 0.771)</div></div>
-</div>
+const gridColor='rgba(255,255,255,0.06)';
+const tickColor='#9aa0b0';
 
-<div class="charts-row">
-  <div class="chart-box">
-    <h3>Peso por Posición</h3>
-    <canvas id="piePos"></canvas>
-  </div>
-  <div class="chart-box">
-    <h3>Peso por Sector</h3>
-    <canvas id="pieSec"></canvas>
-  </div>
-  <div class="chart-box">
-    <h3>Evolución Cartera vs Benchmark</h3>
-    <canvas id="chartEvol"></canvas>
-  </div>
-</div>
-
-<script>
-new Chart(document.getElementById('piePos'), {
-    type: 'pie',
-    data: { labels: ["Siemens Energy", "NVIDIA", "Rolls-Royce", "Danieli"], datasets: [{ data: [20.4, 22.0, 35.3, 22.3], backgroundColor: ["#22c55e", "#3b82f6", "#eab308", "#ef4444", "#a855f7", "#ec4899"] }] },
-    options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
+new Chart(document.getElementById('chartPeso'),{
+  type:'doughnut',
+  data:{
+    labels:["ENR", "NVD", "RRU", "DANR"].map(function(l,i){return l+' '+[20.0, 21.0, 36.6, 22.4][i]+'%';}),
+    datasets:[{data:[20.0, 21.0, 36.6, 22.4],backgroundColor:["#2a78d6", "#1baf7a", "#eda100", "#4a3aa7"],borderColor:'#1a1d2e',borderWidth:3}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': '+c.formattedValue+'%'}}}}}
 });
-new Chart(document.getElementById('pieSec'), {
-    type: 'pie',
-    data: { labels: ["Energ\u00eda", "Tecnolog\u00eda", "Aeroespacial", "Industrials"], datasets: [{ data: [20.4, 22.0, 35.3, 22.3], backgroundColor: ["#22c55e", "#3b82f6", "#eab308", "#ef4444", "#a855f7", "#ec4899"] }] },
-    options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
+
+new Chart(document.getElementById('chartPnl'),{
+  type:'bar',
+  data:{
+    labels:["ENR", "NVD", "RRU", "DANR"],
+    datasets:[{label:'P&L (€)',data:[-41.4, -56.6, 10.5, 34.34],backgroundColor:["rgba(224,80,80,0.8)","rgba(224,80,80,0.8)","rgba(62,207,142,0.8)","rgba(62,207,142,0.8)"],borderRadius:4}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tickColor},grid:{color:gridColor}},y:{ticks:{color:tickColor,callback:function(v){return v+'€';}},grid:{color:gridColor}}}}
 });
-var evolCtx = document.getElementById('chartEvol');
-if (evolCtx) {
-  var evolDates = ["2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19"];
-  var evolPort = [5638.039855957031, 5487.0, 5517.679801940918, 5694.679801940918, 5645.120018005371, 5597.91983795166, 5590.840126037598, 5616.799819946289, 5538.91983795166, 5487.0, 5461.039855957031, 5527.120018005371, 5645.120018005371, 5458.679801940918, 5645.120018005371, 5734.799819946289, 5706.480072021484, 5630.960144042969, 5546.0, 5515.320198059082, 5623.879981994629, 5659.279891967773, 5543.639945983887, 5550.720108032227, 5461.039855957031, 5777.279891967773, 5645.120018005371, 5859.879981994629, 5941.299819946289, 5988.5, 5941.299819946289, 5959.0, 5900.0, 5917.700180053711, 6071.1000900268555, 5941.299819946289, 5845.720108032227, 5805.6000900268555, 5852.799819946289, 5713.559783935547, 5682.879981994629, 5770.200180053711, 5982.6000900268555, 6018.0, 5941.299819946289, 6088.799819946289, 6082.8999099731445, 6071.1000900268555];
-  var evolBm = [5984.509765625, 5940.33984375, 5933.27978515625, 6057.7099609375, 5982.6298828125, 5930.25, 5906.22021484375, 5894.72998046875, 5883.47998046875, 5860.31982421875, 5836.10009765625, 5816.47998046875, 5881.509765625, 5763.60986328125, 5869.6298828125, 6027.1298828125, 5972.64990234375, 5911.52978515625, 5895.4501953125, 5808.4501953125, 5861.06982421875, null, 5827.759765625, 5849.0, 5851.16015625, 5976.06982421875, 5960.31982421875, 6019.4501953125, null, 6064.14990234375, 6070.5400390625, 6055.10986328125, 6050.5400390625, 6034.9501953125, 6107.85009765625, 6053.56982421875, 6103.330078125, 6062.06982421875, 6062.2900390625, 6049.740234375, 6009.9501953125, 6056.9599609375, 6187.6298828125, 6229.43017578125, 6257.419921875, 6300.06982421875, null, 6322.8798828125];
-  if (evolDates.length > 0) {
-    var normPort = evolPort.map(function(v) { return (v / evolPort[0] - 1) * 100; });
-    var firstBm = evolBm.filter(function(v) { return v !== null; })[0] || 1;
-    var normBm = evolBm.map(function(v) { return v !== null ? (v / firstBm - 1) * 100 : null; });
-    new Chart(evolCtx, {
-      type: 'line',
-      data: {
-        labels: evolDates,
-        datasets: [
-          { label: 'Cartera', data: normPort, borderColor: '#3b82f6', backgroundColor: 'transparent', tension: 0.2, pointRadius: 0 },
-          { label: 'Euro Stoxx 50', data: normBm, borderColor: '#9ca3af', backgroundColor: 'transparent', tension: 0.2, pointRadius: 0, borderDash: [4,4] }
-        ]
-      },
-      options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }, scales: { y: { ticks: { callback: function(v) { return v.toFixed(1) + '%'; } } } } }
-    });
-  }
-}</script>
-<h2>Posiciones</h2>
-<table>
-<thead><tr>
-  <th>#</th><th>Empresa</th><th>Ticker</th><th>Acc.</th><th>Fecha</th><th>P.Entrada</th><th>P.Actual</th><th>Inversión</th><th>Val.Actual</th><th>P&amp;L</th><th>Rent.</th><th>CAGR</th><th>Peso</th><th>Stop</th><th>Dist.</th><th>Obj.</th><th>50d</th>
-</tr></thead>
-<tbody>
-<tr>
-  <td>1</td>
-  <td><strong>Siemens Energy</strong></td>
-  <td>ENR.DE</td>
-  <td>5</td>
-  <td>14/04/2026</td>
-  <td>170.76</td>
-  <td id="price-1">169.1200</td>
-  <td>858.70</td>
-  <td id="val-1">845.60</td>
-  <td id="pnl-1" class="red">-13.10</td>
-  <td id="pnlpct-1" class="red">-1.53%</td>
-  <td>-8.2%</td>
-  <td>20.4%</td>
-  <td>129.83</td>
-  <td id="dist-1"><span class="badge green">23.2%</span><br><span class="bar-bg"><span class="bar-fill green" style="width:23.23202238148272%"></span></span></td>
-  <td>200.64</td>
-  <td class="red">169.3275</td>
-</tr>
-<tr>
-  <td>2</td>
-  <td><strong>NVIDIA</strong></td>
-  <td>NVD.DE</td>
-  <td>5</td>
-  <td>27/04/2026</td>
-  <td>182.34</td>
-  <td id="price-2">182.5800</td>
-  <td>915.60</td>
-  <td id="val-2">912.90</td>
-  <td id="pnl-2" class="red">-2.70</td>
-  <td id="pnlpct-2" class="red">-0.29%</td>
-  <td>-2.0%</td>
-  <td>22.0%</td>
-  <td>140.20</td>
-  <td id="dist-2"><span class="badge green">23.2%</span><br><span class="bar-bg"><span class="bar-fill green" style="width:23.21174356777028%"></span></span></td>
-  <td>214.25</td>
-  <td class="green">180.8052</td>
-</tr>
-<tr>
-  <td>3</td>
-  <td><strong>Rolls-Royce</strong></td>
-  <td>RRU.DE</td>
-  <td>90</td>
-  <td>17/06/2026</td>
-  <td>16.47</td>
-  <td id="price-3">16.2800</td>
-  <td>1,486.20</td>
-  <td id="val-3">1,465.20</td>
-  <td id="pnl-3" class="red">-21.00</td>
-  <td id="pnlpct-3" class="red">-1.41%</td>
-  <td>- (*período < 1 mes)</td>
-  <td>35.3%</td>
-  <td>12.15</td>
-  <td id="dist-3"><span class="badge green">25.4%</span><br><span class="bar-bg"><span class="bar-fill green" style="width:25.36855351629898%"></span></span></td>
-  <td>19.35</td>
-  <td class="green">14.3706</td>
-</tr>
-<tr>
-  <td>4</td>
-  <td><strong>Danieli</strong></td>
-  <td>DANR.MI</td>
-  <td>18</td>
-  <td>06/05/2026</td>
-  <td>48.72</td>
-  <td id="price-4">51.4500</td>
-  <td>881.86</td>
-  <td id="val-4">926.10</td>
-  <td id="pnl-4" class="green">+44.24</td>
-  <td id="pnlpct-4" class="green">+5.02%</td>
-  <td>50.1%</td>
-  <td>22.3%</td>
-  <td>38.82</td>
-  <td id="dist-4"><span class="badge green">24.5%</span><br><span class="bar-bg"><span class="bar-fill green" style="width:24.548106075125883%"></span></span></td>
-  <td>57.25</td>
-  <td class="green">48.6090</td>
-</tr>
-</tbody></table><h2>Benchmark</h2>
-<table>
-<thead><tr><th>Indicador</th><th>Valor</th></tr></thead>
-<tbody>
-<tr><td><strong>Euro Stoxx 50 (2026-04-14 - hoy)</strong></td><td>+5.65%</td></tr>
-<tr><td><strong>Cartera (mismo periodo)</strong></td><td class="green">+0.18%</td></tr>
-<tr><td><strong>Diferencia</strong></td><td class="red">-5.47%</td></tr>
-</tbody></table>
-<h2>Riesgo</h2>
-<table>
-<thead><tr>
-  <th>Empresa</th><th>P.Actual</th><th>Stop Loss</th><th>Barra Doble</th><th>Pérdida Máx</th><th>52w High</th><th>52w Low</th>
-</tr></thead>
-<tbody>
-<tr>
-  <td><strong>Siemens Energy</strong></td>
-  <td>169.1200</td>
-  <td>129.83</td>
-  <td><div class="db-wrap" id="dist-1">
-  <div class="db-track">
-    <div class="db-left" style="width:57.800121446627%"></div>
-    <div class="db-right" style="width:42.199878553373%"></div>
-    <div class="db-center" style="left:57.800121446627%"></div>
-    <div class="db-current" style="left:55.48415561717127%">&#x25BC;</div>
-  </div>
-  <div class="db-labels">
-    <span class="db-l-red">129.83</span>
-    <span class="db-l-dark">170.76</span>
-    <span class="db-l-green">200.64</span>
-  </div>
-</div></td>
-  <td class="red">+196 €</td>
-  <td>191.66</td>
-  <td>83.32</td>
-</tr><tr>
-  <td><strong>NVIDIA</strong></td>
-  <td>182.5800</td>
-  <td>140.20</td>
-  <td><div class="db-wrap" id="dist-2">
-  <div class="db-track">
-    <div class="db-left" style="width:56.90787918892093%"></div>
-    <div class="db-right" style="width:43.09212081107907%"></div>
-    <div class="db-center" style="left:56.90787918892093%"></div>
-    <div class="db-current" style="left:57.23198918433573%">&#x25BC;</div>
-  </div>
-  <div class="db-labels">
-    <span class="db-l-red">140.20</span>
-    <span class="db-l-dark">182.34</span>
-    <span class="db-l-green">214.25</span>
-  </div>
-</div></td>
-  <td class="red">+212 €</td>
-  <td>201.90</td>
-  <td>123.90</td>
-</tr><tr>
-  <td><strong>Rolls-Royce</strong></td>
-  <td>16.2800</td>
-  <td>12.15</td>
-  <td><div class="db-wrap" id="dist-3">
-  <div class="db-track">
-    <div class="db-left" style="width:59.98125585754451%"></div>
-    <div class="db-right" style="width:40.01874414245549%"></div>
-    <div class="db-center" style="left:59.98125585754451%"></div>
-    <div class="db-current" style="left:57.3432008975738%">&#x25BC;</div>
-  </div>
-  <div class="db-labels">
-    <span class="db-l-red">12.15</span>
-    <span class="db-l-dark">16.47</span>
-    <span class="db-l-green">19.35</span>
-  </div>
-</div></td>
-  <td class="red">+372 €</td>
-  <td>16.47</td>
-  <td>10.30</td>
-</tr><tr>
-  <td><strong>Danieli</strong></td>
-  <td>51.4500</td>
-  <td>38.82</td>
-  <td><div class="db-wrap" id="dist-4">
-  <div class="db-track">
-    <div class="db-left" style="width:53.728427222403106%"></div>
-    <div class="db-right" style="width:46.271572777596894%"></div>
-    <div class="db-center" style="left:53.728427222403106%"></div>
-    <div class="db-current" style="left:68.54445220307962%">&#x25BC;</div>
-  </div>
-  <div class="db-labels">
-    <span class="db-l-red">38.82</span>
-    <span class="db-l-dark">48.72</span>
-    <span class="db-l-green">57.25</span>
-  </div>
-</div></td>
-  <td class="red">+227 €</td>
-  <td>52.40</td>
-  <td>24.48</td>
-</tr></tbody></table><h2>Valoración</h2>
-<table>
-<thead><tr>
-  <th>Empresa</th><th>PER</th><th>PER Fwd</th><th>P/B</th><th>EV/EBITDA</th><th>Cap.Mercado</th><th>BPA</th><th>P/S</th><th>Div.Yield</th>
-</tr></thead>
-<tbody>
-<tr>
-  <td><strong>Siemens Energy</strong></td>
-  <td class="red">66.6</td>
-  <td>28.2</td>
-  <td class="red">13.54</td>
-  <td class="red">34.5</td>
-  <td>143,895,511,040</td>
-  <td>2.54</td>
-  <td>3.59</td>
-  <td>N/D</td>
-</tr><tr>
-  <td><strong>NVIDIA</strong></td>
-  <td class="red">32.4</td>
-  <td>N/D</td>
-  <td class="red">26.17</td>
-  <td class="red">26.2</td>
-  <td>4,422,270,189,568</td>
-  <td>5.63</td>
-  <td>17.45</td>
-  <td>N/D</td>
-</tr><tr>
-  <td><strong>Rolls-Royce</strong></td>
-  <td class="yellow">20.4</td>
-  <td>N/D</td>
-  <td class="red">43.25</td>
-  <td class="red">28.9</td>
-  <td>134,974,390,272</td>
-  <td>0.80</td>
-  <td>6.36</td>
-  <td>N/D</td>
-</tr><tr>
-  <td><strong>Danieli</strong></td>
-  <td class="green">16.1</td>
-  <td>11.7</td>
-  <td class="green">1.35</td>
-  <td class="green">2.8</td>
-  <td>3,682,417,664</td>
-  <td>3.19</td>
-  <td>0.93</td>
-  <td>N/D</td>
-</tr></tbody></table><h2>Métricas Financieras</h2>
-<table>
-<thead><tr>
-  <th>Empresa</th><th>Año</th><th>ROE</th><th>ROI</th><th>FCF</th><th>EVA</th><th>M.EBITA</th><th>M.EBIT</th>
-</tr></thead>
-<tbody>
-<tr>
-  <td><strong>Siemens Energy</strong></td>
-  <td>2024</td>
-  <td class="red">-53.3%</td>
-  <td class="red">-9.5%</td>
-  <td class="green">394,000,000</td>
-  <td class="red">-3,303,202,149</td>
-  <td class="red">-5.1%</td>
-  <td class="red">-10.0%</td>
-</tr><tr>
-  <td><strong>Siemens Energy</strong></td>
-  <td>2025</td>
-  <td class="yellow">13.1%</td>
-  <td class="red">2.3%</td>
-  <td class="green">1,375,000,000</td>
-  <td class="green">186,020,154</td>
-  <td class="yellow">10.6%</td>
-  <td class="red">6.2%</td>
-</tr><tr>
-  <td><strong>Siemens Energy</strong></td>
-  <td>2026</td>
-  <td class="yellow">13.7%</td>
-  <td class="red">2.5%</td>
-  <td class="green">4,097,000,000</td>
-  <td class="green">457,545,486</td>
-  <td class="yellow">10.8%</td>
-  <td class="red">6.4%</td>
-</tr><tr>
-  <td><strong>NVIDIA</strong></td>
-  <td>2024</td>
-  <td class="green">69.2%</td>
-  <td class="green">45.3%</td>
-  <td class="green">27,021,000,000</td>
-  <td class="green">25,578,401,216</td>
-  <td class="green">58.4%</td>
-  <td class="green">55.9%</td>
-</tr><tr>
-  <td><strong>NVIDIA</strong></td>
-  <td>2025</td>
-  <td class="green">91.9%</td>
-  <td class="green">65.3%</td>
-  <td class="green">60,853,000,000</td>
-  <td class="green">65,609,915,594</td>
-  <td class="green">66.0%</td>
-  <td class="green">64.6%</td>
-</tr><tr>
-  <td><strong>NVIDIA</strong></td>
-  <td>2026</td>
-  <td class="green">76.3%</td>
-  <td class="green">58.1%</td>
-  <td class="green">96,676,000,000</td>
-  <td class="green">106,315,646,964</td>
-  <td class="green">66.9%</td>
-  <td class="green">65.6%</td>
-</tr><tr>
-  <td><strong>Rolls-Royce</strong></td>
-  <td>2024</td>
-  <td class="red">-65.5%</td>
-  <td class="yellow">7.7%</td>
-  <td class="green">1,772,000,000</td>
-  <td class="green">1,442,623,090</td>
-  <td class="green">22.7%</td>
-  <td class="green">17.0%</td>
-</tr><tr>
-  <td><strong>Rolls-Royce</strong></td>
-  <td>2025</td>
-  <td class="red">-276.4%</td>
-  <td class="yellow">7.1%</td>
-  <td class="green">2,896,000,000</td>
-  <td class="green">791,649,705</td>
-  <td class="green">18.4%</td>
-  <td class="yellow">13.7%</td>
-</tr><tr>
-  <td><strong>Rolls-Royce</strong></td>
-  <td>2026</td>
-  <td class="green">214.3%</td>
-  <td class="green">15.3%</td>
-  <td class="green">3,580,000,000</td>
-  <td class="green">4,583,901,601</td>
-  <td class="green">38.4%</td>
-  <td class="green">34.1%</td>
-</tr><tr>
-  <td><strong>Danieli</strong></td>
-  <td>2024</td>
-  <td class="yellow">9.2%</td>
-  <td class="red">3.2%</td>
-  <td class="green">156,078,000</td>
-  <td>N/D</td>
-  <td class="yellow">11.0%</td>
-  <td class="red">7.7%</td>
-</tr><tr>
-  <td><strong>Danieli</strong></td>
-  <td>2025</td>
-  <td>N/D</td>
-  <td>N/D</td>
-  <td>N/D</td>
-  <td>N/D</td>
-  <td>N/D</td>
-  <td>N/D</td>
-</tr><tr>
-  <td><strong>Danieli</strong></td>
-  <td>2026</td>
-  <td>N/D</td>
-  <td>N/D</td>
-  <td>N/D</td>
-  <td>N/D</td>
-  <td>N/D</td>
-  <td>N/D</td>
-</tr><tr><td colspan="8" style="color:#888;font-size:11px;">* Datos parciales extraídos de yfinance</td></tr></tbody></table><h2>Comparativa Sectorial</h2>
-<table>
-<thead><tr>
-  <th>Empresa</th><th>Sector</th><th>ROE 2026</th><th>Media Sector</th><th>vs Media</th><th>EVA 2026</th><th>Posición</th>
-</tr></thead>
-<tbody>
-<tr>
-  <td><strong>Siemens Energy</strong></td>
-  <td>Energía</td>
-  <td class="yellow">13.7%</td>
-  <td>11.3%</td>
-  <td class="green">+2.4%</td>
-  <td class="green">457,545,486</td>
-  <td>4/13</td>
-</tr><tr>
-  <td><strong>NVIDIA</strong></td>
-  <td>Tecnología</td>
-  <td class="green">76.3%</td>
-  <td>32.9%</td>
-  <td class="green">+43.4%</td>
-  <td class="green">106,315,646,964</td>
-  <td>6/48</td>
-</tr><tr>
-  <td><strong>Rolls-Royce</strong></td>
-  <td>Aeroespacial</td>
-  <td class="green">214.3%</td>
-  <td>59.1%</td>
-  <td class="green">+155.2%</td>
-  <td class="green">4,583,901,601</td>
-  <td>1/7</td>
-</tr><tr>
-  <td><strong>Danieli</strong></td>
-  <td>Industrials</td>
-  <td class="yellow">9.2%</td>
-  <td colspan="4" style="color:#888;">Sin comparativa sectorial (datos parciales)</td>
-</tr></tbody></table><h2>Top 5 Alternativas por Sector</h2>
-<p class="small">Ranking: ROE (50%) + EVA (25%) + FCF (25%). Normalizado por sector. Filtro PER &lt;=30. (*) PER no disponible.</p>
-<h3>Siemens Energy · Energía (10 empresas)</h3>
-<table>
-<thead><tr>
-  <th>#</th><th>Empresa</th><th>Ticker</th><th>Score</th><th>ROE 2026</th><th>EVA 2026</th><th>FCF 2026</th><th>PER</th><th>PER Fwd</th><th>P/B</th><th>Rent.1A</th>
-</tr></thead>
-<tbody>
-<tr>
-  <td>1</td>
-  <td>Naturgy</td>
-  <td>NTGY.MC</td>
-  <td>0.730</td>
-  <td class="green">21.6%</td>
-  <td class="green">434,947,943</td>
-  <td class="green">2,376,000,000</td>
-  <td class="green">12.8</td>
-  <td class="green">14.0</td>
-  <td class="yellow">3.29</td>
-  <td class="red">+13.7%</td>
-</tr><tr>
-  <td>2</td>
-  <td>ExxonMobil</td>
-  <td>XOM</td>
-  <td>0.698</td>
-  <td class="yellow">11.1%</td>
-  <td class="green">66,905,787</td>
-  <td class="green">23,612,000,000</td>
-  <td class="yellow">23.2</td>
-  <td class="green">12.9</td>
-  <td class="green">2.22</td>
-  <td class="yellow">+nan%</td>
-</tr><tr>
-  <td>3</td>
-  <td>Solaria</td>
-  <td>SLR.MC</td>
-  <td>0.645</td>
-  <td class="green">19.5%</td>
-  <td class="green">12,457,041</td>
-  <td class="red">-260,098,000</td>
-  <td class="yellow">19.9</td>
-  <td class="green">13.7</td>
-  <td class="yellow">3.77</td>
-  <td class="green">+128.5%</td>
-</tr><tr>
-  <td>4</td>
-  <td>Shell</td>
-  <td>SHEL.L</td>
-  <td>0.640</td>
-  <td class="yellow">10.2%</td>
-  <td class="red">-2,028,914,027</td>
-  <td class="green">23,916,000,000</td>
-  <td class="green">12.5</td>
-  <td class="green">8.2</td>
-  <td class="green">1.30</td>
-  <td class="red">+11.0%</td>
-</tr><tr>
-  <td>5</td>
-  <td>TotalEnergies</td>
-  <td>TTE.PA</td>
-  <td>0.623</td>
-  <td class="yellow">11.4%</td>
-  <td class="green">2,875,890,000</td>
-  <td class="green">10,390,000,000</td>
-  <td class="green">12.3</td>
-  <td class="green">8.6</td>
-  <td class="green">1.44</td>
-  <td class="yellow">+35.9%</td>
-</tr><tr style="background:#f0f0f0;font-weight:700;">
-  <td colspan="3">Mediana del sector (11 empresas)</td>
-  <td colspan="8">+35.9%</td>
-</tr></tbody></table><h3>NVIDIA · Tecnología (27 empresas)</h3>
-<table>
-<thead><tr>
-  <th>#</th><th>Empresa</th><th>Ticker</th><th>Score</th><th>ROE 2026</th><th>EVA 2026</th><th>FCF 2026</th><th>PER</th><th>PER Fwd</th><th>P/B</th><th>Rent.1A</th>
-</tr></thead>
-<tbody>
-<tr style="background:#f0fdf4;font-weight:600;">
-  <td>1</td>
-  <td>Nvidia (tu posición)</td>
-  <td>NVDA</td>
-  <td>0.673</td>
-  <td class="green">76.3%</td>
-  <td class="green">106,315,646,964</td>
-  <td class="green">96,676,000,000</td>
-  <td class="red">32.3</td>
-  <td class="yellow">16.6</td>
-  <td class="red">26.11</td>
-  <td class="yellow">+nan%</td>
-</tr><tr>
-  <td>2</td>
-  <td>Verisk Analytics</td>
-  <td>VRSK</td>
-  <td>0.582</td>
-  <td class="green">293.9%</td>
-  <td class="green">729,210,654</td>
-  <td class="green">1,191,900,000</td>
-  <td class="red">26.5</td>
-  <td class="yellow">20.1</td>
-  <td class="red">77.83</td>
-  <td class="yellow">+nan%</td>
-</tr><tr>
-  <td>3</td>
-  <td>Rightmove</td>
-  <td>RMV.L</td>
-  <td>0.534</td>
-  <td class="green">263.8%</td>
-  <td class="green">210,132,401</td>
-  <td class="green">226,120,000</td>
-  <td class="yellow">15.1</td>
-  <td class="green">12.5</td>
-  <td class="red">39.23</td>
-  <td class="yellow">-44.9%</td>
-</tr><tr>
-  <td>4</td>
-  <td>Microsoft</td>
-  <td>MSFT</td>
-  <td>0.467</td>
-  <td class="green">29.6%</td>
-  <td class="green">65,573,732,990</td>
-  <td class="green">71,611,000,000</td>
-  <td class="yellow">22.6</td>
-  <td class="yellow">19.6</td>
-  <td class="red">6.80</td>
-  <td class="yellow">+nan%</td>
-</tr><tr>
-  <td>5</td>
-  <td>Adobe</td>
-  <td>ADBE</td>
-  <td>0.261</td>
-  <td class="green">61.3%</td>
-  <td class="green">5,801,020,023</td>
-  <td class="green">9,852,000,000</td>
-  <td class="green">11.2</td>
-  <td class="green">7.1</td>
-  <td class="red">6.76</td>
-  <td class="yellow">+nan%</td>
-</tr><tr style="background:#f0f0f0;font-weight:700;">
-  <td colspan="3">Mediana del sector (28 empresas)</td>
-  <td colspan="8">+nan%</td>
-</tr></tbody></table><h3>Rolls-Royce · Aeroespacial (2 empresas)</h3>
-<table>
-<thead><tr>
-  <th>#</th><th>Empresa</th><th>Ticker</th><th>Score</th><th>ROE 2026</th><th>EVA 2026</th><th>FCF 2026</th><th>PER</th><th>PER Fwd</th><th>P/B</th><th>Rent.1A</th>
-</tr></thead>
-<tbody>
-<tr style="background:#f0fdf4;font-weight:600;">
-  <td>1</td>
-  <td>Rolls-Royce (tu posición)</td>
-  <td>RR.L</td>
-  <td>0.921</td>
-  <td class="green">214.3%</td>
-  <td class="green">4,583,901,601</td>
-  <td class="green">3,580,000,000</td>
-  <td class="yellow">20.4</td>
-  <td class="red">32.5</td>
-  <td class="red">43.15</td>
-  <td class="green">+59.4%</td>
-</tr><tr>
-  <td>2</td>
-  <td>Safran</td>
-  <td>SAF.PA</td>
-  <td>0.565</td>
-  <td class="green">48.4%</td>
-  <td class="green">5,739,144,400</td>
-  <td class="green">3,921,000,000</td>
-  <td class="yellow">19.5</td>
-  <td class="red">27.3</td>
-  <td class="red">9.41</td>
-  <td class="yellow">+31.3%</td>
-</tr><tr>
-  <td>3</td>
-  <td>MTU Aero Engines</td>
-  <td>MTX.DE</td>
-  <td>0.000</td>
-  <td class="green">23.6%</td>
-  <td class="green">514,926,314</td>
-  <td class="green">333,000,000</td>
-  <td class="yellow">18.4</td>
-  <td class="yellow">16.8</td>
-  <td class="yellow">4.16</td>
-  <td class="red">-6.0%</td>
-</tr><tr style="background:#f0f0f0;font-weight:700;">
-  <td colspan="3">Mediana del sector (3 empresas)</td>
-  <td colspan="8">+31.3%</td>
-</tr></tbody></table><h2>Correlación de Precios (252d)</h2>
-<table>
-<tbody>
-<tr><th></th><th>ENR</th><th>NVD</th><th>RRU</th><th>DANR</th></tr><tr><td><strong>ENR</strong></td><td class="red">1.00</td><td class="yellow">0.47</td><td class="yellow">0.53</td><td class="yellow">0.42</td></tr><tr><td><strong>NVD</strong></td><td class="yellow">0.47</td><td class="red">1.00</td><td class="green">0.28</td><td class="green">0.28</td></tr><tr><td><strong>RRU</strong></td><td class="yellow">0.53</td><td class="green">0.28</td><td class="red">1.00</td><td class="yellow">0.39</td></tr><tr><td><strong>DANR</strong></td><td class="yellow">0.42</td><td class="green">0.28</td><td class="yellow">0.39</td><td class="red">1.00</td></tr>
-</tbody>
-</table>
-<p class="small"><span class="green">Verde</span> = baja correlación (<0.3) · <span class="yellow">Amarillo</span> = media (0.3-0.7) · <span class="red">Rojo</span> = alta (>0.7)</p>
-<h2>Tesis de Inversión</h2>
-<table>
-<thead><tr>
-  <th>Empresa</th><th>Fecha Entrada</th><th>Motivo de Compra</th><th>Precio Objetivo</th><th>Condición de Venta</th>
-</tr></thead>
-<tbody>
-<tr>
-  <td><strong>Siemens Energy</strong></td>
-  <td>14/04/2026</td>
-  <td>Transición energética europea, backlog récord, recuperación post-problemas en turbinas de viento</td>
-  <td>200.64 €</td>
-  <td>Si pierde contratos clave de hidrógeno o PER forward supera 40</td>
-</tr><tr>
-  <td><strong>NVIDIA</strong></td>
-  <td>27/04/2026</td>
-  <td>Monopolio de facto en GPUs para IA, ciclo de inversión en centros de datos sin techo visible</td>
-  <td>214.25 €</td>
-  <td>Si AMD supera 25% de cuota en IA o regulación antimonopolio</td>
-</tr><tr>
-  <td><strong>Rolls-Royce</strong></td>
-  <td>17/06/2026</td>
-  <td>Turnaround completado, contratos TotalCare con visibilidad a largo plazo, exposición a aviación y defensa</td>
-  <td>19.35 €</td>
-  <td>Si márgenes EBIT caen por debajo del 10%</td>
-</tr><tr>
-  <td><strong>Danieli</strong></td>
-  <td>06/05/2026</td>
-  <td>Empresa familiar italiana infravalorada, P/B bajo, especialista en acerías con cartera de pedidos sólida</td>
-  <td>57.25 €</td>
-  <td>Si el ciclo del acero se deteriora significativamente</td>
-</tr></tbody></table>
 
-<script>
-const PORTFOLIO = [{"ticker": "ENR.DE", "shares": 5, "entry": 170.76, "commission": 4.9, "stop": 129.83, "name": "Siemens Energy", "cost": 858.6999999999999}, {"ticker": "NVD.DE", "shares": 5, "entry": 182.34, "commission": 3.9, "stop": 140.2, "name": "NVIDIA", "cost": 915.6}, {"ticker": "RRU.DE", "shares": 90, "entry": 16.47, "commission": 3.9, "stop": 12.15, "name": "Rolls-Royce", "cost": 1486.2}, {"ticker": "DANR.MI", "shares": 18, "entry": 48.72, "commission": 4.9, "stop": 38.82, "name": "Danieli", "cost": 881.86}];
-const SERVER = '';
-function liveUpdate() {
-    let totalVal = 0, totalCost = 0;
-    let pending = PORTFOLIO.length;
-    PORTFOLIO.forEach((pos, idx) => {
-        if (!pos.ticker) { pending--; return; }
-        const row = idx + 1;
-        fetch(SERVER + '/api/price/' + encodeURIComponent(pos.ticker))
-            .then(r => r.json())
-            .then(data => {
-                const price = data.price;
-                if (!price) return;
-                const cost = pos.cost;
-                const currVal = pos.shares * price;
-                const pnl = currVal - cost;
-                const pnlPct = (pnl / cost) * 100;
-                totalVal += currVal;
-                totalCost += cost;
-                document.getElementById('price-' + row).textContent = price.toFixed(4);
-                document.getElementById('val-' + row).textContent = currVal.toFixed(2) + ' \u20ac';
-                const el = document.getElementById('pnl-' + row);
-                if (el) { el.textContent = (pnl >= 0 ? '+' : '') + pnl.toFixed(2) + ' \u20ac'; el.className = pnl >= 0 ? 'green' : 'red'; }
-                const el2 = document.getElementById('pnlpct-' + row);
-                if (el2) { el2.textContent = (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%'; el2.className = pnlPct >= 0 ? 'green' : 'red'; }
-                const el3 = document.getElementById('dist-' + row);
-                if (el3) { 
-                    const E = pos.entry, S = pos.stop, T = E * 1.175, C = price;
-                    const rng = T - S;
-                    if (rng > 0) {
-                        const ePct = Math.max(1, Math.min(99, (E-S)/rng*100));
-                        const cPct = Math.max(0, Math.min(100, (C-S)/rng*100));
-                        el3.querySelector('.db-left').style.width = ePct + '%';
-                        el3.querySelector('.db-right').style.width = (100-ePct) + '%';
-                        el3.querySelector('.db-center').style.left = ePct + '%';
-                        el3.querySelector('.db-current').style.left = cPct + '%';
-                        el3.querySelector('.db-l-red').textContent = S.toFixed(2);
-                        el3.querySelector('.db-l-green').textContent = T.toFixed(2);
-                        if (C >= T) {
-                            el3.querySelector('.db-right').classList.add('blink');
-                        } else {
-                            el3.querySelector('.db-right').classList.remove('blink');
-                        }
-                    }
-                }
-            })
-            .catch(() => {})
-            .finally(() => {
-                pending--;
-                if (pending === 0 && totalCost > 0) {
-                    const totalPnl = totalVal - totalCost;
-                    const totalPnlPct = (totalPnl / totalCost) * 100;
-                    document.getElementById('total-value').textContent = totalVal.toFixed(2) + ' \u20ac';
-                    document.getElementById('total-pnl').textContent = (totalPnl >= 0 ? '+' : '') + totalPnl.toFixed(2) + ' \u20ac';
-                    document.getElementById('total-pnl').className = totalPnl >= 0 ? 'value green' : 'value red';
-                    document.getElementById('total-pnlpct').textContent = (totalPnlPct >= 0 ? '+' : '') + totalPnlPct.toFixed(2) + '%';
-                    document.getElementById('total-pnlpct').className = totalPnlPct >= 0 ? 'value green' : 'value red';
-                }
-            });
-    });
-    if (pending === 0 && totalCost > 0) {
-        const totalPnl = totalVal - totalCost;
-        const totalPnlPct = (totalPnl / totalCost) * 100;
-        document.getElementById('total-value').textContent = totalVal.toFixed(2) + ' \u20ac';
-        document.getElementById('total-pnl').textContent = (totalPnl >= 0 ? '+' : '') + totalPnl.toFixed(2) + ' \u20ac';
-        document.getElementById('total-pnl').className = totalPnl >= 0 ? 'value green' : 'value red';
-        document.getElementById('total-pnlpct').textContent = (totalPnlPct >= 0 ? '+' : '') + totalPnlPct.toFixed(2) + '%';
-        document.getElementById('total-pnlpct').className = totalPnlPct >= 0 ? 'value green' : 'value red';
-    }
-}
-window.addEventListener('DOMContentLoaded', liveUpdate);
+new Chart(document.getElementById('chartVal'),{
+  type:'bar',
+  data:{
+    labels:["ENR", "NVD", "RRU", "DANR"],
+    datasets:[
+      {label:'PER',data:[64.4, 30.0, 20.8, 16.0],backgroundColor:'rgba(42,120,214,0.8)',borderRadius:4},
+      {label:'P/B',data:[13.09, 24.4, 44.18, 1.33],backgroundColor:'rgba(237,161,0,0.8)',borderRadius:4}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tickColor},grid:{color:gridColor}},y:{ticks:{color:tickColor},grid:{color:gridColor}}}}
+});
+
+new Chart(document.getElementById('chartRoe'),{
+  type:'bar',
+  data:{
+    labels:["ENR", "NVD", "RRU"],
+    datasets:[
+      {label:'ROE empresa',data:[13.7, 76.3, 214.3],backgroundColor:'rgba(62,207,142,0.8)',borderRadius:4},
+      {label:'Media sector',data:[11.3, 32.9, 59.1],backgroundColor:'rgba(255,255,255,0.15)',borderRadius:4}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tickColor},grid:{color:gridColor}},y:{ticks:{color:tickColor,callback:function(v){return v+'%';}},grid:{color:gridColor}}}}
+});
 </script>
-
-<p class="small" style="margin-top:30px;text-align:center;color:#aaa;">
-  Generado automáticamente · yfinance · EVA con WACC 8%<br>
-  <span class="green">Verde = bueno</span> ·
-  <span class="yellow">Amarillo = precaución</span> ·
-  <span class="red">Rojo = atención</span><br>
-  Precios en vivo al recargar (requiere servidor local: python server.py)
-</p>
-<!-- RADAR SCREENER -->
-<h2>Radar — Oportunidades de Entrada</h2>
-<p class="small">Último análisis: 19/06/2026 12:24 · Criterios: Rent.1A &gt; 0, PER 0-30, Score &gt; 0.5, EVA &gt; 0, ROE &gt; 0 · No en cartera · (*) no disponible</p>
-<table>
-<thead><tr>
-  <th>#</th><th>Empresa</th><th>Ticker</th><th>Sector</th><th>Score</th><th>PER</th><th>Rent.1A</th><th>ROE</th><th>EVA</th><th>FCF</th>
-</tr></thead>
-<tbody>
-<tr>
-  <td>1</td>
-  <td>UPS</td>
-  <td>UPS</td>
-  <td>Industriales</td>
-  <td>1.000</td>
-  <td>13.1</td>
-  <td class="red">+nan%</td>
-  <td class="green">34.3%</td>
-  <td>1,765,400,000</td>
-  <td>4,765,000,000</td>
-</tr><tr>
-  <td>2</td>
-  <td>Mastercard</td>
-  <td>MA</td>
-  <td>Financiero</td>
-  <td>1.000</td>
-  <td>21.5</td>
-  <td class="red">+nan%</td>
-  <td class="green">193.5%</td>
-  <td>13,038,103,951</td>
-  <td>16,433,000,000</td>
-</tr><tr>
-  <td>3</td>
-  <td>UnitedHealth Group</td>
-  <td>UNH</td>
-  <td>Salud</td>
-  <td>1.000</td>
-  <td>19.2</td>
-  <td class="red">+nan%</td>
-  <td class="yellow">12.8%</td>
-  <td>719,632,113</td>
-  <td>16,075,000,000</td>
-</tr><tr>
-  <td>4</td>
-  <td>Union Pacific</td>
-  <td>UNP</td>
-  <td>Industriales</td>
-  <td>1.000</td>
-  <td>18.7</td>
-  <td class="red">+nan%</td>
-  <td class="green">38.6%</td>
-  <td>2,982,660,537</td>
-  <td>5,499,000,000</td>
-</tr><tr>
-  <td>5</td>
-  <td>Indra</td>
-  <td>IDR.MC</td>
-  <td>Tecnología</td>
-  <td>0.975</td>
-  <td>17.0</td>
-  <td class="green">+61.2%</td>
-  <td class="green">25.1%</td>
-  <td>45,643,185</td>
-  <td>378,457,000</td>
-</tr><tr>
-  <td>6</td>
-  <td>Intuit</td>
-  <td>INTU</td>
-  <td>Tecnología</td>
-  <td>0.839</td>
-  <td>9.8</td>
-  <td class="red">+nan%</td>
-  <td class="green">19.6%</td>
-  <td>1,939,651,974</td>
-  <td>6,083,000,000</td>
-</tr><tr>
-  <td>7</td>
-  <td>Coca-Cola HBC</td>
-  <td>CCH.L</td>
-  <td>Bebidas</td>
-  <td>0.836</td>
-  <td>16.5</td>
-  <td class="green">+18.2%</td>
-  <td class="green">24.5%</td>
-  <td>436,316,335</td>
-  <td>760,900,000</td>
-</tr><tr>
-  <td>8</td>
-  <td>Deere & Company</td>
-  <td>DE</td>
-  <td>Industriales</td>
-  <td>0.771</td>
-  <td>25.8</td>
-  <td class="red">+nan%</td>
-  <td class="green">19.4%</td>
-  <td>1,646,869,592</td>
-  <td>3,231,000,000</td>
-</tr><tr>
-  <td>9</td>
-  <td>Colgate-Palmolive</td>
-  <td>CL</td>
-  <td>Consumo básico</td>
-  <td>0.771</td>
-  <td>22.1</td>
-  <td class="red">+nan%</td>
-  <td class="red">nan% (*)</td>
-  <td>1,700,187,826</td>
-  <td>3,634,000,000</td>
-</tr><tr>
-  <td>10</td>
-  <td>Nike</td>
-  <td>NKE</td>
-  <td>Consumo discrecional</td>
-  <td>0.746</td>
-  <td>24.9</td>
-  <td class="red">+nan%</td>
-  <td class="green">24.4%</td>
-  <td>986,331,429</td>
-  <td>3,268,000,000</td>
-</tr><tr>
-  <td>11</td>
-  <td>Comcast</td>
-  <td>CMCSA</td>
-  <td>Comunicaciones</td>
-  <td>0.732</td>
-  <td>5.9</td>
-  <td class="red">+nan%</td>
-  <td class="green">20.6%</td>
-  <td>3,895,599,745</td>
-  <td>19,235,000,000</td>
-</tr><tr>
-  <td>12</td>
-  <td>Henkel</td>
-  <td>HEN3.DE</td>
-  <td>Consumo</td>
-  <td>0.675</td>
-  <td>12.1</td>
-  <td class="green">+11.0%</td>
-  <td class="yellow">9.9%</td>
-  <td>217,320,704</td>
-  <td>1,842,000,000</td>
-</tr><tr>
-  <td>13</td>
-  <td>Home Depot</td>
-  <td>HD</td>
-  <td>Consumo discrecional</td>
-  <td>0.667</td>
-  <td>20.8</td>
-  <td class="red">+nan%</td>
-  <td class="green">110.5%</td>
-  <td>10,177,836,181</td>
-  <td>12,646,000,000</td>
-</tr><tr>
-  <td>14</td>
-  <td>Adobe</td>
-  <td>ADBE</td>
-  <td>Tecnología</td>
-  <td>0.627</td>
-  <td>7.1</td>
-  <td class="red">+nan%</td>
-  <td class="green">61.3%</td>
-  <td>5,801,020,023</td>
-  <td>9,852,000,000</td>
-</tr><tr>
-  <td>15</td>
-  <td>Honeywell</td>
-  <td>HON</td>
-  <td>Industriales</td>
-  <td>0.613</td>
-  <td>20.0</td>
-  <td class="red">+nan%</td>
-  <td class="green">34.0%</td>
-  <td>1,543,241,899</td>
-  <td>5,422,000,000</td>
-</tr><tr>
-  <td>16</td>
-  <td>Broadcom</td>
-  <td>AVGO</td>
-  <td>Semiconductores</td>
-  <td>0.606</td>
-  <td>21.3</td>
-  <td class="red">+nan%</td>
-  <td class="green">28.4%</td>
-  <td>13,279,691,981</td>
-  <td>26,914,000,000</td>
-</tr><tr>
-  <td>17</td>
-  <td>PayPal</td>
-  <td>PYPL</td>
-  <td>Financiero</td>
-  <td>0.605</td>
-  <td>7.4</td>
-  <td class="red">+nan%</td>
-  <td class="green">25.8%</td>
-  <td>2,901,375,747</td>
-  <td>5,564,000,000</td>
-</tr><tr>
-  <td>18</td>
-  <td>Puig Brands</td>
-  <td>PUIG.MC</td>
-  <td>Consumo</td>
-  <td>0.582</td>
-  <td>13.6</td>
-  <td class="yellow">+0.8%</td>
-  <td class="green">15.2%</td>
-  <td>160,015,937</td>
-  <td>660,560,000</td>
-</tr><tr>
-  <td>19</td>
-  <td>Qualcomm</td>
-  <td>QCOM</td>
-  <td>Semiconductores</td>
-  <td>0.566</td>
-  <td>21.2</td>
-  <td class="red">+nan%</td>
-  <td class="green">26.1%</td>
-  <td>6,715,330,000</td>
-  <td>12,820,000,000</td>
-</tr><tr>
-  <td>20</td>
-  <td>Vinci</td>
-  <td>DG.PA</td>
-  <td>Construcción</td>
-  <td>0.564</td>
-  <td>12.8</td>
-  <td class="green">+11.7%</td>
-  <td class="green">15.9%</td>
-  <td>1,087,060,000</td>
-  <td>8,013,000,000</td>
-</tr>
-</tbody>
-</table>
-<!-- END RADAR -->
 </body></html>
