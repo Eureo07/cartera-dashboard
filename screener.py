@@ -252,7 +252,7 @@ def run_screener():
     rent_cache = {}
     # Batch download prices via yf.download (single request, much faster on Railway)
     try:
-        batch = yf.download(" ".join(all_tickers), period="1y", progress=False, auto_adjust=False, session=_YF_SESSION, group_by="ticker")
+        batch = yf.download(" ".join(all_tickers), period="1y", progress=False, auto_adjust=False, session=_YF_SESSION, group_by="ticker", threads=1)
         if batch is not None and not batch.empty and isinstance(batch.columns, pd.MultiIndex):
             for t in all_tickers:
                 try:
