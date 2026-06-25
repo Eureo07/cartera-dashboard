@@ -525,455 +525,314 @@ html = f"""<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard Cartera</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <style>
-* {{ box-sizing: border-box; margin: 0; padding: 0; }}
-body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; padding: 20px; }}
-h1 {{ font-size: 24px; margin-bottom: 5px; }}
-h2 {{ font-size: 18px; margin: 25px 0 10px; color: #444; }}
-h3 {{ font-size: 14px; margin: 15px 0 8px; color: #555; }}
-.header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }}
-.date {{ color: #888; font-size: 13px; }}
-.summary-cards {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }}
-.card {{ background: white; border-radius: 10px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }}
-.card .label {{ font-size: 11px; text-transform: uppercase; color: #888; }}
-.card .value {{ font-size: 20px; font-weight: 700; margin-top: 5px; }}
-.charts-row {{ display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }}
-.chart-box {{ background: white; border-radius: 10px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex: 1; min-width: 250px; }}
-.chart-box canvas {{ max-height: 250px; }}
-table {{ width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; }}
-th {{ background: #f8f9fa; text-align: left; padding: 10px 12px; font-size: 11px; text-transform: uppercase; color: #666; border-bottom: 2px solid #eee; }}
-td {{ padding: 10px 12px; border-bottom: 1px solid #eee; font-size: 13px; }}
-tr:last-child td {{ border-bottom: none; }}
-.green {{ color: #166534; background: #dcfce7; }}
-.yellow {{ color: #854d0e; background: #fef9c3; }}
-.orange {{ color: #9a3412; background: #ffedd5; }}
-.red {{ color: #991b1b; background: #fce4e4; }}
-.badge {{ display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }}
-.bar-bg {{ background: #eee; border-radius: 6px; height: 10px; width: 100px; display: inline-block; vertical-align: middle; }}
-.bar-fill {{ height: 10px; border-radius: 6px; display: block; }}
-.db-wrap {{ width: 240px; }}
-.db-track {{ height: 14px; background: #e5e7eb; border-radius: 7px; position: relative; overflow: hidden; }}
-.db-left {{ height: 100%; background: #ef4444; position: absolute; left: 0; top: 0; border-radius: 7px 0 0 7px; }}
-.db-right {{ height: 100%; background: #22c55e; position: absolute; top: 0; border-radius: 0 7px 7px 0; }}
-.db-right.blink {{ animation: db-blink 0.8s infinite; }}
-@keyframes db-blink {{ 0%,100% {{ opacity: 1; }} 50% {{ opacity: 0.2; }} }}
-.db-center {{ position: absolute; top: 0; width: 2px; height: 100%; background: #1f2937; z-index: 2; }}
-.db-current {{ position: absolute; top: -4px; font-size: 10px; color: #2563eb; transform: translateX(-50%); z-index: 3; line-height: 1; }}
-.db-labels {{ display: flex; justify-content: space-between; margin-top: 2px; font-size: 10px; }}
-.db-l-red {{ color: #dc2626; }}
-.db-l-dark {{ color: #1f2937; font-weight: 600; }}
-.db-l-green {{ color: #16a34a; }}
-.small {{ font-size: 11px; color: #888; }}
-.alert-box {{ background: #fff; border-left: 4px solid #ef4444; padding: 12px 15px; margin-bottom: 15px; border-radius: 0 8px 8px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }}
-.alert-box .a-title {{ font-weight: 700; font-size: 13px; }}
-.alert-box .a-item {{ font-size: 12px; color: #666; margin-top: 4px; }}
-.alert-red {{ color: #dc2626; font-weight: 600; }}
-.alert-yellow {{ color: #ca8a04; font-weight: 600; }}
-.divers-box {{ background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }}
-.divers-box h2 {{ margin: 0 0 10px; }}
-.div-row {{ display: flex; flex-wrap: wrap; gap: 12px; }}
-.div-item {{ font-size: 13px; padding: 6px 12px; background: #f8f9fa; border-radius: 6px; flex: 1; min-width: 200px; }}
-.div-icon {{ font-size: 18px; margin-right: 6px; }}
-.div-suggestion {{ font-size: 12px; color: #2563eb; margin-top: 8px; padding: 6px 10px; background: #eff6ff; border-radius: 6px; }}
-.btn-alt {{ border: none; background: #e5e7eb; color: #374151; padding: 2px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; margin-right: 4px; }}
-.btn-alt.active {{ background: #3b82f6; color: white; }}
-.btn-alt:hover {{ background: #d1d5db; }}
-.best-alt-btns {{ margin-top: 6px; }}
-.best-alt-value {{ font-size: 13px; margin-top: 5px; }}
-.card-wide {{ grid-column: span 2; }}
-.sect-row {{ padding: 4px 0; border-bottom: 1px solid #eee; }}
-.sect-row:last-child {{ border-bottom: none; }}
-.sect-name {{ font-weight: 700; color: #555; font-size: 11px; text-transform: uppercase; margin-right: 4px; }}
-.sect-meta {{ color: #888; font-size: 11px; }}
-.sect-ours {{ color: #16a34a; font-size: 12px; }}
-.sect-none {{ color: #999; font-style: italic; }}
-.sect-warn {{ color: #ca8a04; font-size: 11px; }}
-
-
-@media (max-width: 600px) {{ table {{ font-size: 12px; }} td, th {{ padding: 6px 8px; }} }}
+*{{margin:0;padding:0;box-sizing:border-box}}
+body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
+.dash{{background:#0f1117;color:#e8eaed;padding:20px 30px;min-height:100vh}}
+.header{{background:linear-gradient(135deg,#1a1d2e,#2a2d3e);border-radius:16px;padding:28px 36px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center}}
+.header h1{{font-size:24px;font-weight:700;color:#fff}}
+.header .sub{{color:#9aa0b0;font-size:13px;margin-top:4px}}
+.header .date-info{{text-align:right;color:#9aa0b0;font-size:12px}}
+.kpi-row{{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px}}
+.kpi{{background:#1a1d2e;border-radius:12px;padding:18px 22px}}
+.kpi .label{{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#9aa0b0;margin-bottom:8px}}
+.kpi .value{{font-size:22px;font-weight:700;color:#fff}}
+.kpi .value.neg{{color:#e05050}}
+.kpi .value.pos{{color:#3ecf8e}}
+.kpi .sub{{font-size:11px;color:#9aa0b0;margin-top:4px}}
+.section-title{{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#9aa0b0;margin-bottom:14px;font-weight:600}}
+.positions-grid{{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}}
+.pos-card{{background:#1a1d2e;border-radius:12px;padding:20px 24px;border-left:4px solid #3ecf8e}}
+.pos-card.neg{{border-left-color:#e05050}}
+.pos-card .pos-header{{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}}
+.pos-card .ticker{{font-size:18px;font-weight:700;color:#fff}}
+.pos-card .name{{font-size:12px;color:#9aa0b0;margin-top:2px}}
+.pos-card .price{{text-align:right}}
+.pos-card .price .current{{font-size:20px;font-weight:700}}
+.pos-card .price .pnl{{font-size:13px;margin-top:2px}}
+.pos-card .price .pnl.neg{{color:#e05050}}
+.pos-card .price .pnl.pos{{color:#3ecf8e}}
+.signal-badge{{display:inline-block;padding:4px 12px;border-radius:6px;font-size:11px;font-weight:700;margin-bottom:12px}}
+.signal-badge.compra{{background:#1a3d2e;color:#3ecf8e;border:1px solid #3ecf8e}}
+.signal-badge.venta{{background:#3d1a1a;color:#e05050;border:1px solid #e05050}}
+.signal-badge.hold{{background:#2d2d1a;color:#f0a500;border:1px solid #f0a500}}
+.metrics-grid{{display:grid;grid-template-columns:1fr 1fr;gap:8px}}
+.metric-row{{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px}}
+.metric-row .ml{{color:#9aa0b0}}
+.metric-row .mv{{color:#fff;font-weight:600}}
+.metric-row .mv.neg{{color:#e05050}}
+.metric-row .mv.pos{{color:#3ecf8e}}
+.metric-row .mv.warn{{color:#f0a500}}
+.charts-row{{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}}
+.chart-card{{background:#1a1d2e;border-radius:12px;padding:18px 20px}}
+.chart-card .ctitle{{font-size:12px;color:#9aa0b0;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}}
+.bottom-row{{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}}
+.info-card{{background:#1a1d2e;border-radius:12px;padding:18px 20px}}
+.info-card .ctitle{{font-size:12px;color:#9aa0b0;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}}
+.alert-item{{padding:8px 10px;border-radius:6px;font-size:12px;margin-bottom:6px;display:flex;align-items:center;gap:8px}}
+.alert-item.danger{{background:#3d1a1a;color:#e05050}}
+.alert-item.warn{{background:#2d2a1a;color:#f0a500}}
+.alert-item.info{{background:#1a1d3d;color:#5b8def}}
+.tendencia-row{{display:flex;gap:16px;margin-top:8px}}
+.tend-item{{background:#12151f;border-radius:8px;padding:10px 14px;flex:1}}
+.tend-label{{font-size:11px;color:#9aa0b0;margin-bottom:6px}}
+.tend-val{{font-size:13px;font-weight:700}}
+.tend-val.alcista{{color:#3ecf8e}}
+.tend-val.bajista{{color:#e05050}}
+.corr-table{{width:100%;border-collapse:collapse;font-size:12px}}
+.corr-table th{{color:#9aa0b0;padding:5px 8px;text-align:center;font-weight:500}}
+.corr-table td{{padding:5px 8px;text-align:center;border-radius:4px;font-weight:600}}
+.corr-low{{background:#1a3d2e;color:#3ecf8e}}
+.corr-mid{{background:#2d2d1a;color:#f0a500}}
+.corr-high{{background:#3d1a1a;color:#e05050}}
+.corr-self{{background:#12151f;color:#9aa0b0}}
+.legend-row{{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px}}
+.leg-item{{display:flex;align-items:center;gap:5px;font-size:11px;color:#9aa0b0}}
+.leg-dot{{width:10px;height:10px;border-radius:2px}}
+.tesis-item{{margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.05)}}
+.tesis-item:last-child{{border-bottom:none}}
+.tesis-ticker{{font-size:13px;font-weight:700;color:#fff}}
+.tesis-target{{font-size:11px;color:#3ecf8e;margin-top:2px}}
+.tesis-text{{font-size:11px;color:#9aa0b0;margin-top:4px;line-height:1.5}}
+.peso-bar{{height:6px;border-radius:3px;background:#3ecf8e;margin-top:4px}}
+.peso-bar.warn{{background:#f0a500}}
+.peso-bar.danger{{background:#e05050}}
+.alt-section{{margin-bottom:24px}}
+.alt-table{{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px}}
+.alt-table th{{background:#12151f;color:#9aa0b0;padding:8px 10px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid rgba(255,255,255,0.1)}}
+.alt-table td{{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.05);color:#e8eaed}}
+.alt-table tr.excluded td{{color:#5a5f6b;font-style:italic}}
+.alt-table tr.selected td{{background:rgba(62,207,142,0.08);font-weight:600}}
+.alt-table tr:last-child td{{border-bottom:none}}
+.alt-table .badge-tu{{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;background:#1a3d2e;color:#3ecf8e;border:1px solid #3ecf8e}}
+.alt-table .badge-alt{{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;background:#1a2a3d;color:#5b8def;border:1px solid #5b8def}}
+.alt-table .badge-excl{{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;background:#3d1a1a;color:#e05050;border:1px solid #e05050}}
+.score-bar-bg{{background:#12151f;border-radius:4px;height:8px;width:80px;display:inline-block;vertical-align:middle;overflow:hidden}}
+.score-bar-fill{{height:8px;border-radius:4px;display:block}}
+.alt-note{{font-size:10px;color:#9aa0b0;margin-bottom:20px;padding:8px 12px;background:#12151f;border-radius:8px;line-height:1.5}}
+.footer{{text-align:center;padding:20px 0;font-size:11px;color:#5a5f6b;border-top:1px solid rgba(255,255,255,0.05);margin-top:30px}}
+.footer span{{color:#9aa0b0}}
 </style>
 </head>
 <body>
-<div class="header">
-  <div>
-    <h1>Dashboard Cartera</h1>
-    <div class="date">Actualizado: {now_str}</div>
+<div class="dash">
+  <div class="header">
+    <div>
+      <h1>Dashboard Cartera</h1>
+      <div class="sub">{' · '.join(p['name'] for p in portfolio)}</div>
+    </div>
+    <div class="date-info">Actualizado: {now_str}<br><span style="color:#3ecf8e;font-size:13px;">{len(portfolio)} posiciones activas</span></div>
   </div>
-</div>
 
-<div class="summary-cards">
-  <div class="card"><div class="label">Inversi\u00f3n Total</div><div class="value" id="total-cost">{total_cost:,.2f} \u20ac</div></div>
-  <div class="card"><div class="label">Valor Actual</div><div class="value" id="total-value">{total_value:,.2f} \u20ac</div></div>
-  <div class="card"><div class="label">Resultado</div><div class="value {total_cls}" id="total-pnl">{total_pnl:+,.2f} \u20ac</div></div>
-  <div class="card"><div class="label">Rentabilidad</div><div class="value {total_cls}" id="total-pnlpct">{total_pnl_pct:+.2f}%</div></div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="label">Inversi\u00f3n Total</div><div class="value">{total_cost:,.0f} \u20ac</div></div>
+    <div class="kpi"><div class="label">Valor Actual</div><div class="value">{total_value:,.0f} \u20ac</div></div>
+    <div class="kpi"><div class="label">Resultado</div><div class="value {"neg" if total_pnl < 0 else "pos"}">{total_pnl:+,.2f} \u20ac</div></div>
+    <div class="kpi"><div class="label">Rentabilidad</div><div class="value {"neg" if total_pnl_pct < 0 else "pos"}">{total_pnl_pct:+.2f}%</div><div class="sub">Cartera</div></div>
+    <div class="kpi"><div class="label">vs Euro Stoxx 50</div><div class="value {"neg" if benchmark_return is not None and (total_pnl_pct - benchmark_return) < 0 else "pos"}">{("" if benchmark_return is None else f"{(total_pnl_pct - benchmark_return):+.2f}%")}</div><div class="sub">{f"\u00cdndice {benchmark_return:+.2f}%" if benchmark_return is not None else "N/D"}</div></div>
+  </div>
+
+  <div class="section-title">An\u00e1lisis por posici\u00f3n</div>
+  <div class="positions-grid">
 """
 
-# vs Benchmark card
-if benchmark_return is not None:
-    vs_bm = total_pnl_pct - benchmark_return
-    bm_cls = "green" if vs_bm > 0 else "red"
-    html += f'  <div class="card"><div class="label">vs Euro Stoxx 50</div><div class="value {bm_cls}">{vs_bm:+.2f}%</div><div class="small">Cartera {total_pnl_pct:+.2f}% vs \u00cdndice {benchmark_return:+.2f}%</div></div>\n'
-
-html += "  {BEST_ALT_CARD}\n"
-html += "</div>\n"
-
-# Alerts
-if alerts:
-    html += """<div class="alert-box"><div class="a-title">Alertas</div>\n"""
-    for a in alerts:
-        html += f'<div class="a-item">{a}</div>\n'
-    html += "</div>\n"
-
-# == DIVERSIFICATION SECTION ==
-html += f"""<div class="divers-box">
-  <h2>Diversificaci\u00f3n</h2>
-  <div class="div-row">
-    <div class="div-item"><span class="div-icon">{conc_icon}</span> <span>{conc_text}</span></div>
-    <div class="div-item"><span class="div-icon">{def_icon}</span> <span>{def_text}</span></div>
-    <div class="div-item"><span class="div-icon">{div_icon}</span> <span>{div_text}</span></div>
-  </div>
-</div>
-"""
-
-# == PIE CHARTS ==
-pie_labels = json.dumps([p["name"] for p in portfolio])
-pie_weights = json.dumps([round(p["weight"], 1) for p in portfolio])
-pie_colors = json.dumps(["#22c55e","#3b82f6","#eab308","#ef4444","#a855f7","#ec4899"])
-
-# Sector aggregation
-sector_map = {}
-for p in portfolio:
-    sec_name = "Desconocido"
-    db_t = p["db_ticker"]
-    if db_t:
-        row = df[df["Ticker"] == db_t]
-        if not row.empty:
-            sec_name = row.iloc[0][sec_col_name]
-    else:
-        fb = get_fallback_financials(p["ticker"])
-        if fb:
-            sec_name = fb.get("Sector", "Desconocido")
-    sector_map[sec_name] = sector_map.get(sec_name, 0) + p["weight"]
-sec_labels = json.dumps(list(sector_map.keys()))
-sec_weights = json.dumps([round(v, 1) for v in sector_map.values()])
-
-html += f"""
-<div class="charts-row">
-  <div class="chart-box">
-    <h3>Peso por Posici\u00f3n</h3>
-    <canvas id="piePos"></canvas>
-  </div>
-  <div class="chart-box">
-    <h3>Peso por Sector</h3>
-    <canvas id="pieSec"></canvas>
-  </div>
-  <div class="chart-box">
-    <h3>Evoluci\u00f3n Cartera vs Benchmark</h3>
-    <canvas id="chartEvol"></canvas>
-  </div>
-</div>
-
-<script>
-new Chart(document.getElementById('piePos'), {{
-    type: 'pie',
-    data: {{ labels: {pie_labels}, datasets: [{{ data: {pie_weights}, backgroundColor: {pie_colors} }}] }},
-    options: {{ responsive: true, plugins: {{ legend: {{ position: 'bottom', labels: {{ font: {{ size: 11 }} }} }} }} }}
-}});
-new Chart(document.getElementById('pieSec'), {{
-    type: 'pie',
-    data: {{ labels: {sec_labels}, datasets: [{{ data: {sec_weights}, backgroundColor: {pie_colors} }}] }},
-    options: {{ responsive: true, plugins: {{ legend: {{ position: 'bottom', labels: {{ font: {{ size: 11 }} }} }} }} }}
-}});
-var evolCtx = document.getElementById('chartEvol');
-if (evolCtx) {{
-  var evolDates = {evol_dates_json};
-  var evolPort = {evol_portfolio_json};
-  var evolBm = {evol_benchmark_json};
-  if (evolDates.length > 0) {{
-    var normPort = evolPort.map(function(v) {{ return (v / evolPort[0] - 1) * 100; }});
-    var firstBm = evolBm.filter(function(v) {{ return v !== null; }})[0] || 1;
-    var normBm = evolBm.map(function(v) {{ return v !== null ? (v / firstBm - 1) * 100 : null; }});
-    new Chart(evolCtx, {{
-      type: 'line',
-      data: {{
-        labels: evolDates,
-        datasets: [
-          {{ label: 'Cartera', data: normPort, borderColor: '#3b82f6', backgroundColor: 'transparent', tension: 0.2, pointRadius: 0 }},
-          {{ label: 'Euro Stoxx 50', data: normBm, borderColor: '#9ca3af', backgroundColor: 'transparent', tension: 0.2, pointRadius: 0, borderDash: [4,4] }}
-        ]
-      }},
-      options: {{ responsive: true, plugins: {{ legend: {{ position: 'bottom', labels: {{ font: {{ size: 11 }} }} }} }}, scales: {{ y: {{ ticks: {{ callback: function(v) {{ return v.toFixed(1) + '%'; }} }} }} }} }}
-    }});
-  }}
-}}</script>
-"""
-
-# == POSICIONES ==
-html += """<h2>Posiciones</h2>
-<table>
-<thead><tr>
-  <th>#</th><th>Empresa</th><th>Ticker</th><th>Acc.</th><th>Fecha</th><th>P.Entrada</th><th>P.Actual</th><th>Inversi\u00f3n</th><th>Val.Actual</th><th>P&amp;L</th><th>Rent.</th><th>CAGR</th><th>Peso</th><th>Stop</th><th>Dist.</th><th>Obj.</th><th>50d</th>
-</tr></thead>
-<tbody>
-"""
-# MA50 data for each position (from price_hist)
+# MA data for trends
+ma20_data = {}
 ma50_data = {}
 for tk, series in price_hist.items():
+    if len(series) >= 20:
+        ma20_data[tk] = series.tail(20).mean()
+    elif len(series) > 0:
+        ma20_data[tk] = series.mean()
     if len(series) >= 50:
         ma50_data[tk] = series.tail(50).mean()
     elif len(series) > 0:
         ma50_data[tk] = series.mean()
 
-for i, p in enumerate(portfolio, 1):
-    pnl_cls = metric_class("pnl", p["pnl"])
+for i, p in enumerate(portfolio):
+    tk = p["ticker"]
+    v = valuation.get(tk, {})
+    per = v.get("per")
+    pb_val = v.get("pb")
+    fwd_per = v.get("fwd_per")
+    db_t = p.get("db_ticker")
+    sector_name = "Desconocido"
+    roe_val = None
+    fcf_val = None
+    if db_t:
+        row = df[df["Ticker"] == db_t]
+        if not row.empty:
+            r = row.iloc[0]
+            sector_name = r.get(sec_col_name, "Desconocido")
+            roe_val = val_metric(r.get("2026 ROE"), -500, 500)
+            fcf_v = r.get("2026 FCN")
+            fcf_val = fcf_v if pd.notna(fcf_v) else None
+    # Signal badge
+    days = p.get("days", 999)
+    if days <= 14:
+        signal_cls = "compra"
+        signal_txt = "COMPRA (posici\u00f3n nueva)"
+    elif p["pnl_pct"] > 5:
+        signal_cls = "compra"
+        signal_txt = "COMPRA (momentum positivo)"
+    elif p["pnl_pct"] < -5:
+        signal_cls = "venta"
+        signal_txt = "VENTA (correcci\u00f3n)"
+    else:
+        signal_cls = "hold"
+        signal_txt = "HOLD (seguimiento)"
+    # Trends
+    ma20 = ma20_data.get(tk)
+    ma50 = ma50_data.get(tk)
+    if ma20 and p["current"] >= ma20:
+        st_trend, st_cls = "ALCISTA", "alcista"
+    else:
+        st_trend, st_cls = "BAJISTA", "bajista"
+    if ma50 and p["current"] >= ma50:
+        lt_trend, lt_cls = "ALCISTA", "alcista"
+    else:
+        lt_trend, lt_cls = "BAJISTA", "bajista"
+    # Thesis
+    t = tesis.get(tk, {})
+    thesis_text = t.get("motivo", "")
+    # P&L colors
+    pnl_cls_card = "neg" if p["pnl"] < 0 else "pos"
+    pnl_sign = "" if p["pnl"] < 0 else "+"
+    pnl_pct_sign = "" if p["pnl_pct"] < 0 else "+"
+    # Metric classes
+    per_cls = metric_class("per", per)
+    pb_cls = metric_class("pb", pb_val)
+    roe_cls = metric_class("roe", roe_val)
     dist_cls = metric_class("dist_stop", p["dist_stop"])
-    cagr_s = f"{p['cagr']*100:.1f}%" if p.get("cagr") is not None else "-"
-    if p.get("cagr") is not None and p.get("days", 999) < 30:
-        cagr_s += " (*per\u00edodo < 1 mes)"
-    elif p.get("cagr") is None and p.get("days", 999) < 30:
-        cagr_s = "- (*per\u00edodo < 1 mes)"
-    cagr_cls = ""
-    bar_color = "green" if p["dist_stop"] > 15 else ("yellow" if p["dist_stop"] > 8 else "red")
-    bar_w = min(p["dist_stop"], 100)
-    ret = p["pnl_pct"]
-    if ret >= 17.5:
-        target_cls = "orange"
-    elif ret >= 12:
-        target_cls = "green"
-    else:
-        target_cls = ""
-    # MA50
-    ma50 = ma50_data.get(p["ticker"])
-    ma50_s = f"{ma50:.4f}" if ma50 else "N/D"
-    ma50_cls = ""
-    if ma50:
-        ma50_cls = "green" if p["current"] >= ma50 else "red"
-    html += f"""<tr>
-  <td>{i}</td>
-  <td><strong>{p['name']}</strong></td>
-  <td>{p['ticker']}</td>
-  <td>{p['shares']}</td>
-  <td>{p['entry_date']}</td>
-  <td>{p['entry']:.2f}</td>
-  <td id="price-{i}">{p['current']:.4f}</td>
-  <td>{p['cost']:,.2f}</td>
-  <td id="val-{i}">{p['value']:,.2f}</td>
-  {cell(f"{p['pnl']:+,.2f}", pnl_cls, f"pnl-{i}")}
-  {cell(f"{p['pnl_pct']:+.2f}%", pnl_cls, f"pnlpct-{i}")}
-  {cell(cagr_s, cagr_cls)}
-  <td>{p['weight']:.1f}%</td>
-  <td>{p['stop']:.2f}</td>
-  <td id="dist-{i}"><span class="badge {dist_cls}">{p['dist_stop']:.1f}%</span><br><span class="bar-bg"><span class="bar-fill {bar_color}" style="width:{bar_w}%"></span></span></td>
-  {cell(f"{p['target']:.2f}", target_cls)}
-  {cell(ma50_s, ma50_cls)}
-</tr>
-"""
-html += "</tbody></table>"
+    fcf_cls = "pos" if (fcf_val or 0) > 0 else "neg"
+    weight_warn = "warn" if p["weight"] > 25 else ("danger" if p["weight"] > 30 else "")
+    weight_cls = "warn" if p["weight"] > 25 else ""
+    peso_bar_cls = "danger" if p["weight"] > 30 else ("warn" if p["weight"] > 25 else "")
 
-# == BENCHMARK ==
-if benchmark_return is not None:
-    bm_vs = total_pnl_pct - benchmark_return
-    bm_cls2 = "green" if bm_vs > 0 else "red"
-    html += f"""<h2>Benchmark</h2>
-<table>
-<thead><tr><th>Indicador</th><th>Valor</th></tr></thead>
-<tbody>
-<tr><td><strong>Euro Stoxx 50 ({bench_start} - hoy)</strong></td><td>{benchmark_return:+.2f}%</td></tr>
-<tr><td><strong>Cartera (mismo periodo)</strong></td><td class="{total_cls}">{total_pnl_pct:+.2f}%</td></tr>
-<tr><td><strong>Diferencia</strong></td><td class="{bm_cls2}">{bm_vs:+.2f}%</td></tr>
-</tbody></table>
-"""
-
-# == RISK ==
-html += """<h2>Riesgo</h2>
-<table>
-<thead><tr>
-  <th>Empresa</th><th>P.Actual</th><th>Stop Loss</th><th>Barra Doble</th><th>P\u00e9rdida M\u00e1x</th><th>52w High</th><th>52w Low</th>
-</tr></thead>
-<tbody>
-"""
-for i, p in enumerate(portfolio, 1):
-    high52 = low52 = None
-    if p["ticker"]:
-        try:
-            sinfo = yf.Ticker(p["ticker"], session=_YF_SESSION).info or {}
-            high52 = sinfo.get("fiftyTwoWeekHigh")
-            low52 = sinfo.get("fiftyTwoWeekLow")
-        except:
-            pass
-    # Build double bar
-    S, E, T, C = p["stop"], p["entry"], p["target"], p["current"]
-    total_range = T - S
-    if total_range > 0:
-        entry_pct = max(1, min(99, (E - S) / total_range * 100))
-        current_pct = max(0, min(100, (C - S) / total_range * 100))
-    else:
-        entry_pct = 50
-        current_pct = 50
-    exceeded = C >= T
-    blink_cls = " blink" if exceeded else ""
-    double_bar = f"""<div class="db-wrap" id="dist-{i}">
-  <div class="db-track">
-    <div class="db-left" style="width:{entry_pct}%"></div>
-    <div class="db-right{blink_cls}" style="width:{100-entry_pct}%"></div>
-    <div class="db-center" style="left:{entry_pct}%"></div>
-    <div class="db-current" style="left:{current_pct}%">&#x25BC;</div>
+    html += f"""    <div class="pos-card{" neg" if p["pnl"] < 0 else ""}">
+      <div class="pos-header">
+        <div><div class="ticker">{tk} — {p['name']}</div><div class="name">{sector_name} · Entrada {p['entry_date']}</div></div>
+        <div class="price"><div class="current" style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}">{p['current']:.2f} \u20ac</div><div class="pnl {pnl_cls_card}">{pnl_sign}{p['pnl']:,.2f} \u20ac ({pnl_pct_sign}{p['pnl_pct']:.2f}%)</div></div>
+      </div>
+      <div class="signal-badge {signal_cls}">{signal_txt}</div>
+      <div class="metrics-grid">
+        <div class="metric-row"><span class="ml">P. Entrada</span><span class="mv">{p['entry']:.2f} \u20ac</span></div>
+        <div class="metric-row"><span class="ml">Stop Loss</span><span class="mv">{p['stop']:.2f} \u20ac</span></div>
+        <div class="metric-row"><span class="ml">Distancia stop</span><span class="mv {dist_cls}">{p['dist_stop']:.1f}%</span></div>
+        <div class="metric-row"><span class="ml">P. Objetivo</span><span class="mv {"pos" if p["current"] >= p["target"] else ""}">{p['target']:.2f} \u20ac</span></div>
+        <div class="metric-row"><span class="ml">PER</span><span class="mv {"warn" if (per or 99) > 30 else ("pos" if per and per <= 20 else "")}">{f"{per:.1f}x" if per else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">PER Fwd</span><span class="mv">{f"{fwd_per:.1f}x" if fwd_per else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">P/B</span><span class="mv {"warn" if (pb_val or 99) > 5 else ("pos" if pb_val and pb_val <= 3 else "")}">{f"{pb_val:.2f}" if pb_val else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">ROE 2026</span><span class="mv {"pos" if (roe_val or 0) >= 15 else ("warn" if (roe_val or 0) >= 5 else "neg")}">{f"{roe_val:.1f}%" if roe_val else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">FCF 2026</span><span class="mv {fcf_cls}">{f"{fcf_val:,.0f}M \u20ac" if fcf_val else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">Peso cartera</span><span class="mv {weight_cls}">{p['weight']:.1f}%{" \u26a0" if p["weight"] > 25 else ""}</span></div>
+      </div>
+      <div class="tendencia-row">
+        <div class="tend-item"><div class="tend-label">Corto Plazo</div><div class="tend-val {st_cls}">{st_trend}</div></div>
+        <div class="tend-item"><div class="tend-label">Largo Plazo</div><div class="tend-val {lt_cls}">{lt_trend}</div></div>
+      </div>
+      <div style="font-size:11px;color:#9aa0b0;margin-top:10px;line-height:1.5">{thesis_text}</div>
+    </div>
   </div>
-  <div class="db-labels">
-    <span class="db-l-red">{S:.2f}</span>
-    <span class="db-l-dark">{E:.2f}</span>
-    <span class="db-l-green">{T:.2f}</span>
+
+# == CHARTS ROW 1 ==
+chart_labels_short = json.dumps([p["ticker"].replace(".DE","").replace(".MI","") for p in portfolio])
+chart_pnl_vals = json.dumps([round(p["pnl"], 2) for p in portfolio])
+chart_weight_vals = json.dumps([round(p["weight"], 1) for p in portfolio])
+chart_colors = json.dumps(["#2a78d6","#1baf7a","#eda100","#4a3aa7"])
+pnl_colors_js = ",".join(f'"rgba(224,80,80,0.8)"' if p["pnl"] < 0 else '"rgba(62,207,142,0.8)"' for p in portfolio)
+
+html += f"""  <div class="charts-row">
+    <div class="chart-card">
+      <div class="ctitle">Distribuci\u00f3n de cartera</div>
+      <div class="legend-row">
+"""
+for p in portfolio:
+    short_n = p["ticker"].replace(".DE","").replace(".MI","")
+    html += f'        <span class="leg-item"><span class="leg-dot" style="background:{["#2a78d6","#1baf7a","#eda100","#4a3aa7"][portfolio.index(p)%4]}"></span>{short_n} {p["weight"]:.1f}%</span>\n'
+
+html += f"""      </div>
+      <div style="position:relative;height:200px"><canvas id="chartPeso" role="img" aria-label="Distribuci\u00f3n de la cartera por posici\u00f3n"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="ctitle">P&amp;L por posici\u00f3n (\u20ac)</div>
+      <div style="position:relative;height:230px"><canvas id="chartPnl" role="img" aria-label="P&L por posici\u00f3n en euros"></canvas></div>
+    </div>
   </div>
-</div>"""
-    html += f"""<tr>
-  <td><strong>{p['name']}</strong></td>
-  <td>{p['current']:.4f}</td>
-  <td>{p['stop']:.2f}</td>
-  <td>{double_bar}</td>
-  <td class="red">{p['shares']*(p['current']-p['stop']):+,.0f} \u20ac</td>
-  <td>{f"{high52:.2f}" if high52 else "-"}</td>
-  <td>{f"{low52:.2f}" if low52 else "-"}</td>
-</tr>"""
-html += "</tbody></table>"
 
-# == VALUATION ==
-html += """<h2>Valoraci\u00f3n</h2>
-<table>
-<thead><tr>
-  <th>Empresa</th><th>PER</th><th>PER Fwd</th><th>P/B</th><th>EV/EBITDA</th><th>Cap.Mercado</th><th>BPA</th><th>P/S</th><th>Div.Yield</th>
-</tr></thead>
-<tbody>
+  <div class="bottom-row">
+    <div class="info-card">
+      <div class="ctitle">Alertas</div>
+"""
+
+# Alerts
+if alerts:
+    for a in alerts:
+        is_danger = "danger" if "\u26a0" in a else "warn"
+        is_danger = "danger" if "concentraci" in a.lower() or "defensivo" in a.lower() else is_danger
+        html += f'      <div class="alert-item {is_danger}"><span>{"\u26a0" if is_danger=="danger" else "!"}</span><span>{a}</span></div>\n'
+if not alerts:
+    html += '      <div class="alert-item info"><span>\u2713</span><span>Sin alertas activas</span></div>\n'
+
+html += f"""    </div>
+
+    <div class="info-card">
+      <div class="ctitle">Correlaci\u00f3n de precios (252d)</div>
+      <table class="corr-table">
+        <tr><th></th>
+"""
+for t2 in corr_tickers:
+    short = t2.replace(".DE","").replace(".MI","")
+    html += f"<th>{short}</th>\n"
+html += "        </tr>\n"
+# Use corr_html_rows but adapt classes to new CSS
+corr_rows_adapted = corr_html_rows.replace('class="green"','class="corr-low"').replace('class="yellow"','class="corr-mid"').replace('class="red"','class="corr-high"')
+html += corr_rows_adapted
+html += """      </table>
+      <div style="font-size:10px;color:#9aa0b0;margin-top:8px">Verde &lt;0.3 · Amarillo 0.3–0.7 · Rojo &gt;0.7</div>
+    </div>
+
+    <div class="info-card">
+      <div class="ctitle">Tesis de inversi\u00f3n</div>
 """
 for p in portfolio:
-    v = valuation.get(p["ticker"], {})
-    per_v = val_metric(v.get("per"), 0, 200)
-    pb_v = val_metric(v.get("pb"), 0, 100)
-    div_v = v.get("div_yield")
-    html += f"""<tr>
-  <td><strong>{p['name']}</strong></td>
-  {cell(f"{per_v:.1f}" if per_v is not None else "N/D", metric_class("per", per_v))}
-  <td>{f"{v['fwd_per']:.1f}" if v.get('fwd_per') else "N/D"}</td>
-  {cell(f"{pb_v:.2f}" if pb_v is not None else "N/D", metric_class("pb", pb_v))}
-  {cell(f"{v['ev_ebitda']:.1f}" if v.get('ev_ebitda') else "N/D", metric_class("ev_ebitda", v.get('ev_ebitda')))}
-  <td>{f"{v['mcap']:,.0f}" if v.get('mcap') else "N/D"}</td>
-  <td>{f"{v['eps']:.2f}" if v.get('eps') else "N/D"}</td>
-  <td>{f"{v['ps']:.2f}" if v.get('ps') else "N/D"}</td>
-  <td>{f"{div_v*100:.2f}%" if div_v is not None else "N/D"}</td>
-</tr>"""
-html += "</tbody></table>"
-
-# == METRICAS FINANCIERAS ==
-html += """<h2>M\u00e9tricas Financieras</h2>
-<table>
-<thead><tr>
-  <th>Empresa</th><th>A\u00f1o</th><th>ROE</th><th>ROI</th><th>FCF</th><th>EVA</th><th>M.EBITA</th><th>M.EBIT</th>
-</tr></thead>
-<tbody>
+    t = tesis.get(p["ticker"], {})
+    motivo = t.get("motivo", "")
+    objetivo = t.get("precio_objetivo", "")
+    obj_s = f"{objetivo:.2f} \u20ac" if isinstance(objetivo, (int, float)) else str(objetivo)
+    cond = t.get("condicion_venta", "")
+    html += f"""      <div class="tesis-item">
+        <div class="tesis-ticker">{p['name']}</div>
+        <div class="tesis-target">Objetivo: {obj_s} · Venta si {cond}</div>
+        <div class="tesis-text">{motivo}</div>
+      </div>
 """
-for p in portfolio:
-    db_t = p["db_ticker"]
-    if db_t:
-        row = df[df["Ticker"] == db_t]
-        if not row.empty:
-            r = row.iloc[0]
-            for y in ["2024", "2025", "2026"]:
-                roe_v = val_metric(r[f"{y} ROE"], -500, 500)
-                roi_v = val_metric(r[f"{y} ROI"], -500, 500)
-                fcf_v = r[f"{y} FCN"]
-                eva_v = r[f"{y} EVA"]
-                mebita_v = val_metric(r[f"{y} M.EBITA"], -500, 500)
-                mebit_v = val_metric(r[f"{y} M.EBIT"], -500, 500)
-                html += f"""<tr>
-  <td><strong>{p['name']}</strong></td>
-  <td>{y}</td>
-  {cell(f"{roe_v:.1f}%" if roe_v is not None else "-", metric_class("roe", roe_v))}
-  {cell(f"{roi_v:.1f}%" if roi_v is not None else "-", metric_class("roi", roi_v))}
-  {cell(f"{fcf_v:,.0f}" if pd.notna(fcf_v) else "-", metric_class("fcf", fcf_v))}
-  {cell(f"{eva_v:,.0f}" if pd.notna(eva_v) else "-", metric_class("eva", eva_v))}
-  {cell(f"{mebita_v:.1f}%" if mebita_v is not None else "-", metric_class("margen", mebita_v))}
-  {cell(f"{mebit_v:.1f}%" if mebit_v is not None else "-", metric_class("margen", mebit_v))}
-</tr>"""
-    else:
-        # Fallback: try yfinance
-        fb = get_fallback_financials(p["ticker"])
-        if fb:
-            for y in ["2024", "2025", "2026"]:
-                roe_v = val_metric(fb.get(f"{y} ROE"), -500, 500)
-                roi_v = val_metric(fb.get(f"{y} ROI"), -500, 500)
-                fcf_v = fb.get(f"{y} FCN")
-                eva_v = fb.get(f"{y} EVA")
-                mebita_v = val_metric(fb.get(f"{y} M.EBITA"), -500, 500)
-                mebit_v = val_metric(fb.get(f"{y} M.EBIT"), -500, 500)
-                html += f"""<tr>
-  <td><strong>{p['name']}</strong></td>
-  <td>{y}</td>
-  {cell(f"{roe_v:.1f}%" if roe_v is not None else "N/D", metric_class("roe", roe_v))}
-  {cell(f"{roi_v:.1f}%" if roi_v is not None else "N/D", metric_class("roi", roi_v))}
-  {cell(f"{fcf_v:,.0f}" if fcf_v is not None else "N/D", metric_class("fcf", fcf_v))}
-  {cell(f"{eva_v:,.0f}" if eva_v is not None else "N/D", metric_class("eva", eva_v))}
-  {cell(f"{mebita_v:.1f}%" if mebita_v is not None else "N/D", metric_class("margen", mebita_v))}
-  {cell(f"{mebit_v:.1f}%" if mebit_v is not None else "N/D", metric_class("margen", mebit_v))}
-</tr>"""
-            html += """<tr><td colspan="8" style="color:#888;font-size:11px;">* Datos parciales extra\u00eddos de yfinance</td></tr>"""
-        else:
-            html += f"""<tr><td><strong>{p['name']}</strong></td><td colspan="7" style="color:#888;">No disponible en la base de datos</td></tr>"""
-html += "</tbody></table>"
+html += """    </div>
+  </div>
 
-# == SECTOR COMPARISON ==
-html += """<h2>Comparativa Sectorial</h2>
-<table>
-<thead><tr>
-  <th>Empresa</th><th>Sector</th><th>ROE 2026</th><th>Media Sector</th><th>vs Media</th><th>EVA 2026</th><th>Posici\u00f3n</th>
-</tr></thead>
-<tbody>
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="ctitle">M\u00e9tricas de valoraci\u00f3n comparadas</div>
+      <div style="position:relative;height:220px"><canvas id="chartVal" role="img" aria-label="Comparativa PER y P/B por posici\u00f3n"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="ctitle">ROE 2026 vs media sectorial</div>
+      <div style="position:relative;height:220px"><canvas id="chartRoe" role="img" aria-label="ROE 2026 por empresa versus media sectorial"></canvas></div>
+    </div>
+  </div>
 """
-for p in portfolio:
-    db_t = p["db_ticker"]
-    if db_t:
-        row = df[df["Ticker"] == db_t]
-        if not row.empty:
-            r = row.iloc[0]
-            sec = r[sec_col_name]
-            sm = get_sector_metrics(sec, df, sec_col_name)
-            roe_val = val_metric(r["2026 ROE"], -500, 500) or 0
-            vs_media = roe_val - sm["roe_mean"]
-            vs_cls = "green" if vs_media > 0 else "red"
-            sec_df = df[df[sec_col_name] == sec].copy()
-            sec_df["_rank"] = sec_df["2026 ROE"].rank(ascending=False)
-            rank = int(sec_df[sec_df["Ticker"] == db_t]["_rank"].values[0]) if db_t in sec_df["Ticker"].values else "-"
-            eva_v = r["2026 EVA"]
-            html += f"""<tr>
-  <td><strong>{p['name']}</strong></td>
-  <td>{sec}</td>
-  {cell(f"{roe_val:.1f}%", metric_class("roe", roe_val))}
-  <td>{sm['roe_mean']:.1f}%</td>
-  {cell(f"{vs_media:+.1f}%", vs_cls)}
-  {cell(f"{eva_v:,.0f}" if pd.notna(eva_v) else "-", metric_class("eva", eva_v))}
-  <td>{rank}/{sm['n']}</td>
-</tr>"""
-    else:
-        fb = get_fallback_financials(p["ticker"])
-        if fb:
-            sec = fb.get("Sector", "Desconocido")
-            # Use latest available ROE
-            roe_val = None
-            for y in ["2026", "2025", "2024"]:
-                roe_val = val_metric(fb.get(f"{y} ROE"), -500, 500)
-                if roe_val is not None:
-                    break
-            html += f"""<tr>
-  <td><strong>{p['name']}</strong></td>
-  <td>{sec}</td>
-  {cell(f"{roe_val:.1f}%" if roe_val else "N/D", metric_class("roe", roe_val))}
-  <td colspan="4" style="color:#888;">Sin comparativa sectorial (datos parciales)</td>
-</tr>"""
-html += "</tbody></table>"
 
-# == TOP 5 PEERS (DEDUPED + PER FILTER) ==
-html += """<h2>Top 5 Alternativas por Sector</h2>
-<p class="small">Ranking: ROE (50%) + EVA (25%) + FCF (25%). Normalizado por sector. Filtro PER &lt;=30. (*) PER no disponible.</p>
+# ========== ALTERNATIVAS POR SECTOR ==========
+html += """  <div class="section-title">Alternativas por sector</div>
+  <div style="font-size:11px;color:#9aa0b0;margin-bottom:14px;padding:8px 12px;background:#12151f;border-radius:8px;line-height:1.6">
+    Filtros activos: PER ≤ 30 <span style="color:#5a5f6b;">|</span> Rentabilidad 1A ≥ +25%
+    <span style="color:#5a5f6b;display:block;margin-top:2px;font-size:10px;">
+      Score = ROE (50%) + EVA (25%) + FCF (25%), normalizado por sector. WACC: 8%.
+    </span>
+  </div>
 """
+
+# Prepare per-sector alternatives data
 for p in portfolio:
     db_t = p["db_ticker"]
     if not db_t: continue
@@ -985,427 +844,163 @@ for p in portfolio:
     sec_df = sec_df.drop_duplicates(subset="Empresa", keep="first")
     sec_df = sec_df[sec_df["2026 ROE"].notna() & sec_df["2026 EVA"].notna() & sec_df["2026 FCN"].notna()].copy()
     if len(sec_df) < 2: continue
-    # Get valuations for all peers in this sector
+    # Get valuations for all peers
     all_peer_tickers = df[df[sec_col_name] == sec]["Ticker"].unique()
     all_peer_vals = {}
     for pt in set(peer_ticker_to_yf(t) for t in all_peer_tickers):
         all_peer_vals[pt] = get_valuation(pt)
-    # Apply PER filter: exclude PER > 30 or PER < 0 (use fwd if available)
-    def get_effective_per(tick):
+    def get_eper(tick):
         pv = all_peer_vals.get(peer_ticker_to_yf(tick), {})
         fwd = pv.get("fwd_per")
-        if fwd is not None and fwd > 0:
-            return fwd
+        if fwd and fwd > 0: return fwd
         tr = pv.get("per")
-        if tr is not None and tr > 0:
-            return tr
+        if tr and tr > 0: return tr
         return None
-    def get_trailing_per(tick):
+    def get_pb_val(tick):
         pv = all_peer_vals.get(peer_ticker_to_yf(tick), {})
-        return pv.get("per")
-    def get_fwd_per(tick):
-        pv = all_peer_vals.get(peer_ticker_to_yf(tick), {})
-        return pv.get("fwd_per")
-    mask = []
-    per_missing = set()
-    our_row_saved = None
-    for _, rw in sec_df.iterrows():
-        is_ours = rw["Ticker"] == db_t or rw["Empresa"].strip().lower() == p["name"].strip().lower()
-        if is_ours:
-            our_row_saved = rw
-            mask.append(True)
-            continue
-        eper = get_effective_per(rw["Ticker"])
-        if eper is None:
-            mask.append(True)
-            per_missing.add(rw["Ticker"])
-        elif 0 <= eper <= 30:
-            mask.append(True)
-        else:
-            mask.append(False)
-    sec_df = sec_df[mask].copy()
-    # Ensure the portfolio company is always in the set
-    if our_row_saved is not None and our_row_saved["Ticker"] not in sec_df["Ticker"].values:
-        sec_df = pd.concat([sec_df, our_row_saved.to_frame().T], ignore_index=True)
-        our_exempted = True
-    else:
-        our_exempted = False
-    if len(sec_df) < 1: continue
+        return val_metric(pv.get("pb"), 0, 100)
+    # Compute scores
     sec_df["_score"] = normalized_score(sec_df["2026 ROE"]) * 0.50 + normalized_score(sec_df["2026 EVA"]) * 0.25 + normalized_score(sec_df["2026 FCN"]) * 0.25
     sec_df = sec_df.sort_values("_score", ascending=False)
-    top5 = sec_df.head(5)
-    # n_sector counts non-portfolio peers
-    n_sector = len(sec_df) - (1 if our_row_saved is not None else 0)
-    # Collect peer data for sector alternatives
-    peer_list = []
+    # Build table data with pass/fail
+    table_rows = []
+    pass_count = 0
     for _, rw in sec_df.iterrows():
         t2 = rw["Ticker"]
         yf_t2 = peer_ticker_to_yf(t2)
-        eper2 = get_effective_per(t2)
-        rent_1a2 = get_1y_return(yf_t2)
-        is_ours2 = t2 == db_t or rw["Empresa"].strip().lower() == p["name"].strip().lower()
-        peer_list.append({
+        eper = get_eper(t2)
+        pb2 = get_pb_val(t2)
+        rent_1a = get_1y_return(yf_t2)
+        is_ours = t2 == db_t or rw["Empresa"].strip().lower() == p["name"].strip().lower()
+        # Check filters
+        passes = True
+        reasons = []
+        if eper is not None and (eper > 30 or eper <= 0):
+            passes = False
+            reasons.append(f"PER {eper:.0f} >30")
+        if rent_1a is not None and rent_1a < 25:
+            passes = False
+            reasons.append(f"Rent.1A {rent_1a:+.0f}% <25%")
+        if eper is None and rent_1a is None:
+            passes = False
+            reasons.append("Sin datos")
+        if is_ours:
+            passes = True
+            reasons = []
+        if passes:
+            pass_count += 1
+        row_data = {
             "name": rw["Empresa"],
             "ticker": t2,
             "score": round(rw["_score"], 3),
-            "per": round(eper2, 1) if eper2 is not None else None,
-            "rent_1a": round(rent_1a2, 1) if rent_1a2 is not None else None,
-            "is_ours": is_ours2
-        })
-    if peer_list:
-        sector_alts_data[sec] = {"ours": p["name"], "peers": peer_list}
-    # Compute 1y returns for peers in the filtered sector
-    sec_tickers = [peer_ticker_to_yf(t) for t in sec_df["Ticker"].tolist()]
-    sec_avg_1y = None
-    sec_returns = []
-    for st in set(sec_tickers):
-        r = get_1y_return(st)
-        if r is not None:
-            sec_returns.append(r)
-    if sec_returns:
-        sec_avg_1y = statistics.median(sec_returns)
-
-    html += f"""<h3>{p['name']} \u00b7 {sec} ({n_sector} empresas)</h3>
-<table>
-<thead><tr>
-  <th>#</th><th>Empresa</th><th>Ticker</th><th>Score</th><th>ROE 2026</th><th>EVA 2026</th><th>FCF 2026</th><th>PER</th><th>PER Fwd</th><th>P/B</th><th>Rent.1A</th>
-</tr></thead>
-<tbody>
+            "roe": val_metric(rw["2026 ROE"], -500, 500) or 0,
+            "per_fwd": round(eper, 1) if eper else None,
+            "pb": round(pb2, 2) if pb2 else None,
+            "rent_1a": round(rent_1a, 1) if rent_1a else None,
+            "is_ours": is_ours,
+            "passes": passes,
+            "reasons": "; ".join(reasons)
+        }
+        table_rows.append(row_data)
+    n_total = len(table_rows)
+    # Render the sector table
+    sec_short = sec[:30]
+    html += f"""  <div style="margin-bottom:20px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <h3 style="color:#e8eaed;font-size:14px;font-weight:600;margin:0">{sec}</h3>
+      <span style="color:#9aa0b0;font-size:11px">{n_total} empresas analizadas</span>
+    </div>
+    <table class="alt-table">
+      <thead><tr>
+        <th>Empresa</th><th>Ticker</th><th>Score</th><th>ROE 2026</th><th>PER Fwd</th><th>P/B</th><th>Rent.1A</th><th></th>
+      </tr></thead>
+      <tbody>
 """
-    for i2, (_, pr) in enumerate(top5.iterrows(), 1):
-        t = pr["Ticker"]
-        is_ours = t == db_t or pr["Empresa"].strip().lower() == p["name"].strip().lower()
-        name_disp = f"{pr['Empresa']}" + (" (tu posici\u00f3n)" if is_ours else "")
-        if t in per_missing:
-            name_disp += " (*)"
-        if is_ours and our_exempted:
-            name_disp += " (PER no filtrado)"
-        tr_style = ' style="background:#f0fdf4;font-weight:600;"' if is_ours else ""
-        yf_t = peer_ticker_to_yf(t)
-        pv = all_peer_vals.get(yf_t, {})
-        roe_v2 = val_metric(pr["2026 ROE"], -500, 500) or 0
-        eva_v2, fcf_v2 = pr["2026 EVA"], pr["2026 FCN"]
-        per_v2 = get_trailing_per(t)
-        per_fwd_v2 = get_fwd_per(t)
-        pb_v2 = val_metric(pv.get("pb"), 0, 100)
-        rent_1a = get_1y_return(yf_t)
-        html += f"""<tr{tr_style}>
-  <td>{i2}</td>
-  <td>{name_disp}</td>
-  <td>{t}</td>
-  <td>{pr['_score']:.3f}</td>
-  {cell(f"{roe_v2:.1f}%", metric_class("roe", roe_v2))}
-  {cell(f"{eva_v2:,.0f}", metric_class("eva", eva_v2))}
-  {cell(f"{fcf_v2:,.0f}", metric_class("fcf", fcf_v2))}
-  {cell(f"{per_v2:.1f}" if per_v2 is not None else "N/D", per_val_class(per_v2))}
-  {cell(f"{per_fwd_v2:.1f}" if per_fwd_v2 is not None else "N/D", per_val_class(per_fwd_v2))}
-  {cell(f"{pb_v2:.2f}" if pb_v2 is not None else "N/D", metric_class("pb", pb_v2))}
-  {cell(f"{rent_1a:+.1f}%" if rent_1a is not None else "N/D", rent_1a_class(rent_1a, sec_avg_1y))}
-</tr>"""
-    # Sector average row
-    sec_avg_str = f"{sec_avg_1y:+.1f}%" if sec_avg_1y is not None else "N/D"
-    html += f"""<tr style="background:#f0f0f0;font-weight:700;">
-  <td colspan="3">Mediana del sector ({len(sec_returns)} empresas)</td>
-  <td colspan="8">{sec_avg_str}</td>
-</tr>"""
-    html += "</tbody></table>"
-
-# Handle portfolio companies without db_ticker (add their sector with just the portfolio company)
-for p in portfolio:
-    if p.get("db_ticker"): continue
-    fb = get_fallback_financials(p["ticker"])
-    if fb:
-        sec = fb.get("Sector", "Desconocido")
-        if sec not in sector_alts_data:
-            sector_alts_data[sec] = {"ours": p["name"], "peers": []}
-
-# Build best alternative card per sector
-def select_best_alt(peers, mode):
-    """Return (best_peer_dict, warning_str, is_portfolio_company)."""
-    non_ours = [q for q in peers if not q.get("is_ours")]
-    ours_list = [q for q in peers if q.get("is_ours")]
-    ours = ours_list[0] if ours_list else None
-
-    if mode == "score":
-        cand = [q for q in non_ours if q["per"] is not None and q["per"] <= 30 and q["rent_1a"] is not None and q["rent_1a"] > 0 and q.get("score", 0) > 0.4]
-        if not cand:
-            cand = [q for q in non_ours if q["per"] is not None and q["per"] <= 30 and q.get("score", 0) > 0.4]
-            if cand:
-                best = max(cand, key=lambda x: x["score"])
-                return (best, "(sin momentum positivo en el sector)", False)
-            if ours:
-                return (ours, "no_momentum_ours", True)
-            return (None, None, False)
-        best = max(cand, key=lambda x: x["score"])
-        return (best, None, False)
-
-    elif mode == "per":
-        cand = [q for q in non_ours if q["score"] > 0.4 and q["rent_1a"] is not None and q["rent_1a"] > 0 and q["per"] is not None]
-        if not cand:
-            cand = [q for q in non_ours if q["score"] > 0.4 and q["per"] is not None]
-            if cand:
-                best = min(cand, key=lambda x: x["per"])
-                return (best, "(sin momentum positivo en el sector)", False)
-            if ours:
-                return (ours, "no_momentum_ours", True)
-            return (None, None, False)
-        best = min(cand, key=lambda x: x["per"])
-        return (best, None, False)
-
-    elif mode == "mom":
-        cand = [q for q in non_ours if q["score"] > 0.4 and q["per"] is not None and q["per"] <= 30 and q["rent_1a"] is not None]
-        if not cand:
-            cand = [q for q in non_ours if q["score"] > 0.4 and q["per"] is not None]
-            if cand:
-                best = max(cand, key=lambda x: x["rent_1a"])
-                return (best, "(sin momentum positivo en el sector)", False)
-            if ours:
-                return (ours, "no_momentum_ours", True)
-            return (None, None, False)
-        best = max(cand, key=lambda x: x["rent_1a"])
-        return (best, None, False)
-
-    return (None, None, False)
-
-def fmt_alt_sector(sec_name, sec_data, mode):
-    """Return HTML row for one sector given a mode."""
-    best, warn, is_ours = select_best_alt(sec_data["peers"], mode)
-    if best is None:
-        return f'<div class="sect-row"><span class="sect-name">{sec_name}</span> \u2192 <span class="sect-none">Sin alternativas</span></div>'
-    if is_ours:
-        if warn == "no_momentum_ours":
-            return f'<div class="sect-row"><span class="sect-name">{sec_name}</span> \u2192 <span class="sect-warn">Sector sin momentum positivo</span><br><span class="sect-ours">Mejor por score: {best["name"]} (ya en cartera)</span></div>'
-        return f'<div class="sect-row"><span class="sect-name">{sec_name}</span> \u2192 <span class="sect-ours">Ya tienes la mejor opci\u00f3n ({best["ticker"]})</span></div>'
-    rent_str = f"{best['rent_1a']:+.1f}%" if best["rent_1a"] is not None else "N/D"
-    per_str = f"{best['per']:.1f}" if best["per"] is not None else "N/D"
-    warn_str = f' <span class="sect-warn">{warn}</span>' if warn else ""
-    return f'<div class="sect-row"><span class="sect-name">{sec_name}</span> \u2192 <strong>{best["name"]}</strong> ({best["ticker"]})<br><span class="sect-meta">Score: {best["score"]:.3f} \u00b7 PER: {per_str} \u00b7 Rent.1A: {rent_str}</span>{warn_str}</div>'
-
-def build_sector_alts_html(mode="score"):
-    rows = "".join(fmt_alt_sector(s, d, mode) for s, d in sector_alts_data.items())
-    return rows
-
-sector_alts_json = json.dumps(sector_alts_data, ensure_ascii=False, indent=None)
-
-best_alt_card = f"""<div class="card card-wide" id="best-alt-card">
-  <div class="label">Mejores Alternativas por Sector</div>
-  <div class="best-alt-value" id="best-alt-value">
-    {build_sector_alts_html("score")}
+    for rd in table_rows:
+        tr_class = ""
+        if rd["is_ours"]:
+            tr_class = ' class="selected"'
+        elif not rd["passes"]:
+            tr_class = ' class="excluded"'
+        badge_html = ""
+        if rd["is_ours"]:
+            badge_html = '<span class="badge-tu">TU POS.</span>'
+        elif rd["passes"]:
+            badge_html = '<span class="badge-alt">ALT</span>'
+        else:
+            badge_html = f'<span class="badge-excl">EXCL.</span>'
+        score_pct = max(1, min(100, rd["score"] * 100))
+        score_color = "#3ecf8e" if rd["score"] > 0.6 else ("#f0a500" if rd["score"] > 0.3 else "#e05050")
+        html += f"""        <tr{tr_class}>
+          <td><strong>{rd["name"]}</strong></td>
+          <td>{rd["ticker"]}</td>
+          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:{score_pct}%;background:{score_color}"></div></div> {rd["score"]:.3f}</td>
+          <td style="color:{"#3ecf8e" if (rd["roe"] or 0) >= 15 else ("#f0a500" if (rd["roe"] or 0) >= 5 else "#e05050")}">{f"{rd['roe']:.1f}%" if rd["roe"] else "N/D"}</td>
+          <td>{f"{rd['per_fwd']:.1f}x" if rd["per_fwd"] else "N/D"}</td>
+          <td style="color:{"#3ecf8e" if (rd["pb"] or 99) <= 3 else ("#f0a500" if (rd["pb"] or 99) <= 5 else "#e05050")}">{f"{rd['pb']:.2f}" if rd["pb"] else "N/D"}</td>
+          <td style="color:{"#3ecf8e" if (rd["rent_1a"] or 0) >= 25 else "#e05050"}">{f"{rd['rent_1a']:+.1f}%" if rd["rent_1a"] else "N/D"}</td>
+          <td>{badge_html}{f' <span style="font-size:9px;color:#5a5f6b">({rd["reasons"]})</span>' if not rd["passes"] and not rd["is_ours"] else ""}</td>
+        </tr>
+"""
+    html += f"""      </tbody>
+    </table>
+    <div class="alt-note">{pass_count} de {n_total} empresas pasan el filtro (PER ≤ 30 y Rent.1A ≥ +25%). Score: ROE 50% / EVA 25% / FCF 25%.</div>
   </div>
-  <div class="best-alt-btns" id="best-alt-btns">
-    <button class="btn-alt active" data-mode="score">Score</button>
-    <button class="btn-alt" data-mode="per">PER</button>
-    <button class="btn-alt" data-mode="mom">Momentum</button>
+"""
+
+# == FOOTER ==
+html += """  <div class="footer">
+    Generado autom\u00e1ticamente \u00b7 <span>yfinance</span> \u00b7 EVA con WACC 8% \u00b7 Precios en vivo al recargar
   </div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-(function() {{
-  const DATA = {sector_alts_json};
-  function selectBestAlt(peers, mode) {{
-    var nonOurs = peers.filter(function(q) {{ return !q.is_ours; }});
-    var oursList = peers.filter(function(q) {{ return q.is_ours; }});
-    var ours = oursList.length > 0 ? oursList[0] : null;
-    var cand, best;
-    if (mode === 'score') {{
-      cand = nonOurs.filter(function(q) {{ return q.per !== null && q.per <= 30 && q.rent_1a !== null && q.rent_1a > 0 && q.score > 0.4; }});
-      if (cand.length === 0) {{
-        cand = nonOurs.filter(function(q) {{ return q.per !== null && q.per <= 30 && q.score > 0.4; }});
-        if (cand.length > 0) {{
-          best = cand.reduce(function(a,b) {{ return a.score > b.score ? a : b; }});
-          return {{peer: best, warn: "(sin momentum positivo en el sector)", isOurs: false}};
-        }}
-        if (ours) return {{peer: ours, warn: "no_momentum_ours", isOurs: true}};
-        return {{peer: null, warn: null, isOurs: false}};
-      }}
-      best = cand.reduce(function(a,b) {{ return a.score > b.score ? a : b; }});
-      return {{peer: best, warn: null, isOurs: false}};
-    }}
-    if (mode === 'per') {{
-      cand = nonOurs.filter(function(q) {{ return q.score > 0.4 && q.rent_1a !== null && q.rent_1a > 0 && q.per !== null; }});
-      if (cand.length === 0) {{
-        cand = nonOurs.filter(function(q) {{ return q.score > 0.4 && q.per !== null; }});
-        if (cand.length > 0) {{
-          best = cand.reduce(function(a,b) {{ return a.per < b.per ? a : b; }});
-          return {{peer: best, warn: "(sin momentum positivo en el sector)", isOurs: false}};
-        }}
-        if (ours) return {{peer: ours, warn: "no_momentum_ours", isOurs: true}};
-        return {{peer: null, warn: null, isOurs: false}};
-      }}
-      best = cand.reduce(function(a,b) {{ return a.per < b.per ? a : b; }});
-      return {{peer: best, warn: null, isOurs: false}};
-    }}
-    if (mode === 'mom') {{
-      cand = nonOurs.filter(function(q) {{ return q.score > 0.4 && q.per !== null && q.per <= 30 && q.rent_1a !== null; }});
-      if (cand.length === 0) {{
-        cand = nonOurs.filter(function(q) {{ return q.score > 0.4 && q.per !== null; }});
-        if (cand.length > 0) {{
-          best = cand.reduce(function(a,b) {{ return a.rent_1a > b.rent_1a ? a : b; }});
-          return {{peer: best, warn: "(sin momentum positivo en el sector)", isOurs: false}};
-        }}
-        if (ours) return {{peer: ours, warn: "no_momentum_ours", isOurs: true}};
-        return {{peer: null, warn: null, isOurs: false}};
-      }}
-      best = cand.reduce(function(a,b) {{ return a.rent_1a > b.rent_1a ? a : b; }});
-      return {{peer: best, warn: null, isOurs: false}};
-    }}
-  }}
-  function fmtSector(name, data, mode) {{
-    var r = selectBestAlt(data.peers, mode);
-    if (!r.peer) return '<div class="sect-row"><span class="sect-name">' + name + '</span> \u2192 <span class="sect-none">Sin alternativas</span></div>';
-    if (r.isOurs) {{
-      if (r.warn === 'no_momentum_ours') {{
-        return '<div class="sect-row"><span class="sect-name">' + name + '</span> \u2192 <span class="sect-warn">Sector sin momentum positivo</span><br><span class="sect-ours">Mejor por score: ' + r.peer.name + ' (ya en cartera)</span></div>';
-      }}
-      return '<div class="sect-row"><span class="sect-name">' + name + '</span> \u2192 <span class="sect-ours">Ya tienes la mejor opci\u00f3n (' + r.peer.ticker + ')</span></div>';
-    }}
-    var rentStr = r.peer.rent_1a !== null ? (r.peer.rent_1a >= 0 ? '+' : '') + r.peer.rent_1a.toFixed(1) + '%' : 'N/D';
-    var perStr = r.peer.per !== null ? r.peer.per.toFixed(1) : 'N/D';
-    var warnStr = r.warn ? ' <span class="sect-warn">' + r.warn + '</span>' : '';
-    return '<div class="sect-row"><span class="sect-name">' + name + '</span> \u2192 <strong>' + r.peer.name + '</strong> (' + r.peer.ticker + ')<br><span class="sect-meta">Score: ' + r.peer.score.toFixed(3) + ' \u00b7 PER: ' + perStr + ' \u00b7 Rent.1A: ' + rentStr + '</span>' + warnStr + '</div>';
-  }}
-  function updateSectorAlts(mode) {{
-    var html = '';
-    for (var sec in DATA) {{
-      if (DATA.hasOwnProperty(sec)) {{
-        html += fmtSector(sec, DATA[sec], mode);
-      }}
-    }}
-    document.getElementById('best-alt-value').innerHTML = html;
-    var btns = document.querySelectorAll('#best-alt-btns .btn-alt');
-    btns.forEach(function(b) {{
-      b.classList.remove('active');
-      if (b.dataset.mode === mode) b.classList.add('active');
-    }});
-  }}
-  var btns = document.querySelectorAll('#best-alt-btns .btn-alt');
-  btns.forEach(function(b) {{
-    b.addEventListener('click', function() {{
-      updateSectorAlts(this.dataset.mode);
-    }});
-  }});
-}})();
-</script>"""
-html = html.replace("{BEST_ALT_CARD}", best_alt_card)
+const gridColor='rgba(255,255,255,0.06)';
+const tickColor='#9aa0b0';
 
-# == CORRELATION ==
-html += f"""<h2>Correlaci\u00f3n de Precios (252d)</h2>
-<table>
-<tbody>
-{corr_html_rows}
-</tbody>
-</table>
-<p class="small"><span class="green">Verde</span> = baja correlaci\u00f3n (<0.3) · <span class="yellow">Amarillo</span> = media (0.3-0.7) · <span class="red">Rojo</span> = alta (>0.7)</p>
-"""
+new Chart(document.getElementById('chartPeso'),{
+  type:'doughnut',
+  data:{
+    labels:""" + chart_labels_short + """.map(function(l,i){return l+' '+""" + chart_weight_vals + """[i]+'%';}),
+    datasets:[{data:""" + chart_weight_vals + """,backgroundColor:""" + chart_colors + """,borderColor:'#1a1d2e',borderWidth:3}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': '+c.formattedValue+'%'}}}}}
+});
 
-# == INVESTMENT THESIS ==
-html += """<h2>Tesis de Inversi\u00f3n</h2>
-<table>
-<thead><tr>
-  <th>Empresa</th><th>Fecha Entrada</th><th>Motivo de Compra</th><th>Precio Objetivo</th><th>Condici\u00f3n de Venta</th>
-</tr></thead>
-<tbody>
-"""
-for p in portfolio:
-    t = tesis.get(p["ticker"], {})
-    fecha = t.get("fecha_entrada", p["entry_date"])
-    motivo = t.get("motivo", "—")
-    objetivo = t.get("precio_objetivo", "—")
-    obj_s = f"{objetivo:.2f}" if isinstance(objetivo, (int, float)) else str(objetivo)
-    cond = t.get("condicion_venta", "—")
-    html += f"""<tr>
-  <td><strong>{p['name']}</strong></td>
-  <td>{fecha}</td>
-  <td>{motivo}</td>
-  <td>{obj_s} \u20ac</td>
-  <td>{cond}</td>
-</tr>"""
-html += "</tbody></table>\n"
+new Chart(document.getElementById('chartPnl'),{
+  type:'bar',
+  data:{
+    labels:""" + chart_labels_short + """,
+    datasets:[{label:'P&L (€)',data:""" + chart_pnl_vals + """,backgroundColor:[""" + pnl_colors_js + """],borderRadius:4}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tickColor},grid:{color:gridColor}},y:{ticks:{color:tickColor,callback:function(v){return v+'€';}},grid:{color:gridColor}}}}
+});
 
-# == JS LIVE UPDATE ==
-js_data = json.dumps([{"ticker": p["ticker"], "shares": p["shares"], "entry": p["entry"], "commission": p["commission"], "stop": p["stop"], "name": p["name"], "cost": p["cost"]} for p in portfolio])
+new Chart(document.getElementById('chartVal'),{
+  type:'bar',
+  data:{
+    labels:""" + chart_labels_short + """,
+    datasets:[
+      {label:'PER',data:""" + json.dumps([round(v.get("per") or 0, 1) for v in [valuation.get(p["ticker"], {}) for p in portfolio]]) + """,backgroundColor:'rgba(42,120,214,0.8)',borderRadius:4},
+      {label:'P/B',data:""" + json.dumps([round(v.get("pb") or 0, 2) for v in [valuation.get(p["ticker"], {}) for p in portfolio]]) + """,backgroundColor:'rgba(237,161,0,0.8)',borderRadius:4}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tickColor},grid:{color:gridColor}},y:{ticks:{color:tickColor},grid:{color:gridColor}}}}
+});
 
-html += f"""
-<script>
-const PORTFOLIO = {js_data};
-const SERVER = '';
-function liveUpdate() {{
-    let totalVal = 0, totalCost = 0;
-    let pending = PORTFOLIO.length;
-    PORTFOLIO.forEach((pos, idx) => {{
-        if (!pos.ticker) {{ pending--; return; }}
-        const row = idx + 1;
-        fetch(SERVER + '/api/price/' + encodeURIComponent(pos.ticker))
-            .then(r => r.json())
-            .then(data => {{
-                const price = data.price;
-                if (!price) return;
-                const cost = pos.cost;
-                const currVal = pos.shares * price;
-                const pnl = currVal - cost;
-                const pnlPct = (pnl / cost) * 100;
-                totalVal += currVal;
-                totalCost += cost;
-                document.getElementById('price-' + row).textContent = price.toFixed(4);
-                document.getElementById('val-' + row).textContent = currVal.toFixed(2) + ' \\u20ac';
-                const el = document.getElementById('pnl-' + row);
-                if (el) {{ el.textContent = (pnl >= 0 ? '+' : '') + pnl.toFixed(2) + ' \\u20ac'; el.className = pnl >= 0 ? 'green' : 'red'; }}
-                const el2 = document.getElementById('pnlpct-' + row);
-                if (el2) {{ el2.textContent = (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%'; el2.className = pnlPct >= 0 ? 'green' : 'red'; }}
-                const el3 = document.getElementById('dist-' + row);
-                if (el3) {{ 
-                    const E = pos.entry, S = pos.stop, T = E * 1.175, C = price;
-                    const rng = T - S;
-                    if (rng > 0) {{
-                        const ePct = Math.max(1, Math.min(99, (E-S)/rng*100));
-                        const cPct = Math.max(0, Math.min(100, (C-S)/rng*100));
-                        el3.querySelector('.db-left').style.width = ePct + '%';
-                        el3.querySelector('.db-right').style.width = (100-ePct) + '%';
-                        el3.querySelector('.db-center').style.left = ePct + '%';
-                        el3.querySelector('.db-current').style.left = cPct + '%';
-                        el3.querySelector('.db-l-red').textContent = S.toFixed(2);
-                        el3.querySelector('.db-l-green').textContent = T.toFixed(2);
-                        if (C >= T) {{
-                            el3.querySelector('.db-right').classList.add('blink');
-                        }} else {{
-                            el3.querySelector('.db-right').classList.remove('blink');
-                        }}
-                    }}
-                }}
-            }})
-            .catch(() => {{}})
-            .finally(() => {{
-                pending--;
-                if (pending === 0 && totalCost > 0) {{
-                    const totalPnl = totalVal - totalCost;
-                    const totalPnlPct = (totalPnl / totalCost) * 100;
-                    document.getElementById('total-value').textContent = totalVal.toFixed(2) + ' \\u20ac';
-                    document.getElementById('total-pnl').textContent = (totalPnl >= 0 ? '+' : '') + totalPnl.toFixed(2) + ' \\u20ac';
-                    document.getElementById('total-pnl').className = totalPnl >= 0 ? 'value green' : 'value red';
-                    document.getElementById('total-pnlpct').textContent = (totalPnlPct >= 0 ? '+' : '') + totalPnlPct.toFixed(2) + '%';
-                    document.getElementById('total-pnlpct').className = totalPnlPct >= 0 ? 'value green' : 'value red';
-                }}
-            }});
-    }});
-    if (pending === 0 && totalCost > 0) {{
-        const totalPnl = totalVal - totalCost;
-        const totalPnlPct = (totalPnl / totalCost) * 100;
-        document.getElementById('total-value').textContent = totalVal.toFixed(2) + ' \\u20ac';
-        document.getElementById('total-pnl').textContent = (totalPnl >= 0 ? '+' : '') + totalPnl.toFixed(2) + ' \\u20ac';
-        document.getElementById('total-pnl').className = totalPnl >= 0 ? 'value green' : 'value red';
-        document.getElementById('total-pnlpct').textContent = (totalPnlPct >= 0 ? '+' : '') + totalPnlPct.toFixed(2) + '%';
-        document.getElementById('total-pnlpct').className = totalPnlPct >= 0 ? 'value green' : 'value red';
-    }}
-}}
-window.addEventListener('DOMContentLoaded', liveUpdate);
+new Chart(document.getElementById('chartRoe'),{
+  type:'bar',
+  data:{
+    labels:""" + json.dumps([p["ticker"].replace(".DE","").replace(".MI","") for p in portfolio if p.get("db_ticker")]) + """,
+    datasets:[
+      {label:'ROE empresa',data:""" + json.dumps([round(val_metric(df[df["Ticker"]==p["db_ticker"]].iloc[0]["2026 ROE"] if not df[df["Ticker"]==p["db_ticker"]].empty else None, -500, 500) or 0, 1) for p in portfolio if p.get("db_ticker")]) + """,backgroundColor:'rgba(62,207,142,0.8)',borderRadius:4},
+      {label:'Media sector',data:""" + json.dumps([round(get_sector_metrics(df[df["Ticker"]==p["db_ticker"]].iloc[0][sec_col_name] if not df[df["Ticker"]==p["db_ticker"]].empty else "", df, sec_col_name)["roe_mean"], 1) for p in portfolio if p.get("db_ticker")]) + """,backgroundColor:'rgba(255,255,255,0.15)',borderRadius:4}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tickColor},grid:{color:gridColor}},y:{ticks:{color:tickColor,callback:function(v){return v+'%';}},grid:{color:gridColor}}}}
+});
 </script>
-
-<p class="small" style="margin-top:30px;text-align:center;color:#aaa;">
-  Generado autom\u00e1ticamente \u00b7 yfinance \u00b7 EVA con WACC 8%<br>
-  <span class="green">Verde = bueno</span> \u00b7
-  <span class="yellow">Amarillo = precauci\u00f3n</span> \u00b7
-  <span class="red">Rojo = atenci\u00f3n</span><br>
-  Precios en vivo al recargar (requiere servidor local: python server.py)
-</p>
 </body></html>"""
 
 with open(OUT_FILE, "w", encoding="utf-8") as f:
