@@ -230,11 +230,52 @@ def get_entry_types(ticker):
     return types
 
 # ========== SCREENING ==========
+RADAR_CACHE = CFG["paths"]["radar_prev"]  # radar_prev.json
+
 def normalized_score(series):
     mn, mx = series.min(), series.max()
     if mx - mn == 0:
         return pd.Series([0.5] * len(series))
     return (series - mn) / (mx - mn)
+
+def _save_radar_cache(results):
+    """Save screener results to JSON cache with timestamp."""
+    cache = {
+        "updated": datetime.now().isoformat(),
+        "results": [
+            {
+                "ticker": r["ticker"],
+                "name": r["name"],
+                "sector": r["sector"],
+                "score": r["score"],
+                "eper": r["eper"],
+                "rent_1a": r["rent_1a"],
+                "roe": r["roe"],
+                "eva": r.get("eva"),
+                "fcf": r.get("fcf"),
+                "entry_types": r.get("entry_types", []),
+            }
+            for r in results
+        ],
+    }
+    with open(RADAR_CACHE, "w", encoding="utf-8") as f:
+        json.dump(cache, f, ensure_ascii=False, indent=2)
+    log.info(f"  Resultados guardados en {RADAR_CACHE}")
+
+def _load_radar_cache():
+    """Load cached screener results if fresh (< cache_ttl_hours)."""
+    ttl = CFG.get("screener", {}).get("cache_ttl_hours", 24)
+    if not os.path.exists(RADAR_CACHE):
+        return None
+    with open(RADAR_CACHE, "r", encoding="utf-8") as f:
+        cache = json.load(f)
+    updated = datetime.fromisoformat(cache.get("updated", "2000-01-01"))
+    age = (datetime.now() - updated).total_seconds() / 3600
+    if age < ttl:
+        log.info(f"  Usando caché de {RADAR_CACHE} ({age:.1f}h de antigüedad)")
+        return cache["results"]
+    log.info(f"  Caché caducada ({age:.1f}h > {ttl}h), descargando datos nuevos...")
+    return None
 
 def run_screener():
     log.info("Cargando datos financieros...")
@@ -244,6 +285,10 @@ def run_screener():
     df_u = df[df["Ticker"].isin(universe_tickers)].copy()
     df_u = df_u.drop_duplicates(subset="Empresa", keep="first")
     log.info(f"  {len(df_u)} empresas en el universo con datos financieros")
+    # Try loading from cache first
+    cached_results = _load_radar_cache()
+    if cached_results:
+        return cached_results
     # Fetch valuations and 1-year returns
     all_tickers = df_u["Ticker"].unique().tolist()
     all_tickers = [str(t).strip() for t in all_tickers]
@@ -252,7 +297,7 @@ def run_screener():
     rent_cache = {}
     # Batch download prices via yf.download (single request, much faster on Railway)
     try:
-        batch = yf.download(" ".join(all_tickers), period="1y", progress=False, auto_adjust=False, session=_YF_SESSION, group_by="ticker", threads=1)
+        batch = yf.download(" ".join(all_tickers), period="1y", progress=False, auto_adjust=False, session=_YF_SESSION, group_by="ticker", threads=False)
         if batch is not None and not batch.empty and isinstance(batch.columns, pd.MultiIndex):
             for t in all_tickers:
                 try:
@@ -275,15 +320,13 @@ def run_screener():
         log.warning(f"  Batch download error: {e}, falling back to individual downloads...")
         for t in all_tickers:
             rent_cache[t] = get_1y_return(t)
-    # Fetch valuations individually (stock.info, can't be batched)
-    for idx, t in enumerate(all_tickers):
-        val_cache[t] = get_valuation(t) or {}
-        if idx > 0 and idx % 10 == 0:
-            _ytime.sleep(0.5)
     log.info(f"  Datos descargados. Evaluando criterios...")
     # Local versions using cache
     def cached_eper(t):
-        pv = val_cache.get(t, {})
+        if t not in val_cache:
+            val_cache[t] = get_valuation(t) or {}
+            _ytime.sleep(0.2)
+        pv = val_cache[t]
         fwd = pv.get("fwd_per")
         if fwd is not None and fwd > 0:
             return fwd
@@ -364,7 +407,9 @@ def run_screener():
     rdf = rdf.sort_values("score", ascending=False)
     final = rdf.head(MAX_RESULTS)
     log.info(f"  {len(final)} oportunidades encontradas (Score > {SCORE_THRESHOLD})")
-    return final.to_dict("records")
+    results_list = final.to_dict("records")
+    _save_radar_cache(results_list)
+    return results_list
 
 # ========== DASHBOARD INTEGRATION ==========
 DEFENSIVE_SECTORS = {"Salud", "Utilities", "Consumo básico", "Telecomunicaciones", "Comunicaciones", "Alimentación", "Consumo", "Farma"}
