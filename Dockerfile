@@ -14,6 +14,9 @@ COPY fin_data_final.xlsx tickers_universo.json price_history.csv ./
 
 RUN chmod +x start.sh
 
+# Force no-cache on generate_dashboard.py
+RUN head -1 generate_dashboard.py
+
 EXPOSE 5000
 CMD ["./start.sh"]
-# rebuild-20
+# rebuild-21
