@@ -9,6 +9,7 @@ import sys, os
 _PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 if _PROJ_DIR not in sys.path:
     sys.path.insert(0, _PROJ_DIR)
+import time as _ytime
 import pandas as pd
 import yfinance as yf
 import requests
@@ -55,21 +56,28 @@ _yf_cache = {}
 def get_valuation(t):
     if t in _yf_cache:
         return _yf_cache[t]
-    try:
-        stock = yf.Ticker(t, session=_YF_SESSION)
-        info = stock.info
-        result = {
-            "per": info.get("trailingPE"),
-            "fwd_per": info.get("forwardPE"),
-            "pb": info.get("priceToBook"),
-            "mcap": info.get("marketCap"),
-            "div_yield": info.get("dividendYield"),
-        }
-        _yf_cache[t] = result
-        return result
-    except:
-        _yf_cache[t] = {}
-        return {}
+    for attempt in range(3):
+        try:
+            stock = yf.Ticker(t, session=_YF_SESSION)
+            info = stock.info
+            result = {
+                "per": info.get("trailingPE"),
+                "fwd_per": info.get("forwardPE"),
+                "pb": info.get("priceToBook"),
+                "mcap": info.get("marketCap"),
+                "div_yield": info.get("dividendYield"),
+            }
+            _yf_cache[t] = result
+            return result
+        except yf.YFRateLimitError:
+            if attempt < 2:
+                _ytime.sleep(2 ** attempt)
+                continue
+            _yf_cache[t] = {}
+            return {}
+        except:
+            _yf_cache[t] = {}
+            return {}
 
 _hist_cache = {}
 _rent_cache = {}
@@ -268,8 +276,10 @@ def run_screener():
         for t in all_tickers:
             rent_cache[t] = get_1y_return(t)
     # Fetch valuations individually (stock.info, can't be batched)
-    for t in all_tickers:
+    for idx, t in enumerate(all_tickers):
         val_cache[t] = get_valuation(t) or {}
+        if idx > 0 and idx % 10 == 0:
+            _ytime.sleep(0.5)
     log.info(f"  Datos descargados. Evaluando criterios...")
     # Local versions using cache
     def cached_eper(t):
