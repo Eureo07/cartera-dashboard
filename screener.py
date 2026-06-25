@@ -69,7 +69,7 @@ def get_valuation(t):
             }
             _yf_cache[t] = result
             return result
-        except yf.YFRateLimitError:
+        except Exception:
             if attempt < 2:
                 _ytime.sleep(2 ** attempt)
                 continue
