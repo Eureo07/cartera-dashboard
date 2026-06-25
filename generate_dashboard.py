@@ -733,7 +733,10 @@ for i, p in enumerate(portfolio):
       </div>
       <div style="font-size:11px;color:#9aa0b0;margin-top:10px;line-height:1.5">{thesis_text}</div>
     </div>
-  </div>
+"""
+
+html += """  </div>
+"""
 
 # == CHARTS ROW 1 ==
 chart_labels_short = json.dumps([p["ticker"].replace(".DE","").replace(".MI","") for p in portfolio])
