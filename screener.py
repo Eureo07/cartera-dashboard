@@ -444,7 +444,7 @@ def append_radar(results):
         score_col = "#3ecf8e" if r['score'] > 0.6 else ("#f0a500" if r['score'] > 0.3 else "#e05050")
         entry_types = r.get("entry_types", [])
         entry_badges = "".join(
-            f'<span style="display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:#1a2a3d;color:#5b8def;border:1px solid #5b8def;margin:1px 2px">{t}</span>'
+            f'<span class="badge-alt" style="margin:1px 2px">{t}</span>'
             for t in entry_types
         )
         rows_html += f"""<tr>
@@ -462,7 +462,7 @@ def append_radar(results):
 </tr>"""
     n_total = len(results)
     radar_section = f"""<!-- RADAR SCREENER -->
-<div class="section-title" style="margin-top:24px">Radar \u2014 Oportunidades de Entrada</div>
+<div class="section-title">Radar \u2014 Oportunidades de Entrada</div>
 <div style="font-size:11px;color:#9aa0b0;margin-bottom:14px;padding:8px 12px;background:#12151f;border-radius:8px;line-height:1.6">
   \u00daltimo an\u00e1lisis: {now_str}
   <span style="color:#5a5f6b;display:block;margin-top:2px;font-size:10px">
