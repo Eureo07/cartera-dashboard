@@ -10,6 +10,7 @@ import requests
 import json, math, statistics
 from datetime import datetime, date
 from config_loader import CFG, logger, get_logger
+from screener import calcular_soporte_resistencia
 
 _YF_SESSION = requests.Session()
 _YF_SESSION.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
@@ -81,20 +82,24 @@ idx_col_name, sec_col_name = cols_list[3], cols_list[4]
 
 # Fetch historical prices from yfinance for all positions + benchmark
 price_hist = {}
+full_hist = {}
 bench_hist = None
 hist_path = CFG["paths"]["price_history"]
 log.info("Downloading price histories...")
 for p in portfolio:
     tk = p["ticker"]
     try:
+        entry_dt = datetime.strptime(p["entry_date"], "%d/%m/%Y")
+        start_str = entry_dt.strftime("%Y-%m-%d")
         stock = yf.Ticker(tk, session=_YF_SESSION)
-        hist = stock.history(period="6mo", auto_adjust=False)
+        hist = stock.history(start=start_str, auto_adjust=False)
         if hist is not None and len(hist) > 2:
             close = hist["Close"].dropna()
             if len(close) < 2:
                 log.warning(f"  {tk}: menos de 2 Close validos ({len(close)})")
                 continue
             price_hist[tk] = close
+            full_hist[tk] = hist
             p["current"] = float(close.iloc[-1])
         else:
             log.warning(f"  {tk}: hist={None if hist is None else len(hist)} (insuficiente)")
@@ -109,6 +114,29 @@ for p in portfolio:
         except Exception as e:
             log.error(f"  {tk}: fallback error ({e})")
             p["current"] = 0
+# Support/resistance for each position
+for p in portfolio:
+    tk = p["ticker"]
+    hist = full_hist.get(tk)
+    if hist is not None and len(hist) >= 3:
+        try:
+            support, resistance, cprice, ok = calcular_soporte_resistencia(tk, hist_data=hist)
+            if ok and support is not None:
+                p["pos_support"] = round(support, 2)
+                p["pos_resistance"] = round(resistance, 2) if resistance is not None else None
+                p["dynamic_stop"] = round(support * 0.98, 2)
+            else:
+                p["pos_support"] = None
+                p["pos_resistance"] = None
+                p["dynamic_stop"] = None
+        except Exception:
+            p["pos_support"] = None
+            p["pos_resistance"] = None
+            p["dynamic_stop"] = None
+    else:
+        p["pos_support"] = None
+        p["pos_resistance"] = None
+        p["dynamic_stop"] = None
 # Benchmark
 try:
     bm = yf.Ticker("^STOXX50E", session=_YF_SESSION)
@@ -140,6 +168,9 @@ def get_valuation(t):
         div_yield = info.get("dividendYield")
         if div_yield is not None and (div_yield < 0 or div_yield > 0.15):
             div_yield = None
+        beta_v = info.get("beta")
+        if beta_v is not None and (beta_v < 0 or beta_v > 5):
+            beta_v = None
         return {
             "per": val_metric(info.get("trailingPE"), 0, 200),
             "fwd_per": info.get("forwardPE"),
@@ -149,9 +180,10 @@ def get_valuation(t):
             "eps": info.get("trailingEps"),
             "div_yield": div_yield,
             "ps": info.get("priceToSalesTrailing12Months"),
+            "beta": beta_v,
         }
     except:
-        return {"per": None, "fwd_per": None, "pb": None, "ev_ebitda": None, "mcap": None, "eps": None, "div_yield": None, "ps": None}
+        return {"per": None, "fwd_per": None, "pb": None, "ev_ebitda": None, "mcap": None, "eps": None, "div_yield": None, "ps": None, "beta": None}
 
 _rent_cache = {}
 def get_1y_return(t):
@@ -311,6 +343,24 @@ total_cost = sum(p["cost"] for p in portfolio)
 total_value = sum(p["value"] for p in portfolio)
 total_pnl = total_value - total_cost
 total_pnl_pct = (total_pnl / total_cost) * 100 if total_cost else 0
+
+# Daily variation (HOY)
+day_var_total = 0.0
+n_day_var = 0
+for p in portfolio:
+    hist = full_hist.get(p["ticker"])
+    if hist is not None:
+        close_s = hist["Close"].dropna()
+        if len(close_s) >= 2:
+            dv = (float(close_s.iloc[-1]) - float(close_s.iloc[-2])) * p["shares"]
+            p["day_var"] = dv
+            day_var_total += dv
+            n_day_var += 1
+        else:
+            p["day_var"] = None
+    else:
+        p["day_var"] = None
+day_var_pct = (day_var_total / total_value) * 100 if total_value and n_day_var > 0 else None
 
 for p in portfolio:
     p["weight"] = (p["value"] / total_value) * 100 if total_value else 0
@@ -533,7 +583,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
 .header h1{{font-size:24px;font-weight:700;color:#fff}}
 .header .sub{{color:#9aa0b0;font-size:13px;margin-top:4px}}
 .header .date-info{{text-align:right;color:#9aa0b0;font-size:12px}}
-.kpi-row{{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px}}
+.kpi-row{{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:24px}}
 .kpi{{background:#1a1d2e;border-radius:12px;padding:18px 22px}}
 .kpi .label{{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#9aa0b0;margin-bottom:8px}}
 .kpi .value{{font-size:22px;font-weight:700;color:#fff}}
@@ -630,6 +680,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="kpi"><div class="label">Resultado</div><div class="value {"neg" if total_pnl < 0 else "pos"}">{total_pnl:+,.2f} \u20ac</div></div>
     <div class="kpi"><div class="label">Rentabilidad</div><div class="value {"neg" if total_pnl_pct < 0 else "pos"}">{total_pnl_pct:+.2f}%</div><div class="sub">Cartera</div></div>
     <div class="kpi"><div class="label">vs Euro Stoxx 50</div><div class="value {"neg" if benchmark_return is not None and (total_pnl_pct - benchmark_return) < 0 else "pos"}">{("" if benchmark_return is None else f"{(total_pnl_pct - benchmark_return):+.2f}%")}</div><div class="sub">{f"\u00cdndice {benchmark_return:+.2f}%" if benchmark_return is not None else "N/D"}</div></div>
+    {"<div class=\"kpi\"><div class=\"label\">HOY</div><div class=\"value " + ("pos" if day_var_total >= 0 else "neg") + "\">" + (f"{day_var_pct:+.2f}%" if day_var_pct is not None else "\u2014") + "</div><div class=\"sub\">" + (f"{day_var_total:+,.2f} \u20ac" if day_var_total is not None else "\u2014") + "</div></div>" if day_var_pct is not None else ""}
   </div>
 
   <div class="section-title">An\u00e1lisis por posici\u00f3n</div>
@@ -649,12 +700,14 @@ for tk, series in price_hist.items():
     elif len(series) > 0:
         ma50_data[tk] = series.mean()
 
+pos_charts_js = []
 for i, p in enumerate(portfolio):
     tk = p["ticker"]
     v = valuation.get(tk, {})
     per = v.get("per")
     pb_val = v.get("pb")
     fwd_per = v.get("fwd_per")
+    beta_val = v.get("beta")
     db_t = p.get("db_ticker")
     sector_name = "Desconocido"
     roe_val = None
@@ -708,7 +761,42 @@ for i, p in enumerate(portfolio):
     weight_warn = "warn" if p["weight"] > 25 else ("danger" if p["weight"] > 30 else "")
     weight_cls = "warn" if p["weight"] > 25 else ""
     peso_bar_cls = "danger" if p["weight"] > 30 else ("warn" if p["weight"] > 25 else "")
+    # Dynamic stop data
+    dynamic_stop = p.get("dynamic_stop")
+    pos_support = p.get("pos_support")
+    if dynamic_stop is not None:
+        dyn_stop_str = f"{dynamic_stop:.2f} \u20ac"
+        stop_alert = dynamic_stop > p["stop"]
+    else:
+        dyn_stop_str = "N/D"
+        stop_alert = False
+    # Beta data
+    if beta_val is not None:
+        beta_str = f"{beta_val:.2f}"
+        beta_cls = "pos" if beta_val < 1.0 else ("warn" if beta_val <= 1.5 else "neg")
+        beta_desc = "Volatilidad relativa al mercado. &gt;1 amplifica movimientos."
+    else:
+        beta_str = "N/D"
+        beta_cls = ""
+        beta_desc = ""
+    # Chart data for this position
+    pos_hist = full_hist.get(tk)
+    if pos_hist is not None and len(pos_hist) >= 5:
+        pos_dates = json.dumps([d.strftime("%Y-%m-%d") for d in pos_hist.index])
+        pos_closes = json.dumps([round(float(v), 2) for v in pos_hist["Close"].values])
+        pos_has_chart = True
+        pos_support_val = p.get("pos_support")
+        pos_resistance_val = p.get("pos_resistance")
+        pos_dyn_stop_val = p.get("dynamic_stop")
+    else:
+        pos_dates = "[]"
+        pos_closes = "[]"
+        pos_has_chart = False
+        pos_support_val = None
+        pos_resistance_val = None
+        pos_dyn_stop_val = None
 
+    desc = lambda t: f'<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">{t}</span>'
     html += f"""    <div class="pos-card{" neg" if p["pnl"] < 0 else ""}">
       <div class="pos-header">
         <div><div class="ticker">{tk} — {p['name']}</div><div class="name">{sector_name} · Entrada {p['entry_date']}</div></div>
@@ -718,22 +806,42 @@ for i, p in enumerate(portfolio):
       <div class="metrics-grid">
         <div class="metric-row"><span class="ml">P. Entrada</span><span class="mv">{p['entry']:.2f} \u20ac</span></div>
         <div class="metric-row"><span class="ml">Stop Loss</span><span class="mv">{p['stop']:.2f} \u20ac</span></div>
-        <div class="metric-row"><span class="ml">Distancia stop</span><span class="mv {dist_cls}">{p['dist_stop']:.1f}%</span></div>
+        <div class="metric-row"><span class="ml">Distancia stop{desc("Ca\u00edda m\u00e1xima asumida antes de salir")}</span><span class="mv {dist_cls}">{p['dist_stop']:.1f}%</span></div>
         <div class="metric-row"><span class="ml">P. Objetivo</span><span class="mv {"pos" if p["current"] >= p["target"] else ""}">{p['target']:.2f} \u20ac</span></div>
-        <div class="metric-row"><span class="ml">PER</span><span class="mv {"warn" if (per or 99) > 30 else ("pos" if per and per <= 20 else "")}">{f"{per:.1f}x" if per else "N/D"}</span></div>
-        <div class="metric-row"><span class="ml">PER Fwd</span><span class="mv">{f"{fwd_per:.1f}x" if fwd_per else "N/D"}</span></div>
-        <div class="metric-row"><span class="ml">P/B</span><span class="mv {"warn" if (pb_val or 99) > 5 else ("pos" if pb_val and pb_val <= 3 else "")}">{f"{pb_val:.2f}" if pb_val else "N/D"}</span></div>
-        <div class="metric-row"><span class="ml">ROE 2026</span><span class="mv {"pos" if (roe_val or 0) >= 15 else ("warn" if (roe_val or 0) >= 5 else "neg")}">{f"{roe_val:.1f}%" if roe_val else "N/D"}</span></div>
-        <div class="metric-row"><span class="ml">FCF 2026</span><span class="mv {fcf_cls}">{f"{fcf_val:,.0f}M \u20ac" if fcf_val else "N/D"}</span></div>
-        <div class="metric-row"><span class="ml">Peso cartera</span><span class="mv {weight_cls}">{p['weight']:.1f}%{" \u26a0" if p["weight"] > 25 else ""}</span></div>
+        <div class="metric-row"><span class="ml">PER{desc("Veces que el precio recoge el beneficio anual")}</span><span class="mv {"warn" if (per or 99) > 30 else ("pos" if per and per <= 20 else "")}">{f"{per:.1f}x" if per else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">PER Fwd{desc("PER estimado con beneficios futuros")}</span><span class="mv">{f"{fwd_per:.1f}x" if fwd_per else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">P/B{desc("Precio respecto al valor contable. &lt;1 infravalorado")}</span><span class="mv {"warn" if (pb_val or 99) > 5 else ("pos" if pb_val and pb_val <= 3 else "")}">{f"{pb_val:.2f}" if pb_val else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">Beta{desc(beta_desc)}</span><span class="mv {beta_cls}">{beta_str}</span></div>
+        <div class="metric-row"><span class="ml">ROE 2026{desc("Rentabilidad sobre fondos propios")}</span><span class="mv {"pos" if (roe_val or 0) >= 15 else ("warn" if (roe_val or 0) >= 5 else "neg")}">{f"{roe_val:.1f}%" if roe_val else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">FCF 2026{desc("Caja generada tras inversiones")}</span><span class="mv {fcf_cls}">{f"{fcf_val:,.0f}M \u20ac" if fcf_val else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">Peso cartera{desc("% del capital total invertido en esta posici\u00f3n")}</span><span class="mv {weight_cls}">{p['weight']:.1f}%{" \u26a0" if p["weight"] > 25 else ""}</span></div>
+        <div class="metric-row"><span class="ml">Stop Din\u00e1mico{desc("Stop calculado sobre soporte t\u00e9cnico (-2%)")}</span><span class="mv neg">{dyn_stop_str}{" <span style=\"color:#f0a500;font-size:9px;margin-left:4px\">\u26a0 Revisar stop</span>" if stop_alert else ""}</span></div>
       </div>
       <div class="tendencia-row">
         <div class="tend-item"><div class="tend-label">Corto Plazo</div><div class="tend-val {st_cls}">{st_trend}</div></div>
         <div class="tend-item"><div class="tend-label">Largo Plazo</div><div class="tend-val {lt_cls}">{lt_trend}</div></div>
       </div>
       <div style="font-size:11px;color:#9aa0b0;margin-top:10px;line-height:1.5">{thesis_text}</div>
+      {"<div style=\"font-size:11px;color:#9aa0b0;text-transform:uppercase;letter-spacing:0.5px;margin-top:14px;margin-bottom:6px\">Evoluci\u00f3n desde entrada \u00b7 soporte/resistencia</div><div style=\"position:relative;height:180px\"><canvas id=\"chartPos_" + str(i) + "\"></canvas></div>" if pos_has_chart else "<div style=\"font-size:11px;color:#5a5f6b;margin-top:14px\">Soporte en c\u00e1lculo</div>"}
     </div>
 """
+    # Build chart JS for this position
+    if pos_has_chart:
+        n_dates = len(json.loads(pos_dates))
+        cid = "chartPos_" + str(i)
+        # Build annotation lines via afterDraw plugin
+        js_lines = ""
+        if pos_support_val is not None:
+            sv = str(pos_support_val)
+            js_lines += "ctx.save();ctx.strokeStyle='#e05050';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue("+sv+"));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue("+sv+"));ctx.stroke();ctx.restore();"
+        if pos_resistance_val is not None and pos_resistance_val != pos_support_val:
+            rv = str(pos_resistance_val)
+            js_lines += "ctx.save();ctx.strokeStyle='#3ecf8e';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue("+rv+"));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue("+rv+"));ctx.stroke();ctx.restore();"
+        if pos_dyn_stop_val is not None:
+            dv = str(pos_dyn_stop_val)
+            js_lines += "ctx.save();ctx.strokeStyle='#e05050';ctx.lineWidth=1;ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue("+dv+"));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue("+dv+"));ctx.stroke();ctx.restore();"
+        chart_js = "new Chart(document.getElementById('" + cid + "'),{type:'line',data:{labels:" + pos_dates + ",datasets:[{label:'Precio',data:" + pos_closes + ",borderColor:'#2a78d6',backgroundColor:'rgba(42,120,214,0.1)',borderWidth:2,fill:true,pointRadius:0,tension:0.1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{color:tickColor,font:{size:9}},grid:{color:gridColor}}}},plugins:[{id:'hline',afterDraw:function(c){var yScale=c.scales.y;var ctx=c.ctx;" + js_lines + "}}]});"
+        pos_charts_js.append(chart_js)
 
 html += """  </div>
 """
@@ -835,6 +943,7 @@ html += """  <div class="section-title">Alternativas por sector</div>
   </div>
 """
 
+alt_signal_data = []
 # Prepare per-sector alternatives data
 for p in portfolio:
     db_t = p["db_ticker"]
@@ -865,6 +974,9 @@ for p in portfolio:
     # Compute scores
     sec_df["_score"] = normalized_score(sec_df["2026 ROE"]) * 0.50 + normalized_score(sec_df["2026 EVA"]) * 0.25 + normalized_score(sec_df["2026 FCN"]) * 0.25
     sec_df = sec_df.sort_values("_score", ascending=False)
+    n_total_raw = len(sec_df)
+    if len(sec_df) > 10:
+        sec_df = sec_df.head(10)
     # Build table data with pass/fail
     table_rows = []
     pass_count = 0
@@ -872,6 +984,8 @@ for p in portfolio:
         t2 = rw["Ticker"]
         yf_t2 = peer_ticker_to_yf(t2)
         eper = get_eper(t2)
+        if eper is not None and eper < 15:
+            alt_signal_data.append((rw["Empresa"], yf_t2, sec))
         pb2 = get_pb_val(t2)
         rent_1a = get_1y_return(yf_t2)
         is_ours = t2 == db_t or rw["Empresa"].strip().lower() == p["name"].strip().lower()
@@ -911,7 +1025,7 @@ for p in portfolio:
     html += f"""  <div style="margin-bottom:20px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <h3 style="color:#e8eaed;font-size:14px;font-weight:600;margin:0">{sec}</h3>
-      <span style="color:#9aa0b0;font-size:11px">{n_total} empresas analizadas</span>
+      <span style="color:#9aa0b0;font-size:11px">{n_total_raw} empresas analizadas</span>
     </div>
     <table class="alt-table">
       <thead><tr>
@@ -945,14 +1059,19 @@ for p in portfolio:
           <td>{badge_html}{f' <span style="font-size:9px;color:#5a5f6b">({rd["reasons"]})</span>' if not rd["passes"] and not rd["is_ours"] else ""}</td>
         </tr>
 """
+    if n_total_raw > 10:
+        n_note = f"{pass_count} de 10 empresas pasan el filtro (top 10 de {n_total_raw} analizadas). Score: ROE 50% / EVA 25% / FCF 25%."
+    else:
+        n_note = f"{pass_count} de {n_total} empresas pasan el filtro (PER ≤ 30 y Rent.1A ≥ +25%). Score: ROE 50% / EVA 25% / FCF 25%."
     html += f"""      </tbody>
     </table>
-    <div class="alt-note">{pass_count} de {n_total} empresas pasan el filtro (PER ≤ 30 y Rent.1A ≥ +25%). Score: ROE 50% / EVA 25% / FCF 25%.</div>
+    <div class="alt-note">{n_note}</div>
   </div>
 """
 
 # == FOOTER ==
-html += """  <div class="footer">
+html += """<!-- RADAR INSERT POINT -->
+  <div class="footer">
     Generado autom\u00e1ticamente \u00b7 <span>yfinance</span> \u00b7 EVA con WACC 8% \u00b7 Precios en vivo al recargar
   </div>
 </div>
@@ -1003,8 +1122,101 @@ new Chart(document.getElementById('chartRoe'),{
   },
   options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tickColor},grid:{color:gridColor}},y:{ticks:{color:tickColor,callback:function(v){return v+'%';}},grid:{color:gridColor}}}}
 });
+""" + "\n".join(pos_charts_js) + """
+</script>
+
+<!-- SIGNAL MODAL -->
+<style>
+.sig-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;display:none;align-items:flex-start;justify-content:center;padding-top:60px;backdrop-filter:blur(4px)}
+.sig-box{background:#1a1d2e;border-radius:12px;width:90%;max-width:700px;max-height:80vh;overflow-y:auto;padding:28px;border:1px solid #2a2d3e;box-shadow:0 8px 40px rgba(0,0,0,0.5)}
+.sig-close{float:right;background:none;border:none;color:#9aa0b0;font-size:22px;cursor:pointer;padding:0;line-height:1}
+.sig-title{color:#e8eaed;font-size:18px;font-weight:600;margin:0 0 6px}
+.sig-sub{color:#9aa0b0;font-size:12px;margin-bottom:20px;line-height:1.5}
+.sig-sec{margin-bottom:20px}
+.sig-hdr{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.sig-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.sig-lbl{color:#e8eaed;font-size:13px;font-weight:600}
+.sig-desc{color:#9aa0b0;font-size:11px;flex:1}
+.sig-list{list-style:none;padding:0;margin:0}
+.sig-list li{padding:4px 0;color:#b0b5c0;font-size:12px;border-bottom:1px solid #232638}
+.sig-list li:last-child{border-bottom:none}
+.sig-ftr{text-align:center;color:#5a5f6b;font-size:11px;margin-top:16px;padding-top:12px;border-top:1px solid #232638}
+</style>
+<div id="sigModal" class="sig-overlay"><div class="sig-box" onclick="event.stopPropagation()">
+<button class="sig-close" onclick="closeSigModal()">&times;</button>
+<div class="sig-title">Se\u00f1ales de entrada</div>
+<div class="sig-sub">Compa\u00f1\u00edas agrupadas por tipo de se\u00f1al t\u00e9cnica calculada sobre hist\u00f3rico de precios</div>
+<div id="sigContent"></div>
+<div class="sig-ftr">Autom\u00e1tico · Se muestra una vez por sesi\u00f3n</div>
+</div></div>
+<script>
+const SIG_DATA = SIGNAL_DATA_JSON;
+const SIG_DSC = SIGNAL_DESC_JSON;
+function closeSigModal(){document.getElementById('sigModal').style.display='none';sessionStorage.setItem('sigClosed','1')}
+document.addEventListener('DOMContentLoaded',function(){
+  if(sessionStorage.getItem('sigClosed'))return;
+  var c=document.getElementById('sigContent'),h='',any=false;
+  for(var t in SIG_DATA){var items=SIG_DATA[t];if(!items||!items.length)continue;any=true;
+    var d=SIG_DSC[t]||{label:t,desc:'',color:'#9aa0b0'};
+    h+='<div class="sig-sec"><div class="sig-hdr"><span class="sig-dot" style="background:'+d.color+'"></span><span class="sig-lbl">'+d.label+'</span><span class="sig-desc">'+d.desc+'</span></div><ul class="sig-list">';
+    items.forEach(function(n){h+='<li>'+n+'</li>'});h+='</ul></div>';}
+  if(!any)h='<div style="color:#5a5f6b;font-size:13px;text-align:center;padding:20px">No se detectaron se\u00f1ales activas en esta ejecuci\u00f3n.</div>';
+  c.innerHTML=h;
+  setTimeout(function(){document.getElementById('sigModal').style.display='flex'},800);
+});
 </script>
 </body></html>"""
+
+# ========== ENTRY SIGNALS MODAL ==========
+def _compute_entry_types(ticker, hist):
+    close = hist["Close"].dropna()
+    if len(close) < 2: return []
+    cur = float(close.iloc[-1])
+    hi = float(close.max()); lo = float(close.min())
+    types = []
+    if 0.95 * hi <= cur <= 1.05 * hi: types.append("RRA")
+    if cur > hi: types.append("RR")
+    dd = (hi - cur) / hi
+    if dd > 0.10 and cur > lo + 0.20 * (hi - lo): types.append("LT")
+    now_ts = datetime.now().timestamp()
+    c3 = close[close.index.astype('int64') // 10**9 > now_ts - 90 * 86400]
+    c6 = close[close.index.astype('int64') // 10**9 > now_ts - 180 * 86400]
+    if not c3.empty and not c6.empty and float(c3.min()) > float(c6.min()): types.append("LTA")
+    if lo <= cur <= lo * 1.10: types.append("PER")
+    return types
+
+sig_map = {"RRA": [], "RR": [], "LT": [], "LTA": [], "PER": [], "PER < 15": []}
+# Portfolio positions
+for p in portfolio:
+    h = full_hist.get(p["ticker"])
+    if h is not None and len(h) >= 5:
+        for t in _compute_entry_types(p["ticker"], h):
+            sig_map[t].append(f"{p['ticker']} \u2014 {p['name']} \u2014 Cartera")
+# Alternativas PER < 15
+for nm, tk, sc in alt_signal_data:
+    sig_map["PER < 15"].append(f"{nm} ({tk}) \u2014 {sc} \u2014 Alternativas")
+# Radar cache
+rcp = CFG["paths"].get("radar_prev", "")
+if os.path.exists(rcp):
+    try:
+        with open(rcp, "r", encoding="utf-8") as f:
+            for r in json.load(f):
+                for t in r.get("entry_types", []):
+                    sig_map[t].append(f"{r['ticker']} \u2014 {r['name']} \u2014 Radar")
+    except Exception:
+        pass
+
+SIG_DATA_JSON = json.dumps({k: v for k, v in sig_map.items() if v})
+SIG_DESC_JSON = json.dumps({
+    "RRA": {"label": "RRA \u2014 Cerca de m\u00e1ximos", "desc": "Precio entre 95% y 105% del m\u00e1ximo 52 semanas", "color": "#3ecf8e"},
+    "RR": {"label": "RR \u2014 Rompiendo m\u00e1ximos", "desc": "Precio supera el m\u00e1ximo de 52 semanas", "color": "#2a78d6"},
+    "LT": {"label": "LT \u2014 Drawdown >10%", "desc": "Ca\u00edda >10% desde m\u00e1ximo anual, sin estar en m\u00ednimos", "color": "#f0a500"},
+    "LTA": {"label": "LTA \u2014 Suelo alcista", "desc": "M\u00ednimos 3 meses > m\u00ednimos 6 meses (tendencia alcista)", "color": "#eda100"},
+    "PER": {"label": "PER \u2014 Cerca de m\u00ednimos", "desc": "Precio entre m\u00ednimo y +10% (potencial zona de entrada)", "color": "#e05050"},
+    "PER < 15": {"label": "PER < 15 \u2014 Baratas", "desc": "Alternativas con PER estimado inferior a 15 (infravaloradas)", "color": "#a855f7"},
+})
+# Replace placeholders with actual signal data
+html = html.replace("SIGNAL_DATA_JSON", SIG_DATA_JSON).replace("SIGNAL_DESC_JSON", SIG_DESC_JSON)
 
 with open(OUT_FILE, "w", encoding="utf-8") as f:
     f.write(html)

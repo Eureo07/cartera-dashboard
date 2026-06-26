@@ -229,6 +229,56 @@ def get_entry_types(ticker):
         types.append("PER")
     return types
 
+# ========== SUPPORT & RESISTANCE ==========
+def calcular_soporte_resistencia(ticker, hist_data=None, periodo='1y'):
+    """Calculate support and resistance from daily OHLC data.
+    If hist_data is provided (DataFrame), use it instead of downloading.
+    Returns (support_in_force, resistance, current_price, condition_met)
+    or (None, None, None, False)."""
+    try:
+        hist = hist_data
+        if hist is None:
+            stock = yf.Ticker(ticker, session=_YF_SESSION)
+            hist = stock.history(period=periodo, auto_adjust=False)
+        if hist is None or hist.empty or len(hist) < 20:
+            return None, None, None, False
+        highs = hist['High'].values
+        lows = hist['Low'].values
+        closes = hist['Close'].values
+        n = len(highs)
+        highest_high_since_support = highs[0]
+        current_resistance = None
+        resistance_start_idx = -1
+        support_in_force = None
+        last_resistance_level = None
+        for i in range(1, n):
+            highest_high_since_support = max(highest_high_since_support, highs[i])
+            # Resistance forms when today's low < yesterday's low
+            if lows[i] < lows[i-1]:
+                current_resistance = highest_high_since_support
+                # Find index where this highest high occurred
+                for j in range(i, -1, -1):
+                    if highs[j] == current_resistance:
+                        resistance_start_idx = j
+                        break
+            # Resistance breaks when close > resistance level
+            if current_resistance is not None and closes[i] > current_resistance:
+                last_resistance_level = current_resistance
+                low_since_resistance = min(lows[resistance_start_idx:i+1])
+                support_in_force = low_since_resistance
+                current_resistance = None
+                resistance_start_idx = -1
+                highest_high_since_support = highs[i]
+        if support_in_force is None:
+            return None, None, None, False
+        current_price = float(closes[-1])
+        condition_met = current_price > support_in_force
+        # Use current active resistance if any, otherwise last broken resistance
+        resistance = current_resistance if current_resistance is not None else last_resistance_level
+        return support_in_force, resistance, current_price, condition_met
+    except Exception:
+        return None, None, None, False
+
 # ========== SCREENING ==========
 RADAR_CACHE = CFG["paths"]["radar_prev"]  # radar_prev.json
 
@@ -254,6 +304,8 @@ def _save_radar_cache(results):
                 "eva": r.get("eva"),
                 "fcf": r.get("fcf"),
                 "entry_types": r.get("entry_types", []),
+                "support": r.get("support"),
+                "current_price": r.get("current_price"),
             }
             for r in results
         ],
@@ -295,6 +347,7 @@ def run_screener():
     log.info(f"  Descargando datos de {len(all_tickers)} tickers...")
     val_cache = {}
     rent_cache = {}
+    hist_cache = {}
     # Batch download prices via yf.download (single request, much faster on Railway)
     try:
         batch = yf.download(" ".join(all_tickers), period="1y", progress=False, auto_adjust=False, session=_YF_SESSION, group_by="ticker", threads=False)
@@ -302,7 +355,9 @@ def run_screener():
             for t in all_tickers:
                 try:
                     if t in batch.columns.get_level_values(0):
-                        close = batch[t]["Close"].dropna()
+                        tdf = batch[t]
+                        close = tdf["Close"].dropna()
+                        hist_cache[t] = tdf.dropna()
                         if len(close) >= 2:
                             r = (float(close.iloc[-1]) - float(close.iloc[0])) / float(close.iloc[0]) * 100
                             rent_cache[t] = r
@@ -336,6 +391,8 @@ def run_screener():
         return None
     def cached_rent(t):
         return rent_cache.get(t)
+    def cached_hist(t):
+        return hist_cache.get(t)
     results = []
     cnt_total = 0; cnt_port = 0; cnt_rent_none = 0; cnt_rent_neg = 0; cnt_per = 0; cnt_eva_fcf = 0; cnt_roe = 0; cnt_eva_neg = 0; cnt_tec = 0
     for _, row in df_u.iterrows():
@@ -350,7 +407,7 @@ def run_screener():
         if rent_1a is None:
             cnt_rent_none += 1
             continue
-        if rent_1a <= 0:
+        if rent_1a <= 30:
             cnt_rent_neg += 1
             continue
         if rent_1a > 200:
@@ -382,11 +439,16 @@ def run_screener():
         if not entry_types:
             cnt_tec += 1
             continue
+        support_val, _, current_price, support_ok = calcular_soporte_resistencia(ticker, hist_data=cached_hist(ticker))
+        if not support_ok:
+            cnt_tec += 1
+            continue
         results.append({
             "ticker": ticker, "name": name, "sector": sector,
             "roe": roe, "roe_missing": roe_missing, "eva": eva, "fcf": fcf,
             "eper": eper, "per_missing": per_missing, "rent_1a": rent_1a,
             "entry_types": entry_types, "_sec_key": sector,
+            "support": support_val, "current_price": current_price,
         })
     log.info(f"  Filtros: total={cnt_total}, port={cnt_port}, rentNone={cnt_rent_none}, rentNeg={cnt_rent_neg}, PER={cnt_per}, evaFcf={cnt_eva_fcf}, roe={cnt_roe}, evaNeg={cnt_eva_neg}, tec={cnt_tec}, passed={len(results)}")
     if not results:
@@ -447,6 +509,14 @@ def append_radar(results):
             f'<span class="badge-alt" style="margin:1px 2px">{t}</span>'
             for t in entry_types
         )
+        support_val = r.get("support")
+        current_price = r.get("current_price")
+        if support_val is not None and current_price is not None:
+            soporte_str = f"{support_val:.2f} \u20ac"
+            soporte_col = "#3ecf8e" if current_price > support_val else "#e05050"
+        else:
+            soporte_str = "N/D"
+            soporte_col = "#5a5f6b"
         rows_html += f"""<tr>
   <td>{i}</td>
   <td><strong>{r['name']}</strong></td>
@@ -458,6 +528,7 @@ def append_radar(results):
   <td style="color:{"#3ecf8e" if (r['roe'] or 0) >= 15 else ("#f0a500" if (r['roe'] or 0) >= 5 else "#e05050")}">{roe_str}</td>
   <td>{eva_str}</td>
   <td>{fcf_str}</td>
+  <td style="color:{soporte_col}">{soporte_str}</td>
   <td>{entry_badges}</td>
 </tr>"""
     n_total = len(results)
@@ -466,28 +537,33 @@ def append_radar(results):
 <div style="font-size:11px;color:#9aa0b0;margin-bottom:14px;padding:8px 12px;background:#12151f;border-radius:8px;line-height:1.6">
   \u00daltimo an\u00e1lisis: {now_str}
   <span style="color:#5a5f6b;display:block;margin-top:2px;font-size:10px">
-    Criterios: Rent.1A &gt; 0, PER 0\u201330, Score &gt; 0.3, EVA &gt; 0, ROE &gt; 0 · No en cartera · Técnico: RRA/RR/LT/LTA/PER · (*) no disponible
+    Criterios: Rent.1A &gt; 30%, PER 0\u201330, Score &gt; 0.3, EVA &gt; 0, ROE &gt; 0, Soporte en vigor · No en cartera · Técnico: RRA/RR/LT/LTA/PER · (*) no disponible
   </span>
 </div>
 <table class="alt-table">
   <thead><tr>
-    <th>#</th><th>Empresa</th><th>Ticker</th><th>Sector</th><th>Score</th><th>PER</th><th>Rent.1A</th><th>ROE</th><th>EVA</th><th>FCF</th><th>Tipo Entrada</th>
+    <th>#</th><th>Empresa</th><th>Ticker</th><th>Sector</th><th>Score</th><th>PER</th><th>Rent.1A</th><th>ROE</th><th>EVA</th><th>FCF</th><th>Soporte</th><th>Tipo Entrada</th>
   </tr></thead>
   <tbody>
 {rows_html}
   </tbody>
 </table>
-<div class="alt-note">{n_total} oportunidades encontradas. Score ponderado (0\u20131): ROE 50% / EVA 25% / FCF 25%. Rent.1A positiva con PER ≤ 30.</div>
+<div class="alt-note">{n_total} oportunidades encontradas. Score ponderado (0\u20131): ROE 50% / EVA 25% / FCF 25%. Rent.1A &gt; 30%, Soporte en vigor, PER ≤ 30.</div>
 <!-- END RADAR -->"""
-    # Insert inside .dash container (before its closing </div>) so it gets the dark background
-    body_pos = html.find("</body>")
-    dash_close = html.rfind("</div>", 0, body_pos) if body_pos >= 0 else -1
-    if dash_close >= 0:
-        html = html[:dash_close] + "\n" + radar_section + "\n" + html[dash_close:]
-    elif body_pos >= 0:
-        html = html[:body_pos] + radar_section + "\n" + html[body_pos:]
+    # Insert at RADAR INSERT POINT marker (inside .dash container for dark background)
+    marker = "<!-- RADAR INSERT POINT -->"
+    mp = html.find(marker)
+    if mp >= 0:
+        html = html[:mp] + radar_section + "\n" + html[mp:]
     else:
-        html += radar_section
+        body_pos = html.find("</body>")
+        dash_close = html.rfind("</div>", 0, body_pos) if body_pos >= 0 else -1
+        if dash_close >= 0:
+            html = html[:dash_close] + "\n" + radar_section + "\n" + html[dash_close:]
+        elif body_pos >= 0:
+            html = html[:body_pos] + radar_section + "\n" + html[body_pos:]
+        else:
+            html += radar_section
 
     # Add defensive sector suggestion if needed
     if "Ninguna posición en sectores defensivos" in html:
