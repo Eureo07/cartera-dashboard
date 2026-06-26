@@ -164,7 +164,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         return super().do_GET()
 
     def log_message(self, format, *args):
-        print(f"[{self.address_string()}] {args[0]} {args[1]} {args[2]}")
+        print(f"[{self.address_string()}] {args[0] if len(args) > 0 else ''} {args[1] if len(args) > 1 else ''} {args[2] if len(args) > 2 else ''}")
 
 print(f"Servidor iniciado en puerto {PORT}")
 print(f"Sirviendo: {DIR}")
