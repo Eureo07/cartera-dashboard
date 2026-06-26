@@ -479,12 +479,15 @@ def append_radar(results):
 </table>
 <div class="alt-note">{n_total} oportunidades encontradas. Score ponderado (0\u20131): ROE 50% / EVA 25% / FCF 25%. Rent.1A positiva con PER ≤ 30.</div>
 <!-- END RADAR -->"""
-    # Insert before the closing </body> or at the end
-    insert_pos = html.find("</body>")
-    if insert_pos < 0:
-        html += radar_section
+    # Insert inside .dash container (before its closing </div>) so it gets the dark background
+    body_pos = html.find("</body>")
+    dash_close = html.rfind("</div>", 0, body_pos) if body_pos >= 0 else -1
+    if dash_close >= 0:
+        html = html[:dash_close] + "\n" + radar_section + "\n" + html[dash_close:]
+    elif body_pos >= 0:
+        html = html[:body_pos] + radar_section + "\n" + html[body_pos:]
     else:
-        html = html[:insert_pos] + radar_section + "\n" + html[insert_pos:]
+        html += radar_section
 
     # Add defensive sector suggestion if needed
     if "Ninguna posición en sectores defensivos" in html:
