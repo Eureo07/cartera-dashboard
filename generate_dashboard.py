@@ -344,6 +344,19 @@ total_value = sum(p["value"] for p in portfolio)
 total_pnl = total_value - total_cost
 total_pnl_pct = (total_pnl / total_cost) * 100 if total_cost else 0
 
+# ========== HISTORICAL CLOSED POSITIONS ==========
+closed_positions = [
+    {"entry_date": "15/08/2025", "name": "FERROVIAL SE", "ticker": "FER.MC", "shares": 53, "entry": 46.86, "cost": 2490.58, "support": 43.30, "stop": 41.99, "sale_price": 54.69, "pnl_eur": 400.99, "pnl_pct": 16.15},
+    {"entry_date": "18/08/2025", "name": "IBERDROLA", "ticker": "IBE.MC", "shares": 158, "entry": 16.40, "cost": 2597.41, "support": 15.10, "stop": 14.64, "sale_price": 18.86, "pnl_eur": 375.47, "pnl_pct": 14.49},
+    {"entry_date": "18/08/2025", "name": "GRENERGY RENOVABLES", "ticker": "GRE.MC", "shares": 127, "entry": 5.00, "cost": 904.00, "support": 58.60, "stop": 56.84, "sale_price": 102.00, "pnl_eur": 316.00, "pnl_pct": 35.11},
+    {"entry_date": "17/11/2025", "name": "HEIDELBERG MATERIALS", "ticker": "HEI.DE", "shares": 52, "entry": 12.00, "cost": 1064.90, "support": 184.80, "stop": 179.16, "sale_price": 179.20, "pnl_eur": -168.90, "pnl_pct": -15.93},
+]
+closed_total_pnl = sum(p["pnl_eur"] for p in closed_positions)
+closed_total_cost = sum(p["cost"] for p in closed_positions)
+historical_pnl = total_pnl + closed_total_pnl
+historical_cost = total_cost + closed_total_cost
+historical_return = (historical_pnl / historical_cost) * 100 if historical_cost else 0
+
 # Daily variation (HOY)
 day_var_total = 0.0
 n_day_var = 0
@@ -583,7 +596,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
 .header h1{{font-size:24px;font-weight:700;color:#fff}}
 .header .sub{{color:#9aa0b0;font-size:13px;margin-top:4px}}
 .header .date-info{{text-align:right;color:#9aa0b0;font-size:12px}}
-.kpi-row{{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:24px}}
+.kpi-row{{display:grid;grid-template-columns:repeat(7,1fr);gap:14px;margin-bottom:24px}}
 .kpi{{background:#1a1d2e;border-radius:12px;padding:18px 22px}}
 .kpi .label{{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#9aa0b0;margin-bottom:8px}}
 .kpi .value{{font-size:22px;font-weight:700;color:#fff}}
@@ -662,6 +675,11 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
 .alt-note{{font-size:10px;color:#9aa0b0;margin-bottom:20px;padding:8px 12px;background:#12151f;border-radius:8px;line-height:1.5}}
 .footer{{text-align:center;padding:20px 0;font-size:11px;color:#5a5f6b;border-top:1px solid rgba(255,255,255,0.05);margin-top:30px}}
 .footer span{{color:#9aa0b0}}
+.hist-table{{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px}}
+.hist-table th{{background:#12151f;color:#9aa0b0;padding:8px 10px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid rgba(255,255,255,0.1)}}
+.hist-table td{{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.05);color:#e8eaed}}
+.hist-table tr:last-child td{{border-bottom:none}}
+.hist-table tr.closed td{{background:rgba(255,255,255,0.02);color:#9aa0b0}}
 </style>
 </head>
 <body>
@@ -677,8 +695,9 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
   <div class="kpi-row">
     <div class="kpi"><div class="label">Inversi\u00f3n Total</div><div class="value">{total_cost:,.0f} \u20ac</div></div>
     <div class="kpi"><div class="label">Valor Actual</div><div class="value">{total_value:,.0f} \u20ac</div></div>
-    <div class="kpi"><div class="label">Resultado</div><div class="value {"neg" if total_pnl < 0 else "pos"}">{total_pnl:+,.2f} \u20ac</div></div>
-    <div class="kpi"><div class="label">Rentabilidad</div><div class="value {"neg" if total_pnl_pct < 0 else "pos"}">{total_pnl_pct:+.2f}%</div><div class="sub">Cartera</div></div>
+    <div class="kpi"><div class="label">Resultado Activo</div><div class="value {"neg" if total_pnl < 0 else "pos"}">{total_pnl:+,.2f} \u20ac</div></div>
+    <div class="kpi"><div class="label">Rentabilidad Activa</div><div class="value {"neg" if total_pnl_pct < 0 else "pos"}">{total_pnl_pct:+.2f}%</div><div class="sub">Cartera</div></div>
+    <div class="kpi"><div class="label">Rent. Hist\u00f3rica</div><div class="value {"neg" if historical_pnl < 0 else "pos"}">{historical_return:+.2f}%</div><div class="sub">{historical_pnl:+,.2f} \u20ac / {historical_cost:,.0f} \u20ac invertidos</div></div>
     <div class="kpi"><div class="label">vs Euro Stoxx 50</div><div class="value {"neg" if benchmark_return is not None and (total_pnl_pct - benchmark_return) < 0 else "pos"}">{("" if benchmark_return is None else f"{(total_pnl_pct - benchmark_return):+.2f}%")}</div><div class="sub">{f"\u00cdndice {benchmark_return:+.2f}%" if benchmark_return is not None else "N/D"}</div></div>
     {"<div class=\"kpi\"><div class=\"label\">HOY</div><div class=\"value " + ("pos" if day_var_total >= 0 else "neg") + "\">" + (f"{day_var_pct:+.2f}%" if day_var_pct is not None else "\u2014") + "</div><div class=\"sub\">" + (f"{day_var_total:+,.2f} \u20ac" if day_var_total is not None else "\u2014") + "</div></div>" if day_var_pct is not None else ""}
   </div>
@@ -1071,7 +1090,62 @@ for p in portfolio:
 
 # == FOOTER ==
 html += """<!-- RADAR INSERT POINT -->
-  <div class="footer">
+"""
+# ========== HISTORIAL DE CARTERA ==========
+hist_rows = ""
+# Active positions
+for p in portfolio:
+    sup = f"{p.get('pos_support', 0):.2f}" if p.get("pos_support") else "N/D"
+    pnl_cls_hist = "neg" if p["pnl"] < 0 else "pos"
+    hist_rows += f"""<tr>
+  <td>\U0001f7e2 Activa</td>
+  <td>{p['entry_date']}</td>
+  <td><strong>{p['name']}</strong></td>
+  <td>{p['ticker']}</td>
+  <td>{p['shares']}</td>
+  <td>{p['entry']:.2f}</td>
+  <td>{p['cost']:,.2f}</td>
+  <td>{sup}</td>
+  <td>{p['stop']:.2f}</td>
+  <td style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}">{p['current']:.2f}</td>
+  <td style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}">{p['pnl']:+,.2f}</td>
+  <td style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}">{p['pnl_pct']:+.2f}%</td>
+</tr>"""
+# Closed positions
+for cp in closed_positions:
+    pnl_cls_c = "neg" if cp["pnl_eur"] < 0 else "pos"
+    hist_rows += f"""<tr class="closed">
+  <td>\U0001f534 Cerrada</td>
+  <td>{cp['entry_date']}</td>
+  <td><strong>{cp['name']}</strong></td>
+  <td>{cp['ticker']}</td>
+  <td>{cp['shares']}</td>
+  <td>{cp['entry']:.2f}</td>
+  <td>{cp['cost']:,.2f}</td>
+  <td>{cp['support']:.2f}</td>
+  <td>{cp['stop']:.2f}</td>
+  <td style="color:{"#e05050" if cp["pnl_eur"] < 0 else "#3ecf8e"}">{cp['sale_price']:.2f}</td>
+  <td style="color:{"#e05050" if cp["pnl_eur"] < 0 else "#3ecf8e"}">{cp['pnl_eur']:+,.2f}</td>
+  <td style="color:{"#e05050" if cp["pnl_eur"] < 0 else "#3ecf8e"}">{cp['pnl_pct']:+.2f}%</td>
+</tr>"""
+
+hist_table = f"""  <div class="section-title">Historial de Cartera</div>
+  <div style="font-size:11px;color:#9aa0b0;margin-bottom:14px;padding:8px 12px;background:#12151f;border-radius:8px;line-height:1.6">
+    Rentabilidad global: {historical_pnl:+,.2f} \u20ac ({historical_return:+.2f}%) \u00b7 Inversi\u00f3n hist\u00f3rica total: {historical_cost:,.0f} \u20ac
+  </div>
+  <table class="hist-table">
+    <thead><tr>
+      <th>Estado</th><th>Fecha</th><th>Empresa</th><th>Ticker</th><th>N\u00ba Acc.</th><th>PC</th><th>Inversi\u00f3n (ii)</th><th>Soporte</th><th>Stop Loss</th><th>V.Actual/Venta</th><th>Rent. (\u20ac)</th><th>Rent. (%)</th>
+    </tr></thead>
+    <tbody>
+{hist_rows}
+    </tbody>
+  </table>
+
+"""
+html += hist_table
+
+html += """  <div class="footer">
     Generado autom\u00e1ticamente \u00b7 <span>yfinance</span> \u00b7 EVA con WACC 8% \u00b7 Precios en vivo al recargar
   </div>
 </div>
