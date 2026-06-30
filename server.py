@@ -179,7 +179,11 @@ AUTH_PASS = os.environ.get("DASHBOARD_PASSWORD", "cartera2026")
 REGENERATE_KEY = os.environ.get("REGENERATE_KEY", "")
 
 def check_auth(headers):
-    auth = headers.get("Authorization", "")
+    auth = ""
+    for k, v in headers.items():
+        if k.lower() == "authorization":
+            auth = v
+            break
     if not auth.startswith("Basic "):
         return False
     try:
