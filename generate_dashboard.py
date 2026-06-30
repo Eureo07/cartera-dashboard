@@ -86,6 +86,7 @@ full_hist = {}
 bench_hist = None
 hist_path = CFG["paths"]["price_history"]
 log.info("Downloading price histories...")
+last_data_date = None
 for p in portfolio:
     tk = p["ticker"]
     try:
@@ -101,6 +102,9 @@ for p in portfolio:
             price_hist[tk] = close
             full_hist[tk] = hist
             p["current"] = float(close.iloc[-1])
+            dt_candle = close.index[-1]
+            if last_data_date is None or dt_candle > last_data_date:
+                last_data_date = dt_candle
         else:
             log.warning(f"  {tk}: hist={None if hist is None else len(hist)} (insuficiente)")
     except Exception as e:
@@ -109,11 +113,17 @@ for p in portfolio:
     if "current" not in p or p["current"] is None:
         try:
             info = yf.Ticker(tk, session=_YF_SESSION).info or {}
-            p["current"] = info.get("regularMarketPrice") or info.get("previousClose") or info.get("currentPrice") or 0
-            log.info(f"  {tk}: fallback price={p['current']}")
+            raw = info.get("regularMarketPrice") or info.get("previousClose") or info.get("currentPrice")
+            if raw is not None:
+                p["current"] = float(raw)
+            else:
+                p["current"] = 0
+                p["data_error"] = True
+                log.error(f"  {tk}: fallback SIN DATOS — todas las fuentes yfinance devolvieron None")
         except Exception as e:
-            log.error(f"  {tk}: fallback error ({e})")
+            log.error(f"  {tk}: fallback EXCEPTION — {e}")
             p["current"] = 0
+            p["data_error"] = True
 # Support/resistance for each position
 for p in portfolio:
     tk = p["ticker"]
@@ -584,7 +594,16 @@ evol_benchmark_json = json.dumps(evol_benchmark)
 sector_alts_data = {}
 
 # ========== BUILD HTML ==========
-now_str = datetime.now(ZoneInfo("Europe/Madrid")).strftime("%d/%m/%Y %H:%M")
+if last_data_date is not None:
+    ref_date = last_data_date
+    if hasattr(ref_date, 'to_pydatetime'):
+        ref_date = ref_date.to_pydatetime()
+    if ref_date.tzinfo is None:
+        ref_date = ref_date.replace(tzinfo=ZoneInfo("Europe/Madrid"))
+    now_str = ref_date.strftime("%d/%m/%Y")
+else:
+    ref_date = datetime.now(ZoneInfo("Europe/Madrid"))
+    now_str = ref_date.strftime("%d/%m/%Y %H:%M")
 total_cls = "green" if total_pnl >= 0 else "red"
 
 html = f"""<!DOCTYPE html>
@@ -851,10 +870,10 @@ for i, p in enumerate(portfolio):
         pos_dyn_stop_val = None
 
     desc = lambda t: f'<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">{t}</span>'
-    html += f"""    <div class="pos-card{" neg" if p["pnl"] < 0 else ""}">
+    html += f"""    <div class="pos-card{" neg" if p["pnl"] < 0 else ""}" data-ticker="{tk}" data-entry="{p['entry']}" data-shares="{p['shares']}" data-stop="{p['stop']}">
       <div class="pos-header">
         <div><div class="ticker">{tk} — {p['name']}</div><div class="name">{sector_name} · Entrada {p['entry_date']}</div></div>
-        <div class="price"><div class="current" style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}">{p['current']:.2f} \u20ac</div><div class="pnl {pnl_cls_card}">{pnl_sign}{p['pnl']:,.2f} \u20ac ({pnl_pct_sign}{p['pnl_pct']:.2f}%)</div></div>
+        <div class="price"><div class="current" id="price-{i}" style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}"><span class="price-val">{p['current']:.2f}</span> \u20ac{" <span style=\"color:#f0a500;font-size:11px\" title=\"Dato no actualizado\">\u26a0</span>" if p.get("data_error") else ""}</div><div class="pnl {pnl_cls_card}" id="pnl-{i}"><span class="pnl-val">{pnl_sign}{p['pnl']:,.2f}</span> \u20ac (<span class="pnl-pct-val">{pnl_pct_sign}{p['pnl_pct']:.2f}</span>%)</div></div>
       </div>
       <div class="signal-badge {signal_cls}">{signal_txt}</div>
       <div class="metrics-grid">
@@ -1055,7 +1074,7 @@ for p in portfolio:
   <td>{p['cost']:,.2f}</td>
   <td>{sup}</td>
   <td>{p['stop']:.2f}</td>
-  <td style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}">{p['current']:.2f}</td>
+  <td style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}">{p['current']:.2f}{" \u26a0" if p.get("data_error") else ""}</td>
   <td style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}">{p['pnl']:+,.2f}</td>
   <td style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}">{p['pnl_pct']:+.2f}%</td>
 </tr>"""
@@ -1255,10 +1274,59 @@ function renderRadar(data) {
   c.innerHTML = h;
 }
 
+// ========== Live prices ==========
+function updatePrices(data) {
+  if (data.error || !data.prices) return;
+  var cards = document.querySelectorAll('.pos-card');
+  var anyFail = false;
+  cards.forEach(function(card, i) {
+    var tk = card.getAttribute('data-ticker');
+    var entry = parseFloat(card.getAttribute('data-entry'));
+    var shares = parseFloat(card.getAttribute('data-shares'));
+    var stop = parseFloat(card.getAttribute('data-stop'));
+    var pd = data.prices[tk];
+    if (!pd || pd.current == null) { anyFail = true; return; }
+    var cur = pd.current;
+    var cost = entry * shares;
+    var value = cur * shares;
+    var pnl = value - cost;
+    var pnlPct = cost ? (pnl / cost) * 100 : 0;
+    var distStop = cur ? ((cur - stop) / cur) * 100 : 0;
+    // Update displayed values
+    var priceEl = card.querySelector('.price-val');
+    var pnlEl = card.querySelector('.pnl-val');
+    var pnlPctEl = card.querySelector('.pnl-pct-val');
+    if (priceEl) priceEl.textContent = cur.toFixed(2);
+    if (pnlEl) pnlEl.textContent = (pnl >= 0 ? '+' : '') + pnl.toFixed(2);
+    if (pnlPctEl) pnlPctEl.textContent = (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2);
+    // Color update
+    var isNeg = pnl < 0;
+    var currentDiv = card.querySelector('.current');
+    var pnlDiv = card.querySelector('.pnl');
+    if (currentDiv) currentDiv.style.color = isNeg ? '#e05050' : '#3ecf8e';
+    if (pnlDiv) pnlDiv.style.color = isNeg ? '#e05050' : '#3ecf8e';
+    // Remove data_error warning if it exists (price came through)
+    var warn = card.querySelector('[title="Dato no actualizado"]');
+    if (warn) warn.remove();
+  });
+  if (anyFail) {
+    var hdr = document.querySelector('.header .date-info');
+    if (hdr && !hdr.querySelector('.price-warn')) {
+      hdr.innerHTML += '<br><span class="price-warn" style="color:#f0a500;font-size:11px">\u26a0 Algunos precios no se actualizaron</span>';
+    }
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   fetch('/api/earnings-watchlist').then(function(r){ return r.json(); }).then(renderEarningsWatchlist).catch(function(){ document.getElementById('earnings-watchlist').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
   fetch('/api/alternatives').then(function(r){ return r.json(); }).then(renderAlternatives).catch(function(){ document.getElementById('alternativas-container').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
   fetch('/api/radar').then(function(r){ return r.json(); }).then(renderRadar).catch(function(){ document.getElementById('radar-container').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
+  fetch('/api/prices').then(function(r){ return r.json(); }).then(updatePrices).catch(function(){
+    var hdr = document.querySelector('.header .date-info');
+    if (hdr && !hdr.querySelector('.price-warn')) {
+      hdr.innerHTML += '<br><span class="price-warn" style="color:#e05050;font-size:11px">\u26a0 Precios no disponibles</span>';
+    }
+  });
 });
 </script>
 

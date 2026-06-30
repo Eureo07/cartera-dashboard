@@ -171,6 +171,9 @@ _ALT_TTL = 24 * 3600
 _RADAR_CACHE = {"data": None, "updated": None}
 _RADAR_TTL = 24 * 3600
 
+_PRICES_CACHE = {"data": None, "updated": None}
+_PRICES_TTL = 300  # 5 min
+
 PORT = int(os.environ.get("PORT", "5000"))
 DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -298,6 +301,10 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         # API: Radar (no auth — same origin from logged-in page)
         if self.path == "/api/radar":
             self._send_json_cache(_RADAR_CACHE, _RADAR_TTL, self._compute_radar)
+            return
+        # API: Live prices for portfolio positions (no auth)
+        if self.path == "/api/prices":
+            self._send_json_cache(_PRICES_CACHE, _PRICES_TTL, self._compute_prices)
             return
         # API endpoint for live price
         m = re.match(r"/api/price/([A-Za-z0-9.=-]+)", self.path)
@@ -435,6 +442,31 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         except Exception as e:
             print(f"[radar] ERROR: {e}")
             return {"error": True, "msg": str(e), "oportunidades": [], "total": 0}
+
+    def _compute_prices(self):
+        try:
+            import yfinance as yf
+            import requests as _req
+            _sess = _req.Session()
+            _sess.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            data = {}
+            for p in CFG.get("portfolio", []):
+                tk = p["ticker"]
+                try:
+                    info = yf.Ticker(tk, session=_sess).info or {}
+                    cur = info.get("regularMarketPrice") or info.get("previousClose") or info.get("currentPrice")
+                    prev = info.get("previousClose")
+                    if cur is not None:
+                        cur = float(cur)
+                    if prev is not None:
+                        prev = float(prev)
+                    day_var = (cur - prev) if (cur and prev) else 0
+                    data[tk] = {"current": cur, "prev_close": prev, "day_var": round(day_var, 2)}
+                except Exception:
+                    data[tk] = {"current": None, "prev_close": None, "day_var": 0}
+            return {"prices": data, "updated": datetime.now().isoformat()}
+        except Exception as e:
+            return {"error": True, "msg": str(e), "prices": {}}
 
     def log_message(self, format, *args):
         print(f"[{self.address_string()}] {args[0] if len(args) > 0 else ''} {args[1] if len(args) > 1 else ''} {args[2] if len(args) > 2 else ''}")
