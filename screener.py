@@ -229,6 +229,70 @@ def get_entry_types(ticker):
         types.append("PER")
     return types
 
+# ========== ADVANCED TECHNICAL FILTERS (weekly) ==========
+def validar_filtros_tecnicos(ticker, entry_types):
+    """Additional weekly-based filters:
+    - RR/RRA: breakout confirmation (close > prior 52w high), volume conviction,
+              pullback within -5% of broken level
+    - LT/LTA/PER: weekly momentum (close > prev week), volume > 20w avg
+    Returns True if all applicable filters pass."""
+    try:
+        stock = yf.Ticker(ticker, session=_YF_SESSION)
+        weekly = stock.history(period="2y", interval="1wk")
+        if weekly is None or weekly.empty or len(weekly) < 22:
+            log.warning(f"  Filtro semanal {ticker}: datos insuficientes ({len(weekly) if weekly is not None else 0} semanas)")
+            return False
+
+        closes = weekly['Close'].values
+        highs = weekly['High'].values
+        volumes = weekly['Volume'].values
+        dates = weekly.index
+
+        last_date = dates[-1]
+        last_dt = last_date.to_pydatetime() if hasattr(last_date, 'to_pydatetime') else last_date
+        hours_since_close = (datetime.now() - last_dt).total_seconds() / 3600
+        ref_idx = -2 if hours_since_close < 48 else -1
+
+        if abs(ref_idx) + 22 > len(weekly):
+            log.warning(f"  Filtro semanal {ticker}: datos insuficientes para ventana de referencia")
+            return False
+
+        has_rr = any(s in entry_types for s in ('RR', 'RRA'))
+
+        if has_rr:
+            w_start = max(0, ref_idx - 52)
+            prior_max = float(max(highs[w_start:ref_idx]))
+            if closes[ref_idx] <= prior_max:
+                log.warning(f"  Filtro semanal {ticker}: [RR/RRA] F1 cierre {closes[ref_idx]:.2f} ≤ máx previo {prior_max:.2f}")
+                return False
+
+            v_start = max(0, ref_idx - 20)
+            vol_mean = float(sum(volumes[v_start:ref_idx]) / (ref_idx - v_start))
+            if volumes[ref_idx] <= vol_mean:
+                log.warning(f"  Filtro semanal {ticker}: [RR/RRA] F2 volumen {volumes[ref_idx]:.0f} ≤ media 20s {vol_mean:.0f}")
+                return False
+
+            current_price = float(closes[-1])
+            lower_bound = prior_max * 0.95
+            if not (lower_bound <= current_price <= prior_max):
+                log.warning(f"  Filtro semanal {ticker}: [RR/RRA] F3 precio {current_price:.2f} fuera de [{lower_bound:.2f}, {prior_max:.2f}]")
+                return False
+        else:
+            if closes[ref_idx] <= closes[ref_idx - 1]:
+                log.warning(f"  Filtro semanal {ticker}: [LT/LTA/PER] F1 cierre {closes[ref_idx]:.2f} ≤ semana ant {closes[ref_idx-1]:.2f}")
+                return False
+
+            v_start = max(0, ref_idx - 20)
+            vol_mean = float(sum(volumes[v_start:ref_idx]) / (ref_idx - v_start))
+            if volumes[ref_idx] <= vol_mean:
+                log.warning(f"  Filtro semanal {ticker}: [LT/LTA/PER] F2 volumen {volumes[ref_idx]:.0f} ≤ media 20s {vol_mean:.0f}")
+                return False
+
+        return True
+    except Exception as e:
+        log.warning(f"  Filtro semanal {ticker}: error - {e}")
+        return False
+
 # ========== SUPPORT & RESISTANCE ==========
 def calcular_soporte_resistencia(ticker, hist_data=None, periodo='1y'):
     """Calculate support and resistance from daily OHLC data.
@@ -329,14 +393,20 @@ def _load_radar_cache():
     log.info(f"  Caché caducada ({age:.1f}h > {ttl}h), descargando datos nuevos...")
     return None
 
-def run_screener():
+def ejecutar_radar(sector_filter=None, max_resultados=None):
+    """Ejecuta el pipeline completo de filtrado y scoring.
+    - sector_filter: string opcional para filtrar por sector
+    - max_resultados: límite de resultados (defecto: MAX_RESULTS de config)
+    - Devuelve: lista de dicts con resultados ordenados por score"""
     log.info("Cargando datos financieros...")
     df = pd.read_excel(EXCEL_FILE)
     sec_col = df.columns[4]
     universe_tickers = get_universe()
     df_u = df[df["Ticker"].isin(universe_tickers)].copy()
     df_u = df_u.drop_duplicates(subset="Empresa", keep="first")
-    log.info(f"  {len(df_u)} empresas en el universo con datos financieros")
+    if sector_filter:
+        df_u = df_u[df_u[sec_col].str.strip() == sector_filter].copy()
+    log.info(f"  {len(df_u)} empresas en el universo con datos financieros" + (f" (sector: {sector_filter})" if sector_filter else ""))
     # Try loading from cache first
     cached_results = _load_radar_cache()
     if cached_results:
@@ -443,6 +513,9 @@ def run_screener():
         if not support_ok:
             cnt_tec += 1
             continue
+        if not validar_filtros_tecnicos(ticker, entry_types):
+            cnt_tec += 1
+            continue
         results.append({
             "ticker": ticker, "name": name, "sector": sector,
             "roe": roe, "roe_missing": roe_missing, "eva": eva, "fcf": fcf,
@@ -467,7 +540,8 @@ def run_screener():
     rdf["score"] = scores
     rdf = rdf[rdf["score"] > SCORE_THRESHOLD].copy()
     rdf = rdf.sort_values("score", ascending=False)
-    final = rdf.head(MAX_RESULTS)
+    limit = max_resultados if max_resultados is not None else MAX_RESULTS
+    final = rdf.head(limit)
     log.info(f"  {len(final)} oportunidades encontradas (Score > {SCORE_THRESHOLD})")
     results_list = final.to_dict("records")
     _save_radar_cache(results_list)
@@ -475,6 +549,9 @@ def run_screener():
 
 # ========== DASHBOARD INTEGRATION ==========
 DEFENSIVE_SECTORS = {"Salud", "Utilities", "Consumo básico", "Telecomunicaciones", "Comunicaciones", "Alimentación", "Consumo", "Farma"}
+
+def run_screener():
+    return ejecutar_radar()
 
 def append_radar(results):
     if not os.path.exists(DASHBOARD_FILE):
@@ -556,14 +633,8 @@ def append_radar(results):
     if mp >= 0:
         html = html[:mp] + radar_section + "\n" + html[mp:]
     else:
-        body_pos = html.find("</body>")
-        dash_close = html.rfind("</div>", 0, body_pos) if body_pos >= 0 else -1
-        if dash_close >= 0:
-            html = html[:dash_close] + "\n" + radar_section + "\n" + html[dash_close:]
-        elif body_pos >= 0:
-            html = html[:body_pos] + radar_section + "\n" + html[body_pos:]
-        else:
-            html += radar_section
+        # Marker not found — radar is loaded dynamically via JS; skip static insertion
+        pass
 
     # Add defensive sector suggestion if needed
     if "Ninguna posición en sectores defensivos" in html:

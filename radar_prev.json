@@ -1,286 +1,181 @@
 {
-  "updated": "2026-06-25T23:23:23.983574",
+  "updated": "2026-06-29T09:02:36.786159",
   "results": [
     {
-      "ticker": "DHL.DE",
-      "name": "Deutsche Post (DHL)",
-      "sector": "Logística",
-      "score": 1.0,
-      "eper": 14.355635,
-      "rent_1a": 37.87721616403596,
-      "roe": 15.75,
-      "eva": 519392406.0,
-      "fcf": 6324000000.0,
-      "entry_types": [
-        "RRA"
-      ]
-    },
-    {
-      "ticker": "SN.L",
-      "name": "Smith & Nephew",
-      "sector": "Salud",
-      "score": 1.0,
-      "eper": 12.212194,
-      "rent_1a": 4.514363885088919,
-      "roe": 11.82,
-      "eva": 59653607.0,
-      "fcf": 852000000.0,
-      "entry_types": [
-        "LT",
-        "PER"
-      ]
-    },
-    {
-      "ticker": "LMT",
-      "name": "Lockheed Martin",
-      "sector": "Defensa",
-      "score": 1.0,
-      "eper": 15.737594,
-      "rent_1a": 10.2904555023514,
-      "roe": 74.65,
-      "eva": 3043747248.0,
-      "fcf": 6908000000.0,
-      "entry_types": [
-        "LT"
-      ]
-    },
-    {
-      "ticker": "ITX.MC",
-      "name": "Inditex",
-      "sector": "Consumo",
-      "score": 0.9698508816452365,
-      "eper": 23.705965,
-      "rent_1a": 29.66276728587747,
-      "roe": 30.5,
-      "eva": 4469993850.0,
-      "fcf": 6520075000.0,
-      "entry_types": [
-        "RRA"
-      ]
-    },
-    {
-      "ticker": "MRK",
-      "name": "Merck",
-      "sector": "Salud",
-      "score": 0.8192270191213911,
-      "eper": 13.123016,
-      "rent_1a": 59.139913781940045,
-      "roe": 34.7,
-      "eva": 10756264440.0,
-      "fcf": 12360000000.0,
-      "entry_types": [
-        "RRA"
-      ]
-    },
-    {
-      "ticker": "TTE.PA",
-      "name": "TotalEnergies",
-      "sector": "Energía",
-      "score": 0.75,
-      "eper": 8.1807575,
-      "rent_1a": 32.49808389532261,
-      "roe": 11.43,
-      "eva": 2875890000.0,
-      "fcf": 10390000000.0,
-      "entry_types": [
-        "LT"
-      ]
-    },
-    {
-      "ticker": "GILD",
-      "name": "Gilead Sciences",
-      "sector": "Biotecnología",
-      "score": 0.75,
-      "eper": 12.798651,
-      "rent_1a": 15.071541699829341,
-      "roe": 37.49,
-      "eva": 5622771254.0,
-      "fcf": 9456000000.0,
-      "entry_types": [
-        "LT"
-      ]
-    },
-    {
-      "ticker": "QCOM",
-      "name": "Qualcomm",
+      "ticker": "TXN",
+      "name": "Texas Instruments",
       "sector": "Semiconductores",
-      "score": 0.6937688442211055,
-      "eper": 18.677958,
-      "rent_1a": 29.527777188308445,
-      "roe": 26.13,
-      "eva": 6715330000.0,
-      "fcf": 12820000000.0,
+      "score": 0.75,
+      "eper": 29.814537,
+      "rent_1a": 37.83561432873081,
+      "roe": 30.73,
+      "eva": 2962496708.0,
+      "fcf": 2603000000.0,
       "entry_types": [
         "LT"
-      ]
+      ],
+      "support": 273.8800048828125,
+      "current_price": 285.42999267578125
     },
     {
-      "ticker": "AMZN",
-      "name": "Amazon",
-      "sector": "Consumo discrecional",
-      "score": 0.6361810058894888,
-      "eper": 22.975464,
-      "rent_1a": 4.555084567089478,
-      "roe": 18.89,
-      "eva": 26685790000.0,
-      "fcf": 7695000000.0,
-      "entry_types": [
-        "LT"
-      ]
-    },
-    {
-      "ticker": "LOG.MC",
-      "name": "Logista",
-      "sector": "Distribución",
-      "score": 0.5802924077943963,
-      "eper": 14.4360695,
-      "rent_1a": 23.16629281526588,
-      "roe": 48.05,
-      "eva": 227137914.0,
-      "fcf": 350223000.0,
+      "ticker": "JNJ",
+      "name": "Johnson & Johnson",
+      "sector": "Salud",
+      "score": 0.630081435202279,
+      "eper": 20.00693,
+      "rent_1a": 67.08877209050311,
+      "roe": 32.87,
+      "eva": 15996110116.0,
+      "fcf": 19313000000.0,
       "entry_types": [
         "RRA"
-      ]
-    },
-    {
-      "ticker": "GOOG",
-      "name": "Alphabet C",
-      "sector": "Comunicaciones",
-      "score": 0.5061524780735805,
-      "eper": 23.512606,
-      "rent_1a": 96.17612613069704,
-      "roe": 31.83,
-      "eva": 93379596043.0,
-      "fcf": 73266000000.0,
-      "entry_types": [
-        "LT"
-      ]
-    },
-    {
-      "ticker": "IAG.MC",
-      "name": "IAG",
-      "sector": "Aerolíneas",
-      "score": 0.5,
-      "eper": 7.1027,
-      "rent_1a": 45.61357667116883,
-      "roe": 44.04,
-      "eva": 2004747081.0,
-      "fcf": 3146000000.0,
-      "entry_types": [
-        "RRA"
-      ]
+      ],
+      "support": 220.3699951171875,
+      "current_price": 254.66000366210938
     },
     {
       "ticker": "ELE.MC",
       "name": "Endesa",
       "sector": "Utilities",
       "score": 0.5,
-      "eper": 16.836655,
-      "rent_1a": 44.89721568409153,
+      "eper": 16.900639,
+      "rent_1a": 47.34101833835245,
       "roe": 25.79,
       "eva": 215883087.0,
       "fcf": 2207000000.0,
       "entry_types": [
         "RRA"
-      ]
+      ],
+      "support": 35.5,
+      "current_price": 39.619998931884766
+    },
+    {
+      "ticker": "DHL.DE",
+      "name": "Deutsche Post (DHL)",
+      "sector": "Logística",
+      "score": 0.5,
+      "eper": 14.182284,
+      "rent_1a": 31.590850479018208,
+      "roe": 15.75,
+      "eva": 519392406.0,
+      "fcf": 6324000000.0,
+      "entry_types": [
+        "RRA"
+      ],
+      "support": 50.31999969482422,
+      "current_price": 52.36000061035156
+    },
+    {
+      "ticker": "IAG.MC",
+      "name": "IAG",
+      "sector": "Aerolíneas",
+      "score": 0.5,
+      "eper": 7.017368,
+      "rent_1a": 40.29101660819251,
+      "roe": 44.04,
+      "eva": 2004747081.0,
+      "fcf": 3146000000.0,
+      "entry_types": [
+        "RRA"
+      ],
+      "support": 3.819999933242798,
+      "current_price": 5.5920000076293945
+    },
+    {
+      "ticker": "CPG.L",
+      "name": "Compass Group",
+      "sector": "Servicios",
+      "score": 0.5,
+      "eper": 19.987791,
+      "rent_1a": 32.7118020965372,
+      "roe": 24.41,
+      "eva": 871015480.0,
+      "fcf": 2474000000.0,
+      "entry_types": [
+        "RRA"
+      ],
+      "support": 28.0,
+      "current_price": 32.7400016784668
+    },
+    {
+      "ticker": "BHP.L",
+      "name": "BHP Group",
+      "sector": "Minería",
+      "score": 0.5,
+      "eper": 15.765822,
+      "rent_1a": 75.43658746063555,
+      "roe": 19.51,
+      "eva": 4828716654.0,
+      "fcf": 9294000000.0,
+      "entry_types": [
+        "LT"
+      ],
+      "support": 3026.0,
+      "current_price": 3064.0
+    },
+    {
+      "ticker": "HON",
+      "name": "Honeywell",
+      "sector": "Industriales",
+      "score": 0.5,
+      "eper": 20.285257,
+      "rent_1a": 102.93642169170994,
+      "roe": 34.01,
+      "eva": 1543241899.0,
+      "fcf": 5422000000.0,
+      "entry_types": [
+        "RRA"
+      ],
+      "support": 205.52000427246094,
+      "current_price": 464.4200134277344
     },
     {
       "ticker": "LLY",
       "name": "Eli Lilly",
       "sector": "Salud",
       "score": 0.5,
-      "eper": 25.353767,
-      "rent_1a": 41.826384486790225,
+      "eper": 27.162912,
+      "rent_1a": 55.79598634330038,
       "roe": 77.78,
       "eva": 17640666004.0,
       "fcf": 5964000000.0,
       "entry_types": [
         "RRA"
-      ]
+      ],
+      "support": 1079.219970703125,
+      "current_price": 1208.1199951171875
     },
     {
-      "ticker": "GSK.L",
-      "name": "GSK",
+      "ticker": "TGT",
+      "name": "Target",
+      "sector": "Consumo discrecional",
+      "score": 0.5,
+      "eper": 15.733198,
+      "rent_1a": 41.479385911800264,
+      "roe": 22.92,
+      "eva": 990062177.0,
+      "fcf": 2835000000.0,
+      "entry_types": [
+        "RRA"
+      ],
+      "support": 127.66000366210938,
+      "current_price": 140.38999938964844
+    },
+    {
+      "ticker": "MRK",
+      "name": "Merck",
       "sector": "Salud",
-      "score": 0.5,
-      "eper": 10.279119,
-      "rent_1a": 42.2373610613123,
-      "roe": 34.9,
-      "eva": 3694618273.0,
-      "fcf": 4756000000.0,
-      "entry_types": [
-        "LT"
-      ]
-    },
-    {
-      "ticker": "SAF.PA",
-      "name": "Safran",
-      "sector": "Aeroespacial",
-      "score": 0.5,
-      "eper": 27.990105,
-      "rent_1a": 30.33750333587087,
-      "roe": 48.37,
-      "eva": 5739144400.0,
-      "fcf": 3921000000.0,
+      "score": 0.4365329546636831,
+      "eper": 13.458807,
+      "rent_1a": 62.65487502405285,
+      "roe": 34.7,
+      "eva": 10756264440.0,
+      "fcf": 12360000000.0,
       "entry_types": [
         "RRA"
-      ]
-    },
-    {
-      "ticker": "RIO.L",
-      "name": "Rio Tinto",
-      "sector": "Minería",
-      "score": 0.5,
-      "eper": 10.837277,
-      "rent_1a": 74.24830261881668,
-      "roe": 16.02,
-      "eva": 2481993226.0,
-      "fcf": 4497000000.0,
-      "entry_types": [
-        "LT"
-      ]
-    },
-    {
-      "ticker": "SIE.DE",
-      "name": "Siemens",
-      "sector": "Industrial",
-      "score": 0.5,
-      "eper": 21.32605,
-      "rent_1a": 27.528083386136647,
-      "roe": 15.46,
-      "eva": 74990545.0,
-      "fcf": 10812000000.0,
-      "entry_types": [
-        "RRA"
-      ]
-    },
-    {
-      "ticker": "HEN3.DE",
-      "name": "Henkel",
-      "sector": "Consumo",
-      "score": 0.5,
-      "eper": 12.44612,
-      "rent_1a": 9.8970955422308,
-      "roe": 9.93,
-      "eva": 217320704.0,
-      "fcf": 1842000000.0,
-      "entry_types": [
-        "LT"
-      ]
-    },
-    {
-      "ticker": "GOOGL",
-      "name": "Alphabet A",
-      "sector": "Comunicaciones",
-      "score": 0.5,
-      "eper": 23.617048,
-      "rent_1a": 98.05808732997295,
-      "roe": 31.83,
-      "eva": 93379596043.0,
-      "fcf": 73266000000.0,
-      "entry_types": [
-        "LT"
-      ]
+      ],
+      "support": 107.9000015258789,
+      "current_price": 128.66000366210938
     }
   ]
 }

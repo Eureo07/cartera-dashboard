@@ -6,6 +6,7 @@ Usuario y contraseña desde variables de entorno:
   DASHBOARD_PASSWORD (obligatorio en Railway, defecto: "cartera2026")
 """
 import http.server
+import socketserver
 import urllib.request
 import json
 import os
@@ -13,6 +14,162 @@ import re
 import base64
 import subprocess
 import threading
+from datetime import datetime, timedelta
+import pandas as pd
+import yfinance as yf
+import sys
+_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
+if _PROJ_DIR not in sys.path:
+    sys.path.insert(0, _PROJ_DIR)
+from config_loader import CFG
+import time as _ytime
+
+# ========== FMP API ==========
+FMP_API_KEY = os.getenv("FMP_API_KEY", "")
+_FMP_CACHE = {}  # {"ticker_field": {"value": ..., "updated": "iso"}}
+_FMP_CACHE_TTL = 24 * 3600  # 24h
+
+def _fmp_url(endpoint, ticker):
+    return f"https://financialmodelingprep.com/api/v3/{endpoint}/{ticker}?limit=1&apikey={FMP_API_KEY}"
+
+def _fetch_fmp(endpoint, ticker):
+    """Try ticker with exchange suffix first, then without. Returns (value, source) or (None, None)."""
+    if not FMP_API_KEY:
+        return None, None
+    variants = [ticker]
+    parts = ticker.split(".")
+    if len(parts) > 1:
+        variants.append(parts[0])
+    for v in variants:
+        cache_key = f"{endpoint}:{v}"
+        now = datetime.now()
+        if cache_key in _FMP_CACHE:
+            age = (now - datetime.fromisoformat(_FMP_CACHE[cache_key]["updated"])).total_seconds()
+            if age < _FMP_CACHE_TTL:
+                return _FMP_CACHE[cache_key]["value"], "fmp"
+        try:
+            url = _fmp_url(endpoint, v)
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            resp = urllib.request.urlopen(req, timeout=10)
+            data = json.loads(resp.read())
+            if isinstance(data, list) and len(data) > 0:
+                val = data[0]
+                _FMP_CACHE[cache_key] = {"value": val, "updated": now.isoformat()}
+                return val, "fmp"
+        except Exception:
+            continue
+    return None, None
+
+# ========== EARNINGS WATCHLIST ==========
+_WATCHLIST_CACHE = {"data": None, "updated": None}
+_WATCHLIST_TTL = 24 * 3600
+
+def _get_metric_value(ticker, metrica, df_xlsx):
+    """Fetch a metric value following FMP -> yfinance -> xlsx hierarchy.
+    Returns (valor, fuente) where fuente is 'fmp', 'yfinance', 'xlsx', or None."""
+    fmp_field = metrica.get("fmp_campo")
+    yf_field = metrica.get("yf_campo")
+    xlsx_field = metrica.get("xlsx_campo")
+    # 1) FMP
+    if fmp_field:
+        val, src = _fetch_fmp("ratios", ticker)
+        if val is not None and isinstance(val, dict) and fmp_field in val and val[fmp_field] is not None:
+            return float(val[fmp_field]), "fmp"
+        val2, _ = _fetch_fmp("key-metrics", ticker)
+        if val2 is not None and isinstance(val2, dict) and fmp_field in val2 and val2[fmp_field] is not None:
+            return float(val2[fmp_field]), "fmp"
+    # 2) yfinance
+    if yf_field:
+        try:
+            yf_ticker = yf.Ticker(ticker)
+            info = yf_ticker.info
+            if yf_field in info and info[yf_field] is not None:
+                return float(info[yf_field]), "yfinance"
+        except Exception:
+            pass
+    # 3) xlsx
+    if xlsx_field and df_xlsx is not None:
+        try:
+            match = df_xlsx[df_xlsx["Ticker"].astype(str).str.strip() == ticker]
+            if not match.empty and xlsx_field in match.columns:
+                val = match.iloc[0][xlsx_field]
+                if val is not None and not (isinstance(val, float) and pd.isna(val)):
+                    return float(val), "xlsx"
+        except Exception:
+            pass
+    return None, None
+
+def _compute_metric_status(valor, umbral_alerta, umbral_venta, direccion):
+    """Compute metric status based on direction thresholds."""
+    if valor is None:
+        return "sin_dato"
+    if direccion == "menor_es_peor":
+        if umbral_venta is not None and valor < umbral_venta:
+            return "venta"
+        if umbral_alerta is not None and valor < umbral_alerta:
+            return "alerta"
+        return "ok"
+    # mayor_es_peor
+    if umbral_venta is not None and valor > umbral_venta:
+        return "venta"
+    if umbral_alerta is not None and valor > umbral_alerta:
+        return "alerta"
+    return "ok"
+
+def _compute_watchlist(df_xlsx=None):
+    """Compute earnings watchlist data."""
+    if df_xlsx is None:
+        try:
+            df_xlsx = pd.read_excel(os.path.join(DIR, CFG["paths"]["excel"]))
+        except Exception:
+            df_xlsx = None
+    watchlist = CFG.get("earnings_watchlist", [])
+    now = datetime.now()
+    empresas = []
+    for item in watchlist:
+        ticker = item["ticker"]
+        fecha_earnings = datetime.strptime(item["fecha_earnings"], "%Y-%m-%d")
+        dias = (fecha_earnings - now).days
+        metricas = []
+        estados = []
+        for m in item["metricas"]:
+            valor, fuente = _get_metric_value(ticker, m, df_xlsx)
+            estado = _compute_metric_status(valor, m.get("umbral_alerta"), m.get("umbral_venta"), m.get("direccion"))
+            estados.append(estado)
+            metricas.append({
+                "nombre": m["nombre"],
+                "valor": valor,
+                "formato": m.get("formato", "ratio"),
+                "fuente": fuente if fuente else "sin_dato",
+                "umbral_alerta": m.get("umbral_alerta"),
+                "umbral_venta": m.get("umbral_venta"),
+                "estado": estado,
+            })
+        if "venta" in estados:
+            estado_global = "venta"
+        elif "alerta" in estados:
+            estado_global = "alerta"
+        elif all(e == "sin_dato" for e in estados):
+            estado_global = "sin_dato"
+        else:
+            estado_global = "ok"
+        empresas.append({
+            "ticker": ticker,
+            "nombre": item["nombre"],
+            "fecha_earnings": item["fecha_earnings"],
+            "dias_hasta_earnings": dias,
+            "condicion_venta": item["condicion_venta_texto"],
+            "estado_global": estado_global,
+            "metricas": metricas,
+        })
+    return {"updated": now.isoformat(), "empresas": empresas}
+
+# ========== ALTERNATIVES CACHE ==========
+_ALT_CACHE = {"data": None, "updated": None}
+_ALT_TTL = 24 * 3600
+
+_RADAR_CACHE = {"data": None, "updated": None}
+_RADAR_TTL = 24 * 3600
 
 PORT = int(os.environ.get("PORT", "5000"))
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -126,8 +283,18 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps(LAST_REGENERATE, indent=2).encode())
             return
-        if not check_auth(self.headers):
-            return send_401(self)
+        # API: Earnings watchlist (no auth — same origin from logged-in page)
+        if self.path == "/api/earnings-watchlist":
+            self._send_json_cache(_WATCHLIST_CACHE, _WATCHLIST_TTL, _compute_watchlist)
+            return
+        # API: Alternatives (no auth — same origin from logged-in page)
+        if self.path == "/api/alternatives":
+            self._send_json_cache(_ALT_CACHE, _ALT_TTL, self._compute_alternatives)
+            return
+        # API: Radar (no auth — same origin from logged-in page)
+        if self.path == "/api/radar":
+            self._send_json_cache(_RADAR_CACHE, _RADAR_TTL, self._compute_radar)
+            return
         # API endpoint for live price
         m = re.match(r"/api/price/([A-Za-z0-9.=-]+)", self.path)
         if m:
@@ -160,8 +327,110 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(json.dumps({"ticker": ticker, "price": None, "error": str(e)}).encode())
             return
-        # Serve static files
+        # Auth check for static files
+        if not check_auth(self.headers):
+            return send_401(self)
         return super().do_GET()
+
+    def _send_json_cache(self, cache, ttl, compute_fn):
+        now = datetime.now()
+        if cache["data"] and cache["updated"]:
+            age = (now - datetime.fromisoformat(cache["updated"])).total_seconds()
+            if age < ttl:
+                self._send_json(cache["data"])
+                return
+        try:
+            result = compute_fn()
+            cache["data"] = result
+            cache["updated"] = now.isoformat()
+            self._send_json(result)
+        except Exception as e:
+            if cache["data"]:
+                self._send_json(cache["data"])
+            else:
+                self._send_json({"error": True, "msg": str(e)})
+
+    def _send_json(self, data):
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.end_headers()
+        self.wfile.write(json.dumps(data, default=str).encode())
+
+    def _compute_alternatives(self):
+        from screener import ejecutar_radar
+        sec_col = None
+        df = None
+        try:
+            df = pd.read_excel(os.path.join(DIR, CFG["paths"]["excel"]))
+            sec_col = df.columns[4]
+        except Exception:
+            return {"error": True, "msg": "No se pudo leer excel"}
+        # Map portfolio tickers to sectors
+        ticker_sectors = {}
+        for p in CFG["portfolio"]:
+            candidates = [p["ticker"]]
+            if p.get("db_ticker"):
+                candidates.append(p["db_ticker"])
+            for t in candidates:
+                match = df[df["Ticker"].astype(str).str.strip() == t]
+                if not match.empty:
+                    ticker_sectors[p["ticker"]] = str(match.iloc[0][sec_col]).strip()
+                    break
+        unique_sectors = sorted(set(ticker_sectors.values()))
+        results = []
+        for sec in unique_sectors:
+            try:
+                empresas = ejecutar_radar(sector_filter=sec, max_resultados=5)
+                n_total = len(df[df[sec_col].str.strip() == sec]) if sec_col else 0
+                results.append({
+                    "sector": sec,
+                    "empresas": [
+                        {
+                            "ticker": r["ticker"],
+                            "name": r["name"],
+                            "score": r["score"],
+                            "eper": r["eper"],
+                            "roe": r["roe"],
+                            "rent_1a": r["rent_1a"],
+                            "entry_types": r.get("entry_types", []),
+                            "support": r.get("support"),
+                            "current_price": r.get("current_price"),
+                        }
+                        for r in empresas
+                    ],
+                    "n_analizadas": int(n_total),
+                })
+            except Exception as e:
+                print(f"[alternatives] Error en sector {sec}: {e}")
+                results.append({"sector": sec, "empresas": [], "n_analizadas": 0, "error": True})
+        return {"sectores": results, "updated": datetime.now().isoformat()}
+
+    def _compute_radar(self):
+        from screener import ejecutar_radar
+        try:
+            empresas = ejecutar_radar(max_resultados=15)
+            return {
+                "oportunidades": [
+                    {
+                        "ticker": r["ticker"],
+                        "name": r["name"],
+                        "score": r["score"],
+                        "eper": r["eper"],
+                        "current_price": r.get("current_price"),
+                        "rent_1a": r.get("rent_1a"),
+                        "entry_types": r.get("entry_types", []),
+                        "support": r.get("support"),
+                        "resistance": r.get("resistance"),
+                    }
+                    for r in empresas
+                ],
+                "total": len(empresas),
+                "updated": datetime.now().isoformat(),
+            }
+        except Exception as e:
+            print(f"[radar] ERROR: {e}")
+            return {"error": True, "msg": str(e), "oportunidades": [], "total": 0}
 
     def log_message(self, format, *args):
         print(f"[{self.address_string()}] {args[0] if len(args) > 0 else ''} {args[1] if len(args) > 1 else ''} {args[2] if len(args) > 2 else ''}")
@@ -173,4 +442,4 @@ if "DASHBOARD_PASSWORD" in os.environ:
     print(f"Autenticación: usuario={AUTH_USER} (desde DASHBOARD_PASSWORD)")
 else:
     print(f"! DASHBOARD_PASSWORD no definida, usando contraseña por defecto: {AUTH_PASS}")
-http.server.HTTPServer(("0.0.0.0", PORT), DashboardHandler).serve_forever()
+socketserver.ThreadingTCPServer(("0.0.0.0", PORT), DashboardHandler).serve_forever()

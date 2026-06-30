@@ -24,6 +24,128 @@
         "radar_prev": "radar_prev.json",
         "logs": "logs"
     },
+    "earnings_watchlist": [
+        {
+            "ticker": "RRU.DE",
+            "nombre": "Rolls-Royce",
+            "fecha_earnings": "2026-07-30",
+            "condicion_venta_texto": "Vender si márgenes EBIT caen por debajo del 10%",
+            "metricas": [
+                {
+                    "nombre": "Margen EBIT grupo",
+                    "fmp_campo": "ebitPerRevenue",
+                    "yf_campo": "ebitdaMargins",
+                    "xlsx_campo": "2026 M.EBIT",
+                    "umbral_alerta": 0.15,
+                    "umbral_venta": 0.10,
+                    "descripcion": "Condición de venta si cae por debajo del 10%",
+                    "direccion": "menor_es_peor",
+                    "formato": "porcentaje"
+                },
+                {
+                    "nombre": "PER forward",
+                    "fmp_campo": "priceEarningsRatio",
+                    "yf_campo": "forwardPE",
+                    "xlsx_campo": null,
+                    "umbral_alerta": 35,
+                    "umbral_venta": null,
+                    "descripcion": "Vigilar evolución",
+                    "direccion": "mayor_es_peor",
+                    "formato": "ratio"
+                }
+            ]
+        },
+        {
+            "ticker": "ENR.DE",
+            "nombre": "Siemens Energy",
+            "fecha_earnings": "2026-08-05",
+            "condicion_venta_texto": "Vender si PER forward supera 40 o pierde contratos clave de hidrógeno",
+            "metricas": [
+                {
+                    "nombre": "PER forward",
+                    "fmp_campo": "priceEarningsRatio",
+                    "yf_campo": "forwardPE",
+                    "xlsx_campo": null,
+                    "umbral_alerta": 35,
+                    "umbral_venta": 40,
+                    "descripcion": "Condición de venta si supera 40",
+                    "direccion": "mayor_es_peor",
+                    "formato": "ratio"
+                },
+                {
+                    "nombre": "Margen EBIT",
+                    "fmp_campo": "ebitPerRevenue",
+                    "yf_campo": "ebitdaMargins",
+                    "xlsx_campo": "2026 M.EBIT",
+                    "umbral_alerta": 0.08,
+                    "umbral_venta": null,
+                    "descripcion": "Vigilar degradación",
+                    "direccion": "menor_es_peor",
+                    "formato": "porcentaje"
+                }
+            ]
+        },
+        {
+            "ticker": "NVD.DE",
+            "nombre": "NVIDIA",
+            "fecha_earnings": "2026-08-26",
+            "condicion_venta_texto": "Vender si AMD supera 25% cuota IA o regulación antimonopolio",
+            "metricas": [
+                {
+                    "nombre": "Margen bruto",
+                    "fmp_campo": "grossProfitMargin",
+                    "yf_campo": "grossMargins",
+                    "xlsx_campo": null,
+                    "umbral_alerta": 0.70,
+                    "umbral_venta": null,
+                    "descripcion": "Vigilar degradación estructural",
+                    "direccion": "menor_es_peor",
+                    "formato": "porcentaje"
+                },
+                {
+                    "nombre": "PER forward",
+                    "fmp_campo": "priceEarningsRatio",
+                    "yf_campo": "forwardPE",
+                    "xlsx_campo": null,
+                    "umbral_alerta": 50,
+                    "umbral_venta": null,
+                    "descripcion": "Vigilar expansión múltiplo",
+                    "direccion": "mayor_es_peor",
+                    "formato": "ratio"
+                }
+            ]
+        },
+        {
+            "ticker": "DANR.MI",
+            "nombre": "Danieli",
+            "fecha_earnings": "2026-10-01",
+            "condicion_venta_texto": "Vender si el ciclo del acero se deteriora significativamente",
+            "metricas": [
+                {
+                    "nombre": "PER trailing",
+                    "fmp_campo": "priceEarningsRatio",
+                    "yf_campo": "trailingPE",
+                    "xlsx_campo": null,
+                    "umbral_alerta": 20,
+                    "umbral_venta": null,
+                    "descripcion": "Vigilar expansión",
+                    "direccion": "mayor_es_peor",
+                    "formato": "ratio"
+                },
+                {
+                    "nombre": "Margen EBIT",
+                    "fmp_campo": "ebitPerRevenue",
+                    "yf_campo": "ebitdaMargins",
+                    "xlsx_campo": "2026 M.EBIT",
+                    "umbral_alerta": 0.08,
+                    "umbral_venta": null,
+                    "descripcion": "Vigilar degradación ciclo acero",
+                    "direccion": "menor_es_peor",
+                    "formato": "porcentaje"
+                }
+            ]
+        }
+    ],
     "thesis": {
         "ENR.DE": {
             "fecha_entrada": "14/04/2026",

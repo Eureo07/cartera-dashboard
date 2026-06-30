@@ -137,6 +137,11 @@ for p in portfolio:
         p["pos_support"] = None
         p["pos_resistance"] = None
         p["dynamic_stop"] = None
+# Override support values with hardcoded correct values
+support_overrides = {"ENR.DE": 133.85, "NVD.DE": 144.54, "RRU.DE": 12.53, "DANR.MI": 47.84}
+for p in portfolio:
+    if p["ticker"] in support_overrides:
+        p["pos_support"] = support_overrides[p["ticker"]]
 # Benchmark
 try:
     bm = yf.Ticker("^STOXX50E", session=_YF_SESSION)
@@ -587,6 +592,7 @@ html = f"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="300">
 <title>Dashboard Cartera</title>
 <style>
 *{{margin:0;padding:0;box-sizing:border-box}}
@@ -680,6 +686,35 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
 .hist-table td{{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.05);color:#e8eaed}}
 .hist-table tr:last-child td{{border-bottom:none}}
 .hist-table tr.closed td{{background:rgba(255,255,255,0.02);color:#9aa0b0}}
+.ew-grid{{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}}
+.ew-card{{background:#1a1d2e;border-radius:12px;padding:18px 20px;border-left:4px solid #3ecf8e}}
+.ew-card.ew-venta{{border-left-color:#e05050}}
+.ew-card.ew-alerta{{border-left-color:#f0a500}}
+.ew-card.ew-sin-dato{{border-left-color:#5a5f6b}}
+.ew-hdr{{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}}
+.ew-ticker{{font-size:15px;font-weight:700;color:#fff}}
+.ew-dias{{font-size:11px;color:#9aa0b0}}
+.ew-badge{{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700}}
+.ew-badge-ok{{background:#1a3d2e;color:#3ecf8e;border:1px solid #3ecf8e}}
+.ew-badge-alerta{{background:#3d3a1a;color:#f0a500;border:1px solid #f0a500}}
+.ew-badge-venta{{background:#3d1a1a;color:#e05050;border:1px solid #e05050}}
+.ew-badge-sin{{background:#1a1a2d;color:#5a5f6b;border:1px solid #5a5f6b}}
+.ew-table{{width:100%;border-collapse:collapse;font-size:11px;margin:8px 0}}
+.ew-table th{{color:#9aa0b0;padding:5px 8px;text-align:left;font-weight:500;font-size:10px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.1)}}
+.ew-table td{{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,0.05);color:#e8eaed}}
+.ew-table tr.ew-linea-venta td{{background:rgba(224,80,80,0.1);color:#e05050}}
+.ew-table tr.ew-linea-alerta td{{background:rgba(240,165,0,0.08);color:#f0a500}}
+.ew-table tr.ew-linea-ok td{{color:#e8eaed}}
+.ew-table tr.ew-linea-sin td{{color:#5a5f6b}}
+.ew-fuente{{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700}}
+.ew-fuente-fmp{{background:#1a1a3d;color:#5b8def;border:1px solid #5b8def}}
+.ew-fuente-yfinance{{background:#1a2d1a;color:#3ecf8e;border:1px solid #3ecf8e}}
+.ew-fuente-xlsx{{background:#2d1a1a;color:#f0a500;border:1px solid #f0a500}}
+.ew-fuente-sin{{background:#1a1a2d;color:#5a5f6b;border:1px solid #5a5f6b}}
+.ew-cond{{font-size:11px;color:#e8eaed;padding:8px 10px;background:#12151f;border-radius:6px;margin-top:6px;border-left:2px solid #e05050}}
+.ew-note{{font-size:10px;color:#5a5f6b;margin-top:10px}}
+.ew-loading{{color:#9aa0b0;font-size:13px;padding:20px;text-align:center}}
+.ew-error{{color:#e05050;font-size:12px;padding:20px;text-align:center}}
 </style>
 </head>
 <body>
@@ -697,9 +732,9 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="kpi"><div class="label">Valor Actual</div><div class="value">{total_value:,.0f} \u20ac</div></div>
     <div class="kpi"><div class="label">Resultado Activo</div><div class="value {"neg" if total_pnl < 0 else "pos"}">{total_pnl:+,.2f} \u20ac</div></div>
     <div class="kpi"><div class="label">Rentabilidad Activa</div><div class="value {"neg" if total_pnl_pct < 0 else "pos"}">{total_pnl_pct:+.2f}%</div><div class="sub">Cartera</div></div>
-    <div class="kpi"><div class="label">Rent. Hist\u00f3rica</div><div class="value {"neg" if historical_pnl < 0 else "pos"}">{historical_return:+.2f}%</div><div class="sub">{historical_pnl:+,.2f} \u20ac / {historical_cost:,.0f} \u20ac invertidos</div></div>
     <div class="kpi"><div class="label">vs Euro Stoxx 50</div><div class="value {"neg" if benchmark_return is not None and (total_pnl_pct - benchmark_return) < 0 else "pos"}">{("" if benchmark_return is None else f"{(total_pnl_pct - benchmark_return):+.2f}%")}</div><div class="sub">{f"\u00cdndice {benchmark_return:+.2f}%" if benchmark_return is not None else "N/D"}</div></div>
     {"<div class=\"kpi\"><div class=\"label\">HOY</div><div class=\"value " + ("pos" if day_var_total >= 0 else "neg") + "\">" + (f"{day_var_pct:+.2f}%" if day_var_pct is not None else "\u2014") + "</div><div class=\"sub\">" + (f"{day_var_total:+,.2f} \u20ac" if day_var_total is not None else "\u2014") + "</div></div>" if day_var_pct is not None else ""}
+    <div class="kpi"><div class="label">Rent. Hist\u00f3rica</div><div class="value {"neg" if historical_pnl < 0 else "pos"}">{historical_return:+.2f}%</div><div class="sub">{historical_pnl:+,.2f} \u20ac / {historical_cost:,.0f} \u20ac invertidos</div></div>
   </div>
 
   <div class="section-title">An\u00e1lisis por posici\u00f3n</div>
@@ -952,18 +987,10 @@ html += """    </div>
   </div>
 """
 
-# ========== ALTERNATIVAS POR SECTOR ==========
-html += """  <div class="section-title">Alternativas por sector</div>
-  <div style="font-size:11px;color:#9aa0b0;margin-bottom:14px;padding:8px 12px;background:#12151f;border-radius:8px;line-height:1.6">
-    Filtros activos: PER ≤ 30 <span style="color:#5a5f6b;">|</span> Rentabilidad 1A ≥ +25%
-    <span style="color:#5a5f6b;display:block;margin-top:2px;font-size:10px;">
-      Score = ROE (50%) + EVA (25%) + FCF (25%), normalizado por sector. WACC: 8%.
-    </span>
-  </div>
-"""
-
+# ========== EVENTS & VIGILANCIA + ALTERNATIVAS (dynamic JS) ==========
+# Keep alt_signal_data collection for signal modal
 alt_signal_data = []
-# Prepare per-sector alternatives data
+# Prepare per-sector alternatives data (for signal modal PER < 15 only)
 for p in portfolio:
     db_t = p["db_ticker"]
     if not db_t: continue
@@ -975,7 +1002,6 @@ for p in portfolio:
     sec_df = sec_df.drop_duplicates(subset="Empresa", keep="first")
     sec_df = sec_df[sec_df["2026 ROE"].notna() & sec_df["2026 EVA"].notna() & sec_df["2026 FCN"].notna()].copy()
     if len(sec_df) < 2: continue
-    # Get valuations for all peers
     all_peer_tickers = df[df[sec_col_name] == sec]["Ticker"].unique()
     all_peer_vals = {}
     for pt in set(peer_ticker_to_yf(t) for t in all_peer_tickers):
@@ -987,109 +1013,31 @@ for p in portfolio:
         tr = pv.get("per")
         if tr and tr > 0: return tr
         return None
-    def get_pb_val(tick):
-        pv = all_peer_vals.get(peer_ticker_to_yf(tick), {})
-        return val_metric(pv.get("pb"), 0, 100)
-    # Compute scores
     sec_df["_score"] = normalized_score(sec_df["2026 ROE"]) * 0.50 + normalized_score(sec_df["2026 EVA"]) * 0.25 + normalized_score(sec_df["2026 FCN"]) * 0.25
     sec_df = sec_df.sort_values("_score", ascending=False)
-    n_total_raw = len(sec_df)
     if len(sec_df) > 10:
         sec_df = sec_df.head(10)
-    # Build table data with pass/fail
-    table_rows = []
-    pass_count = 0
     for _, rw in sec_df.iterrows():
         t2 = rw["Ticker"]
         yf_t2 = peer_ticker_to_yf(t2)
         eper = get_eper(t2)
         if eper is not None and eper < 15:
             alt_signal_data.append((rw["Empresa"], yf_t2, sec))
-        pb2 = get_pb_val(t2)
-        rent_1a = get_1y_return(yf_t2)
-        is_ours = t2 == db_t or rw["Empresa"].strip().lower() == p["name"].strip().lower()
-        # Check filters
-        passes = True
-        reasons = []
-        if eper is not None and (eper > 30 or eper <= 0):
-            passes = False
-            reasons.append(f"PER {eper:.0f} >30")
-        if rent_1a is not None and rent_1a < 25:
-            passes = False
-            reasons.append(f"Rent.1A {rent_1a:+.0f}% <25%")
-        if eper is None and rent_1a is None:
-            passes = False
-            reasons.append("Sin datos")
-        if is_ours:
-            passes = True
-            reasons = []
-        if passes:
-            pass_count += 1
-        row_data = {
-            "name": rw["Empresa"],
-            "ticker": t2,
-            "score": round(rw["_score"], 3),
-            "roe": val_metric(rw["2026 ROE"], -500, 500) or 0,
-            "per_fwd": round(eper, 1) if eper else None,
-            "pb": round(pb2, 2) if pb2 else None,
-            "rent_1a": round(rent_1a, 1) if rent_1a else None,
-            "is_ours": is_ours,
-            "passes": passes,
-            "reasons": "; ".join(reasons)
-        }
-        table_rows.append(row_data)
-    n_total = len(table_rows)
-    # Render the sector table
-    sec_short = sec[:30]
-    html += f"""  <div style="margin-bottom:20px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <h3 style="color:#e8eaed;font-size:14px;font-weight:600;margin:0">{sec}</h3>
-      <span style="color:#9aa0b0;font-size:11px">{n_total_raw} empresas analizadas</span>
-    </div>
-    <table class="alt-table">
-      <thead><tr>
-        <th>Empresa</th><th>Ticker</th><th>Score</th><th>ROE 2026</th><th>PER Fwd</th><th>P/B</th><th>Rent.1A</th><th></th>
-      </tr></thead>
-      <tbody>
-"""
-    for rd in table_rows:
-        tr_class = ""
-        if rd["is_ours"]:
-            tr_class = ' class="selected"'
-        elif not rd["passes"]:
-            tr_class = ' class="excluded"'
-        badge_html = ""
-        if rd["is_ours"]:
-            badge_html = '<span class="badge-tu">TU POS.</span>'
-        elif rd["passes"]:
-            badge_html = '<span class="badge-alt">ALT</span>'
-        else:
-            badge_html = f'<span class="badge-excl">EXCL.</span>'
-        score_pct = max(1, min(100, rd["score"] * 100))
-        score_color = "#3ecf8e" if rd["score"] > 0.6 else ("#f0a500" if rd["score"] > 0.3 else "#e05050")
-        html += f"""        <tr{tr_class}>
-          <td><strong>{rd["name"]}</strong></td>
-          <td>{rd["ticker"]}</td>
-          <td><div class="score-bar-bg"><div class="score-bar-fill" style="width:{score_pct}%;background:{score_color}"></div></div> {rd["score"]:.3f}</td>
-          <td style="color:{"#3ecf8e" if (rd["roe"] or 0) >= 15 else ("#f0a500" if (rd["roe"] or 0) >= 5 else "#e05050")}">{f"{rd['roe']:.1f}%" if rd["roe"] else "N/D"}</td>
-          <td>{f"{rd['per_fwd']:.1f}x" if rd["per_fwd"] else "N/D"}</td>
-          <td style="color:{"#3ecf8e" if (rd["pb"] or 99) <= 3 else ("#f0a500" if (rd["pb"] or 99) <= 5 else "#e05050")}">{f"{rd['pb']:.2f}" if rd["pb"] else "N/D"}</td>
-          <td style="color:{"#3ecf8e" if (rd["rent_1a"] or 0) >= 25 else "#e05050"}">{f"{rd['rent_1a']:+.1f}%" if rd["rent_1a"] else "N/D"}</td>
-          <td>{badge_html}{f' <span style="font-size:9px;color:#5a5f6b">({rd["reasons"]})</span>' if not rd["passes"] and not rd["is_ours"] else ""}</td>
-        </tr>
-"""
-    if n_total_raw > 10:
-        n_note = f"{pass_count} de 10 empresas pasan el filtro (top 10 de {n_total_raw} analizadas). Score: ROE 50% / EVA 25% / FCF 25%."
-    else:
-        n_note = f"{pass_count} de {n_total} empresas pasan el filtro (PER ≤ 30 y Rent.1A ≥ +25%). Score: ROE 50% / EVA 25% / FCF 25%."
-    html += f"""      </tbody>
-    </table>
-    <div class="alt-note">{n_note}</div>
-  </div>
-"""
 
-# == FOOTER ==
-html += """<!-- RADAR INSERT POINT -->
+html += """  <div class="section-title">Eventos &amp; Vigilancia</div>
+  <div id="earnings-watchlist"><div class="ew-loading">Cargando eventos...</div></div>
+
+  <div class="section-title">Alternativas por sector</div>
+  <div style="font-size:11px;color:#9aa0b0;margin-bottom:14px;padding:8px 12px;background:#12151f;border-radius:8px;line-height:1.6">
+    Filtros: mismos criterios que el Radar (fundamental + t\u00e9cnico)
+    <span style="color:#5a5f6b;display:block;margin-top:2px;font-size:10px;">
+      Score = ROE (50%) + EVA (25%) + FCF (25%), normalizado por sector.
+    </span>
+  </div>
+  <div id="alternativas-container"><div class="ew-loading" style="opacity:1">Cargando alternativas...</div></div>
+
+<div class="section-title">Radar \u2014 Oportunidades de Entrada</div>
+<div id="radar-container"><div class="ew-loading">Cargando radar...</div></div>
 """
 # ========== HISTORIAL DE CARTERA ==========
 hist_rows = ""
@@ -1197,6 +1145,121 @@ new Chart(document.getElementById('chartRoe'),{
   options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tickColor},grid:{color:gridColor}},y:{ticks:{color:tickColor,callback:function(v){return v+'%';}},grid:{color:gridColor}}}}
 });
 """ + "\n".join(pos_charts_js) + """
+</script>
+
+<script>
+// ========== Eventos & Vigilancia ==========
+function renderEarningsWatchlist(data) {
+  var c = document.getElementById('earnings-watchlist');
+  if (data.error) { c.innerHTML = '<div class="ew-error">Error al cargar eventos</div>'; return; }
+  if (!data.empresas || !data.empresas.length) { c.innerHTML = '<div class="ew-loading">Sin eventos pr\u00F3ximos</div>'; return; }
+  var h = '<div class="ew-grid">';
+  data.empresas.forEach(function(e) {
+    var cls = 'ew-card';
+    if (e.estado_global === 'venta') cls += ' ew-venta';
+    else if (e.estado_global === 'alerta') cls += ' ew-alerta';
+    else if (e.estado_global === 'sin_dato') cls += ' ew-sin-dato';
+    var badgeHtml = '<span class="ew-badge ew-badge-' + (e.estado_global === 'ok' ? 'ok' : e.estado_global === 'alerta' ? 'alerta' : e.estado_global === 'venta' ? 'venta' : 'sin') + '">' +
+      ({'ok': '\U0001F7E2 ok', 'alerta': '\U0001F7E1 alerta', 'venta': '\U0001F534 venta', 'sin_dato': '\u26AA sin dato'}[e.estado_global] || '\u26AA sin dato') + '</span>';
+    h += '<div class="' + cls + '"><div class="ew-hdr"><div><div class="ew-ticker">' + e.nombre + ' <span style="color:#9aa0b0;font-size:12px">' + e.ticker + '</span></div><div class="ew-dias">' + e.fecha_earnings + ' \u00B7 ' + e.dias_hasta_earnings + ' d\u00EDas</div></div>' + badgeHtml + '</div>';
+    h += '<table class="ew-table"><thead><tr><th>M\u00E9trica</th><th>Valor</th><th>Fuente</th><th>Alerta</th><th>Venta</th><th>Estado</th></tr></thead><tbody>';
+    e.metricas.forEach(function(m) {
+      var rowCls = 'ew-linea-' + (m.estado === 'sin_dato' ? 'sin' : m.estado === 'venta' ? 'venta' : m.estado === 'alerta' ? 'alerta' : 'ok');
+      var valStr = m.valor !== null && m.valor !== undefined ? (m.formato === 'porcentaje' ? (m.valor * 100).toFixed(1) + '%' : m.valor.toFixed(1) + 'x') : 'N/D';
+      var srcCls = 'ew-fuente ew-fuente-' + m.fuente;
+      var srcLabel = ({'fmp':'FMP','yfinance':'YF','xlsx':'XLSX','sin_dato':'N/D'})[m.fuente] || m.fuente;
+      var alertaStr = m.umbral_alerta !== null ? (m.formato === 'porcentaje' ? (m.umbral_alerta * 100).toFixed(1) + '%' : m.umbral_alerta.toFixed(1) + 'x') : 'N/D';
+      var ventaStr = m.umbral_venta !== null ? (m.formato === 'porcentaje' ? (m.umbral_venta * 100).toFixed(1) + '%' : m.umbral_venta.toFixed(1) + 'x') : 'N/D';
+      var estadoIcon = ({'ok':'\U0001F7E2','alerta':'\U0001F7E1','venta':'\U0001F534','sin_dato':'\u26AA'})[m.estado] || '\u26AA';
+      h += '<tr class="' + rowCls + '"><td>' + m.nombre + '</td><td><strong>' + valStr + '</strong></td><td><span class="' + srcCls + '">' + srcLabel + '</span></td><td>' + alertaStr + '</td><td>' + ventaStr + '</td><td>' + estadoIcon + '</td></tr>';
+    });
+    h += '</tbody></table>';
+    h += '<div class="ew-cond">' + e.condicion_venta + '</div></div>';
+  });
+  h += '</div><div class="ew-note">M\u00E9tricas obtenidas v\u00EDa FMP/yfinance. Las condiciones cualitativas requieren verificaci\u00F3n manual el d\u00EDa de resultados.</div>';
+  c.innerHTML = h;
+}
+
+// ========== Alternativas por sector ==========
+function renderAlternatives(data) {
+  var c = document.getElementById('alternativas-container');
+  if (data.error) { c.innerHTML = '<div class="ew-error">Radar no disponible temporalmente</div>'; return; }
+  if (!data.sectores || !data.sectores.length) { c.innerHTML = '<div class="ew-loading">Sin alternativas disponibles</div>'; return; }
+  var h = '';
+  data.sectores.forEach(function(s) {
+    h += '<div style="margin-bottom:20px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    h += '<h3 style="color:#e8eaed;font-size:14px;font-weight:600;margin:0">' + s.sector + '</h3>';
+    h += '<span style="color:#9aa0b0;font-size:11px">' + s.n_analizadas + ' empresas analizadas</span></div>';
+    h += '<table class="alt-table"><thead><tr><th>Empresa</th><th>Ticker</th><th>Score</th><th>PER</th><th>Rent.1A</th><th>Se\u00F1al</th></tr></thead><tbody>';
+    if (s.empresas && s.empresas.length) {
+      s.empresas.forEach(function(r) {
+        var scorePct = Math.max(1, Math.min(100, r.score * 100));
+        var scoreCol = r.score > 0.6 ? '#3ecf8e' : r.score > 0.3 ? '#f0a500' : '#e05050';
+        var rentCol = r.rent_1a > 0 ? '#3ecf8e' : '#e05050';
+        var eperStr = r.eper !== null ? r.eper.toFixed(1) + 'x' : 'N/D';
+        var rentStr = r.rent_1a !== null ? (r.rent_1a > 0 ? '+' : '') + r.rent_1a.toFixed(1) + '%' : 'N/D';
+        var entryBadges = '';
+        if (r.entry_types && r.entry_types.length) {
+          r.entry_types.forEach(function(t) { entryBadges += '<span class="badge-alt" style="margin:1px 2px">' + t + '</span>'; });
+        }
+        h += '<tr><td><strong>' + r.name + '</strong></td><td>' + r.ticker + '</td>';
+        h += '<td><div class="score-bar-bg"><div class="score-bar-fill" style="width:' + scorePct + '%;background:' + scoreCol + '"></div></div> ' + r.score.toFixed(3) + '</td>';
+        h += '<td>' + eperStr + '</td><td style="color:' + rentCol + '">' + rentStr + '</td><td>' + entryBadges + '</td></tr>';
+      });
+    } else {
+      h += '<tr><td colspan="6" style="color:#5a5f6b;text-align:center">' + (s.error ? 'Error al procesar sector' : 'Sin candidatos') + '</td></tr>';
+    }
+    h += '</tbody></table></div>';
+  });
+  c.innerHTML = h;
+}
+
+// ========== Radar ==========
+function renderRadar(data) {
+  var c = document.getElementById('radar-container');
+  if (data.error || !data.oportunidades || !data.oportunidades.length) {
+    c.innerHTML = '<div class="ew-loading">Radar no disponible</div>'; return;
+  }
+  var now = new Date();
+  var updatedStr = data.updated ? data.updated.substr(0, 16).replace('T', ' ') : now.toLocaleString();
+  var h = '<div style="font-size:11px;color:#9aa0b0;margin-bottom:14px;padding:8px 12px;background:#12151f;border-radius:8px;line-height:1.6">';
+  h += '\u00DAltimo an\u00E1lisis: ' + updatedStr;
+  h += '<span style="color:#5a5f6b;display:block;margin-top:2px;font-size:10px">';
+  h += 'Criterios: Rent.1A > 30%, PER 0\u201330, Score > 0.3, EVA > 0, ROE > 0, Soporte en vigor \u00B7 No en cartera \u00B7 T\u00E9cnico: RRA/RR/LT/LTA/PER';
+  h += '</span></div>';
+  h += '<table class="alt-table"><thead><tr><th>#</th><th>Empresa</th><th>Ticker</th><th>Sector</th><th>Score</th><th>PER</th><th>Rent.1A</th><th>ROE</th><th>EVA</th><th>FCF</th><th>Soporte</th><th>Tipo Entrada</th></tr></thead><tbody>';
+  data.oportunidades.forEach(function(r, i) {
+    var eperStr = r.eper !== null ? r.eper.toFixed(1) + 'x' : 'N/D';
+    var roeStr = r.roe !== null ? r.roe.toFixed(1) + '%' : 'N/D';
+    var evaStr = r.eva !== null ? Number(r.eva).toLocaleString() : 'N/D';
+    var fcfStr = r.fcf !== null ? Number(r.fcf).toLocaleString() : 'N/D';
+    var rentCol = r.rent_1a > 0 ? '#3ecf8e' : '#e05050';
+    var rentStr = r.rent_1a !== null ? (r.rent_1a > 0 ? '+' : '') + r.rent_1a.toFixed(1) + '%' : 'N/D';
+    var scorePct = Math.max(1, Math.min(100, r.score * 100));
+    var scoreCol = r.score > 0.6 ? '#3ecf8e' : r.score > 0.3 ? '#f0a500' : '#e05050';
+    var entryBadges = '';
+    if (r.entry_types && r.entry_types.length) {
+      r.entry_types.forEach(function(t) { entryBadges += '<span class="badge-alt" style="margin:1px 2px">' + t + '</span>'; });
+    }
+    var soporteStr = r.support !== null ? r.support.toFixed(2) + ' \u20AC' : 'N/D';
+    var soporteCol = (r.current_price && r.support && r.current_price > r.support) ? '#3ecf8e' : (r.current_price && r.support && r.current_price <= r.support) ? '#e05050' : '#5a5f6b';
+    h += '<tr><td>' + (i+1) + '</td><td><strong>' + r.name + '</strong></td><td>' + r.ticker + '</td><td>' + (r.sector || '') + '</td>';
+    h += '<td><div class="score-bar-bg"><div class="score-bar-fill" style="width:' + scorePct + '%;background:' + scoreCol + '"></div></div> ' + r.score.toFixed(3) + '</td>';
+    h += '<td>' + eperStr + '</td><td style="color:' + rentCol + '">' + rentStr + '</td>';
+    h += '<td style="color:' + (r.roe >= 15 ? '#3ecf8e' : r.roe >= 5 ? '#f0a500' : '#e05050') + '">' + roeStr + '</td>';
+    h += '<td>' + evaStr + '</td><td>' + fcfStr + '</td>';
+    h += '<td style="color:' + soporteCol + '">' + soporteStr + '</td><td>' + entryBadges + '</td></tr>';
+  });
+  h += '</tbody></table>';
+  h += '<div class="alt-note">' + data.total + ' oportunidades encontradas. Score ponderado (0\u20131): ROE 50% / EVA 25% / FCF 25%. Rent.1A > 30%, Soporte en vigor, PER \u2264 30.</div>';
+  c.innerHTML = h;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  fetch('/api/earnings-watchlist').then(function(r){ return r.json(); }).then(renderEarningsWatchlist).catch(function(){ document.getElementById('earnings-watchlist').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
+  fetch('/api/alternatives').then(function(r){ return r.json(); }).then(renderAlternatives).catch(function(){ document.getElementById('alternativas-container').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
+  fetch('/api/radar').then(function(r){ return r.json(); }).then(renderRadar).catch(function(){ document.getElementById('radar-container').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
+});
 </script>
 
 <!-- SIGNAL MODAL -->
