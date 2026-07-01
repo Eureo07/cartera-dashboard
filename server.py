@@ -604,8 +604,9 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     cur = info.get("regularMarketPrice") or info.get("previousClose") or info.get("currentPrice")
                     if cur is not None:
                         cur = float(cur)
-                    # Get prev from chart API close array (more reliable than info.previousClose)
-                    prev = None
+                    # Get today's open from chart API (matching DEGIRO base), fallback to prev close
+                    open_today = None
+                    prev_close = None
                     try:
                         url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
                         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
@@ -613,17 +614,20 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         chart = json.loads(resp.read())
                         res = chart.get("chart", {}).get("result", [{}])[0]
                         quotes = res.get("indicators", {}).get("quote", [{}])[0]
-                        closes = quotes.get("close", [])
-                        if closes and len(closes) >= 2:
-                            prev = float(closes[-2]) if closes[-2] is not None else None
+                        opens_raw = quotes.get("open", [])
+                        closes_raw = quotes.get("close", [])
+                        if opens_raw and len(opens_raw) >= 1 and opens_raw[-1] is not None:
+                            open_today = float(opens_raw[-1])
+                        if closes_raw and len(closes_raw) >= 2 and closes_raw[-2] is not None:
+                            prev_close = float(closes_raw[-2])
                     except Exception:
                         pass
-                    if prev is None:
-                        prev = info.get("previousClose")
-                        if prev is not None:
-                            prev = float(prev)
-                    day_var = (cur - prev) if (cur and prev) else 0
-                    data[tk] = {"current": cur, "prev_close": prev, "day_var": round(day_var, 2)}
+                    if open_today is None:
+                        open_today = info.get("regularMarketOpen")
+                        if open_today is not None:
+                            open_today = float(open_today)
+                    day_var = (cur - open_today) if (cur and open_today) else ((cur - prev_close) if (cur and prev_close) else 0)
+                    data[tk] = {"current": cur, "prev_close": prev_close, "day_var": round(day_var, 2)}
                 except Exception as e:
                     # Fallback to chart API
                     try:
@@ -635,10 +639,13 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         meta = res.get("meta", {})
                         cur = meta.get("regularMarketPrice")
                         quotes = res.get("indicators", {}).get("quote", [{}])[0]
-                        closes = quotes.get("close", [])
-                        prev = closes[-2] if (closes and len(closes) >= 2 and closes[-2] is not None) else meta.get("previousClose")
+                        opens_raw = quotes.get("open", [])
+                        closes_raw = quotes.get("close", [])
+                        open_today = opens_raw[-1] if (opens_raw and len(opens_raw) >= 1 and opens_raw[-1] is not None) else None
+                        prev_close = closes_raw[-2] if (closes_raw and len(closes_raw) >= 2 and closes_raw[-2] is not None) else meta.get("previousClose")
                         if cur is not None:
-                            data[tk] = {"current": float(cur), "prev_close": float(prev) if prev else None, "day_var": round(float(cur) - float(prev), 2) if prev else 0}
+                            base = open_today if open_today is not None else prev_close
+                            data[tk] = {"current": float(cur), "prev_close": float(prev_close) if prev_close else None, "day_var": round(float(cur) - float(base), 2) if base else 0}
                             continue
                     except Exception as e2:
                         print(f"[prices] {tk} chart fallback error: {e2}")
