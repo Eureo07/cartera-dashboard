@@ -296,8 +296,18 @@ def validar_filtros_tecnicos(ticker, entry_types):
 # ========== SUPPORT & RESISTANCE ==========
 def calcular_soporte_resistencia(ticker, hist_data=None, periodo='1y'):
     """Calculate support and resistance from daily OHLC data.
+
+    Logic:
+    - Walk chronologically. A resistance (Point A) forms when the current
+      low is lower than the previous low. Point A = highest high up to then.
+    - A support forms when price breaks above Point A (close > resistance).
+      Support = minimum low between Point A and the breakout.
+    - Invalidation: if price falls >2% below support, the entire cycle is
+      invalidated and a new one must form from scratch.
+    - Only the most recent valid support/resistance counts.
+
     If hist_data is provided (DataFrame), use it instead of downloading.
-    Returns (support_in_force, resistance, current_price, condition_met)
+    Returns (support, resistance, current_price, is_valid)
     or (None, None, None, False)."""
     try:
         hist = hist_data
@@ -306,40 +316,52 @@ def calcular_soporte_resistencia(ticker, hist_data=None, periodo='1y'):
             hist = stock.history(period=periodo, auto_adjust=False)
         if hist is None or hist.empty or len(hist) < 20:
             return None, None, None, False
-        highs = hist['High'].values
-        lows = hist['Low'].values
-        closes = hist['Close'].values
+        highs = hist['High'].values.astype(float)
+        lows = hist['Low'].values.astype(float)
+        closes = hist['Close'].values.astype(float)
         n = len(highs)
-        highest_high_since_support = highs[0]
-        current_resistance = None
-        resistance_start_idx = -1
-        support_in_force = None
-        last_resistance_level = None
+
+        cycle_high = highs[0]
+        cycle_high_idx = 0
+        resistance = None
+        resistance_high_idx = -1
+        after_resistance = False
+        support = None
+        support_active = False
+
         for i in range(1, n):
-            highest_high_since_support = max(highest_high_since_support, highs[i])
-            # Resistance forms when today's low < yesterday's low
+            if highs[i] > cycle_high:
+                cycle_high = highs[i]
+                cycle_high_idx = i
+
+            # Invalidation: >2% below support
+            if support_active and lows[i] < support * 0.98:
+                cycle_high = highs[i]
+                cycle_high_idx = i
+                resistance = None
+                after_resistance = False
+                support = None
+                support_active = False
+                continue
+
+            # Resistance forms when current low < previous low
             if lows[i] < lows[i-1]:
-                current_resistance = highest_high_since_support
-                # Find index where this highest high occurred
-                for j in range(i, -1, -1):
-                    if highs[j] == current_resistance:
-                        resistance_start_idx = j
-                        break
-            # Resistance breaks when close > resistance level
-            if current_resistance is not None and closes[i] > current_resistance:
-                last_resistance_level = current_resistance
-                low_since_resistance = min(lows[resistance_start_idx:i+1])
-                support_in_force = low_since_resistance
-                current_resistance = None
-                resistance_start_idx = -1
-                highest_high_since_support = highs[i]
-        if support_in_force is None:
-            return None, None, None, False
-        current_price = float(closes[-1])
-        condition_met = current_price > support_in_force
-        # Use current active resistance if any, otherwise last broken resistance
-        resistance = current_resistance if current_resistance is not None else last_resistance_level
-        return support_in_force, resistance, current_price, condition_met
+                resistance = cycle_high
+                resistance_high_idx = cycle_high_idx
+                after_resistance = True
+
+            # Breakout: close above resistance → support forms
+            if after_resistance and closes[i] > resistance:
+                support = float(min(lows[resistance_high_idx:i+1]))
+                support_active = True
+                after_resistance = False
+                cycle_high = highs[i]
+                cycle_high_idx = i
+
+        if support_active and support is not None:
+            current_price = float(closes[-1])
+            return support, resistance, current_price, True
+        return None, None, None, False
     except Exception:
         return None, None, None, False
 
