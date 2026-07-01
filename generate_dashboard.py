@@ -746,14 +746,14 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="date-info">Actualizado: {now_str}<br><span style="color:#3ecf8e;font-size:13px;">{len(portfolio)} posiciones activas</span></div>
   </div>
 
-  <div class="kpi-row">
-    <div class="kpi"><div class="label">Inversi\u00f3n Total</div><div class="value">{total_cost:,.0f} \u20ac</div></div>
-    <div class="kpi"><div class="label">Valor Actual</div><div class="value">{total_value:,.0f} \u20ac</div></div>
-    <div class="kpi"><div class="label">Resultado Activo</div><div class="value {"neg" if total_pnl < 0 else "pos"}">{total_pnl:+,.2f} \u20ac</div></div>
-    <div class="kpi"><div class="label">Rentabilidad Activa</div><div class="value {"neg" if total_pnl_pct < 0 else "pos"}">{total_pnl_pct:+.2f}%</div><div class="sub">Cartera</div></div>
-    <div class="kpi"><div class="label">vs Euro Stoxx 50</div><div class="value {"neg" if benchmark_return is not None and (total_pnl_pct - benchmark_return) < 0 else "pos"}">{("" if benchmark_return is None else f"{(total_pnl_pct - benchmark_return):+.2f}%")}</div><div class="sub">{f"\u00cdndice {benchmark_return:+.2f}%" if benchmark_return is not None else "N/D"}</div></div>
-    {"<div class=\"kpi\"><div class=\"label\">HOY</div><div class=\"value " + ("pos" if day_var_total >= 0 else "neg") + "\">" + (f"{day_var_pct:+.2f}%" if day_var_pct is not None else "\u2014") + "</div><div class=\"sub\">" + (f"{day_var_total:+,.2f} \u20ac" if day_var_total is not None else "\u2014") + "</div></div>" if day_var_pct is not None else ""}
-    <div class="kpi"><div class="label">Rent. Hist\u00f3rica</div><div class="value {"neg" if historical_pnl < 0 else "pos"}">{historical_return:+.2f}%</div><div class="sub">{historical_pnl:+,.2f} \u20ac / {historical_cost:,.0f} \u20ac invertidos</div></div>
+  <div class="kpi-row" id="kpi-row">
+    <div class="kpi" data-kpi="total-cost"><div class="label">Inversi\u00f3n Total</div><div class="value" data-kpi-val="total-cost">{total_cost:,.0f} \u20ac</div></div>
+    <div class="kpi" data-kpi="total-value"><div class="label">Valor Actual</div><div class="value {"neg" if total_pnl < 0 else "pos"}" data-kpi-val="total-value">{total_value:,.0f} \u20ac</div></div>
+    <div class="kpi" data-kpi="total-pnl"><div class="label">Resultado Activo</div><div class="value {"neg" if total_pnl < 0 else "pos"}" data-kpi-val="total-pnl">{total_pnl:+,.2f} \u20ac</div></div>
+    <div class="kpi" data-kpi="total-pnl-pct"><div class="label">Rentabilidad Activa</div><div class="value {"neg" if total_pnl_pct < 0 else "pos"}" data-kpi-val="total-pnl-pct">{total_pnl_pct:+.2f}%</div><div class="sub">Cartera</div></div>
+    <div class="kpi" data-kpi="vs-benchmark" data-bench-start="{bench_start_px:.4f}" data-bench-start-date="{bench_start}"><div class="label">vs Euro Stoxx 50</div><div class="value {"neg" if benchmark_return is not None and (total_pnl_pct - benchmark_return) < 0 else "pos"}" data-kpi-val="vs-benchmark">{("" if benchmark_return is None else f"{(total_pnl_pct - benchmark_return):+.2f}%")}</div><div class="sub" data-kpi-sub="benchmark-ret">{f"\u00cdndice {benchmark_return:+.2f}%" if benchmark_return is not None else "N/D"}</div></div>
+    {"<div class=\"kpi\" data-kpi=\"today\"><div class=\"label\">HOY</div><div class=\"value " + ("pos" if day_var_total >= 0 else "neg") + "\" data-kpi-val=\"day-pct\">" + (f"{day_var_pct:+.2f}%" if day_var_pct is not None else "\u2014") + "</div><div class=\"sub\" data-kpi-val=\"day-eur\">" + (f"{day_var_total:+,.2f} \u20ac" if day_var_total is not None else "\u2014") + "</div></div>" if day_var_pct is not None else ""}
+    <div class="kpi" data-kpi="historical" data-closed-pnl="{closed_total_pnl:+.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rent. Hist\u00f3rica</div><div class="value {"neg" if historical_pnl < 0 else "pos"}" data-kpi-val="historical-return">{historical_return:+.2f}%</div><div class="sub" data-kpi-val="historical-pnl">{historical_pnl:+,.2f} \u20ac / {historical_cost:,.0f} \u20ac invertidos</div></div>
   </div>
 
   <div class="section-title">An\u00e1lisis por posici\u00f3n</div>
@@ -879,15 +879,15 @@ for i, p in enumerate(portfolio):
       <div class="metrics-grid">
         <div class="metric-row"><span class="ml">P. Entrada</span><span class="mv">{p['entry']:.2f} \u20ac</span></div>
         <div class="metric-row"><span class="ml">Stop Loss</span><span class="mv">{p['stop']:.2f} \u20ac</span></div>
-        <div class="metric-row"><span class="ml">Distancia stop{desc("Ca\u00edda m\u00e1xima asumida antes de salir")}</span><span class="mv {dist_cls}">{p['dist_stop']:.1f}%</span></div>
-        <div class="metric-row"><span class="ml">P. Objetivo</span><span class="mv {"pos" if p["current"] >= p["target"] else ""}">{p['target']:.2f} \u20ac</span></div>
+        <div class="metric-row"><span class="ml">Distancia stop{desc("Ca\u00edda m\u00e1xima asumida antes de salir")}</span><span class="mv {dist_cls}" data-metric="dist-stop">{p['dist_stop']:.1f}%</span></div>
+        <div class="metric-row"><span class="ml">P. Objetivo</span><span class="mv {"pos" if p["current"] >= p["target"] else ""}" data-metric="target">{p['target']:.2f} \u20ac</span></div>
         <div class="metric-row"><span class="ml">PER{desc("Veces que el precio recoge el beneficio anual")}</span><span class="mv {"warn" if (per or 99) > 30 else ("pos" if per and per <= 20 else "")}">{f"{per:.1f}x" if per else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">PER Fwd{desc("PER estimado con beneficios futuros")}</span><span class="mv">{f"{fwd_per:.1f}x" if fwd_per else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">P/B{desc("Precio respecto al valor contable. &lt;1 infravalorado")}</span><span class="mv {"warn" if (pb_val or 99) > 5 else ("pos" if pb_val and pb_val <= 3 else "")}">{f"{pb_val:.2f}" if pb_val else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">Beta{desc(beta_desc)}</span><span class="mv {beta_cls}">{beta_str}</span></div>
         <div class="metric-row"><span class="ml">ROE 2026{desc("Rentabilidad sobre fondos propios")}</span><span class="mv {"pos" if (roe_val or 0) >= 15 else ("warn" if (roe_val or 0) >= 5 else "neg")}">{f"{roe_val:.1f}%" if roe_val else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">FCF 2026{desc("Caja generada tras inversiones")}</span><span class="mv {fcf_cls}">{f"{fcf_val:,.0f}M \u20ac" if fcf_val else "N/D"}</span></div>
-        <div class="metric-row"><span class="ml">Peso cartera{desc("% del capital total invertido en esta posici\u00f3n")}</span><span class="mv {weight_cls}">{p['weight']:.1f}%{" \u26a0" if p["weight"] > 25 else ""}</span></div>
+        <div class="metric-row"><span class="ml">Peso cartera{desc("% del capital total invertido en esta posici\u00f3n")}</span><span class="mv {weight_cls}" data-metric="weight">{p['weight']:.1f}%{" \u26a0" if p["weight"] > 25 else ""}</span></div>
         <div class="metric-row"><span class="ml">Stop Din\u00e1mico{desc("Stop calculado sobre soporte t\u00e9cnico (-2%)")}</span><span class="mv neg">{dyn_stop_str}{" <span style=\"color:#f0a500;font-size:9px;margin-left:4px\">\u26a0 Revisar stop</span>" if stop_alert else ""}</span></div>
       </div>
       <div class="tendencia-row">
@@ -1057,6 +1057,9 @@ html += """  <div class="section-title">Eventos &amp; Vigilancia</div>
 
 <div class="section-title">Radar \u2014 Oportunidades de Entrada</div>
 <div id="radar-container"><div class="ew-loading">Cargando radar...</div></div>
+
+<div class="section-title">Acciones en Estudio</div>
+<div id="watchlist-container"><div class="ew-loading">Cargando watchlist...</div></div>
 """
 # ========== HISTORIAL DE CARTERA ==========
 hist_rows = ""
@@ -1274,6 +1277,47 @@ function renderRadar(data) {
   c.innerHTML = h;
 }
 
+// ========== Watchlist (Acciones en Estudio) ==========
+function renderWatchlist(data) {
+  var c = document.getElementById('watchlist-container');
+  if (data.error || !data.items || !data.items.length) {
+    c.innerHTML = '<div class="ew-loading">Watchlist vac\u00EDa o no disponible</div>'; return;
+  }
+  var h = '<table class="alt-table"><thead><tr><th>Empresa</th><th>Nivel / Precio</th><th>Distancia</th><th>Se\u00F1al</th><th>Soporte</th><th>F1/F2/F3</th><th>Estado</th><th>Notas</th></tr></thead><tbody>';
+  data.items.forEach(function(r) {
+    var priceStr = r.current_price !== null ? r.current_price.toFixed(2) + ' \u20ac' : 'N/D';
+    var levelStr = r.entry_level.toFixed(2) + ' \u20ac';
+    var distStr = r.distance_pct !== null ? (r.distance_pct >= 0 ? '+' : '') + r.distance_pct.toFixed(1) + '%' : 'N/D';
+    var distColor = '#9aa0b0';
+    if (r.distance_pct !== null) {
+      var ad = Math.abs(r.distance_pct);
+      if (ad <= 5) distColor = '#3ecf8e';
+      else if (ad <= 10) distColor = '#f0a500';
+      else distColor = '#e05050';
+    }
+    var signalDetected = r.signal_active ? '\u2705 ' + r.entry_signal : '\u274c ' + r.entry_signal;
+    var supportStr = r.support_ok ? '\u2705 ' + (r.support !== null ? r.support.toFixed(2) + ' \u20ac' : '') : '\u274c ' + (r.support !== null ? r.support.toFixed(2) + ' \u20ac' : 'N/D');
+    var f1 = r.f1_ok ? '\u2705' : '\u274c';
+    var f2 = r.f2_ok ? '\u2705' : '\u274c';
+    var f3 = r.f3_ok ? '\u2705' : '\u274c';
+    var filterStr = (r.signal_active ? '' : '\u23f3 ') + 'F1' + f1 + ' F2' + f2 + ' F3' + f3;
+    var statusMap = {
+      'confirmado': ['\U0001F7E2 Confirmado', '#3ecf8e', '#1a3d2e'],
+      'activa': ['\U0001F7E1 Activa', '#f0a500', '#2d2a1a'],
+    };
+    var st = statusMap[r.visual_status] || ['\U0001F534 Sin se\u00F1al', '#e05050', '#3d1a1a'];
+    h += '<tr><td><strong>' + r.name + '</strong><br><span style="color:#9aa0b0;font-size:11px">' + r.ticker + '</span></td>';
+    h += '<td>' + levelStr + '<br><span style="color:#9aa0b0;font-size:11px">' + priceStr + '</span></td>';
+    h += '<td style="color:' + distColor + ';font-weight:700">' + distStr + '</td>';
+    h += '<td style="font-size:11px">' + signalDetected + '</td>';
+    h += '<td style="font-size:11px">' + supportStr + '</td><td style="font-size:11px">' + filterStr + '</td>';
+    h += '<td><span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;background:' + st[2] + ';color:' + st[1] + ';border:1px solid ' + st[1] + '">' + st[0] + '</span></td>';
+    h += '<td style="font-size:11px;color:#9aa0b0">' + (r.notes || '') + '</td></tr>';
+  });
+  h += '</tbody></table>';
+  c.innerHTML = h;
+}
+
 // ========== Live prices ==========
 function updatePrices(data) {
   if (data.error || !data.prices) return;
@@ -1305,10 +1349,115 @@ function updatePrices(data) {
     var pnlDiv = card.querySelector('.pnl');
     if (currentDiv) currentDiv.style.color = isNeg ? '#e05050' : '#3ecf8e';
     if (pnlDiv) pnlDiv.style.color = isNeg ? '#e05050' : '#3ecf8e';
+    // Update distance to stop
+    var distEl = card.querySelector('[data-metric="dist-stop"]');
+    if (distEl) {
+      var distPct = ((cur - stop) / cur) * 100;
+      distEl.textContent = distPct.toFixed(1) + '%';
+      distEl.className = 'mv ' + (distPct < 10 ? 'warn' : distPct < 5 ? 'neg' : 'green');
+    }
     // Remove data_error warning if it exists (price came through)
     var warn = card.querySelector('[title="Dato no actualizado"]');
     if (warn) warn.remove();
   });
+  // Recalc top KPI row
+  var totalValue = 0, totalCost = 0, totalDayVar = 0, nDayVar = 0;
+  cards.forEach(function(card) {
+    var entry = parseFloat(card.getAttribute('data-entry'));
+    var shares = parseFloat(card.getAttribute('data-shares'));
+    var tk = card.getAttribute('data-ticker');
+    var pd = data.prices[tk];
+    var cost = entry * shares;
+    totalCost += cost;
+    if (pd && pd.current != null) {
+      totalValue += pd.current * shares;
+      if (pd.day_var != null) {
+        totalDayVar += pd.day_var * shares;
+        nDayVar++;
+      }
+    } else {
+      totalValue += cost;  // fallback to cost for missing prices
+    }
+  });
+  var totalPnl = totalValue - totalCost;
+  var totalPnlPct = totalCost ? (totalPnl / totalCost) * 100 : 0;
+  var dayPct = totalValue && nDayVar ? (totalDayVar / totalValue) * 100 : null;
+  // Update KPI elements
+  var fmt = function(n){ return n.toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:0}); };
+  var fmt2 = function(n){ return n.toLocaleString('es-ES', {minimumFractionDigits:2, maximumFractionDigits:2}); };
+  var el = document.querySelector('[data-kpi-val="total-cost"]');
+  if (el) el.textContent = fmt(totalCost) + ' \u20ac';
+  el = document.querySelector('[data-kpi-val="total-value"]');
+  if (el) {
+    el.textContent = fmt(totalValue) + ' \u20ac';
+    el.className = 'value';
+  }
+  el = document.querySelector('[data-kpi-val="total-pnl"]');
+  if (el) {
+    el.textContent = (totalPnl >= 0 ? '+' : '') + fmt2(totalPnl) + ' \u20ac';
+    el.className = 'value ' + (totalPnl < 0 ? 'neg' : 'pos');
+  }
+  el = document.querySelector('[data-kpi-val="total-pnl-pct"]');
+  if (el) {
+    el.textContent = (totalPnlPct >= 0 ? '+' : '') + fmt2(totalPnlPct) + '%';
+    el.className = 'value ' + (totalPnlPct < 0 ? 'neg' : 'pos');
+  }
+  // Update historical KPI
+  var histCard = document.querySelector('[data-kpi="historical"]');
+  if (histCard) {
+    var closedPnl = parseFloat(histCard.getAttribute('data-closed-pnl'));
+    var closedCost = parseFloat(histCard.getAttribute('data-closed-cost'));
+    var historicalPnl = totalPnl + closedPnl;
+    var historicalCost = totalCost + closedCost;
+    var historicalReturn = historicalCost ? (historicalPnl / historicalCost) * 100 : 0;
+    el = document.querySelector('[data-kpi-val="historical-return"]');
+    if (el) {
+      el.textContent = (historicalReturn >= 0 ? '+' : '') + fmt2(historicalReturn) + '%';
+      el.className = 'value ' + (historicalReturn < 0 ? 'neg' : 'pos');
+    }
+    el = document.querySelector('[data-kpi-val="historical-pnl"]');
+    if (el) {
+      el.textContent = (historicalPnl >= 0 ? '+' : '') + fmt2(historicalPnl) + ' \u20ac / ' + fmt(historicalCost) + ' \u20ac invertidos';
+    }
+  }
+  el = document.querySelector('[data-kpi-val="day-pct"]');
+  if (el && dayPct !== null) {
+    el.textContent = (dayPct >= 0 ? '+' : '') + fmt2(dayPct) + '%';
+    el.className = 'value ' + (dayPct < 0 ? 'neg' : 'pos');
+  }
+  el = document.querySelector('[data-kpi-val="day-eur"]');
+  if (el) {
+    el.textContent = (totalDayVar >= 0 ? '+' : '') + fmt2(totalDayVar) + ' \u20ac';
+  }
+  // Update per-card weight metrics
+  cards.forEach(function(card) {
+    var tk = card.getAttribute('data-ticker');
+    var shares = parseFloat(card.getAttribute('data-shares'));
+    var pd = data.prices[tk];
+    var cur = pd && pd.current != null ? pd.current : null;
+    var weightEl = card.querySelector('[data-metric="weight"]');
+    if (weightEl && cur !== null && totalValue > 0) {
+      var w = (cur * shares / totalValue) * 100;
+      weightEl.textContent = w.toFixed(1) + '%' + (w > 25 ? ' \u26a0' : '');
+      weightEl.className = 'mv' + (w > 25 ? ' warn' : w > 20 ? '' : '');
+    }
+  });
+
+  el = document.querySelector('[data-kpi-val="vs-benchmark"]');
+  if (el) {
+    var benchCard = document.querySelector('[data-kpi="vs-benchmark"]');
+    var benchStart = benchCard ? parseFloat(benchCard.getAttribute('data-bench-start')) : null;
+    var benchPrice = data.prices && data.prices['^STOXX50E'];
+    if (benchStart && benchPrice && benchPrice.current != null) {
+      var benchRet = (benchPrice.current / benchStart - 1) * 100;
+      var benchSub = el.parentElement.querySelector('[data-kpi-sub="benchmark-ret"]');
+      var vs = totalPnlPct - benchRet;
+      el.textContent = (vs >= 0 ? '+' : '') + vs.toFixed(2) + '%';
+      el.className = 'value ' + (vs < 0 ? 'neg' : 'pos');
+      if (benchSub) benchSub.textContent = '\u00cdndice ' + (benchRet >= 0 ? '+' : '') + benchRet.toFixed(2) + '%';
+    }
+  }
+
   if (anyFail) {
     var hdr = document.querySelector('.header .date-info');
     if (hdr && !hdr.querySelector('.price-warn')) {
@@ -1321,6 +1470,7 @@ document.addEventListener('DOMContentLoaded', function() {
   fetch('/api/earnings-watchlist').then(function(r){ return r.json(); }).then(renderEarningsWatchlist).catch(function(){ document.getElementById('earnings-watchlist').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
   fetch('/api/alternatives').then(function(r){ return r.json(); }).then(renderAlternatives).catch(function(){ document.getElementById('alternativas-container').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
   fetch('/api/radar').then(function(r){ return r.json(); }).then(renderRadar).catch(function(){ document.getElementById('radar-container').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
+  fetch('/api/watchlist').then(function(r){ return r.json(); }).then(renderWatchlist).catch(function(){ document.getElementById('watchlist-container').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
   fetch('/api/prices').then(function(r){ return r.json(); }).then(updatePrices).catch(function(){
     var hdr = document.querySelector('.header .date-info');
     if (hdr && !hdr.querySelector('.price-warn')) {

@@ -1,109 +1,29 @@
 {
-  "updated": "2026-06-29T09:02:36.786159",
+  "updated": "2026-07-01T08:57:08.288671",
   "results": [
     {
-      "ticker": "TXN",
-      "name": "Texas Instruments",
-      "sector": "Semiconductores",
-      "score": 0.75,
-      "eper": 29.814537,
-      "rent_1a": 37.83561432873081,
-      "roe": 30.73,
-      "eva": 2962496708.0,
-      "fcf": 2603000000.0,
+      "ticker": "IDR.MC",
+      "name": "Indra",
+      "sector": "Tecnología",
+      "score": 0.5,
+      "eper": 14.928023,
+      "rent_1a": 30.00541881566795,
+      "roe": 25.13,
+      "eva": 45643185.0,
+      "fcf": 378457000.0,
       "entry_types": [
         "LT"
       ],
-      "support": 273.8800048828125,
-      "current_price": 285.42999267578125
-    },
-    {
-      "ticker": "JNJ",
-      "name": "Johnson & Johnson",
-      "sector": "Salud",
-      "score": 0.630081435202279,
-      "eper": 20.00693,
-      "rent_1a": 67.08877209050311,
-      "roe": 32.87,
-      "eva": 15996110116.0,
-      "fcf": 19313000000.0,
-      "entry_types": [
-        "RRA"
-      ],
-      "support": 220.3699951171875,
-      "current_price": 254.66000366210938
-    },
-    {
-      "ticker": "ELE.MC",
-      "name": "Endesa",
-      "sector": "Utilities",
-      "score": 0.5,
-      "eper": 16.900639,
-      "rent_1a": 47.34101833835245,
-      "roe": 25.79,
-      "eva": 215883087.0,
-      "fcf": 2207000000.0,
-      "entry_types": [
-        "RRA"
-      ],
-      "support": 35.5,
-      "current_price": 39.619998931884766
-    },
-    {
-      "ticker": "DHL.DE",
-      "name": "Deutsche Post (DHL)",
-      "sector": "Logística",
-      "score": 0.5,
-      "eper": 14.182284,
-      "rent_1a": 31.590850479018208,
-      "roe": 15.75,
-      "eva": 519392406.0,
-      "fcf": 6324000000.0,
-      "entry_types": [
-        "RRA"
-      ],
-      "support": 50.31999969482422,
-      "current_price": 52.36000061035156
-    },
-    {
-      "ticker": "IAG.MC",
-      "name": "IAG",
-      "sector": "Aerolíneas",
-      "score": 0.5,
-      "eper": 7.017368,
-      "rent_1a": 40.29101660819251,
-      "roe": 44.04,
-      "eva": 2004747081.0,
-      "fcf": 3146000000.0,
-      "entry_types": [
-        "RRA"
-      ],
-      "support": 3.819999933242798,
-      "current_price": 5.5920000076293945
-    },
-    {
-      "ticker": "CPG.L",
-      "name": "Compass Group",
-      "sector": "Servicios",
-      "score": 0.5,
-      "eper": 19.987791,
-      "rent_1a": 32.7118020965372,
-      "roe": 24.41,
-      "eva": 871015480.0,
-      "fcf": 2474000000.0,
-      "entry_types": [
-        "RRA"
-      ],
-      "support": 28.0,
-      "current_price": 32.7400016784668
+      "support": 45.34000015258789,
+      "current_price": 47.91999816894531
     },
     {
       "ticker": "BHP.L",
       "name": "BHP Group",
       "sector": "Minería",
       "score": 0.5,
-      "eper": 15.765822,
-      "rent_1a": 75.43658746063555,
+      "eper": 15.953623,
+      "rent_1a": 77.61236759232752,
       "roe": 19.51,
       "eva": 4828716654.0,
       "fcf": 9294000000.0,
@@ -111,71 +31,7 @@
         "LT"
       ],
       "support": 3026.0,
-      "current_price": 3064.0
-    },
-    {
-      "ticker": "HON",
-      "name": "Honeywell",
-      "sector": "Industriales",
-      "score": 0.5,
-      "eper": 20.285257,
-      "rent_1a": 102.93642169170994,
-      "roe": 34.01,
-      "eva": 1543241899.0,
-      "fcf": 5422000000.0,
-      "entry_types": [
-        "RRA"
-      ],
-      "support": 205.52000427246094,
-      "current_price": 464.4200134277344
-    },
-    {
-      "ticker": "LLY",
-      "name": "Eli Lilly",
-      "sector": "Salud",
-      "score": 0.5,
-      "eper": 27.162912,
-      "rent_1a": 55.79598634330038,
-      "roe": 77.78,
-      "eva": 17640666004.0,
-      "fcf": 5964000000.0,
-      "entry_types": [
-        "RRA"
-      ],
-      "support": 1079.219970703125,
-      "current_price": 1208.1199951171875
-    },
-    {
-      "ticker": "TGT",
-      "name": "Target",
-      "sector": "Consumo discrecional",
-      "score": 0.5,
-      "eper": 15.733198,
-      "rent_1a": 41.479385911800264,
-      "roe": 22.92,
-      "eva": 990062177.0,
-      "fcf": 2835000000.0,
-      "entry_types": [
-        "RRA"
-      ],
-      "support": 127.66000366210938,
-      "current_price": 140.38999938964844
-    },
-    {
-      "ticker": "MRK",
-      "name": "Merck",
-      "sector": "Salud",
-      "score": 0.4365329546636831,
-      "eper": 13.458807,
-      "rent_1a": 62.65487502405285,
-      "roe": 34.7,
-      "eva": 10756264440.0,
-      "fcf": 12360000000.0,
-      "entry_types": [
-        "RRA"
-      ],
-      "support": 107.9000015258789,
-      "current_price": 128.66000366210938
+      "current_price": 3102.0
     }
   ]
 }

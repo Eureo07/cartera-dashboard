@@ -174,6 +174,9 @@ _RADAR_TTL = 24 * 3600
 _PRICES_CACHE = {"data": None, "updated": None}
 _PRICES_TTL = 300  # 5 min
 
+_WL_CACHE = {"data": None, "updated": None}
+_WL_TTL = 300  # 5 min
+
 PORT = int(os.environ.get("PORT", "5000"))
 DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -291,20 +294,30 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(LAST_REGENERATE, indent=2).encode())
             return
         # API: Earnings watchlist (no auth — same origin from logged-in page)
-        if self.path == "/api/earnings-watchlist":
+        if self.path.startswith("/api/earnings-watchlist"):
             self._send_json_cache(_WATCHLIST_CACHE, _WATCHLIST_TTL, _compute_watchlist)
             return
         # API: Alternatives (no auth — same origin from logged-in page)
-        if self.path == "/api/alternatives":
+        if self.path.startswith("/api/alternatives"):
             self._send_json_cache(_ALT_CACHE, _ALT_TTL, self._compute_alternatives)
             return
         # API: Radar (no auth — same origin from logged-in page)
-        if self.path == "/api/radar":
+        if self.path.startswith("/api/radar"):
             self._send_json_cache(_RADAR_CACHE, _RADAR_TTL, self._compute_radar)
             return
         # API: Live prices for portfolio positions (no auth)
-        if self.path == "/api/prices":
+        if self.path.startswith("/api/prices"):
+            # allow /api/prices?refresh=1 to bypass cache
+            qs = self.path.split("?", 1)[1] if "?" in self.path else ""
+            params = dict(p.split("=", 1) for p in qs.split("&") if "=" in p) if qs else {}
+            if "refresh" in params:
+                _PRICES_CACHE["data"] = None
+                _PRICES_CACHE["updated"] = None
             self._send_json_cache(_PRICES_CACHE, _PRICES_TTL, self._compute_prices)
+            return
+        # API: Watchlist (study list, no auth)
+        if self.path.startswith("/api/watchlist"):
+            self._send_json_cache(_WL_CACHE, _WL_TTL, self._compute_watchlist_study)
             return
         # API endpoint for live price
         m = re.match(r"/api/price/([A-Za-z0-9.=-]+)", self.path)
@@ -443,27 +456,217 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             print(f"[radar] ERROR: {e}")
             return {"error": True, "msg": str(e), "oportunidades": [], "total": 0}
 
+    def _compute_watchlist_study(self):
+        """Compute watchlist study data. Only 3 states: sin_senal/activa/confirmado."""
+        from screener import get_entry_types, calcular_soporte_resistencia
+        import yfinance as yf
+        try:
+            wl_path = os.path.join(DIR, "watchlist.json")
+            if not os.path.exists(wl_path):
+                return {"error": True, "msg": "watchlist.json no encontrado", "items": []}
+            with open(wl_path, "r", encoding="utf-8") as f:
+                watchlist = json.load(f)
+            results = []
+            for item in watchlist:
+                tk = item["ticker"]
+                entry_level = item["entry_level"]
+                entry_signal = item["entry_signal"]
+                # 1) Current price via chart API
+                cur_price = None
+                try:
+                    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
+                    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+                    resp = urllib.request.urlopen(req, timeout=10)
+                    chart = json.loads(resp.read())
+                    meta = chart.get("chart", {}).get("result", [{}])[0].get("meta", {})
+                    cur_price = meta.get("regularMarketPrice")
+                    if cur_price is not None:
+                        cur_price = float(cur_price)
+                except Exception:
+                    pass
+                # 2) Distance to entry level
+                dist_pct = ((cur_price - entry_level) / entry_level) * 100 if cur_price else None
+                # 3) Entry types from screener
+                detected_types = get_entry_types(tk)
+                signal_active = entry_signal in detected_types
+                # 4) Support
+                support_val = None
+                support_ok = False
+                try:
+                    sv, _, _, sok = calcular_soporte_resistencia(tk)
+                    support_val = sv
+                    support_ok = sok
+                except Exception:
+                    pass
+                # 5) Weekly granular F1/F2/F3 check (only if signal active)
+                f1_ok = f2_ok = f3_ok = False
+                if signal_active:
+                    try:
+                        weekly = yf.Ticker(tk).history(period="2y", interval="1wk")
+                        if weekly is not None and not weekly.empty and len(weekly) >= 22:
+                            c = weekly['Close'].values; h = weekly['High'].values; v = weekly['Volume'].values
+                            ld = weekly.index[-1].to_pydatetime() if hasattr(weekly.index[-1], 'to_pydatetime') else weekly.index[-1]
+                            hrs = (datetime.now(timezone.utc) - ld).total_seconds() / 3600
+                            ref = -2 if hrs < 48 else -1
+                            if abs(ref) + 22 <= len(weekly):
+                                ws = max(0, ref - 52); pm = float(max(h[ws:ref]))
+                                f1_ok = c[ref] > pm
+                                vs = max(0, ref - 20); vm = float(sum(v[vs:ref]) / (ref - vs))
+                                f2_ok = v[ref] > vm
+                                cp = float(c[-1]); lb = pm * 0.95
+                                f3_ok = lb <= cp <= pm if entry_signal in ('RR','RRA') else True
+                    except Exception:
+                        pass
+                # 6) Visual status (only 3 states)
+                if signal_active and f1_ok and f2_ok and f3_ok and support_ok:
+                    visual_status = "confirmado"
+                elif signal_active and f2_ok and f3_ok and not f1_ok:
+                    visual_status = "activa"
+                else:
+                    visual_status = "sin_senal"
+                results.append({
+                    "ticker": tk,
+                    "name": item.get("name", tk),
+                    "entry_level": entry_level,
+                    "entry_signal": entry_signal,
+                    "current_price": cur_price,
+                    "distance_pct": round(dist_pct, 2) if dist_pct is not None else None,
+                    "detected_types": detected_types,
+                    "signal_active": signal_active,
+                    "support": support_val,
+                    "support_ok": support_ok,
+                    "f1_ok": f1_ok,
+                    "f2_ok": f2_ok,
+                    "f3_ok": f3_ok,
+                    "visual_status": visual_status,
+                    "notes": item.get("notes", ""),
+                })
+            # 7) Alert on status change
+            self._wl_check_alerts(results)
+            return {"items": results, "updated": datetime.now().isoformat()}
+        except Exception as e:
+            print(f"[watchlist] ERROR: {e}")
+            return {"error": True, "msg": str(e), "items": []}
+
+    def _wl_send_alert(self, item, new_status):
+        subject = f"[Watchlist] {item['ticker']} — {item['name']}: {new_status}"
+        emoji = {"activa": "\U0001F7E1", "confirmado": "\U0001F7E2"}.get(new_status, "\U0001F534")
+        body = f"""<h3>{emoji} {item['name']} ({item['ticker']})</h3>
+<p><b>Estado:</b> {new_status}</p>
+<p><b>Precio:</b> {item.get('current_price', 'N/D')} \u20ac</p>
+<p><b>Nivel entrada:</b> {item['entry_level']} \u20ac</p>
+<p><b>Se\u00f1al esperada:</b> {item['entry_signal']}</p>
+<p><b>Se\u00f1ales detectadas:</b> {', '.join(item.get('detected_types', [])) or 'ninguna'}</p>
+<p><b>Soporte:</b> {item.get('support', 'N/D')} \u20ac</p>
+<p><b>Notas:</b> {item.get('notes', '')}</p>
+<hr><p style="color:#9aa0b0">Dashboard Cartera</p>"""
+        try:
+            from alertas import send_email
+            send_email(subject, body)
+        except Exception as e:
+            print(f"[watchlist] Alert error: {e}")
+
+    def _wl_check_alerts(self, results):
+        status_file = os.path.join(DIR, "watchlist_status_cache.json")
+        prev = {}
+        if os.path.exists(status_file):
+            try:
+                with open(status_file, "r", encoding="utf-8") as f:
+                    prev = json.load(f)
+            except Exception:
+                pass
+        new_prev = {}
+        for r in results:
+            tk = r["ticker"]
+            new_s = r["visual_status"]
+            old_s = prev.get(tk, "sin_senal")
+            new_prev[tk] = new_s
+            if new_s in ("activa", "confirmado") and old_s != new_s:
+                print(f"[watchlist] ALERT: {tk} cambió a {new_s}")
+                self._wl_send_alert(r, new_s)
+        try:
+            with open(status_file, "w", encoding="utf-8") as f:
+                json.dump(new_prev, f, indent=2)
+        except Exception:
+            pass
+
     def _compute_prices(self):
         try:
             import yfinance as yf
             import requests as _req
             _sess = _req.Session()
-            _sess.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            _sess.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
             data = {}
             for p in CFG.get("portfolio", []):
                 tk = p["ticker"]
                 try:
                     info = yf.Ticker(tk, session=_sess).info or {}
                     cur = info.get("regularMarketPrice") or info.get("previousClose") or info.get("currentPrice")
-                    prev = info.get("previousClose")
                     if cur is not None:
                         cur = float(cur)
-                    if prev is not None:
-                        prev = float(prev)
+                    # Get prev from chart API close array (more reliable than info.previousClose)
+                    prev = None
+                    try:
+                        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
+                        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+                        resp = urllib.request.urlopen(req, timeout=10)
+                        chart = json.loads(resp.read())
+                        res = chart.get("chart", {}).get("result", [{}])[0]
+                        quotes = res.get("indicators", {}).get("quote", [{}])[0]
+                        closes = quotes.get("close", [])
+                        if closes and len(closes) >= 2:
+                            prev = float(closes[-2]) if closes[-2] is not None else None
+                    except Exception:
+                        pass
+                    if prev is None:
+                        prev = info.get("previousClose")
+                        if prev is not None:
+                            prev = float(prev)
                     day_var = (cur - prev) if (cur and prev) else 0
                     data[tk] = {"current": cur, "prev_close": prev, "day_var": round(day_var, 2)}
-                except Exception:
+                except Exception as e:
+                    # Fallback to chart API
+                    try:
+                        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
+                        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+                        resp = urllib.request.urlopen(req, timeout=10)
+                        chart = json.loads(resp.read())
+                        res = chart.get("chart", {}).get("result", [{}])[0]
+                        meta = res.get("meta", {})
+                        cur = meta.get("regularMarketPrice")
+                        quotes = res.get("indicators", {}).get("quote", [{}])[0]
+                        closes = quotes.get("close", [])
+                        prev = closes[-2] if (closes and len(closes) >= 2 and closes[-2] is not None) else meta.get("previousClose")
+                        if cur is not None:
+                            data[tk] = {"current": float(cur), "prev_close": float(prev) if prev else None, "day_var": round(float(cur) - float(prev), 2) if prev else 0}
+                            continue
+                    except Exception as e2:
+                        print(f"[prices] {tk} chart fallback error: {e2}")
                     data[tk] = {"current": None, "prev_close": None, "day_var": 0}
+            # Benchmark ^STOXX50E
+            try:
+                bench = yf.Ticker("^STOXX50E", session=_sess).info or {}
+                bcur = bench.get("regularMarketPrice") or bench.get("previousClose") or bench.get("currentPrice")
+                bprev = None
+                try:
+                    url = "https://query1.finance.yahoo.com/v8/finance/chart/%5ESTOXX50E?interval=1d&range=5d"
+                    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+                    resp = urllib.request.urlopen(req, timeout=10)
+                    chart = json.loads(resp.read())
+                    quotes = chart["chart"]["result"][0]["indicators"]["quote"][0]
+                    closes = quotes.get("close", [])
+                    if closes and len(closes) >= 2 and closes[-2] is not None:
+                        bprev = float(closes[-2])
+                except Exception:
+                    pass
+                if bprev is None:
+                    bprev = bench.get("previousClose")
+                data["^STOXX50E"] = {
+                    "current": float(bcur) if bcur is not None else None,
+                    "prev_close": float(bprev) if bprev is not None else None,
+                }
+            except Exception:
+                data["^STOXX50E"] = {"current": None, "prev_close": None}
             return {"prices": data, "updated": datetime.now().isoformat()}
         except Exception as e:
             return {"error": True, "msg": str(e), "prices": {}}

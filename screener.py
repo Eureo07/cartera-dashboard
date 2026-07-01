@@ -18,7 +18,7 @@ import json, math, re
 
 _YF_SESSION = requests.Session()
 _YF_SESSION.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
-from datetime import datetime
+from datetime import datetime, timezone
 
 from config_loader import CFG, get_logger
 
@@ -250,7 +250,7 @@ def validar_filtros_tecnicos(ticker, entry_types):
 
         last_date = dates[-1]
         last_dt = last_date.to_pydatetime() if hasattr(last_date, 'to_pydatetime') else last_date
-        hours_since_close = (datetime.now() - last_dt).total_seconds() / 3600
+        hours_since_close = (datetime.now(timezone.utc) - last_dt).total_seconds() / 3600
         ref_idx = -2 if hours_since_close < 48 else -1
 
         if abs(ref_idx) + 22 > len(weekly):
