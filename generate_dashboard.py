@@ -372,18 +372,27 @@ historical_pnl = total_pnl + closed_total_pnl
 historical_cost = total_cost + closed_total_cost
 historical_return = (historical_pnl / historical_cost) * 100 if historical_cost else 0
 
-# Daily variation (HOY)
+# Daily variation (HOY) — cur - open_today (aligned with /api/prices)
 day_var_total = 0.0
 n_day_var = 0
 for p in portfolio:
     hist = full_hist.get(p["ticker"])
     if hist is not None:
+        open_s = hist["Open"].dropna()
         close_s = hist["Close"].dropna()
-        if len(close_s) >= 2:
-            dv = (float(close_s.iloc[-1]) - float(close_s.iloc[-2])) * p["shares"]
+        if len(close_s) >= 1 and len(open_s) >= 1:
+            cur = float(close_s.iloc[-1])
+            open_today = float(open_s.iloc[-1])
+            if pd.isna(open_today) or open_today is None:
+                open_today = float(close_s.iloc[-2]) if len(close_s) >= 2 else None
+            if open_today is not None:
+                dv = (cur - open_today) * p["shares"]
+            else:
+                dv = None
             p["day_var"] = dv
-            day_var_total += dv
-            n_day_var += 1
+            if dv is not None:
+                day_var_total += dv
+                n_day_var += 1
         else:
             p["day_var"] = None
     else:
@@ -753,7 +762,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="kpi" data-kpi="total-pnl-pct"><div class="label">Rentabilidad Activa</div><div class="value {"neg" if total_pnl_pct < 0 else "pos"}" data-kpi-val="total-pnl-pct">{total_pnl_pct:+.2f}%</div><div class="sub">Cartera</div></div>
     <div class="kpi" data-kpi="vs-benchmark" data-bench-start="{bench_start_px:.4f}" data-bench-start-date="{bench_start}"><div class="label">vs Euro Stoxx 50</div><div class="value {"neg" if benchmark_return is not None and (total_pnl_pct - benchmark_return) < 0 else "pos"}" data-kpi-val="vs-benchmark">{("" if benchmark_return is None else f"{(total_pnl_pct - benchmark_return):+.2f}%")}</div><div class="sub" data-kpi-sub="benchmark-ret">{f"\u00cdndice {benchmark_return:+.2f}%" if benchmark_return is not None else "N/D"}</div></div>
     {"<div class=\"kpi\" data-kpi=\"today\"><div class=\"label\">HOY</div><div class=\"value " + ("pos" if day_var_total >= 0 else "neg") + "\" data-kpi-val=\"day-pct\">" + (f"{day_var_pct:+.2f}%" if day_var_pct is not None else "\u2014") + "</div><div class=\"sub\" data-kpi-val=\"day-eur\">" + (f"{day_var_total:+,.2f} \u20ac" if day_var_total is not None else "\u2014") + "</div></div>" if day_var_pct is not None else ""}
-    <div class="kpi" data-kpi="historical" data-closed-pnl="{closed_total_pnl:+.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rent. Hist\u00f3rica</div><div class="value {"neg" if historical_pnl < 0 else "pos"}" data-kpi-val="historical-return">{historical_return:+.2f}%</div><div class="sub" data-kpi-val="historical-pnl">{historical_pnl:+,.2f} \u20ac / {historical_cost:,.0f} \u20ac invertidos</div></div>
+    <div class="kpi" data-kpi="historical" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rent. Hist\u00f3rica</div><div class="value {"neg" if historical_pnl < 0 else "pos"}" data-kpi-val="historical-return">{historical_return:+.2f}%</div><div class="sub" data-kpi-val="historical-pnl">{historical_pnl:+,.2f} \u20ac / {historical_cost:,.0f} \u20ac invertidos</div></div>
   </div>
 
   <div class="section-title">An\u00e1lisis por posici\u00f3n</div>
@@ -1320,8 +1329,9 @@ function renderWatchlist(data) {
 
 // ========== Live prices ==========
 function updatePrices(data) {
-  if (data.error || !data.prices) return;
+  if (data.error || !data.prices) { console.warn('[prices] error:', data.error); return; }
   var cards = document.querySelectorAll('.pos-card');
+  if (!cards.length) { console.warn('[prices] no .pos-card found'); return; }
   var anyFail = false;
   cards.forEach(function(card, i) {
     var tk = card.getAttribute('data-ticker');
@@ -1467,6 +1477,17 @@ function updatePrices(data) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  var fetchPrices = function() {
+    fetch('/api/prices').then(function(r){ return r.json(); }).then(updatePrices).catch(function(e){
+      console.warn('[prices] fetch error:', e);
+      var hdr = document.querySelector('.header .date-info');
+      if (hdr && !hdr.querySelector('.price-warn')) {
+        hdr.innerHTML += '<br><span class="price-warn" style="color:#e05050;font-size:11px">\u26a0 Precios no disponibles</span>';
+      }
+    });
+  };
+  fetchPrices();
+  setInterval(fetchPrices, 60000);  // poll every 60s
   fetch('/api/earnings-watchlist').then(function(r){ return r.json(); }).then(renderEarningsWatchlist).catch(function(){ document.getElementById('earnings-watchlist').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
   fetch('/api/alternatives').then(function(r){ return r.json(); }).then(renderAlternatives).catch(function(){ document.getElementById('alternativas-container').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
   fetch('/api/radar').then(function(r){ return r.json(); }).then(renderRadar).catch(function(){ document.getElementById('radar-container').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });

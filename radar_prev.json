@@ -1,29 +1,13 @@
 {
-  "updated": "2026-07-01T08:57:08.288671",
+  "updated": "2026-07-01T14:51:07.232850",
   "results": [
-    {
-      "ticker": "IDR.MC",
-      "name": "Indra",
-      "sector": "Tecnología",
-      "score": 0.5,
-      "eper": 14.928023,
-      "rent_1a": 30.00541881566795,
-      "roe": 25.13,
-      "eva": 45643185.0,
-      "fcf": 378457000.0,
-      "entry_types": [
-        "LT"
-      ],
-      "support": 45.34000015258789,
-      "current_price": 47.91999816894531
-    },
     {
       "ticker": "BHP.L",
       "name": "BHP Group",
       "sector": "Minería",
       "score": 0.5,
-      "eper": 15.953623,
-      "rent_1a": 77.61236759232752,
+      "eper": 15.783904,
+      "rent_1a": 73.72593431483578,
       "roe": 19.51,
       "eva": 4828716654.0,
       "fcf": 9294000000.0,
@@ -31,7 +15,7 @@
         "LT"
       ],
       "support": 3026.0,
-      "current_price": 3102.0
+      "current_price": 3068.0
     }
   ]
 }
