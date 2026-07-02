@@ -172,7 +172,7 @@ _RADAR_CACHE = {"data": None, "updated": None}
 _RADAR_TTL = 24 * 3600
 
 _PRICES_CACHE = {"data": None, "updated": None}
-_PRICES_TTL = 300  # 5 min
+_PRICES_TTL = 120  # 2 min
 
 _WL_CACHE = {"data": None, "updated": None}
 _WL_TTL = 300  # 5 min
@@ -605,7 +605,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         cur = float(cur)
 
                     def _choose_prev(infoprev, chartprev):
-                        if infoprev is not None and abs(infoprev - cur) > max(0.01, cur * 0.001):
+                        if infoprev is not None and round(infoprev, 4) != round(cur, 4):
                             return infoprev
                         return chartprev
 

@@ -386,7 +386,7 @@ for p in portfolio:
             import urllib.request, json, yfinance as yf
             info = yf.Ticker(tk).info or {}
             ip = info.get("regularMarketPreviousClose") or info.get("previousClose")
-            if ip is not None and abs(float(ip) - cur_px) > max(0.01, cur_px * 0.001):
+            if ip is not None and round(float(ip), 4) != round(cur_px, 4):
                 prev_close = float(ip)
             else:
                 url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
@@ -1488,8 +1488,11 @@ function updatePrices(data) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  var fetchCount = 0;
   var fetchPrices = function() {
-    fetch('/api/prices').then(function(r){ return r.json(); }).then(updatePrices).catch(function(e){
+    var url = (fetchCount % 3 === 0) ? '/api/prices?refresh=1' : '/api/prices';
+    fetchCount++;
+    fetch(url).then(function(r){ return r.json(); }).then(updatePrices).catch(function(e){
       console.warn('[prices] fetch error:', e);
       var hdr = document.querySelector('.header .date-info');
       if (hdr && !hdr.querySelector('.price-warn')) {
@@ -1498,7 +1501,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   };
   fetchPrices();
-  setInterval(fetchPrices, 60000);  // poll every 60s
+  setInterval(fetchPrices, 30000);  // poll every 30s
   fetch('/api/earnings-watchlist').then(function(r){ return r.json(); }).then(renderEarningsWatchlist).catch(function(){ document.getElementById('earnings-watchlist').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
   fetch('/api/alternatives').then(function(r){ return r.json(); }).then(renderAlternatives).catch(function(){ document.getElementById('alternativas-container').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
   fetch('/api/radar').then(function(r){ return r.json(); }).then(renderRadar).catch(function(){ document.getElementById('radar-container').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
