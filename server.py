@@ -688,4 +688,27 @@ if "DASHBOARD_PASSWORD" in os.environ:
     print(f"Autenticación: usuario={AUTH_USER} (desde DASHBOARD_PASSWORD)")
 else:
     print(f"! DASHBOARD_PASSWORD no definida, usando contraseña por defecto: {AUTH_PASS}")
-socketserver.ThreadingTCPServer(("0.0.0.0", PORT), DashboardHandler).serve_forever()
+try:
+    socketserver.ThreadingTCPServer(("0.0.0.0", PORT), DashboardHandler).serve_forever()
+except OSError as e:
+    if "10048" in str(e) or "Address already in use" in str(e):
+        import subprocess, sys
+        print(f"\nERROR: Puerto {PORT} en uso. Buscando proceso...")
+        try:
+            out = subprocess.check_output(f"netstat -ano | findstr :{PORT}", shell=True, text=True)
+            for line in out.strip().split("\n"):
+                if "LISTENING" in line:
+                    pid = line.strip().split()[-1]
+                    print(f"  PID {pid} escuchando en puerto {PORT}")
+                    try:
+                        import psutil; p = psutil.Process(int(pid)); print(f"  Proceso: {p.name()} (PID {pid}, iniciado {p.create_time()})")
+                    except ImportError:
+                        print(f"  PID: {pid}  (instala 'psutil' para más detalles)")
+                        print(f"  Para matarlo:  taskkill /F /PID {pid}")
+            print("\nSolución: mata el proceso en puerto 5000 y vuelve a ejecutar server.py")
+            print("  O usa:  npx kill-port 5000")
+        except Exception:
+            print(f"  No se pudo identificar. Usa: netstat -ano | findstr :{PORT}")
+    else:
+        print(f"\nERROR al iniciar servidor: {e}")
+    sys.exit(1)
