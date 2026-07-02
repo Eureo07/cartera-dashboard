@@ -603,7 +603,16 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     cur = info.get("regularMarketPrice") or info.get("previousClose") or info.get("currentPrice")
                     if cur is not None:
                         cur = float(cur)
+
+                    def _choose_prev(infoprev, chartprev):
+                        if infoprev is not None and abs(infoprev - cur) > max(0.01, cur * 0.001):
+                            return infoprev
+                        return chartprev
+
                     prev_close = None
+                    info_prev = info.get("regularMarketPreviousClose") or info.get("previousClose")
+                    if info_prev is not None:
+                        info_prev = float(info_prev)
                     try:
                         url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
                         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
@@ -612,16 +621,13 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         meta = chart.get("chart", {}).get("result", [{}])[0].get("meta", {})
                         cp = meta.get("chartPreviousClose")
                         if cp is not None:
-                            prev_close = float(cp)
+                            cp = float(cp)
+                        prev_close = _choose_prev(info_prev, cp)
                         rmp = meta.get("regularMarketPrice")
                         if rmp is not None:
                             cur = float(rmp)
                     except Exception:
-                        pass
-                    if prev_close is None:
-                        prev_close = info.get("regularMarketPreviousClose") or info.get("previousClose")
-                        if prev_close is not None:
-                            prev_close = float(prev_close)
+                        prev_close = _choose_prev(info_prev, None)
                     day_var = (cur - prev_close) if (cur and prev_close) else 0
                     return (tk, {"current": cur, "prev_close": prev_close, "day_var": round(day_var, 2)})
                 except Exception:
