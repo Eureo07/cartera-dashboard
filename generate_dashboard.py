@@ -372,27 +372,34 @@ historical_pnl = total_pnl + closed_total_pnl
 historical_cost = total_cost + closed_total_cost
 historical_return = (historical_pnl / historical_cost) * 100 if historical_cost else 0
 
-# Daily variation (HOY) — cur - open_today (aligned with /api/prices)
+# Daily variation (HOY) — cur - chartPreviousClose (aligned with DEGIRO)
 day_var_total = 0.0
 n_day_var = 0
 for p in portfolio:
-    hist = full_hist.get(p["ticker"])
-    if hist is not None:
-        open_s = hist["Open"].dropna()
+    tk = p["ticker"]
+    hist = full_hist.get(tk)
+    if hist is not None and len(hist) >= 2:
         close_s = hist["Close"].dropna()
-        if len(close_s) >= 1 and len(open_s) >= 1:
-            cur = float(close_s.iloc[-1])
-            open_today = float(open_s.iloc[-1])
-            if pd.isna(open_today) or open_today is None:
-                open_today = float(close_s.iloc[-2]) if len(close_s) >= 2 else None
-            if open_today is not None:
-                dv = (cur - open_today) * p["shares"]
-            else:
-                dv = None
+        cur_px = float(close_s.iloc[-1])
+        prev_close = None
+        try:
+            import urllib.request, json
+            url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+            resp = urllib.request.urlopen(req, timeout=10)
+            chart = json.loads(resp.read())
+            cp = chart.get("chart", {}).get("result", [{}])[0].get("meta", {}).get("chartPreviousClose")
+            if cp is not None:
+                prev_close = float(cp)
+        except:
+            pass
+        if prev_close is None and len(close_s) >= 2:
+            prev_close = float(close_s.iloc[-2])
+        if prev_close is not None:
+            dv = (cur_px - prev_close) * p["shares"]
             p["day_var"] = dv
-            if dv is not None:
-                day_var_total += dv
-                n_day_var += 1
+            day_var_total += dv
+            n_day_var += 1
         else:
             p["day_var"] = None
     else:

@@ -604,32 +604,30 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     cur = info.get("regularMarketPrice") or info.get("previousClose") or info.get("currentPrice")
                     if cur is not None:
                         cur = float(cur)
-                    # Get today's open from chart API (matching DEGIRO base), fallback to prev close
-                    open_today = None
                     prev_close = None
                     try:
                         url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
                         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
                         resp = urllib.request.urlopen(req, timeout=10)
                         chart = json.loads(resp.read())
-                        res = chart.get("chart", {}).get("result", [{}])[0]
-                        quotes = res.get("indicators", {}).get("quote", [{}])[0]
-                        opens_raw = quotes.get("open", [])
-                        closes_raw = quotes.get("close", [])
-                        if opens_raw and len(opens_raw) >= 1 and opens_raw[-1] is not None:
-                            open_today = float(opens_raw[-1])
-                        if closes_raw and len(closes_raw) >= 2 and closes_raw[-2] is not None:
-                            prev_close = float(closes_raw[-2])
+                        meta = chart.get("chart", {}).get("result", [{}])[0].get("meta", {})
+                        cp = meta.get("chartPreviousClose")
+                        if cp is not None:
+                            prev_close = float(cp)
+                        # Use current price from chart meta if info is unreliable
+                        rmp = meta.get("regularMarketPrice")
+                        if rmp is not None:
+                            cur = float(rmp)
                     except Exception:
                         pass
-                    if open_today is None:
-                        open_today = info.get("regularMarketOpen")
-                        if open_today is not None:
-                            open_today = float(open_today)
-                    day_var = (cur - open_today) if (cur and open_today) else ((cur - prev_close) if (cur and prev_close) else 0)
+                    if prev_close is None:
+                        prev_close = info.get("regularMarketPreviousClose") or info.get("previousClose")
+                        if prev_close is not None:
+                            prev_close = float(prev_close)
+                    day_var = (cur - prev_close) if (cur and prev_close) else 0
                     data[tk] = {"current": cur, "prev_close": prev_close, "day_var": round(day_var, 2)}
                 except Exception as e:
-                    # Fallback to chart API
+                    # Fallback to chart API only
                     try:
                         url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
                         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
@@ -638,40 +636,44 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         res = chart.get("chart", {}).get("result", [{}])[0]
                         meta = res.get("meta", {})
                         cur = meta.get("regularMarketPrice")
-                        quotes = res.get("indicators", {}).get("quote", [{}])[0]
-                        opens_raw = quotes.get("open", [])
-                        closes_raw = quotes.get("close", [])
-                        open_today = opens_raw[-1] if (opens_raw and len(opens_raw) >= 1 and opens_raw[-1] is not None) else None
-                        prev_close = closes_raw[-2] if (closes_raw and len(closes_raw) >= 2 and closes_raw[-2] is not None) else meta.get("previousClose")
+                        prev_close = meta.get("chartPreviousClose")
+                        if prev_close is None:
+                            closes_raw = res.get("indicators", {}).get("quote", [{}])[0].get("close", [])
+                            for c in reversed(closes_raw):
+                                if c is not None:
+                                    prev_close = float(c)
+                                    break
                         if cur is not None:
-                            base = open_today if open_today is not None else prev_close
-                            data[tk] = {"current": float(cur), "prev_close": float(prev_close) if prev_close else None, "day_var": round(float(cur) - float(base), 2) if base else 0}
+                            day_var = (float(cur) - float(prev_close)) if prev_close else 0
+                            data[tk] = {"current": float(cur), "prev_close": float(prev_close) if prev_close else None, "day_var": round(day_var, 2)}
                             continue
                     except Exception as e2:
                         print(f"[prices] {tk} chart fallback error: {e2}")
                     data[tk] = {"current": None, "prev_close": None, "day_var": 0}
             # Benchmark ^STOXX50E
             try:
-                bench = yf.Ticker("^STOXX50E", session=_sess).info or {}
-                bcur = bench.get("regularMarketPrice") or bench.get("previousClose") or bench.get("currentPrice")
-                bprev = None
+                bench_info = yf.Ticker("^STOXX50E", session=_sess).info or {}
+                bcur = bench_info.get("regularMarketPrice") or bench_info.get("previousClose") or bench_info.get("currentPrice")
+                bprev = bench_info.get("regularMarketPreviousClose") or bench_info.get("previousClose")
                 try:
                     url = "https://query1.finance.yahoo.com/v8/finance/chart/%5ESTOXX50E?interval=1d&range=5d"
                     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
                     resp = urllib.request.urlopen(req, timeout=10)
                     chart = json.loads(resp.read())
-                    quotes = chart["chart"]["result"][0]["indicators"]["quote"][0]
-                    closes = quotes.get("close", [])
-                    if closes and len(closes) >= 2 and closes[-2] is not None:
-                        bprev = float(closes[-2])
+                    meta = chart.get("chart", {}).get("result", [{}])[0].get("meta", {})
+                    cp = meta.get("chartPreviousClose")
+                    if cp is not None:
+                        bprev = float(cp)
+                    rmp = meta.get("regularMarketPrice")
+                    if rmp is not None:
+                        bcur = float(rmp)
                 except Exception:
                     pass
-                if bprev is None:
-                    bprev = bench.get("previousClose")
-                data["^STOXX50E"] = {
-                    "current": float(bcur) if bcur is not None else None,
-                    "prev_close": float(bprev) if bprev is not None else None,
-                }
+                if bprev is not None:
+                    bprev = float(bprev)
+                if bcur is not None:
+                    bcur = float(bcur)
+                data["^STOXX50E"] = {"current": bcur, "prev_close": bprev}
             except Exception:
                 data["^STOXX50E"] = {"current": None, "prev_close": None}
             return {"prices": data, "updated": datetime.now().isoformat()}
