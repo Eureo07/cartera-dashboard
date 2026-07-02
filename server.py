@@ -593,12 +593,11 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
     def _compute_prices(self):
         try:
             import yfinance as yf
-            import requests as _req
+            import requests as _req, concurrent.futures
             _sess = _req.Session()
             _sess.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
-            data = {}
-            for p in CFG.get("portfolio", []):
-                tk = p["ticker"]
+
+            def fetch_ticker_price(tk):
                 try:
                     info = yf.Ticker(tk, session=_sess).info or {}
                     cur = info.get("regularMarketPrice") or info.get("previousClose") or info.get("currentPrice")
@@ -614,7 +613,6 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         cp = meta.get("chartPreviousClose")
                         if cp is not None:
                             prev_close = float(cp)
-                        # Use current price from chart meta if info is unreliable
                         rmp = meta.get("regularMarketPrice")
                         if rmp is not None:
                             cur = float(rmp)
@@ -625,31 +623,17 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         if prev_close is not None:
                             prev_close = float(prev_close)
                     day_var = (cur - prev_close) if (cur and prev_close) else 0
-                    data[tk] = {"current": cur, "prev_close": prev_close, "day_var": round(day_var, 2)}
-                except Exception as e:
-                    # Fallback to chart API only
-                    try:
-                        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
-                        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
-                        resp = urllib.request.urlopen(req, timeout=10)
-                        chart = json.loads(resp.read())
-                        res = chart.get("chart", {}).get("result", [{}])[0]
-                        meta = res.get("meta", {})
-                        cur = meta.get("regularMarketPrice")
-                        prev_close = meta.get("chartPreviousClose")
-                        if prev_close is None:
-                            closes_raw = res.get("indicators", {}).get("quote", [{}])[0].get("close", [])
-                            for c in reversed(closes_raw):
-                                if c is not None:
-                                    prev_close = float(c)
-                                    break
-                        if cur is not None:
-                            day_var = (float(cur) - float(prev_close)) if prev_close else 0
-                            data[tk] = {"current": float(cur), "prev_close": float(prev_close) if prev_close else None, "day_var": round(day_var, 2)}
-                            continue
-                    except Exception as e2:
-                        print(f"[prices] {tk} chart fallback error: {e2}")
-                    data[tk] = {"current": None, "prev_close": None, "day_var": 0}
+                    return (tk, {"current": cur, "prev_close": prev_close, "day_var": round(day_var, 2)})
+                except Exception:
+                    return (tk, None)
+
+            data = {}
+            with concurrent.futures.ThreadPoolExecutor(max_workers=4) as exec:
+                fut = {exec.submit(fetch_ticker_price, p["ticker"]): p["ticker"] for p in CFG.get("portfolio", [])}
+                for f in concurrent.futures.as_completed(fut, timeout=30):
+                    tk, result = f.result()
+                    if result:
+                        data[tk] = result
             # Benchmark ^STOXX50E
             try:
                 bench_info = yf.Ticker("^STOXX50E", session=_sess).info or {}
@@ -683,6 +667,21 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
         print(f"[{self.address_string()}] {args[0] if len(args) > 0 else ''} {args[1] if len(args) > 1 else ''} {args[2] if len(args) > 2 else ''}")
 
+import socket, os, sys
+
+def find_free_port(start):
+    for p in range(start, start + 10):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            if s.connect_ex(("127.0.0.1", p)) != 0:
+                return p
+    return start
+
+BASE_PORT = PORT
+PORT = find_free_port(BASE_PORT)
+if PORT != BASE_PORT:
+    print(f"Puerto {BASE_PORT} ocupado, usando {PORT}")
+
+print(f"PID: {os.getpid()}")
 print(f"Servidor iniciado en puerto {PORT}")
 print(f"Sirviendo: {DIR}")
 print(f"Dashboard: http://localhost:{PORT}/dashboard.html")
@@ -690,27 +689,4 @@ if "DASHBOARD_PASSWORD" in os.environ:
     print(f"Autenticación: usuario={AUTH_USER} (desde DASHBOARD_PASSWORD)")
 else:
     print(f"! DASHBOARD_PASSWORD no definida, usando contraseña por defecto: {AUTH_PASS}")
-try:
-    socketserver.ThreadingTCPServer(("0.0.0.0", PORT), DashboardHandler).serve_forever()
-except OSError as e:
-    if "10048" in str(e) or "Address already in use" in str(e):
-        import subprocess, sys
-        print(f"\nERROR: Puerto {PORT} en uso. Buscando proceso...")
-        try:
-            out = subprocess.check_output(f"netstat -ano | findstr :{PORT}", shell=True, text=True)
-            for line in out.strip().split("\n"):
-                if "LISTENING" in line:
-                    pid = line.strip().split()[-1]
-                    print(f"  PID {pid} escuchando en puerto {PORT}")
-                    try:
-                        import psutil; p = psutil.Process(int(pid)); print(f"  Proceso: {p.name()} (PID {pid}, iniciado {p.create_time()})")
-                    except ImportError:
-                        print(f"  PID: {pid}  (instala 'psutil' para más detalles)")
-                        print(f"  Para matarlo:  taskkill /F /PID {pid}")
-            print("\nSolución: mata el proceso en puerto 5000 y vuelve a ejecutar server.py")
-            print("  O usa:  npx kill-port 5000")
-        except Exception:
-            print(f"  No se pudo identificar. Usa: netstat -ano | findstr :{PORT}")
-    else:
-        print(f"\nERROR al iniciar servidor: {e}")
-    sys.exit(1)
+socketserver.ThreadingTCPServer(("0.0.0.0", PORT), DashboardHandler).serve_forever()
