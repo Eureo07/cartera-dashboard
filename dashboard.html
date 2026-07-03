@@ -13,7 +13,7 @@ body{font-family:'Segoe UI',-apple-system,Arial,sans-serif}
 .header h1{font-size:24px;font-weight:700;color:#fff}
 .header .sub{color:#9aa0b0;font-size:13px;margin-top:4px}
 .header .date-info{text-align:right;color:#9aa0b0;font-size:12px}
-.kpi-row{display:grid;grid-template-columns:repeat(7,1fr);gap:14px;margin-bottom:24px}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fill, minmax(130px,1fr));gap:14px;margin-bottom:24px}
 .kpi{background:#1a1d2e;border-radius:12px;padding:18px 22px}
 .kpi .label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#9aa0b0;margin-bottom:8px}
 .kpi .value{font-size:22px;font-weight:700;color:#fff}
@@ -126,6 +126,32 @@ body{font-family:'Segoe UI',-apple-system,Arial,sans-serif}
 .ew-note{font-size:10px;color:#5a5f6b;margin-top:10px}
 .ew-loading{color:#9aa0b0;font-size:13px;padding:20px;text-align:center}
 .ew-error{color:#e05050;font-size:12px;padding:20px;text-align:center}
+/* Fondos */
+.fondos-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.fondo-card{background:#1a1d2e;border-radius:12px;padding:20px 24px;border-left:4px solid #3ecf8e}
+.fondo-card .fondo-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.fondo-card .fondo-nombre{font-size:15px;font-weight:600;color:#fff}
+.fondo-card .fondo-isin{font-size:11px;color:#9aa0b0}
+.fondo-card .fondo-metric{display:flex;justify-content:space-between;padding:4px 0;font-size:12px}
+.fondo-card .fondo-metric .ml{color:#9aa0b0}
+.fondo-card .fondo-metric .mv{color:#e8eaed;font-weight:600}
+/* Cuenta */
+.cuenta-card{background:#1a1d2e;border-radius:12px;padding:20px 24px;border-left:4px solid #3a7bd5;max-width:400px}
+.cuenta-card .cuenta-saldo{font-size:28px;font-weight:700;color:#fff;margin-bottom:4px}
+.cuenta-card .cuenta-sub{font-size:12px;color:#9aa0b0}
+.cuenta-card .cuenta-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-top:1px solid #232638;margin-top:6px;padding-top:6px}
+.cuenta-card .cuenta-row .ml{color:#9aa0b0}
+.cuenta-card .cuenta-row .mv{color:#e8eaed;font-weight:600}
+/* Radar comparativo */
+.radar-toggle{background:#2a2d3e;border:none;color:#9aa0b0;font-size:11px;padding:6px 14px;border-radius:6px;cursor:pointer;margin-top:10px}
+.radar-toggle:hover{background:#3a3d4e;color:#e8eaed}
+.radar-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px}
+.radar-table th{color:#9aa0b0;padding:6px 8px;text-align:left;border-bottom:1px solid #232638;font-weight:600}
+.radar-table td{padding:6px 8px;border-bottom:1px solid #232638;color:#b0b5c0}
+.radar-table .ter-high{color:#e05050;font-weight:600}
+.radar-table .ter-low{color:#3ecf8e}
+.radar-table .tr-own{background:rgba(62,207,142,0.06)}
+.radar-warn{color:#f0a500;font-size:11px;padding:6px 10px;background:#2d1a1a;border-radius:6px;margin-top:8px}
 </style>
 </head>
 <body>
@@ -140,12 +166,15 @@ body{font-family:'Segoe UI',-apple-system,Arial,sans-serif}
 
   <div class="kpi-row" id="kpi-row">
     <div class="kpi" data-kpi="total-cost"><div class="label">Inversión Activa</div><div class="value" data-kpi-val="total-cost">4,142 €</div></div>
-    <div class="kpi" data-kpi="total-value"><div class="label">Valor Actual</div><div class="value pos" data-kpi-val="total-value">4,146 €</div></div>
-    <div class="kpi" data-kpi="total-pnl"><div class="label">Resultado Activo</div><div class="value pos" data-kpi-val="total-pnl">+3.74 €</div></div>
-    <div class="kpi" data-kpi="total-pnl-pct"><div class="label">Rentabilidad Activa</div><div class="value pos" data-kpi-val="total-pnl-pct">+0.09%</div><div class="sub">Cartera</div></div>
-    <div class="kpi" data-kpi="vs-benchmark" data-bench-start="5984.5098" data-bench-start-date="2026-04-14"><div class="label">vs Euro Stoxx 50</div><div class="value neg" data-kpi-val="vs-benchmark">-6.62%</div><div class="sub" data-kpi-sub="benchmark-ret">Índice +6.71%</div></div>
-    <div class="kpi" data-kpi="today"><div class="label">HOY</div><div class="value pos" data-kpi-val="day-pct">+1.34%</div><div class="sub" data-kpi-val="day-eur">+55.36 €</div></div>
-    <div class="kpi" data-kpi="historical" data-closed-pnl="923.56" data-closed-cost="7056.89"><div class="label">Rent. Histórica</div><div class="value pos" data-kpi-val="historical-return">+8.28%</div><div class="sub" data-kpi-val="historical-pnl">+927.30 € / 11,199 € invertidos</div></div>
+    <div class="kpi" data-kpi="total-value"><div class="label">Valor Actual</div><div class="value pos" data-kpi-val="total-value">4,174 €</div></div>
+    <div class="kpi" data-kpi="total-pnl"><div class="label">Resultado Activo</div><div class="value pos" data-kpi-val="total-pnl">+32.10 €</div></div>
+    <div class="kpi" data-kpi="total-pnl-pct"><div class="label">Rentabilidad Activa</div><div class="value pos" data-kpi-val="total-pnl-pct">+0.77%</div><div class="sub">Cartera</div></div>
+    <div class="kpi" data-kpi="vs-benchmark" data-bench-start="5984.5098" data-bench-start-date="2026-04-14"><div class="label">vs Euro Stoxx 50</div><div class="value neg" data-kpi-val="vs-benchmark">-6.38%</div><div class="sub" data-kpi-sub="benchmark-ret">Índice +7.15%</div></div>
+    <div class="kpi" data-kpi="today"><div class="label">HOY</div><div class="value pos" data-kpi-val="day-pct">+2.01%</div><div class="sub" data-kpi-val="day-eur">+83.72 €</div></div>
+    <div class="kpi" data-kpi="historical" data-closed-pnl="923.56" data-closed-cost="7056.89"><div class="label">Rent. Histórica</div><div class="value pos" data-kpi-val="historical-return">+8.53%</div><div class="sub" data-kpi-val="historical-pnl">+955.66 € / 11,199 € invertidos</div></div>
+    <div class="kpi" data-kpi="rend-fondos" data-rend-fondos-eur="0.00" data-total-aportado-fondos="0.00"><div class="label">Rendimiento Fondos</div><div class="value pos" data-kpi-val="rend-fondos-pct">—</div><div class="sub">—</div></div>
+    <div class="kpi" data-kpi="rend-cuenta" data-rend-cuenta-eur="0.00" data-tae="0.03"><div class="label">Rendimiento Cuenta</div><div class="value pos" data-kpi-val="rend-cuenta-eur">+0.00 €</div><div class="sub">Cuenta remunerada, TAE 3%</div></div>
+    <div class="kpi" data-kpi="rend-total" data-rend-fondos-eur="0.00" data-rend-cuenta-eur="0.00" data-total-aportado-fondos="0.00" data-cuenta-saldo-base="30089.33"><div class="label">Rendimiento Total</div><div class="value" data-kpi-val="rend-total-eur">—</div><div class="sub">Cartera + Fondos + Cuenta</div></div>
   </div>
 
   <div class="section-title">Análisis por posición</div>
@@ -153,21 +182,21 @@ body{font-family:'Segoe UI',-apple-system,Arial,sans-serif}
     <div class="pos-card neg" data-ticker="ENR.DE" data-entry="170.76" data-shares="5" data-stop="129.83">
       <div class="pos-header">
         <div><div class="ticker">ENR.DE — Siemens Energy</div><div class="name">Energía · Entrada 14/04/2026</div></div>
-        <div class="price"><div class="current" id="price-0" style="color:#e05050"><span class="price-val">168.04</span> €</div><div class="pnl neg" id="pnl-0"><span class="pnl-val">-18.50</span> € (<span class="pnl-pct-val">-2.15</span>%)</div></div>
+        <div class="price"><div class="current" id="price-0" style="color:#e05050"><span class="price-val">168.12</span> €</div><div class="pnl neg" id="pnl-0"><span class="pnl-val">-18.10</span> € (<span class="pnl-pct-val">-2.11</span>%)</div></div>
       </div>
       <div class="signal-badge hold">HOLD (seguimiento)</div>
       <div class="metrics-grid">
         <div class="metric-row"><span class="ml">P. Entrada</span><span class="mv">170.76 €</span></div>
         <div class="metric-row"><span class="ml">Stop Loss</span><span class="mv">129.83 €</span></div>
-        <div class="metric-row"><span class="ml">Distancia stop<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Caída máxima asumida antes de salir</span></span><span class="mv green" data-metric="dist-stop">22.7%</span></div>
+        <div class="metric-row"><span class="ml">Distancia stop<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Caída máxima asumida antes de salir</span></span><span class="mv green" data-metric="dist-stop">22.8%</span></div>
         <div class="metric-row"><span class="ml">P. Objetivo</span><span class="mv " data-metric="target">200.64 €</span></div>
-        <div class="metric-row"><span class="ml">PER<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Veces que el precio recoge el beneficio anual</span></span><span class="mv warn">64.9x</span></div>
-        <div class="metric-row"><span class="ml">PER Fwd<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">PER estimado con beneficios futuros</span></span><span class="mv">28.0x</span></div>
+        <div class="metric-row"><span class="ml">PER<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Veces que el precio recoge el beneficio anual</span></span><span class="mv warn">66.2x</span></div>
+        <div class="metric-row"><span class="ml">PER Fwd<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">PER estimado con beneficios futuros</span></span><span class="mv">28.1x</span></div>
         <div class="metric-row"><span class="ml">P/B<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Precio respecto al valor contable. &lt;1 infravalorado</span></span><span class="mv warn">13.46</span></div>
         <div class="metric-row"><span class="ml">Beta<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Volatilidad relativa al mercado. &gt;1 amplifica movimientos.</span></span><span class="mv neg">1.90</span></div>
         <div class="metric-row"><span class="ml">ROE 2026<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Rentabilidad sobre fondos propios</span></span><span class="mv warn">13.7%</span></div>
         <div class="metric-row"><span class="ml">FCF 2026<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Caja generada tras inversiones</span></span><span class="mv pos">4,097,000,000M €</span></div>
-        <div class="metric-row"><span class="ml">Peso cartera<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">% del capital total invertido en esta posición</span></span><span class="mv " data-metric="weight">20.3%</span></div>
+        <div class="metric-row"><span class="ml">Peso cartera<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">% del capital total invertido en esta posición</span></span><span class="mv " data-metric="weight">20.1%</span></div>
         <div class="metric-row"><span class="ml">Stop Dinámico<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Stop calculado sobre soporte técnico (-2%)</span></span><span class="mv neg">135.91 € <span style="color:#f0a500;font-size:9px;margin-left:4px">⚠ Revisar stop</span></span></div>
       </div>
       <div class="tendencia-row">
@@ -180,21 +209,21 @@ body{font-family:'Segoe UI',-apple-system,Arial,sans-serif}
     <div class="pos-card neg" data-ticker="NVD.DE" data-entry="182.34" data-shares="5" data-stop="140.2">
       <div class="pos-header">
         <div><div class="ticker">NVD.DE — NVIDIA</div><div class="name">Tecnología · Entrada 27/04/2026</div></div>
-        <div class="price"><div class="current" id="price-1" style="color:#e05050"><span class="price-val">171.22</span> €</div><div class="pnl neg" id="pnl-1"><span class="pnl-val">-59.50</span> € (<span class="pnl-pct-val">-6.50</span>%)</div></div>
+        <div class="price"><div class="current" id="price-1" style="color:#e05050"><span class="price-val">171.52</span> €</div><div class="pnl neg" id="pnl-1"><span class="pnl-val">-58.00</span> € (<span class="pnl-pct-val">-6.33</span>%)</div></div>
       </div>
       <div class="signal-badge venta">VENTA (corrección)</div>
       <div class="metrics-grid">
         <div class="metric-row"><span class="ml">P. Entrada</span><span class="mv">182.34 €</span></div>
         <div class="metric-row"><span class="ml">Stop Loss</span><span class="mv">140.20 €</span></div>
-        <div class="metric-row"><span class="ml">Distancia stop<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Caída máxima asumida antes de salir</span></span><span class="mv green" data-metric="dist-stop">18.1%</span></div>
+        <div class="metric-row"><span class="ml">Distancia stop<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Caída máxima asumida antes de salir</span></span><span class="mv green" data-metric="dist-stop">18.3%</span></div>
         <div class="metric-row"><span class="ml">P. Objetivo</span><span class="mv " data-metric="target">214.25 €</span></div>
-        <div class="metric-row"><span class="ml">PER<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Veces que el precio recoge el beneficio anual</span></span><span class="mv warn">30.2x</span></div>
+        <div class="metric-row"><span class="ml">PER<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Veces que el precio recoge el beneficio anual</span></span><span class="mv ">29.9x</span></div>
         <div class="metric-row"><span class="ml">PER Fwd<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">PER estimado con beneficios futuros</span></span><span class="mv">N/D</span></div>
-        <div class="metric-row"><span class="ml">P/B<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Precio respecto al valor contable. &lt;1 infravalorado</span></span><span class="mv warn">24.32</span></div>
-        <div class="metric-row"><span class="ml">Beta<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Volatilidad relativa al mercado. &gt;1 amplifica movimientos.</span></span><span class="mv neg">2.20</span></div>
+        <div class="metric-row"><span class="ml">P/B<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Precio respecto al valor contable. &lt;1 infravalorado</span></span><span class="mv warn">24.36</span></div>
+        <div class="metric-row"><span class="ml">Beta<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Volatilidad relativa al mercado. &gt;1 amplifica movimientos.</span></span><span class="mv neg">2.21</span></div>
         <div class="metric-row"><span class="ml">ROE 2026<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Rentabilidad sobre fondos propios</span></span><span class="mv pos">76.3%</span></div>
         <div class="metric-row"><span class="ml">FCF 2026<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Caja generada tras inversiones</span></span><span class="mv pos">96,676,000,000M €</span></div>
-        <div class="metric-row"><span class="ml">Peso cartera<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">% del capital total invertido en esta posición</span></span><span class="mv " data-metric="weight">20.6%</span></div>
+        <div class="metric-row"><span class="ml">Peso cartera<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">% del capital total invertido en esta posición</span></span><span class="mv " data-metric="weight">20.5%</span></div>
         <div class="metric-row"><span class="ml">Stop Dinámico<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Stop calculado sobre soporte técnico (-2%)</span></span><span class="mv neg">163.17 € <span style="color:#f0a500;font-size:9px;margin-left:4px">⚠ Revisar stop</span></span></div>
       </div>
       <div class="tendencia-row">
@@ -207,18 +236,18 @@ body{font-family:'Segoe UI',-apple-system,Arial,sans-serif}
     <div class="pos-card" data-ticker="RRU.DE" data-entry="16.47" data-shares="90" data-stop="12.15">
       <div class="pos-header">
         <div><div class="ticker">RRU.DE — Rolls-Royce</div><div class="name">Aeroespacial · Entrada 17/06/2026</div></div>
-        <div class="price"><div class="current" id="price-2" style="color:#3ecf8e"><span class="price-val">17.36</span> €</div><div class="pnl pos" id="pnl-2"><span class="pnl-val">+76.20</span> € (<span class="pnl-pct-val">+5.13</span>%)</div></div>
+        <div class="price"><div class="current" id="price-2" style="color:#3ecf8e"><span class="price-val">17.47</span> €</div><div class="pnl pos" id="pnl-2"><span class="pnl-val">+86.46</span> € (<span class="pnl-pct-val">+5.82</span>%)</div></div>
       </div>
       <div class="signal-badge compra">COMPRA (momentum positivo)</div>
       <div class="metrics-grid">
         <div class="metric-row"><span class="ml">P. Entrada</span><span class="mv">16.47 €</span></div>
         <div class="metric-row"><span class="ml">Stop Loss</span><span class="mv">12.15 €</span></div>
-        <div class="metric-row"><span class="ml">Distancia stop<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Caída máxima asumida antes de salir</span></span><span class="mv green" data-metric="dist-stop">30.0%</span></div>
+        <div class="metric-row"><span class="ml">Distancia stop<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Caída máxima asumida antes de salir</span></span><span class="mv green" data-metric="dist-stop">30.5%</span></div>
         <div class="metric-row"><span class="ml">P. Objetivo</span><span class="mv " data-metric="target">19.35 €</span></div>
-        <div class="metric-row"><span class="ml">PER<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Veces que el precio recoge el beneficio anual</span></span><span class="mv ">21.7x</span></div>
+        <div class="metric-row"><span class="ml">PER<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Veces que el precio recoge el beneficio anual</span></span><span class="mv ">21.8x</span></div>
         <div class="metric-row"><span class="ml">PER Fwd<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">PER estimado con beneficios futuros</span></span><span class="mv">N/D</span></div>
-        <div class="metric-row"><span class="ml">P/B<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Precio respecto al valor contable. &lt;1 infravalorado</span></span><span class="mv warn">46.12</span></div>
-        <div class="metric-row"><span class="ml">Beta<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Volatilidad relativa al mercado. &gt;1 amplifica movimientos.</span></span><span class="mv warn">1.22</span></div>
+        <div class="metric-row"><span class="ml">P/B<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Precio respecto al valor contable. &lt;1 infravalorado</span></span><span class="mv warn">46.42</span></div>
+        <div class="metric-row"><span class="ml">Beta<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Volatilidad relativa al mercado. &gt;1 amplifica movimientos.</span></span><span class="mv warn">1.20</span></div>
         <div class="metric-row"><span class="ml">ROE 2026<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Rentabilidad sobre fondos propios</span></span><span class="mv pos">214.3%</span></div>
         <div class="metric-row"><span class="ml">FCF 2026<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Caja generada tras inversiones</span></span><span class="mv pos">3,580,000,000M €</span></div>
         <div class="metric-row"><span class="ml">Peso cartera<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">% del capital total invertido en esta posición</span></span><span class="mv warn" data-metric="weight">37.7% ⚠</span></div>
@@ -234,25 +263,25 @@ body{font-family:'Segoe UI',-apple-system,Arial,sans-serif}
     <div class="pos-card" data-ticker="DANR.MI" data-entry="48.72" data-shares="18" data-stop="38.82">
       <div class="pos-header">
         <div><div class="ticker">DANR.MI — Danieli</div><div class="name">Desconocido · Entrada 06/05/2026</div></div>
-        <div class="price"><div class="current" id="price-3" style="color:#3ecf8e"><span class="price-val">49.30</span> €</div><div class="pnl pos" id="pnl-3"><span class="pnl-val">+5.54</span> € (<span class="pnl-pct-val">+0.63</span>%)</div></div>
+        <div class="price"><div class="current" id="price-3" style="color:#3ecf8e"><span class="price-val">50.20</span> €</div><div class="pnl pos" id="pnl-3"><span class="pnl-val">+21.74</span> € (<span class="pnl-pct-val">+2.47</span>%)</div></div>
       </div>
       <div class="signal-badge hold">HOLD (seguimiento)</div>
       <div class="metrics-grid">
         <div class="metric-row"><span class="ml">P. Entrada</span><span class="mv">48.72 €</span></div>
         <div class="metric-row"><span class="ml">Stop Loss</span><span class="mv">38.82 €</span></div>
-        <div class="metric-row"><span class="ml">Distancia stop<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Caída máxima asumida antes de salir</span></span><span class="mv green" data-metric="dist-stop">21.3%</span></div>
+        <div class="metric-row"><span class="ml">Distancia stop<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Caída máxima asumida antes de salir</span></span><span class="mv green" data-metric="dist-stop">22.7%</span></div>
         <div class="metric-row"><span class="ml">P. Objetivo</span><span class="mv " data-metric="target">57.25 €</span></div>
-        <div class="metric-row"><span class="ml">PER<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Veces que el precio recoge el beneficio anual</span></span><span class="mv pos">15.5x</span></div>
-        <div class="metric-row"><span class="ml">PER Fwd<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">PER estimado con beneficios futuros</span></span><span class="mv">11.2x</span></div>
-        <div class="metric-row"><span class="ml">P/B<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Precio respecto al valor contable. &lt;1 infravalorado</span></span><span class="mv pos">1.29</span></div>
+        <div class="metric-row"><span class="ml">PER<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Veces que el precio recoge el beneficio anual</span></span><span class="mv pos">15.7x</span></div>
+        <div class="metric-row"><span class="ml">PER Fwd<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">PER estimado con beneficios futuros</span></span><span class="mv">11.5x</span></div>
+        <div class="metric-row"><span class="ml">P/B<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Precio respecto al valor contable. &lt;1 infravalorado</span></span><span class="mv pos">1.31</span></div>
         <div class="metric-row"><span class="ml">Beta<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Volatilidad relativa al mercado. &gt;1 amplifica movimientos.</span></span><span class="mv warn">1.16</span></div>
         <div class="metric-row"><span class="ml">ROE 2026<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Rentabilidad sobre fondos propios</span></span><span class="mv neg">N/D</span></div>
         <div class="metric-row"><span class="ml">FCF 2026<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Caja generada tras inversiones</span></span><span class="mv neg">N/D</span></div>
-        <div class="metric-row"><span class="ml">Peso cartera<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">% del capital total invertido en esta posición</span></span><span class="mv " data-metric="weight">21.4%</span></div>
+        <div class="metric-row"><span class="ml">Peso cartera<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">% del capital total invertido en esta posición</span></span><span class="mv " data-metric="weight">21.6%</span></div>
         <div class="metric-row"><span class="ml">Stop Dinámico<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Stop calculado sobre soporte técnico (-2%)</span></span><span class="mv neg">N/D</span></div>
       </div>
       <div class="tendencia-row">
-        <div class="tend-item"><div class="tend-label">Corto Plazo</div><div class="tend-val bajista">BAJISTA</div></div>
+        <div class="tend-item"><div class="tend-label">Corto Plazo</div><div class="tend-val alcista">ALCISTA</div></div>
         <div class="tend-item"><div class="tend-label">Largo Plazo</div><div class="tend-val alcista">ALCISTA</div></div>
       </div>
       <div style="font-size:11px;color:#9aa0b0;margin-top:10px;line-height:1.5">Empresa familiar italiana infravalorada, P/B bajo, especialista en acerías con cartera de pedidos sólida</div>
@@ -263,10 +292,10 @@ body{font-family:'Segoe UI',-apple-system,Arial,sans-serif}
     <div class="chart-card">
       <div class="ctitle">Distribución de cartera</div>
       <div class="legend-row">
-        <span class="leg-item"><span class="leg-dot" style="background:#2a78d6"></span>ENR 20.3%</span>
-        <span class="leg-item"><span class="leg-dot" style="background:#1baf7a"></span>NVD 20.6%</span>
+        <span class="leg-item"><span class="leg-dot" style="background:#2a78d6"></span>ENR 20.1%</span>
+        <span class="leg-item"><span class="leg-dot" style="background:#1baf7a"></span>NVD 20.5%</span>
         <span class="leg-item"><span class="leg-dot" style="background:#eda100"></span>RRU 37.7%</span>
-        <span class="leg-item"><span class="leg-dot" style="background:#4a3aa7"></span>DANR 21.4%</span>
+        <span class="leg-item"><span class="leg-dot" style="background:#4a3aa7"></span>DANR 21.6%</span>
       </div>
       <div style="position:relative;height:200px"><canvas id="chartPeso" role="img" aria-label="Distribución de la cartera por posición"></canvas></div>
     </div>
@@ -280,11 +309,10 @@ body{font-family:'Segoe UI',-apple-system,Arial,sans-serif}
     <div class="info-card">
       <div class="ctitle">Alertas</div>
       <div class="alert-item danger"><span>⚠</span><span><span class="alert-red">⚠ Rolls-Royce: peso elevado (37.7% de la cartera)</span></span></div>
-      <div class="alert-item warn"><span>!</span><span>Siemens Energy: PER alto (64.9)</span></div>
+      <div class="alert-item warn"><span>!</span><span>Siemens Energy: PER alto (66.2)</span></div>
       <div class="alert-item warn"><span>!</span><span>Siemens Energy: P/B elevado (13.46)</span></div>
-      <div class="alert-item warn"><span>!</span><span>NVIDIA: PER alto (30.2)</span></div>
-      <div class="alert-item warn"><span>!</span><span>NVIDIA: P/B elevado (24.32)</span></div>
-      <div class="alert-item warn"><span>!</span><span>Rolls-Royce: P/B elevado (46.12)</span></div>
+      <div class="alert-item warn"><span>!</span><span>NVIDIA: P/B elevado (24.36)</span></div>
+      <div class="alert-item warn"><span>!</span><span>Rolls-Royce: P/B elevado (46.42)</span></div>
     </div>
 
     <div class="info-card">
@@ -352,9 +380,15 @@ body{font-family:'Segoe UI',-apple-system,Arial,sans-serif}
 
 <div class="section-title">Acciones en Estudio</div>
 <div id="watchlist-container"><div class="ew-loading">Cargando watchlist...</div></div>
+
+<div class="section-title">Fondos Indexados</div>
+<div id="fondos-container"><div class="ew-loading">Cargando fondos...</div></div>
+
+<div class="section-title">Cuenta Remunerada</div>
+<div id="cuenta-container"><div class="ew-loading">Cargando cuenta...</div></div>
   <div class="section-title">Historial de Cartera</div>
   <div style="font-size:11px;color:#9aa0b0;margin-bottom:14px;padding:8px 12px;background:#12151f;border-radius:8px;line-height:1.6">
-    Rentabilidad global: +927.30 € (+8.28%) · Inversión histórica total: 11,199 €
+    Rentabilidad global: +955.66 € (+8.53%) · Inversión histórica total: 11,199 €
   </div>
   <table class="hist-table">
     <thead><tr>
@@ -371,9 +405,9 @@ body{font-family:'Segoe UI',-apple-system,Arial,sans-serif}
   <td>858.70</td>
   <td>133.85</td>
   <td>129.83</td>
-  <td style="color:#e05050">168.04</td>
-  <td style="color:#e05050">-18.50</td>
-  <td style="color:#e05050">-2.15%</td>
+  <td style="color:#e05050">168.12</td>
+  <td style="color:#e05050">-18.10</td>
+  <td style="color:#e05050">-2.11%</td>
 </tr><tr>
   <td>🟢 Activa</td>
   <td>27/04/2026</td>
@@ -384,9 +418,9 @@ body{font-family:'Segoe UI',-apple-system,Arial,sans-serif}
   <td>915.60</td>
   <td>144.54</td>
   <td>140.20</td>
-  <td style="color:#e05050">171.22</td>
-  <td style="color:#e05050">-59.50</td>
-  <td style="color:#e05050">-6.50%</td>
+  <td style="color:#e05050">171.52</td>
+  <td style="color:#e05050">-58.00</td>
+  <td style="color:#e05050">-6.33%</td>
 </tr><tr>
   <td>🟢 Activa</td>
   <td>17/06/2026</td>
@@ -397,9 +431,9 @@ body{font-family:'Segoe UI',-apple-system,Arial,sans-serif}
   <td>1,486.20</td>
   <td>12.53</td>
   <td>12.15</td>
-  <td style="color:#3ecf8e">17.36</td>
-  <td style="color:#3ecf8e">+76.20</td>
-  <td style="color:#3ecf8e">+5.13%</td>
+  <td style="color:#3ecf8e">17.47</td>
+  <td style="color:#3ecf8e">+86.46</td>
+  <td style="color:#3ecf8e">+5.82%</td>
 </tr><tr>
   <td>🟢 Activa</td>
   <td>06/05/2026</td>
@@ -410,9 +444,9 @@ body{font-family:'Segoe UI',-apple-system,Arial,sans-serif}
   <td>881.86</td>
   <td>47.84</td>
   <td>38.82</td>
-  <td style="color:#3ecf8e">49.30</td>
-  <td style="color:#3ecf8e">+5.54</td>
-  <td style="color:#3ecf8e">+0.63%</td>
+  <td style="color:#3ecf8e">50.20</td>
+  <td style="color:#3ecf8e">+21.74</td>
+  <td style="color:#3ecf8e">+2.47%</td>
 </tr><tr class="closed">
   <td>🔴 Cerrada</td>
   <td>15/08/2025</td>
@@ -482,8 +516,8 @@ const tickColor='#9aa0b0';
 new Chart(document.getElementById('chartPeso'),{
   type:'doughnut',
   data:{
-    labels:["ENR", "NVD", "RRU", "DANR"].map(function(l,i){return l+' '+[20.3, 20.6, 37.7, 21.4][i]+'%';}),
-    datasets:[{data:[20.3, 20.6, 37.7, 21.4],backgroundColor:["#2a78d6", "#1baf7a", "#eda100", "#4a3aa7"],borderColor:'#1a1d2e',borderWidth:3}]
+    labels:["ENR", "NVD", "RRU", "DANR"].map(function(l,i){return l+' '+[20.1, 20.5, 37.7, 21.6][i]+'%';}),
+    datasets:[{data:[20.1, 20.5, 37.7, 21.6],backgroundColor:["#2a78d6", "#1baf7a", "#eda100", "#4a3aa7"],borderColor:'#1a1d2e',borderWidth:3}]
   },
   options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': '+c.formattedValue+'%'}}}}}
 });
@@ -492,7 +526,7 @@ new Chart(document.getElementById('chartPnl'),{
   type:'bar',
   data:{
     labels:["ENR", "NVD", "RRU", "DANR"],
-    datasets:[{label:'P&L (€)',data:[-18.5, -59.5, 76.2, 5.54],backgroundColor:["rgba(224,80,80,0.8)","rgba(224,80,80,0.8)","rgba(62,207,142,0.8)","rgba(62,207,142,0.8)"],borderRadius:4}]
+    datasets:[{label:'P&L (€)',data:[-18.1, -58.0, 86.46, 21.74],backgroundColor:["rgba(224,80,80,0.8)","rgba(224,80,80,0.8)","rgba(62,207,142,0.8)","rgba(62,207,142,0.8)"],borderRadius:4}]
   },
   options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tickColor},grid:{color:gridColor}},y:{ticks:{color:tickColor,callback:function(v){return v+'€';}},grid:{color:gridColor}}}}
 });
@@ -502,8 +536,8 @@ new Chart(document.getElementById('chartVal'),{
   data:{
     labels:["ENR", "NVD", "RRU", "DANR"],
     datasets:[
-      {label:'PER',data:[64.9, 30.2, 21.7, 15.5],backgroundColor:'rgba(42,120,214,0.8)',borderRadius:4},
-      {label:'P/B',data:[13.46, 24.32, 46.12, 1.29],backgroundColor:'rgba(237,161,0,0.8)',borderRadius:4}
+      {label:'PER',data:[66.2, 29.9, 21.8, 15.7],backgroundColor:'rgba(42,120,214,0.8)',borderRadius:4},
+      {label:'P/B',data:[13.46, 24.36, 46.42, 1.31],backgroundColor:'rgba(237,161,0,0.8)',borderRadius:4}
     ]
   },
   options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tickColor},grid:{color:gridColor}},y:{ticks:{color:tickColor},grid:{color:gridColor}}}}
@@ -520,10 +554,10 @@ new Chart(document.getElementById('chartRoe'),{
   },
   options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tickColor},grid:{color:gridColor}},y:{ticks:{color:tickColor,callback:function(v){return v+'%';}},grid:{color:gridColor}}}}
 });
-new Chart(document.getElementById('chartPos_0'),{type:'line',data:{labels:["2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-29", "2026-06-30", "2026-07-02", "2026-07-03"],datasets:[{label:'Precio',data:[170.96, 169.32, 166.94, 172.06, 168.84, 166.94, 178.42, 182.8, 187.62, 177.42, 172.98, 175.26, 180.58, 176.8, 182.56, 185.84, 180.68, 178.14, 178.5, 169.48, 177.24, 177.0, 169.54, 169.9, 167.7, 174.32, 173.62, 175.42, 181.28, 181.3, 174.36, 166.76, 163.24, 160.0, 158.52, 160.16, 159.48, 158.02, 157.64, 148.3, 138.68, 147.0, 153.58, 156.2, 156.12, 161.74, 169.34, 168.92, 169.14, 162.5, 159.86, 163.46, 153.92, 157.06, 165.8, 165.82, 168.04],borderColor:'#2a78d6',backgroundColor:'rgba(42,120,214,0.1)',borderWidth:2,fill:true,pointRadius:0,tension:0.1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{color:tickColor,font:{size:9}},grid:{color:gridColor}}}},plugins:[{id:'hline',afterDraw:function(c){var yScale=c.scales.y;var ctx=c.ctx;ctx.save();ctx.strokeStyle='#e05050';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue(133.85));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue(133.85));ctx.stroke();ctx.restore();ctx.save();ctx.strokeStyle='#3ecf8e';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue(174.16));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue(174.16));ctx.stroke();ctx.restore();ctx.save();ctx.strokeStyle='#e05050';ctx.lineWidth=1;ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue(135.91));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue(135.91));ctx.stroke();ctx.restore();}}]});
-new Chart(document.getElementById('chartPos_1'),{type:'line',data:{labels:["2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-29", "2026-06-30", "2026-07-03"],datasets:[{label:'Precio',data:[179.18, 178.54, 180.8, 171.26, 167.28, 168.42, 176.14, 180.5, 184.32, 187.96, 184.46, 193.24, 201.8, 196.4, 191.34, 190.42, 193.86, 189.12, 188.04, 189.14, 184.88, 180.46, 182.62, 184.44, 189.3, 194.24, 186.18, 186.06, 180.66, 179.86, 175.98, 175.2, 174.86, 178.52, 182.16, 180.56, 178.1, 181.84, 181.82, 183.7, 176.96, 176.94, 171.8, 169.98, 169.7, 173.56, 171.22],borderColor:'#2a78d6',backgroundColor:'rgba(42,120,214,0.1)',borderWidth:2,fill:true,pointRadius:0,tension:0.1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{color:tickColor,font:{size:9}},grid:{color:gridColor}}}},plugins:[{id:'hline',afterDraw:function(c){var yScale=c.scales.y;var ctx=c.ctx;ctx.save();ctx.strokeStyle='#e05050';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue(144.54));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue(144.54));ctx.stroke();ctx.restore();ctx.save();ctx.strokeStyle='#3ecf8e';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue(201.9));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue(201.9));ctx.stroke();ctx.restore();ctx.save();ctx.strokeStyle='#e05050';ctx.lineWidth=1;ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue(163.17));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue(163.17));ctx.stroke();ctx.restore();}}]});
-new Chart(document.getElementById('chartPos_2'),{type:'line',data:{labels:["2026-06-17", "2026-06-18", "2026-06-19", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-29", "2026-06-30", "2026-07-03"],datasets:[{label:'Precio',data:[16.06, 16.22, 16.28, 16.39, 16.3, 16.41, 16.63, 16.4, 16.52, 16.83, 17.36],borderColor:'#2a78d6',backgroundColor:'rgba(42,120,214,0.1)',borderWidth:2,fill:true,pointRadius:0,tension:0.1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{color:tickColor,font:{size:9}},grid:{color:gridColor}}}},plugins:[{id:'hline',afterDraw:function(c){var yScale=c.scales.y;var ctx=c.ctx;ctx.save();ctx.strokeStyle='#e05050';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue(12.53));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue(12.53));ctx.stroke();ctx.restore();}}]});
-new Chart(document.getElementById('chartPos_3'),{type:'line',data:{labels:["2026-05-06", "2026-05-07", "2026-05-08", "2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-29", "2026-06-30", "2026-07-03"],datasets:[{label:'Precio',data:[48.6, 48.36, 47.72, 47.0, 46.74, 47.66, 47.96, 46.98, 47.04, 46.28, 48.96, 47.84, 49.66, 50.35, 50.75, 50.35, 50.5, 50.0, 50.15, 51.45, 50.35, 49.54, 49.2, 49.6, 48.42, 48.16, 48.9, 50.7, 51.0, 50.35, 51.6, 51.55, 51.5, 51.65, 50.8, 50.5, 50.9, 46.72, 45.38, 46.14, 49.3],borderColor:'#2a78d6',backgroundColor:'rgba(42,120,214,0.1)',borderWidth:2,fill:true,pointRadius:0,tension:0.1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{color:tickColor,font:{size:9}},grid:{color:gridColor}}}},plugins:[{id:'hline',afterDraw:function(c){var yScale=c.scales.y;var ctx=c.ctx;ctx.save();ctx.strokeStyle='#e05050';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue(47.84));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue(47.84));ctx.stroke();ctx.restore();}}]});
+new Chart(document.getElementById('chartPos_0'),{type:'line',data:{labels:["2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-29", "2026-06-30", "2026-07-02", "2026-07-03"],datasets:[{label:'Precio',data:[170.96, 169.32, 166.94, 172.06, 168.84, 166.94, 178.42, 182.8, 187.62, 177.42, 172.98, 175.26, 180.58, 176.8, 182.56, 185.84, 180.68, 178.14, 178.5, 169.48, 177.24, 177.0, 169.54, 169.9, 167.7, 174.32, 173.62, 175.42, 181.28, 181.3, 174.36, 166.76, 163.24, 160.0, 158.52, 160.16, 159.48, 158.02, 157.64, 148.3, 138.68, 147.0, 153.58, 156.2, 156.12, 161.74, 169.34, 168.92, 169.14, 162.5, 159.86, 163.46, 153.92, 157.06, 165.8, 165.82, 168.12],borderColor:'#2a78d6',backgroundColor:'rgba(42,120,214,0.1)',borderWidth:2,fill:true,pointRadius:0,tension:0.1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{color:tickColor,font:{size:9}},grid:{color:gridColor}}}},plugins:[{id:'hline',afterDraw:function(c){var yScale=c.scales.y;var ctx=c.ctx;ctx.save();ctx.strokeStyle='#e05050';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue(133.85));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue(133.85));ctx.stroke();ctx.restore();ctx.save();ctx.strokeStyle='#3ecf8e';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue(174.16));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue(174.16));ctx.stroke();ctx.restore();ctx.save();ctx.strokeStyle='#e05050';ctx.lineWidth=1;ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue(135.91));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue(135.91));ctx.stroke();ctx.restore();}}]});
+new Chart(document.getElementById('chartPos_1'),{type:'line',data:{labels:["2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-29", "2026-06-30", "2026-07-03"],datasets:[{label:'Precio',data:[179.18, 178.54, 180.8, 171.26, 167.28, 168.42, 176.14, 180.5, 184.32, 187.96, 184.46, 193.24, 201.8, 196.4, 191.34, 190.42, 193.86, 189.12, 188.04, 189.14, 184.88, 180.46, 182.62, 184.44, 189.3, 194.24, 186.18, 186.06, 180.66, 179.86, 175.98, 175.2, 174.86, 178.52, 182.16, 180.56, 178.1, 181.84, 181.82, 183.7, 176.96, 176.94, 171.8, 169.98, 169.7, 173.56, 171.52],borderColor:'#2a78d6',backgroundColor:'rgba(42,120,214,0.1)',borderWidth:2,fill:true,pointRadius:0,tension:0.1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{color:tickColor,font:{size:9}},grid:{color:gridColor}}}},plugins:[{id:'hline',afterDraw:function(c){var yScale=c.scales.y;var ctx=c.ctx;ctx.save();ctx.strokeStyle='#e05050';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue(144.54));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue(144.54));ctx.stroke();ctx.restore();ctx.save();ctx.strokeStyle='#3ecf8e';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue(201.9));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue(201.9));ctx.stroke();ctx.restore();ctx.save();ctx.strokeStyle='#e05050';ctx.lineWidth=1;ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue(163.17));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue(163.17));ctx.stroke();ctx.restore();}}]});
+new Chart(document.getElementById('chartPos_2'),{type:'line',data:{labels:["2026-06-17", "2026-06-18", "2026-06-19", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-29", "2026-06-30", "2026-07-03"],datasets:[{label:'Precio',data:[16.06, 16.22, 16.28, 16.39, 16.3, 16.41, 16.63, 16.4, 16.52, 16.83, 17.47],borderColor:'#2a78d6',backgroundColor:'rgba(42,120,214,0.1)',borderWidth:2,fill:true,pointRadius:0,tension:0.1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{color:tickColor,font:{size:9}},grid:{color:gridColor}}}},plugins:[{id:'hline',afterDraw:function(c){var yScale=c.scales.y;var ctx=c.ctx;ctx.save();ctx.strokeStyle='#e05050';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue(12.53));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue(12.53));ctx.stroke();ctx.restore();}}]});
+new Chart(document.getElementById('chartPos_3'),{type:'line',data:{labels:["2026-05-06", "2026-05-07", "2026-05-08", "2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-29", "2026-06-30", "2026-07-03"],datasets:[{label:'Precio',data:[48.6, 48.36, 47.72, 47.0, 46.74, 47.66, 47.96, 46.98, 47.04, 46.28, 48.96, 47.84, 49.66, 50.35, 50.75, 50.35, 50.5, 50.0, 50.15, 51.45, 50.35, 49.54, 49.2, 49.6, 48.42, 48.16, 48.9, 50.7, 51.0, 50.35, 51.6, 51.55, 51.5, 51.65, 50.8, 50.5, 50.9, 46.72, 45.38, 46.14, 50.2],borderColor:'#2a78d6',backgroundColor:'rgba(42,120,214,0.1)',borderWidth:2,fill:true,pointRadius:0,tension:0.1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{color:tickColor,font:{size:9}},grid:{color:gridColor}}}},plugins:[{id:'hline',afterDraw:function(c){var yScale=c.scales.y;var ctx=c.ctx;ctx.save();ctx.strokeStyle='#e05050';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(c.chartArea.left,yScale.getPixelForValue(47.84));ctx.lineTo(c.chartArea.right,yScale.getPixelForValue(47.84));ctx.stroke();ctx.restore();}}]});
 </script>
 
 <script>
@@ -675,6 +709,84 @@ function renderWatchlist(data) {
   c.innerHTML = h;
 }
 
+// ========== Fondos Indexados ==========
+function renderFondos(data) {
+  var c = document.getElementById('fondos-container');
+  if (data.error || !data.fondos || !data.fondos.length) {
+    c.innerHTML = '<div class="ew-loading">Sin fondos registrados</div>'; return;
+  }
+  var h = '<div class="fondos-grid">';
+  data.fondos.forEach(function(f) {
+    var cls = 'fondo-card';
+    var rentCls = f.rentabilidad >= 0 ? 'pos' : 'neg';
+    h += '<div class="' + cls + '">';
+    h += '<div class="fondo-header"><div><div class="fondo-nombre">' + f.nombre + '</div><div class="fondo-isin">' + f.isin + '</div></div></div>';
+    h += '<div class="fondo-metric"><span class="ml">Aportado</span><span class="mv">' + f.aportado.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' €</span></div>';
+    h += '<div class="fondo-metric"><span class="ml">Valor actual</span><span class="mv">' + f.valor_actual.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' €</span></div>';
+    h += '<div class="fondo-metric"><span class="ml">Rentabilidad</span><span class="mv ' + rentCls + '">' + (f.rentabilidad >= 0 ? '+' : '') + f.rentabilidad.toFixed(2) + '%</span></div>';
+    h += '<div class="fondo-metric"><span class="ml">TER</span><span class="mv">' + f.ter.toFixed(2) + '%</span></div>';
+    if (f.fecha_actualizacion) {
+      h += '<div class="fondo-metric" style="font-size:10px;color:#5a5f6b"><span class="ml">Actualización</span><span class="mv">' + f.fecha_actualizacion + '</span></div>';
+    }
+    // Warn if fund name contains ESG
+    if (f.nombre.toUpperCase().indexOf('ESG') >= 0) {
+      h += '<div class="radar-warn">⚠ Este fondo replica un índice ESG, no el índice puro</div>';
+    }
+    h += '</div>';
+  });
+  h += '</div>';
+  // Radar comparativo
+  if (data.radar) {
+    h += '<button class="radar-toggle" onclick="var t=this.nextElementSibling;t.style.display=t.style.display==='block'?'none':'block';this.textContent=t.style.display==='block'?'Ocultar comparativa':'Comparar con alternativas'">Comparar con alternativas</button>';
+    h += '<div style="display:none">';
+    h += '<table class="radar-table"><thead><tr><th>Fondo</th><th>TER</th><th>Rent. 3a</th><th>Réplica</th></tr></thead><tbody>';
+    var all = [];
+    data.fondos.forEach(function(f) { all.push({nombre: f.nombre, ter: f.ter, rentabilidad_3a: null, replica: 'propio', esPropio: true}); });
+    if (data.radar.alternativas_sp500) {
+      data.radar.alternativas_sp500.forEach(function(a) { all.push({nombre: a.nombre, ter: a.ter, rentabilidad_3a: a.rentabilidad_3a, replica: a.replica, esPropio: false}); });
+    }
+    if (data.radar.alternativas_msci_world) {
+      data.radar.alternativas_msci_world.forEach(function(a) { all.push({nombre: a.nombre, ter: a.ter, rentabilidad_3a: a.rentabilidad_3a, replica: a.replica, esPropio: false}); });
+    }
+    all.forEach(function(a) {
+      var trCls = a.esPropio ? ' class="tr-own"' : '';
+      var terCls = a.ter > 0.12 ? 'ter-high' : 'ter-low';
+      h += '<tr' + trCls + '><td>' + a.nombre + '</td><td class="' + terCls + '">' + a.ter.toFixed(2) + '%</td><td>' + (a.rentabilidad_3a !== null ? a.rentabilidad_3a.toFixed(2) + '%' : 'N/D') + '</td><td>' + a.replica + '</td></tr>';
+    });
+    h += '</tbody></table>';
+    h += '<div style="font-size:10px;color:#5a5f6b;margin-top:6px">Fila destacada = tu fondo. TER en rojo si es mayor que alternativas.</div>';
+    h += '<div style="font-size:10px;color:#9aa0b0;margin-top:8px;padding:6px 10px;background:#12151f;border-radius:6px;line-height:1.6">';
+    h += '<b>TER</b> — Comisión anual del fondo. Se paga siempre, gane o pierda el mercado.<br>';
+    h += '<b>Rent. 3a</b> — Rendimiento histórico, no garantiza el futuro.<br>';
+    h += '<b>Réplica</b> — Física = compra acciones reales. Sintética = usa derivados, más riesgo oculto.';
+    h += '</div>';
+    h += '</div>';
+  }
+  c.innerHTML = h;
+}
+
+// ========== Cuenta Remunerada ==========
+function renderCuenta(data) {
+  var c = document.getElementById('cuenta-container');
+  if (data.error) {
+    c.innerHTML = '<div class="ew-loading">Cuenta no disponible</div>'; return;
+  }
+  var taePct = (data.tae_actual * 100).toFixed(1) + '%';
+  var h = '<div class="cuenta-card">';
+  h += '<div class="cuenta-sub">Trade Republic</div>';
+  h += '<div class="cuenta-saldo">' + data.saldo_actual.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' €</div>';
+  h += '<div class="cuenta-row"><span class="ml">TAE actual</span><span class="mv" style="color:#3ecf8e">' + taePct + '</span></div>';
+  h += '<div class="cuenta-row"><span class="ml">Saldo base</span><span class="mv">' + data.saldo_base.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' €</span></div>';
+  h += '<div class="cuenta-row"><span class="ml">Interés diario</span><span class="mv">' + data.interes_diario.toFixed(2) + ' €</span></div>';
+  h += '<div class="cuenta-row"><span class="ml">Días transcurridos</span><span class="mv">' + data.dias_transcurridos + '</span></div>';
+  h += '<div class="cuenta-row"><span class="ml">Intereses generados</span><span class="mv" style="color:#3ecf8e">+' + data.intereses_generados.toFixed(2) + ' €</span></div>';
+  if (data.nota_tae) {
+    h += '<div style="font-size:10px;color:#5a5f6b;margin-top:8px;padding-top:6px;border-top:1px solid #232638">ℹ️ ' + data.nota_tae + '</div>';
+  }
+  h += '</div>';
+  c.innerHTML = h;
+}
+
 // ========== Live prices ==========
 function updatePrices(data) {
   if (data.error || !data.prices) { console.warn('[prices] error:', data.error); return; }
@@ -787,6 +899,22 @@ function updatePrices(data) {
   if (el) {
     el.textContent = (totalDayVar >= 0 ? '+' : '') + fmt2(totalDayVar) + ' €';
   }
+  // Update Rendimiento Total KPI (depende de totalPnl que cambia con precios)
+  el = document.querySelector('[data-kpi="rend-total"]');
+  if (el) {
+    var rf = parseFloat(el.getAttribute('data-rend-fondos-eur')) || 0;
+    var rc = parseFloat(el.getAttribute('data-rend-cuenta-eur')) || 0;
+    var aportF = parseFloat(el.getAttribute('data-total-aportado-fondos')) || 0;
+    var baseC = parseFloat(el.getAttribute('data-cuenta-saldo-base')) || 0;
+    var rendTotalEur = totalPnl + rf + rc;
+    var rendTotalCost = totalCost + aportF + baseC;
+    var rendTotalPct = rendTotalCost ? (rendTotalEur / rendTotalCost) * 100 : 0;
+    var eurEl = el.querySelector('[data-kpi-val="rend-total-eur"]');
+    if (eurEl) {
+      eurEl.textContent = (rendTotalEur >= 0 ? '+' : '') + fmt2(rendTotalEur) + ' € / ' + (rendTotalPct >= 0 ? '+' : '') + fmt2(rendTotalPct) + '%';
+      eurEl.className = 'value ' + (rendTotalEur < 0 ? 'neg' : 'pos');
+    }
+  }
   // Update per-card weight metrics
   cards.forEach(function(card) {
     var tk = card.getAttribute('data-ticker');
@@ -869,6 +997,8 @@ document.addEventListener('DOMContentLoaded', function() {
   fetch('/api/alternatives').then(function(r){ return r.json(); }).then(renderAlternatives).catch(function(){ document.getElementById('alternativas-container').innerHTML = '<div class="ew-error">Error de conexión</div>'; });
   fetch('/api/radar').then(function(r){ return r.json(); }).then(renderRadar).catch(function(){ document.getElementById('radar-container').innerHTML = '<div class="ew-error">Error de conexión</div>'; });
   fetch('/api/watchlist').then(function(r){ return r.json(); }).then(renderWatchlist).catch(function(){ document.getElementById('watchlist-container').innerHTML = '<div class="ew-error">Error de conexión</div>'; });
+  fetch('/api/fondos').then(function(r){ return r.json(); }).then(renderFondos).catch(function(){ document.getElementById('fondos-container').innerHTML = '<div class="ew-error">Error al cargar fondos</div>'; });
+  fetch('/api/cuenta-remunerada').then(function(r){ return r.json(); }).then(renderCuenta).catch(function(){ document.getElementById('cuenta-container').innerHTML = '<div class="ew-error">Error al cargar cuenta</div>'; });
   fetch('/api/prices').then(function(r){ return r.json(); }).then(updatePrices).catch(function(){
     var hdr = document.querySelector('.header .date-info');
     if (hdr && !hdr.querySelector('.price-warn')) {
@@ -903,7 +1033,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="sig-ftr">Automático · Se muestra una vez por sesión</div>
 </div></div>
 <script>
-const SIG_DATA = {"RRA": ["RRU.DE \u2014 Rolls-Royce \u2014 Cartera", "DANR.MI \u2014 Danieli \u2014 Cartera"], "LT": ["ENR.DE \u2014 Siemens Energy \u2014 Cartera"], "PER": ["NVD.DE \u2014 NVIDIA \u2014 Cartera", "RRU.DE \u2014 Rolls-Royce \u2014 Cartera", "DANR.MI \u2014 Danieli \u2014 Cartera"], "PER < 15": ["Naturgy (NTGY.MC) \u2014 Energ\u00eda \u2014 Alternativas", "ExxonMobil (XOM) \u2014 Energ\u00eda \u2014 Alternativas", "Solaria (SLR.MC) \u2014 Energ\u00eda \u2014 Alternativas", "Shell (SHEL.L) \u2014 Energ\u00eda \u2014 Alternativas", "TotalEnergies (TTE.PA) \u2014 Energ\u00eda \u2014 Alternativas", "ConocoPhillips (COP) \u2014 Energ\u00eda \u2014 Alternativas", "Repsol (REP.MC) \u2014 Energ\u00eda \u2014 Alternativas", "Rightmove (RMV.L) \u2014 Tecnolog\u00eda \u2014 Alternativas", "Adobe (ADBE) \u2014 Tecnolog\u00eda \u2014 Alternativas", "Oracle (ORCL) \u2014 Tecnolog\u00eda \u2014 Alternativas"]};
+const SIG_DATA = {"RRA": ["RRU.DE \u2014 Rolls-Royce \u2014 Cartera", "DANR.MI \u2014 Danieli \u2014 Cartera"], "LT": ["ENR.DE \u2014 Siemens Energy \u2014 Cartera"], "PER": ["NVD.DE \u2014 NVIDIA \u2014 Cartera", "RRU.DE \u2014 Rolls-Royce \u2014 Cartera"], "PER < 15": ["Naturgy (NTGY.MC) \u2014 Energ\u00eda \u2014 Alternativas", "ExxonMobil (XOM) \u2014 Energ\u00eda \u2014 Alternativas", "Solaria (SLR.MC) \u2014 Energ\u00eda \u2014 Alternativas", "Shell (SHEL.L) \u2014 Energ\u00eda \u2014 Alternativas", "TotalEnergies (TTE.PA) \u2014 Energ\u00eda \u2014 Alternativas", "ConocoPhillips (COP) \u2014 Energ\u00eda \u2014 Alternativas", "Repsol (REP.MC) \u2014 Energ\u00eda \u2014 Alternativas", "Rightmove (RMV.L) \u2014 Tecnolog\u00eda \u2014 Alternativas", "Adobe (ADBE) \u2014 Tecnolog\u00eda \u2014 Alternativas", "Oracle (ORCL) \u2014 Tecnolog\u00eda \u2014 Alternativas"]};
 const SIG_DSC = {"RRA": {"label": "RRA \u2014 Cerca de m\u00e1ximos", "desc": "Precio entre 95% y 105% del m\u00e1ximo 52 semanas", "color": "#3ecf8e"}, "RR": {"label": "RR \u2014 Rompiendo m\u00e1ximos", "desc": "Precio supera el m\u00e1ximo de 52 semanas", "color": "#2a78d6"}, "LT": {"label": "LT \u2014 Drawdown >10%", "desc": "Ca\u00edda >10% desde m\u00e1ximo anual, sin estar en m\u00ednimos", "color": "#f0a500"}, "LTA": {"label": "LTA \u2014 Suelo alcista", "desc": "M\u00ednimos 3 meses > m\u00ednimos 6 meses (tendencia alcista)", "color": "#eda100"}, "PER": {"label": "PER \u2014 Cerca de m\u00ednimos", "desc": "Precio entre m\u00ednimo y +10% (potencial zona de entrada)", "color": "#e05050"}, "PER < 15": {"label": "PER < 15 \u2014 Baratas", "desc": "Alternativas con PER estimado inferior a 15 (infravaloradas)", "color": "#a855f7"}};
 function closeSigModal(){document.getElementById('sigModal').style.display='none';sessionStorage.setItem('sigClosed','1')}
 document.addEventListener('DOMContentLoaded',function(){

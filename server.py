@@ -177,6 +177,13 @@ _PRICES_TTL = 120  # 2 min
 _WL_CACHE = {"data": None, "updated": None}
 _WL_TTL = 300  # 5 min
 
+# ========== FONDOS INDEXADOS + CUENTA REMUNERADA ==========
+_FONDOS_CACHE = {"data": None, "updated": None}
+_FONDOS_TTL = 300  # 5 min (datos cambian solo cuando editas JSON)
+
+_CUENTA_CACHE = {"data": None, "updated": None}
+_CUENTA_TTL = 300  # 5 min
+
 PORT = int(os.environ.get("PORT", "5000"))
 DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -228,6 +235,13 @@ def regenerate():
             LAST_REGENERATE["msg"] = str(e)
             print(f"[regenerate] EXCEPTION: {e}")
     threading.Thread(target=task, daemon=True).start()
+
+# ========== CUENTA REMUNERADA ==========
+def _calcular_saldo_cuenta(data):
+    from datetime import date
+    fecha_base = date.fromisoformat(data["fecha_saldo_base"])
+    dias = (date.today() - fecha_base).days
+    return round(data["saldo_base"] + data["interes_diario"] * dias, 2)
 
 class DashboardHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
@@ -318,6 +332,14 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         # API: Watchlist (study list, no auth)
         if self.path.startswith("/api/watchlist"):
             self._send_json_cache(_WL_CACHE, _WL_TTL, self._compute_watchlist_study)
+            return
+        # API: Fondos indexados (JSON local, sin fuentes externas)
+        if self.path.startswith("/api/fondos"):
+            self._send_json_cache(_FONDOS_CACHE, _FONDOS_TTL, self._compute_fondos)
+            return
+        # API: Cuenta remunerada (JSON local, sin fuentes externas)
+        if self.path.startswith("/api/cuenta-remunerada"):
+            self._send_json_cache(_CUENTA_CACHE, _CUENTA_TTL, self._compute_cuenta_remunerada)
             return
         # API endpoint for live price
         m = re.match(r"/api/price/([A-Za-z0-9.=-]+)", self.path)
@@ -589,6 +611,64 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 json.dump(new_prev, f, indent=2)
         except Exception:
             pass
+
+    def _compute_fondos(self):
+        """Lee fondos_indexados.json + fondos_comparativa.json (solo ficheros locales)."""
+        result = {"fondos": [], "radar": None}
+        try:
+            path = os.path.join(DIR, "fondos_indexados.json")
+            if os.path.exists(path):
+                with open(path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                for fdo in data.get("fondos", []):
+                    valor = fdo.get("valor_actual", 0) or 0
+                    aportado = fdo.get("aportado", 0) or 0
+                    rent = ((valor - aportado) / aportado * 100) if aportado else 0
+                    result["fondos"].append({
+                        "nombre": fdo.get("nombre", ""),
+                        "isin": fdo.get("isin", ""),
+                        "aportado": aportado,
+                        "valor_actual": valor,
+                        "fecha_actualizacion": fdo.get("fecha_actualizacion", ""),
+                        "ter": fdo.get("ter", 0) or 0,
+                        "rentabilidad": round(rent, 2),
+                    })
+                result["total_fondos"] = round(sum(f["valor_actual"] for f in result["fondos"]), 2)
+            # Radar comparativo (opcional)
+            radar_path = os.path.join(DIR, "fondos_comparativa.json")
+            if os.path.exists(radar_path):
+                with open(radar_path, "r", encoding="utf-8") as f:
+                    result["radar"] = json.load(f)
+        except Exception as e:
+            return {"error": True, "msg": str(e)}
+        return result
+
+    def _compute_cuenta_remunerada(self):
+        """Lee cuenta_remunerada.json y extrapola saldo."""
+        import importlib
+        result = {"error": True, "msg": "No data"}
+        try:
+            path = os.path.join(DIR, "cuenta_remunerada.json")
+            if os.path.exists(path):
+                with open(path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                saldo = _calcular_saldo_cuenta(data)
+                from datetime import date
+                fecha_base = date.fromisoformat(data["fecha_saldo_base"])
+                dias = (date.today() - fecha_base).days
+                result = {
+                    "saldo_actual": saldo,
+                    "saldo_base": data["saldo_base"],
+                    "fecha_saldo_base": data["fecha_saldo_base"],
+                    "tae_actual": data["tae_actual"],
+                    "interes_diario": data["interes_diario"],
+                    "dias_transcurridos": dias,
+                    "intereses_generados": round(data["interes_diario"] * dias, 2),
+                    "nota_tae": data.get("nota_tae", ""),
+                }
+        except Exception as e:
+            return {"error": True, "msg": str(e)}
+        return result
 
     def _compute_prices(self):
         try:

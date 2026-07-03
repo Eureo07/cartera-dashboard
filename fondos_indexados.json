@@ -1,0 +1,20 @@
+{
+  "fondos": [
+    {
+      "nombre": "PLACEHOLDER — MyInvestor S&P 500",
+      "isin": "ES0123456001",
+      "aportado": 0,
+      "valor_actual": 0,
+      "fecha_actualizacion": "2026-07-03",
+      "ter": 0.0
+    },
+    {
+      "nombre": "PLACEHOLDER — ETF Oro",
+      "isin": "ES0123456002",
+      "aportado": 0,
+      "valor_actual": 0,
+      "fecha_actualizacion": "2026-07-03",
+      "ter": 0.0
+    }
+  ]
+}

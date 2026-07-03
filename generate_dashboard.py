@@ -372,6 +372,39 @@ historical_pnl = total_pnl + closed_total_pnl
 historical_cost = total_cost + closed_total_cost
 historical_return = (historical_pnl / historical_cost) * 100 if historical_cost else 0
 
+# ========== FONDOS INDEXADOS + CUENTA (para KPIs Rendimiento) ==========
+fondos_total = 0.0
+total_aportado_fondos = 0.0
+cuenta_saldo = 0.0
+cuenta_saldo_base_eur = 0.0
+cuenta_tae = 0.03
+try:
+    f_path = os.path.join(CFG["base_dir"], "fondos_indexados.json")
+    if os.path.exists(f_path):
+        with open(f_path, "r", encoding="utf-8") as _f:
+            _fd = json.load(_f)
+        for _fdo in _fd.get("fondos", []):
+            fondos_total += _fdo.get("valor_actual") or 0
+            total_aportado_fondos += _fdo.get("aportado") or 0
+except Exception:
+    pass
+rend_fondos_eur = fondos_total - total_aportado_fondos
+rend_fondos_pct = (rend_fondos_eur / total_aportado_fondos * 100) if total_aportado_fondos else None
+try:
+    c_path = os.path.join(CFG["base_dir"], "cuenta_remunerada.json")
+    if os.path.exists(c_path):
+        with open(c_path, "r", encoding="utf-8") as _f:
+            _cd = json.load(_f)
+        from datetime import date as _d
+        _fb = _d.fromisoformat(_cd["fecha_saldo_base"])
+        _dias = (_d.today() - _fb).days
+        cuenta_saldo_base_eur = _cd["saldo_base"]
+        cuenta_tae = _cd.get("tae_actual", 0.03)
+        cuenta_saldo = round(_cd["saldo_base"] + _cd["interes_diario"] * _dias, 2)
+except Exception:
+    pass
+rend_cuenta_eur = cuenta_saldo - cuenta_saldo_base_eur
+
 # Daily variation (HOY) — cur - previousClose (real, no ajustado)
 day_var_total = 0.0
 n_day_var = 0
@@ -641,7 +674,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
 .header h1{{font-size:24px;font-weight:700;color:#fff}}
 .header .sub{{color:#9aa0b0;font-size:13px;margin-top:4px}}
 .header .date-info{{text-align:right;color:#9aa0b0;font-size:12px}}
-.kpi-row{{display:grid;grid-template-columns:repeat(7,1fr);gap:14px;margin-bottom:24px}}
+.kpi-row{{display:grid;grid-template-columns:repeat(auto-fill, minmax(130px,1fr));gap:14px;margin-bottom:24px}}
 .kpi{{background:#1a1d2e;border-radius:12px;padding:18px 22px}}
 .kpi .label{{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#9aa0b0;margin-bottom:8px}}
 .kpi .value{{font-size:22px;font-weight:700;color:#fff}}
@@ -754,6 +787,32 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
 .ew-note{{font-size:10px;color:#5a5f6b;margin-top:10px}}
 .ew-loading{{color:#9aa0b0;font-size:13px;padding:20px;text-align:center}}
 .ew-error{{color:#e05050;font-size:12px;padding:20px;text-align:center}}
+/* Fondos */
+.fondos-grid{{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}}
+.fondo-card{{background:#1a1d2e;border-radius:12px;padding:20px 24px;border-left:4px solid #3ecf8e}}
+.fondo-card .fondo-header{{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}}
+.fondo-card .fondo-nombre{{font-size:15px;font-weight:600;color:#fff}}
+.fondo-card .fondo-isin{{font-size:11px;color:#9aa0b0}}
+.fondo-card .fondo-metric{{display:flex;justify-content:space-between;padding:4px 0;font-size:12px}}
+.fondo-card .fondo-metric .ml{{color:#9aa0b0}}
+.fondo-card .fondo-metric .mv{{color:#e8eaed;font-weight:600}}
+/* Cuenta */
+.cuenta-card{{background:#1a1d2e;border-radius:12px;padding:20px 24px;border-left:4px solid #3a7bd5;max-width:400px}}
+.cuenta-card .cuenta-saldo{{font-size:28px;font-weight:700;color:#fff;margin-bottom:4px}}
+.cuenta-card .cuenta-sub{{font-size:12px;color:#9aa0b0}}
+.cuenta-card .cuenta-row{{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-top:1px solid #232638;margin-top:6px;padding-top:6px}}
+.cuenta-card .cuenta-row .ml{{color:#9aa0b0}}
+.cuenta-card .cuenta-row .mv{{color:#e8eaed;font-weight:600}}
+/* Radar comparativo */
+.radar-toggle{{background:#2a2d3e;border:none;color:#9aa0b0;font-size:11px;padding:6px 14px;border-radius:6px;cursor:pointer;margin-top:10px}}
+.radar-toggle:hover{{background:#3a3d4e;color:#e8eaed}}
+.radar-table{{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px}}
+.radar-table th{{color:#9aa0b0;padding:6px 8px;text-align:left;border-bottom:1px solid #232638;font-weight:600}}
+.radar-table td{{padding:6px 8px;border-bottom:1px solid #232638;color:#b0b5c0}}
+.radar-table .ter-high{{color:#e05050;font-weight:600}}
+.radar-table .ter-low{{color:#3ecf8e}}
+.radar-table .tr-own{{background:rgba(62,207,142,0.06)}}
+.radar-warn{{color:#f0a500;font-size:11px;padding:6px 10px;background:#2d1a1a;border-radius:6px;margin-top:8px}}
 </style>
 </head>
 <body>
@@ -774,6 +833,9 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="kpi" data-kpi="vs-benchmark" data-bench-start="{bench_start_px:.4f}" data-bench-start-date="{bench_start}"><div class="label">vs Euro Stoxx 50</div><div class="value {"neg" if benchmark_return is not None and (total_pnl_pct - benchmark_return) < 0 else "pos"}" data-kpi-val="vs-benchmark">{("" if benchmark_return is None else f"{(total_pnl_pct - benchmark_return):+.2f}%")}</div><div class="sub" data-kpi-sub="benchmark-ret">{f"\u00cdndice {benchmark_return:+.2f}%" if benchmark_return is not None else "N/D"}</div></div>
     {"<div class=\"kpi\" data-kpi=\"today\"><div class=\"label\">HOY</div><div class=\"value " + ("pos" if day_var_total >= 0 else "neg") + "\" data-kpi-val=\"day-pct\">" + (f"{day_var_pct:+.2f}%" if day_var_pct is not None else "\u2014") + "</div><div class=\"sub\" data-kpi-val=\"day-eur\">" + (f"{day_var_total:+,.2f} \u20ac" if day_var_total is not None else "\u2014") + "</div></div>" if day_var_pct is not None else ""}
     <div class="kpi" data-kpi="historical" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rent. Hist\u00f3rica</div><div class="value {"neg" if historical_pnl < 0 else "pos"}" data-kpi-val="historical-return">{historical_return:+.2f}%</div><div class="sub" data-kpi-val="historical-pnl">{historical_pnl:+,.2f} \u20ac / {historical_cost:,.0f} \u20ac invertidos</div></div>
+    <div class="kpi" data-kpi="rend-fondos" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}"><div class="label">Rendimiento Fondos</div><div class="value {"neg" if rend_fondos_eur < 0 else "pos"}" data-kpi-val="rend-fondos-pct">{"{:+.2f}%".format(rend_fondos_pct) if rend_fondos_pct is not None else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac \u00b7 Fondos indexados".format(rend_fondos_eur) if total_aportado_fondos else "\u2014"}</div></div>
+    <div class="kpi" data-kpi="rend-cuenta" data-rend-cuenta-eur="{rend_cuenta_eur:.2f}" data-tae="{cuenta_tae}"><div class="label">Rendimiento Cuenta</div><div class="value pos" data-kpi-val="rend-cuenta-eur">{"+" if rend_cuenta_eur >= 0 else ""}{rend_cuenta_eur:,.2f} \u20ac</div><div class="sub">Cuenta remunerada, TAE {cuenta_tae*100:.0f}%</div></div>
+    <div class="kpi" data-kpi="rend-total" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-rend-cuenta-eur="{rend_cuenta_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}" data-cuenta-saldo-base="{cuenta_saldo_base_eur:.2f}"><div class="label">Rendimiento Total</div><div class="value" data-kpi-val="rend-total-eur">\u2014</div><div class="sub">Cartera + Fondos + Cuenta</div></div>
   </div>
 
   <div class="section-title">An\u00e1lisis por posici\u00f3n</div>
@@ -1080,6 +1142,12 @@ html += """  <div class="section-title">Eventos &amp; Vigilancia</div>
 
 <div class="section-title">Acciones en Estudio</div>
 <div id="watchlist-container"><div class="ew-loading">Cargando watchlist...</div></div>
+
+<div class="section-title">Fondos Indexados</div>
+<div id="fondos-container"><div class="ew-loading">Cargando fondos...</div></div>
+
+<div class="section-title">Cuenta Remunerada</div>
+<div id="cuenta-container"><div class="ew-loading">Cargando cuenta...</div></div>
 """
 # ========== HISTORIAL DE CARTERA ==========
 hist_rows = ""
@@ -1338,6 +1406,84 @@ function renderWatchlist(data) {
   c.innerHTML = h;
 }
 
+// ========== Fondos Indexados ==========
+function renderFondos(data) {
+  var c = document.getElementById('fondos-container');
+  if (data.error || !data.fondos || !data.fondos.length) {
+    c.innerHTML = '<div class="ew-loading">Sin fondos registrados</div>'; return;
+  }
+  var h = '<div class="fondos-grid">';
+  data.fondos.forEach(function(f) {
+    var cls = 'fondo-card';
+    var rentCls = f.rentabilidad >= 0 ? 'pos' : 'neg';
+    h += '<div class="' + cls + '">';
+    h += '<div class="fondo-header"><div><div class="fondo-nombre">' + f.nombre + '</div><div class="fondo-isin">' + f.isin + '</div></div></div>';
+    h += '<div class="fondo-metric"><span class="ml">Aportado</span><span class="mv">' + f.aportado.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' \u20ac</span></div>';
+    h += '<div class="fondo-metric"><span class="ml">Valor actual</span><span class="mv">' + f.valor_actual.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' \u20ac</span></div>';
+    h += '<div class="fondo-metric"><span class="ml">Rentabilidad</span><span class="mv ' + rentCls + '">' + (f.rentabilidad >= 0 ? '+' : '') + f.rentabilidad.toFixed(2) + '%</span></div>';
+    h += '<div class="fondo-metric"><span class="ml">TER</span><span class="mv">' + f.ter.toFixed(2) + '%</span></div>';
+    if (f.fecha_actualizacion) {
+      h += '<div class="fondo-metric" style="font-size:10px;color:#5a5f6b"><span class="ml">Actualizaci\u00f3n</span><span class="mv">' + f.fecha_actualizacion + '</span></div>';
+    }
+    // Warn if fund name contains ESG
+    if (f.nombre.toUpperCase().indexOf('ESG') >= 0) {
+      h += '<div class="radar-warn">\u26a0 Este fondo replica un \u00edndice ESG, no el \u00edndice puro</div>';
+    }
+    h += '</div>';
+  });
+  h += '</div>';
+  // Radar comparativo
+  if (data.radar) {
+    h += '<button class="radar-toggle" onclick="var t=this.nextElementSibling;t.style.display=t.style.display===\'block\'?\'none\':\'block\';this.textContent=t.style.display===\'block\'?\'Ocultar comparativa\':\'Comparar con alternativas\'">Comparar con alternativas</button>';
+    h += '<div style="display:none">';
+    h += '<table class="radar-table"><thead><tr><th>Fondo</th><th>TER</th><th>Rent. 3a</th><th>R\u00e9plica</th></tr></thead><tbody>';
+    var all = [];
+    data.fondos.forEach(function(f) { all.push({nombre: f.nombre, ter: f.ter, rentabilidad_3a: null, replica: 'propio', esPropio: true}); });
+    if (data.radar.alternativas_sp500) {
+      data.radar.alternativas_sp500.forEach(function(a) { all.push({nombre: a.nombre, ter: a.ter, rentabilidad_3a: a.rentabilidad_3a, replica: a.replica, esPropio: false}); });
+    }
+    if (data.radar.alternativas_msci_world) {
+      data.radar.alternativas_msci_world.forEach(function(a) { all.push({nombre: a.nombre, ter: a.ter, rentabilidad_3a: a.rentabilidad_3a, replica: a.replica, esPropio: false}); });
+    }
+    all.forEach(function(a) {
+      var trCls = a.esPropio ? ' class="tr-own"' : '';
+      var terCls = a.ter > 0.12 ? 'ter-high' : 'ter-low';
+      h += '<tr' + trCls + '><td>' + a.nombre + '</td><td class="' + terCls + '">' + a.ter.toFixed(2) + '%</td><td>' + (a.rentabilidad_3a !== null ? a.rentabilidad_3a.toFixed(2) + '%' : 'N/D') + '</td><td>' + a.replica + '</td></tr>';
+    });
+    h += '</tbody></table>';
+    h += '<div style="font-size:10px;color:#5a5f6b;margin-top:6px">Fila destacada = tu fondo. TER en rojo si es mayor que alternativas.</div>';
+    h += '<div style="font-size:10px;color:#9aa0b0;margin-top:8px;padding:6px 10px;background:#12151f;border-radius:6px;line-height:1.6">';
+    h += '<b>TER</b> — Comisi\u00f3n anual del fondo. Se paga siempre, gane o pierda el mercado.<br>';
+    h += '<b>Rent. 3a</b> — Rendimiento hist\u00f3rico, no garantiza el futuro.<br>';
+    h += '<b>R\u00e9plica</b> — F\u00edsica = compra acciones reales. Sint\u00e9tica = usa derivados, m\u00e1s riesgo oculto.';
+    h += '</div>';
+    h += '</div>';
+  }
+  c.innerHTML = h;
+}
+
+// ========== Cuenta Remunerada ==========
+function renderCuenta(data) {
+  var c = document.getElementById('cuenta-container');
+  if (data.error) {
+    c.innerHTML = '<div class="ew-loading">Cuenta no disponible</div>'; return;
+  }
+  var taePct = (data.tae_actual * 100).toFixed(1) + '%';
+  var h = '<div class="cuenta-card">';
+  h += '<div class="cuenta-sub">Trade Republic</div>';
+  h += '<div class="cuenta-saldo">' + data.saldo_actual.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' \u20ac</div>';
+  h += '<div class="cuenta-row"><span class="ml">TAE actual</span><span class="mv" style="color:#3ecf8e">' + taePct + '</span></div>';
+  h += '<div class="cuenta-row"><span class="ml">Saldo base</span><span class="mv">' + data.saldo_base.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' \u20ac</span></div>';
+  h += '<div class="cuenta-row"><span class="ml">Inter\u00e9s diario</span><span class="mv">' + data.interes_diario.toFixed(2) + ' \u20ac</span></div>';
+  h += '<div class="cuenta-row"><span class="ml">D\u00edas transcurridos</span><span class="mv">' + data.dias_transcurridos + '</span></div>';
+  h += '<div class="cuenta-row"><span class="ml">Intereses generados</span><span class="mv" style="color:#3ecf8e">+' + data.intereses_generados.toFixed(2) + ' \u20ac</span></div>';
+  if (data.nota_tae) {
+    h += '<div style="font-size:10px;color:#5a5f6b;margin-top:8px;padding-top:6px;border-top:1px solid #232638">\u2139\ufe0f ' + data.nota_tae + '</div>';
+  }
+  h += '</div>';
+  c.innerHTML = h;
+}
+
 // ========== Live prices ==========
 function updatePrices(data) {
   if (data.error || !data.prices) { console.warn('[prices] error:', data.error); return; }
@@ -1450,6 +1596,22 @@ function updatePrices(data) {
   if (el) {
     el.textContent = (totalDayVar >= 0 ? '+' : '') + fmt2(totalDayVar) + ' \u20ac';
   }
+  // Update Rendimiento Total KPI (depende de totalPnl que cambia con precios)
+  el = document.querySelector('[data-kpi="rend-total"]');
+  if (el) {
+    var rf = parseFloat(el.getAttribute('data-rend-fondos-eur')) || 0;
+    var rc = parseFloat(el.getAttribute('data-rend-cuenta-eur')) || 0;
+    var aportF = parseFloat(el.getAttribute('data-total-aportado-fondos')) || 0;
+    var baseC = parseFloat(el.getAttribute('data-cuenta-saldo-base')) || 0;
+    var rendTotalEur = totalPnl + rf + rc;
+    var rendTotalCost = totalCost + aportF + baseC;
+    var rendTotalPct = rendTotalCost ? (rendTotalEur / rendTotalCost) * 100 : 0;
+    var eurEl = el.querySelector('[data-kpi-val="rend-total-eur"]');
+    if (eurEl) {
+      eurEl.textContent = (rendTotalEur >= 0 ? '+' : '') + fmt2(rendTotalEur) + ' \u20ac / ' + (rendTotalPct >= 0 ? '+' : '') + fmt2(rendTotalPct) + '%';
+      eurEl.className = 'value ' + (rendTotalEur < 0 ? 'neg' : 'pos');
+    }
+  }
   // Update per-card weight metrics
   cards.forEach(function(card) {
     var tk = card.getAttribute('data-ticker');
@@ -1532,6 +1694,8 @@ document.addEventListener('DOMContentLoaded', function() {
   fetch('/api/alternatives').then(function(r){ return r.json(); }).then(renderAlternatives).catch(function(){ document.getElementById('alternativas-container').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
   fetch('/api/radar').then(function(r){ return r.json(); }).then(renderRadar).catch(function(){ document.getElementById('radar-container').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
   fetch('/api/watchlist').then(function(r){ return r.json(); }).then(renderWatchlist).catch(function(){ document.getElementById('watchlist-container').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
+  fetch('/api/fondos').then(function(r){ return r.json(); }).then(renderFondos).catch(function(){ document.getElementById('fondos-container').innerHTML = '<div class="ew-error">Error al cargar fondos</div>'; });
+  fetch('/api/cuenta-remunerada').then(function(r){ return r.json(); }).then(renderCuenta).catch(function(){ document.getElementById('cuenta-container').innerHTML = '<div class="ew-error">Error al cargar cuenta</div>'; });
   fetch('/api/prices').then(function(r){ return r.json(); }).then(updatePrices).catch(function(){
     var hdr = document.querySelector('.header .date-info');
     if (hdr && !hdr.querySelector('.price-warn')) {

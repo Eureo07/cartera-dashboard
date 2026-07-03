@@ -1,0 +1,13 @@
+{
+  "alternativas_sp500": [
+    {"nombre": "Vanguard U.S. 500 Stock Index Fund", "ter": 0.10, "rentabilidad_3a": 17.89, "replica": "fisica"},
+    {"nombre": "Fidelity S&P 500 Index Fund", "ter": 0.06, "rentabilidad_3a": null, "replica": "fisica"},
+    {"nombre": "iShares US Equity Index Fund (clase S)", "ter": 0.05, "rentabilidad_3a": null, "replica": "fisica"}
+  ],
+  "alternativas_msci_world": [
+    {"nombre": "Fidelity MSCI World Index Fund", "ter": 0.12, "rentabilidad_3a": 16.61, "replica": "fisica"},
+    {"nombre": "iShares Developed World Index Fund", "ter": 0.12, "rentabilidad_3a": 16.67, "replica": "fisica"},
+    {"nombre": "Vanguard Global Stock Index Fund", "ter": 0.18, "rentabilidad_3a": null, "replica": "fisica"}
+  ],
+  "fecha_actualizacion": "2026-07-03"
+}
