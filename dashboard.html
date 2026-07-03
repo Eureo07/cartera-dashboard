@@ -172,9 +172,9 @@ body{font-family:'Segoe UI',-apple-system,Arial,sans-serif}
     <div class="kpi" data-kpi="vs-benchmark" data-bench-start="5984.5098" data-bench-start-date="2026-04-14"><div class="label">vs Euro Stoxx 50</div><div class="value neg" data-kpi-val="vs-benchmark">-6.38%</div><div class="sub" data-kpi-sub="benchmark-ret">Índice +7.15%</div></div>
     <div class="kpi" data-kpi="today"><div class="label">HOY</div><div class="value pos" data-kpi-val="day-pct">+2.01%</div><div class="sub" data-kpi-val="day-eur">+83.72 €</div></div>
     <div class="kpi" data-kpi="historical" data-closed-pnl="923.56" data-closed-cost="7056.89"><div class="label">Rent. Histórica</div><div class="value pos" data-kpi-val="historical-return">+8.53%</div><div class="sub" data-kpi-val="historical-pnl">+955.66 € / 11,199 € invertidos</div></div>
-    <div class="kpi" data-kpi="rend-fondos" data-rend-fondos-eur="-0.11" data-total-aportado-fondos="941.12"><div class="label">Rendimiento Fondos</div><div class="value neg" data-kpi-val="rend-fondos-pct">-0.01%</div><div class="sub">-0.11 € · Fondos indexados</div></div>
-    <div class="kpi" data-kpi="rend-cuenta" data-rend-cuenta-eur="0.00" data-tae="0.03"><div class="label">Rendimiento Cuenta</div><div class="value pos" data-kpi-val="rend-cuenta-eur">+0.00 €</div><div class="sub">Cuenta remunerada, TAE 3%</div></div>
-    <div class="kpi" data-kpi="rend-total" data-rend-fondos-eur="-0.11" data-rend-cuenta-eur="0.00" data-total-aportado-fondos="941.12" data-cuenta-saldo-base="30089.33"><div class="label">Rendimiento Total</div><div class="value" data-kpi-val="rend-total-eur">—</div><div class="sub">Cartera + Fondos + Cuenta</div></div>
+    <div class="kpi" data-kpi="rend-fondos" data-rend-fondos-eur="-0.11" data-total-aportado-fondos="941.12"><div class="label">Rendimiento Fondos</div><div class="value neg" data-kpi-val="rend-fondos-eur">-0.11 € / -0.01%</div><div class="sub">Fondos indexados</div></div>
+    <div class="kpi" data-kpi="rend-cuenta" data-rend-cuenta-eur="89.33" data-rend-cuenta-pct="0.30" data-tae="3.0"><div class="label">Rendimiento Cuenta</div><div class="value pos" data-kpi-val="rend-cuenta-eur">+89.33 € (+0.30%)</div><div class="sub">Cuenta remunerada, TAE 3%</div></div>
+    <div class="kpi" data-kpi="rend-total" data-rend-fondos-eur="-0.11" data-rend-cuenta-eur="89.33" data-total-aportado-fondos="941.12" data-saldo-cuenta="30089.33"><div class="label">Rendimiento Total</div><div class="value" data-kpi-val="rend-total-eur">—</div><div class="sub">Cartera + Fondos + Cuenta</div></div>
   </div>
 
   <div class="section-title">Análisis por posición</div>
@@ -771,18 +771,21 @@ function renderCuenta(data) {
   if (data.error) {
     c.innerHTML = '<div class="ew-loading">Cuenta no disponible</div>'; return;
   }
-  var taePct = (data.tae_actual * 100).toFixed(1) + '%';
+  var taePct = data.tae_actual.toFixed(0) + '%';
+  var saldoLabel = data.saldo_desactualizado
+    ? 'Saldo a ' + data.fecha_ultima_actualizacion
+    : 'Saldo actual';
+  var notaAntiguedad = data.saldo_desactualizado
+    ? '<div style="font-size:10px;color:#f0a500;margin-bottom:4px">⚠ Último saldo conocido: ' + data.fecha_ultima_actualizacion + '</div>'
+    : '<div style="font-size:10px;color:#3ecf8e;margin-bottom:4px">✔ Actualizado hoy</div>';
   var h = '<div class="cuenta-card">';
-  h += '<div class="cuenta-sub">Trade Republic</div>';
+  h += '<div class="cuenta-sub">' + (data.entidad || 'Cuenta Remunerada') + '</div>';
+  h += notaAntiguedad;
   h += '<div class="cuenta-saldo">' + data.saldo_actual.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' €</div>';
-  h += '<div class="cuenta-row"><span class="ml">TAE actual</span><span class="mv" style="color:#3ecf8e">' + taePct + '</span></div>';
-  h += '<div class="cuenta-row"><span class="ml">Saldo base</span><span class="mv">' + data.saldo_base.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' €</span></div>';
-  h += '<div class="cuenta-row"><span class="ml">Interés diario</span><span class="mv">' + data.interes_diario.toFixed(2) + ' €</span></div>';
-  h += '<div class="cuenta-row"><span class="ml">Días transcurridos</span><span class="mv">' + data.dias_transcurridos + '</span></div>';
-  h += '<div class="cuenta-row"><span class="ml">Intereses generados</span><span class="mv" style="color:#3ecf8e">+' + data.intereses_generados.toFixed(2) + ' €</span></div>';
-  if (data.nota_tae) {
-    h += '<div style="font-size:10px;color:#5a5f6b;margin-top:8px;padding-top:6px;border-top:1px solid #232638">ℹ️ ' + data.nota_tae + '</div>';
-  }
+  h += '<div class="cuenta-row"><span class="ml">TAE</span><span class="mv" style="color:#3ecf8e">' + taePct + '</span></div>';
+  h += '<div class="cuenta-row"><span class="ml">Interés diario est.</span><span class="mv">' + data.interes_diario_estimado.toFixed(2) + ' €</span></div>';
+  h += '<div class="cuenta-row"><span class="ml">Intereses acumulados</span><span class="mv" style="color:#3ecf8e">+' + data.intereses_acumulados_periodo.toFixed(2) + ' €</span></div>';
+  h += '<div class="cuenta-row"><span class="ml">Tracking desde</span><span class="mv">' + data.fecha_inicio_tracking + '</span></div>';
   h += '</div>';
   c.innerHTML = h;
 }
@@ -905,7 +908,8 @@ function updatePrices(data) {
     var rf = parseFloat(el.getAttribute('data-rend-fondos-eur')) || 0;
     var rc = parseFloat(el.getAttribute('data-rend-cuenta-eur')) || 0;
     var aportF = parseFloat(el.getAttribute('data-total-aportado-fondos')) || 0;
-    var baseC = parseFloat(el.getAttribute('data-cuenta-saldo-base')) || 0;
+    var saldoCta = parseFloat(el.getAttribute('data-saldo-cuenta')) || 0;
+    var baseC = saldoCta - rc;  // saldo sin intereses acumulados
     var rendTotalEur = totalPnl + rf + rc;
     var rendTotalCost = totalCost + aportF + baseC;
     var rendTotalPct = rendTotalCost ? (rendTotalEur / rendTotalCost) * 100 : 0;

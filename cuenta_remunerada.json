@@ -1,7 +1,10 @@
 {
-  "saldo_base": 30089.33,
-  "fecha_saldo_base": "2026-07-03",
-  "tae_actual": 0.03,
-  "interes_diario": 2.47,
-  "nota_tae": "3% promocional durante 3 meses desde apertura, luego baja a 2%. Actualizar manualmente cuando Fran avise del cambio."
+  "entidad": "Trade Republic",
+  "saldo_actual": 30089.33,
+  "tae_actual": 3.0,
+  "historico_saldos": [
+    {"fecha": "2026-07-03", "saldo": 30089.33}
+  ],
+  "intereses_acumulados_periodo": 89.33,
+  "fecha_inicio_tracking": "2026-07-03"
 }

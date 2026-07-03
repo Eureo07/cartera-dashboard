@@ -236,13 +236,6 @@ def regenerate():
             print(f"[regenerate] EXCEPTION: {e}")
     threading.Thread(target=task, daemon=True).start()
 
-# ========== CUENTA REMUNERADA ==========
-def _calcular_saldo_cuenta(data):
-    from datetime import date
-    fecha_base = date.fromisoformat(data["fecha_saldo_base"])
-    dias = (date.today() - fecha_base).days
-    return round(data["saldo_base"] + data["interes_diario"] * dias, 2)
-
 class DashboardHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIR, **kwargs)
@@ -644,31 +637,38 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         return result
 
     def _compute_cuenta_remunerada(self):
-        """Lee cuenta_remunerada.json y extrapola saldo."""
-        import importlib
-        result = {"error": True, "msg": "No data"}
+        """Lee cuenta_remunerada.json, último saldo conocido con fallback, interés diario estimado."""
+        from datetime import date
         try:
             path = os.path.join(DIR, "cuenta_remunerada.json")
-            if os.path.exists(path):
-                with open(path, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                saldo = _calcular_saldo_cuenta(data)
-                from datetime import date
-                fecha_base = date.fromisoformat(data["fecha_saldo_base"])
-                dias = (date.today() - fecha_base).days
-                result = {
-                    "saldo_actual": saldo,
-                    "saldo_base": data["saldo_base"],
-                    "fecha_saldo_base": data["fecha_saldo_base"],
-                    "tae_actual": data["tae_actual"],
-                    "interes_diario": data["interes_diario"],
-                    "dias_transcurridos": dias,
-                    "intereses_generados": round(data["interes_diario"] * dias, 2),
-                    "nota_tae": data.get("nota_tae", ""),
-                }
+            if not os.path.exists(path):
+                return {"error": True, "msg": "JSON no encontrado"}
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            # Último saldo conocido con fallback
+            hoy = date.today()
+            ultimo = max(data["historico_saldos"], key=lambda x: x["fecha"])
+            ultima_fecha = date.fromisoformat(ultimo["fecha"])
+            saldo_actual = ultimo["saldo"]
+            saldo_desactualizado = ultima_fecha < hoy
+            # Interés diario estimado (solo informativo, no alimenta KPI)
+            interes_diario = round(saldo_actual * (data["tae_actual"] / 100) / 365, 2)
+            fecha_str = ultima_fecha.strftime("%d/%m/%Y")
+            result = {
+                "entidad": data.get("entidad", ""),
+                "saldo_actual": saldo_actual,
+                "saldo_desactualizado": saldo_desactualizado,
+                "fecha_ultima_actualizacion": fecha_str,
+                "fecha_ultima_actualizacion_iso": ultimo["fecha"],
+                "tae_actual": data["tae_actual"],
+                "interes_diario_estimado": interes_diario,
+                "intereses_acumulados_periodo": data.get("intereses_acumulados_periodo", 0),
+                "fecha_inicio_tracking": data.get("fecha_inicio_tracking", ""),
+                "historico_saldos": data.get("historico_saldos", []),
+            }
+            return result
         except Exception as e:
             return {"error": True, "msg": str(e)}
-        return result
 
     def _compute_prices(self):
         try:
