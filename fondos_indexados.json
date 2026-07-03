@@ -1,20 +1,20 @@
 {
   "fondos": [
     {
-      "nombre": "PLACEHOLDER — MyInvestor S&P 500",
-      "isin": "ES0123456001",
-      "aportado": 0,
-      "valor_actual": 0,
+      "nombre": "Amundi S&P 500 Index Fund",
+      "isin": "LU1681048804",
+      "aportado": 549.79,
+      "valor_actual": 587.71,
       "fecha_actualizacion": "2026-07-03",
-      "ter": 0.0
+      "ter": 0.06
     },
     {
-      "nombre": "PLACEHOLDER — ETF Oro",
-      "isin": "ES0123456002",
-      "aportado": 0,
-      "valor_actual": 0,
+      "nombre": "iShares Physical Gold ETC",
+      "isin": "IE00B4ND3602",
+      "aportado": 391.33,
+      "valor_actual": 353.3,
       "fecha_actualizacion": "2026-07-03",
-      "ter": 0.0
+      "ter": 0.12
     }
   ]
 }
