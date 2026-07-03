@@ -767,7 +767,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
   </div>
 
   <div class="kpi-row" id="kpi-row">
-    <div class="kpi" data-kpi="total-cost"><div class="label">Inversi\u00f3n Total</div><div class="value" data-kpi-val="total-cost">{total_cost:,.0f} \u20ac</div></div>
+    <div class="kpi" data-kpi="total-cost"><div class="label">Inversi\u00f3n Activa</div><div class="value" data-kpi-val="total-cost">{total_cost:,.0f} \u20ac</div></div>
     <div class="kpi" data-kpi="total-value"><div class="label">Valor Actual</div><div class="value {"neg" if total_pnl < 0 else "pos"}" data-kpi-val="total-value">{total_value:,.0f} \u20ac</div></div>
     <div class="kpi" data-kpi="total-pnl"><div class="label">Resultado Activo</div><div class="value {"neg" if total_pnl < 0 else "pos"}" data-kpi-val="total-pnl">{total_pnl:+,.2f} \u20ac</div></div>
     <div class="kpi" data-kpi="total-pnl-pct"><div class="label">Rentabilidad Activa</div><div class="value {"neg" if total_pnl_pct < 0 else "pos"}" data-kpi-val="total-pnl-pct">{total_pnl_pct:+.2f}%</div><div class="sub">Cartera</div></div>
@@ -1477,6 +1477,32 @@ function updatePrices(data) {
       el.className = 'value ' + (vs < 0 ? 'neg' : 'pos');
       if (benchSub) benchSub.textContent = '\u00cdndice ' + (benchRet >= 0 ? '+' : '') + benchRet.toFixed(2) + '%';
     }
+  }
+
+  // Update historial table active rows
+  var histRows = document.querySelectorAll('.hist-table tbody tr:not(.closed)');
+  if (histRows.length) {
+    histRows.forEach(function(row) {
+      var cells = row.querySelectorAll('td');
+      if (cells.length < 12) return;
+      var tk = cells[3].textContent.trim();
+      var shares = parseFloat(cells[4].textContent.trim().replace(/,/g, ''));
+      var entry = parseFloat(cells[5].textContent.trim().replace(/,/g, ''));
+      var invest = parseFloat(cells[6].textContent.trim().replace(/,/g, ''));
+      var pd = data.prices[tk];
+      if (!pd || pd.current == null) { anyFail = true; return; }
+      var cur = pd.current;
+      var pnl = (cur * shares) - invest;
+      var pnlPct = invest ? (pnl / invest) * 100 : 0;
+      var isNeg = pnl < 0;
+      var color = isNeg ? '#e05050' : '#3ecf8e';
+      cells[9].textContent = cur.toFixed(2);
+      cells[9].style.color = color;
+      cells[10].textContent = (pnl >= 0 ? '+' : '') + pnl.toFixed(2);
+      cells[10].style.color = color;
+      cells[11].textContent = (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%';
+      cells[11].style.color = color;
+    });
   }
 
   if (anyFail) {
