@@ -834,8 +834,8 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="kpi" data-kpi="vs-benchmark" data-bench-start="{bench_start_px:.4f}" data-bench-start-date="{bench_start}"><div class="label">vs Euro Stoxx 50</div><div class="value {"neg" if benchmark_return is not None and (total_pnl_pct - benchmark_return) < 0 else "pos"}" data-kpi-val="vs-benchmark">{("" if benchmark_return is None else f"{(total_pnl_pct - benchmark_return):+.2f}%")}</div><div class="sub" data-kpi-sub="benchmark-ret">{f"\u00cdndice {benchmark_return:+.2f}%" if benchmark_return is not None else "N/D"}</div></div>
     {"<div class=\"kpi\" data-kpi=\"today\"><div class=\"label\">HOY</div><div class=\"value " + ("pos" if day_var_total >= 0 else "neg") + "\" data-kpi-val=\"day-pct\">" + (f"{day_var_pct:+.2f}%" if day_var_pct is not None else "\u2014") + "</div><div class=\"sub\" data-kpi-val=\"day-eur\">" + (f"{day_var_total:+,.2f} \u20ac" if day_var_total is not None else "\u2014") + "</div></div>" if day_var_pct is not None else ""}
     <div class="kpi" data-kpi="historical" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rent. Hist\u00f3rica</div><div class="value {"neg" if historical_pnl < 0 else "pos"}" data-kpi-val="historical-return">{historical_return:+.2f}%</div><div class="sub" data-kpi-val="historical-pnl">{historical_pnl:+,.2f} \u20ac / {historical_cost:,.0f} \u20ac invertidos</div></div>
-    <div class="kpi" data-kpi="rend-fondos" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}"><div class="label">Rendimiento Fondos</div><div class="value {"neg" if rend_fondos_eur < 0 else "pos"}" data-kpi-val="rend-fondos-eur">{"{:+,.2f} \u20ac / {:+.2f}%".format(rend_fondos_eur, rend_fondos_pct) if rend_fondos_pct is not None else "\u2014"}</div><div class="sub">Fondos indexados</div></div>
-    <div class="kpi" data-kpi="rend-cuenta" data-rend-cuenta-eur="{rend_cuenta_eur:.2f}" data-rend-cuenta-pct="{rend_cuenta_pct:.2f}" data-tae="{cuenta_tae}"><div class="label">Rendimiento Cuenta</div><div class="value {"neg" if rend_cuenta_eur < 0 else "pos"}" data-kpi-val="rend-cuenta-eur">{"{:+,.2f} \u20ac ({:+,.2f}%)".format(rend_cuenta_eur, rend_cuenta_pct) if cuenta_saldo else "\u2014"}</div><div class="sub">Cuenta remunerada, TAE {cuenta_tae:.0f}%</div></div>
+    <div class="kpi" data-kpi="rend-fondos" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}"><div class="label">Rendimiento Fondos</div><div class="value {"neg" if rend_fondos_pct is not None and rend_fondos_pct < 0 else "pos"}" data-kpi-val="rend-fondos-pct">{"{:+.2f}%".format(rend_fondos_pct) if rend_fondos_pct is not None else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / {:,.2f} \u20ac aportados".format(rend_fondos_eur, total_aportado_fondos) if rend_fondos_pct is not None else "\u2014"}</div></div>
+    <div class="kpi" data-kpi="rend-cuenta" data-rend-cuenta-eur="{rend_cuenta_eur:.2f}" data-rend-cuenta-pct="{rend_cuenta_pct:.2f}" data-tae="{cuenta_tae}"><div class="label">Rendimiento Cuenta</div><div class="value {"neg" if rend_cuenta_pct is not None and rend_cuenta_pct < 0 else "pos"}" data-kpi-val="rend-cuenta-pct">{"{:+,.2f}%".format(rend_cuenta_pct) if cuenta_saldo else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / saldo {:,.2f} \u20ac".format(rend_cuenta_eur, cuenta_saldo) if cuenta_saldo else "\u2014"}, TAE {cuenta_tae:.0f}%</div></div>
     <div class="kpi" data-kpi="rend-total" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-rend-cuenta-eur="{rend_cuenta_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}" data-saldo-cuenta="{cuenta_saldo:.2f}"><div class="label">Rendimiento Total</div><div class="value" data-kpi-val="rend-total-eur">\u2014</div><div class="sub">Cartera + Fondos + Cuenta</div></div>
   </div>
 
@@ -1467,7 +1467,7 @@ function renderFondos(data) {
   h += '</div>';
   // Radar comparativo
   if (data.radar) {
-    h += '<button class="radar-toggle" onclick="var t=this.nextElementSibling;t.style.display=t.style.display===\'block\'?\'none\':\'block\';this.textContent=t.style.display===\'block\'?\'Ocultar comparativa\':\'Comparar con alternativas\'">Comparar con alternativas</button>';
+    h += '<button class="radar-toggle" onclick="var t=this.nextElementSibling;t.style.display=t.style.display===&quot;block&quot;?&quot;none&quot;:&quot;block&quot;;this.textContent=t.style.display===&quot;block&quot;?&quot;Ocultar comparativa&quot;:&quot;Comparar con alternativas&quot;">Comparar con alternativas</button>';
     h += '<div style="display:none">';
     h += '<table class="radar-table"><thead><tr><th>Fondo</th><th>TER</th><th>Rent. 3a</th><th>R\u00e9plica</th></tr></thead><tbody>';
     var all = [];
@@ -1645,7 +1645,7 @@ function updatePrices(data) {
     var rendTotalPct = rendTotalCost ? (rendTotalEur / rendTotalCost) * 100 : 0;
     var eurEl = el.querySelector('[data-kpi-val="rend-total-eur"]');
     if (eurEl) {
-      eurEl.textContent = (rendTotalEur >= 0 ? '+' : '') + fmt2(rendTotalEur) + ' \u20ac / ' + (rendTotalPct >= 0 ? '+' : '') + fmt2(rendTotalPct) + '%';
+      eurEl.textContent = (rendTotalPct >= 0 ? '+' : '') + fmt2(rendTotalPct) + '% / ' + (rendTotalEur >= 0 ? '+' : '') + fmt2(rendTotalEur) + ' \u20ac';
       eurEl.className = 'value ' + (rendTotalEur < 0 ? 'neg' : 'pos');
     }
   }
