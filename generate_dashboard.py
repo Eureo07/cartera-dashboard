@@ -836,7 +836,8 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="kpi" data-kpi="historical" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rent. Hist\u00f3rica</div><div class="value {"neg" if historical_pnl < 0 else "pos"}" data-kpi-val="historical-return">{historical_return:+.2f}%</div><div class="sub" data-kpi-val="historical-pnl">{historical_pnl:+,.2f} \u20ac / {historical_cost:,.0f} \u20ac invertidos</div></div>
     <div class="kpi" data-kpi="rend-fondos" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}"><div class="label">Rendimiento Fondos</div><div class="value {"neg" if rend_fondos_pct is not None and rend_fondos_pct < 0 else "pos"}" data-kpi-val="rend-fondos-pct">{"{:+.2f}%".format(rend_fondos_pct) if rend_fondos_pct is not None else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / {:,.2f} \u20ac aportados".format(rend_fondos_eur, total_aportado_fondos) if rend_fondos_pct is not None else "\u2014"}</div></div>
     <div class="kpi" data-kpi="rend-cuenta" data-rend-cuenta-eur="{rend_cuenta_eur:.2f}" data-rend-cuenta-pct="{rend_cuenta_pct:.2f}" data-tae="{cuenta_tae}"><div class="label">Rendimiento Cuenta</div><div class="value {"neg" if rend_cuenta_pct is not None and rend_cuenta_pct < 0 else "pos"}" data-kpi-val="rend-cuenta-pct">{"{:+,.2f}%".format(rend_cuenta_pct) if cuenta_saldo else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / saldo {:,.2f} \u20ac".format(rend_cuenta_eur, cuenta_saldo) if cuenta_saldo else "\u2014"}, TAE {cuenta_tae:.0f}%</div></div>
-    <div class="kpi" data-kpi="rend-total" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-rend-cuenta-eur="{rend_cuenta_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}" data-saldo-cuenta="{cuenta_saldo:.2f}"><div class="label">Rendimiento Total</div><div class="value" data-kpi-val="rend-total-eur">\u2014</div><div class="sub">Cartera + Fondos + Cuenta</div></div>
+    <div class="kpi" data-kpi="rend-total-risk" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-rend-cuenta-eur="{rend_cuenta_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}" data-saldo-cuenta="{cuenta_saldo:.2f}" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rendimiento Total (con riesgo)</div><div class="value" data-kpi-val="rend-total-risk-pct">\u2014</div><div class="sub" data-kpi-val="rend-total-risk-sub">\u2014</div></div>
+    <div class="kpi" data-kpi="rend-total-norisk" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-rend-cuenta-eur="{rend_cuenta_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}" data-saldo-cuenta="{cuenta_saldo:.2f}" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rendimiento Total (sin riesgo)</div><div class="value" data-kpi-val="rend-total-norisk-pct">\u2014</div><div class="sub" data-kpi-val="rend-total-norisk-sub">\u2014</div></div>
   </div>
 
   <div class="section-title">An\u00e1lisis por posici\u00f3n</div>
@@ -1633,20 +1634,46 @@ function updatePrices(data) {
     el.textContent = (totalDayVar >= 0 ? '+' : '') + fmt2(totalDayVar) + ' \u20ac';
   }
   // Update Rendimiento Total KPI (depende de totalPnl que cambia con precios)
-  el = document.querySelector('[data-kpi="rend-total"]');
+  // Read common fondos/cuenta values from any rend-total card
+  var rtCard = document.querySelector('[data-kpi^="rend-total-"]');
+  var rf = rtCard ? parseFloat(rtCard.getAttribute('data-rend-fondos-eur')) || 0 : 0;
+  var rc = rtCard ? parseFloat(rtCard.getAttribute('data-rend-cuenta-eur')) || 0 : 0;
+  var aportF = rtCard ? parseFloat(rtCard.getAttribute('data-total-aportado-fondos')) || 0 : 0;
+  var saldoCta = rtCard ? parseFloat(rtCard.getAttribute('data-saldo-cuenta')) || 0 : 0;
+  var baseC = saldoCta - rc;
+  // Rendimiento Total CON riesgo (cartera + fondos, SIN cuenta remunerada)
+  el = document.querySelector('[data-kpi="rend-total-risk"]');
   if (el) {
-    var rf = parseFloat(el.getAttribute('data-rend-fondos-eur')) || 0;
-    var rc = parseFloat(el.getAttribute('data-rend-cuenta-eur')) || 0;
-    var aportF = parseFloat(el.getAttribute('data-total-aportado-fondos')) || 0;
-    var saldoCta = parseFloat(el.getAttribute('data-saldo-cuenta')) || 0;
-    var baseC = saldoCta - rc;  // saldo sin intereses acumulados
-    var rendTotalEur = totalPnl + rf + rc;
-    var rendTotalCost = totalCost + aportF + baseC;
-    var rendTotalPct = rendTotalCost ? (rendTotalEur / rendTotalCost) * 100 : 0;
-    var eurEl = el.querySelector('[data-kpi-val="rend-total-eur"]');
-    if (eurEl) {
-      eurEl.textContent = (rendTotalPct >= 0 ? '+' : '') + fmt2(rendTotalPct) + '% / ' + (rendTotalEur >= 0 ? '+' : '') + fmt2(rendTotalEur) + ' \u20ac';
-      eurEl.className = 'value ' + (rendTotalEur < 0 ? 'neg' : 'pos');
+    var cPnl = parseFloat(el.getAttribute('data-closed-pnl')) || 0;
+    var cCost = parseFloat(el.getAttribute('data-closed-cost')) || 0;
+    var rteur = (totalPnl + cPnl) + rf;
+    var rtcost = (totalCost + cCost) + aportF;
+    var rtpct = rtcost ? (rteur / rtcost) * 100 : 0;
+    var pctEl = el.querySelector('[data-kpi-val="rend-total-risk-pct"]');
+    if (pctEl) {
+      pctEl.textContent = (rtpct >= 0 ? '+' : '') + fmt2(rtpct) + '%';
+      pctEl.className = 'value ' + (rteur < 0 ? 'neg' : 'pos');
+    }
+    var subEl = el.querySelector('[data-kpi-val="rend-total-risk-sub"]');
+    if (subEl) {
+      subEl.textContent = (rteur >= 0 ? '+' : '') + fmt2(rteur) + ' \u20ac / ' + fmt(rtcost) + ' \u20ac invertidos';
+    }
+  }
+  // Rendimiento Total SIN riesgo (todo el patrimonio, CON cuenta remunerada)
+  el = document.querySelector('[data-kpi="rend-total-norisk"]');
+  if (el) {
+    var cPnl2 = parseFloat(el.getAttribute('data-closed-pnl')) || 0;
+    var cCost2 = parseFloat(el.getAttribute('data-closed-cost')) || 0;
+    var rteur2 = (totalPnl + cPnl2) + rf + rc;
+    var rtcost2 = (totalCost + cCost2) + aportF + baseC;
+    var pctEl2 = el.querySelector('[data-kpi-val="rend-total-norisk-pct"]');
+    if (pctEl2) {
+      pctEl2.textContent = (rtpct2 >= 0 ? '+' : '') + fmt2(rtpct2) + '%';
+      pctEl2.className = 'value ' + (rteur2 < 0 ? 'neg' : 'pos');
+    }
+    var subEl2 = el.querySelector('[data-kpi-val="rend-total-norisk-sub"]');
+    if (subEl2) {
+      subEl2.textContent = (rteur2 >= 0 ? '+' : '') + fmt2(rteur2) + ' \u20ac / ' + fmt(rtcost2) + ' \u20ac invertidos';
     }
   }
   // Update per-card weight metrics
