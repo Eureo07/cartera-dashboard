@@ -836,7 +836,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="kpi" data-kpi="historical" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rent. Hist\u00f3rica Acciones</div><div class="value {"neg" if historical_pnl < 0 else "pos"}" data-kpi-val="historical-return">{historical_return:+.2f}%</div><div class="sub" data-kpi-val="historical-pnl">{historical_pnl:+,.2f} \u20ac / {historical_cost:,.0f} \u20ac invertidos</div></div>
     <div class="kpi" data-kpi="rend-fondos" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}"><div class="label">Rendimiento Fondos</div><div class="value {"neg" if rend_fondos_pct is not None and rend_fondos_pct < 0 else "pos"}" data-kpi-val="rend-fondos-pct">{"{:+.2f}%".format(rend_fondos_pct) if rend_fondos_pct is not None else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / {:,.2f} \u20ac aportados".format(rend_fondos_eur, total_aportado_fondos) if rend_fondos_pct is not None else "\u2014"}</div></div>
     <div class="kpi" data-kpi="rend-cuenta" data-rend-cuenta-eur="{rend_cuenta_eur:.2f}" data-rend-cuenta-pct="{rend_cuenta_pct:.2f}" data-tae="{cuenta_tae}"><div class="label">Rendimiento Cuenta</div><div class="value {"neg" if rend_cuenta_pct is not None and rend_cuenta_pct < 0 else "pos"}" data-kpi-val="rend-cuenta-pct">{"{:+,.2f}%".format(rend_cuenta_pct) if cuenta_saldo else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / saldo {:,.2f} \u20ac".format(rend_cuenta_eur, cuenta_saldo) if cuenta_saldo else "\u2014"}, TAE {cuenta_tae:.0f}%</div></div>
-    <div class="kpi" data-kpi="rend-total-risk" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-rend-cuenta-eur="{rend_cuenta_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}" data-saldo-cuenta="{cuenta_saldo:.2f}" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rendimiento Total (con riesgo)</div><div class="value" data-kpi-val="rend-total-risk-pct">\u2014</div><div class="sub" data-kpi-val="rend-total-risk-sub">\u2014</div></div>
+    <div class="kpi" data-kpi="rend-total-risk" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rendimiento Total (con riesgo)</div><div class="value" data-kpi-val="rend-total-risk-pct">\u2014</div><div class="sub" data-kpi-val="rend-total-risk-sub">\u2014</div></div>
   </div>
 
   <div class="section-title">An\u00e1lisis por posici\u00f3n</div>
@@ -1633,18 +1633,15 @@ function updatePrices(data) {
     el.textContent = (totalDayVar >= 0 ? '+' : '') + fmt2(totalDayVar) + ' \u20ac';
   }
   // Update Rendimiento Total KPI (depende de totalPnl que cambia con precios)
-  // Rendimiento Total CON riesgo (acciones + fondos + cuenta remunerada)
+  // Rendimiento Total CON riesgo (acciones + fondos, sin cuenta)
   el = document.querySelector('[data-kpi="rend-total-risk"]');
   if (el) {
     var rf = parseFloat(el.getAttribute('data-rend-fondos-eur')) || 0;
-    var rc = parseFloat(el.getAttribute('data-rend-cuenta-eur')) || 0;
     var aportF = parseFloat(el.getAttribute('data-total-aportado-fondos')) || 0;
-    var saldoCta = parseFloat(el.getAttribute('data-saldo-cuenta')) || 0;
     var cPnl = parseFloat(el.getAttribute('data-closed-pnl')) || 0;
     var cCost = parseFloat(el.getAttribute('data-closed-cost')) || 0;
-    var baseC = saldoCta - rc;
-    var rteur = (totalPnl + cPnl) + rf + rc;
-    var rtcost = (totalCost + cCost) + aportF + baseC;
+    var rteur = (totalPnl + cPnl) + rf;
+    var rtcost = (totalCost + cCost) + aportF;
     var rtpct = rtcost ? (rteur / rtcost) * 100 : 0;
     var pctEl = el.querySelector('[data-kpi-val="rend-total-risk-pct"]');
     if (pctEl) {
