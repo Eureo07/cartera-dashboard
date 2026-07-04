@@ -1414,19 +1414,51 @@ function renderFondos(data) {
     c.innerHTML = '<div class="ew-loading">Sin fondos registrados</div>'; return;
   }
   var h = '<div class="fondos-grid">';
-  data.fondos.forEach(function(f) {
+  data.fondos.forEach(function(f, idx) {
     var cls = 'fondo-card';
     var rentCls = f.rentabilidad >= 0 ? 'pos' : 'neg';
+    // Badge tipo
+    var tipoBadge = f.tipo === 'etf'
+      ? '<span class="badge-tu" style="margin-left:6px;font-size:10px">ETF</span>'
+      : '<span class="badge-alt" style="margin-left:6px;font-size:10px">Fondo</span>';
+    // Badge frescura
+    var hoy = new Date();
+    var hoyStr = hoy.getFullYear() + '-' + String(hoy.getMonth()+1).padStart(2,'0') + '-' + String(hoy.getDate()).padStart(2,'0');
+    var esHoy = f.fecha_actualizacion >= hoyStr;
+    var freshBadge = esHoy
+      ? '<span class="ew-badge ew-badge-ok" style="font-size:10px;margin-left:6px">Actualizado hoy</span>'
+      : '<span class="ew-badge ew-badge-alerta" style="font-size:10px;margin-left:6px">\u00daltimo cierre: ' + f.fecha_actualizacion + '</span>';
     h += '<div class="' + cls + '">';
-    h += '<div class="fondo-header"><div><div class="fondo-nombre">' + f.nombre + '</div><div class="fondo-isin">' + f.isin + '</div></div></div>';
+    h += '<div class="fondo-header"><div><div class="fondo-nombre">' + f.nombre + tipoBadge + freshBadge + '</div><div class="fondo-isin">' + f.isin + '</div></div></div>';
     h += '<div class="fondo-metric"><span class="ml">Aportado</span><span class="mv">' + f.aportado.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' \u20ac</span></div>';
     h += '<div class="fondo-metric"><span class="ml">Valor actual</span><span class="mv">' + f.valor_actual.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' \u20ac</span></div>';
     h += '<div class="fondo-metric"><span class="ml">Rentabilidad</span><span class="mv ' + rentCls + '">' + (f.rentabilidad >= 0 ? '+' : '') + f.rentabilidad.toFixed(2) + '%</span></div>';
     h += '<div class="fondo-metric"><span class="ml">TER</span><span class="mv">' + f.ter.toFixed(2) + '%</span></div>';
-    if (f.fecha_actualizacion) {
-      h += '<div class="fondo-metric" style="font-size:10px;color:#5a5f6b"><span class="ml">Actualizaci\u00f3n</span><span class="mv">' + f.fecha_actualizacion + '</span></div>';
+    // Grafica evolucion si hay historico
+    if (f.historico_prices && f.historico_prices.length > 1) {
+      var cid = 'fondoChart_' + idx;
+      h += '<div style="position:relative;height:140px;margin-top:10px"><canvas id="' + cid + '"></canvas></div>';
+      setTimeout(function() {
+        var hist = f.historico_prices;
+        var labels = hist.map(function(h) { return h.fecha.slice(5); });
+        var prices = hist.map(function(h) { return h.precio; });
+        new Chart(document.getElementById(cid), {
+          type:'line',
+          data:{labels:labels, datasets:[{
+            label:f.nombre, data:prices,
+            borderColor:'#2a78d6', backgroundColor:'rgba(42,120,214,0.1)',
+            borderWidth:2, fill:true, pointRadius:0, tension:0.1
+          }]},
+          options:{
+            responsive:true, maintainAspectRatio:false,
+            plugins:{legend:{display:false}, tooltip:{mode:'index', intersect:false}},
+            scales:{x:{ticks:{color:'#5a5f6b', font:{size:9}}, grid:{color:'#1a1d2e'}},
+                    y:{ticks:{color:'#5a5f6b', font:{size:9}}, grid:{color:'#1a1d2e'}}}
+          }
+        });
+      }, 100);
     }
-    // Warn if fund name contains ESG
+    // Warn ESG
     if (f.nombre.toUpperCase().indexOf('ESG') >= 0) {
       h += '<div class="radar-warn">\u26a0 Este fondo replica un \u00edndice ESG, no el \u00edndice puro</div>';
     }

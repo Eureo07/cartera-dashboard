@@ -1,20 +1,28 @@
 {
   "fondos": [
     {
-      "nombre": "Amundi S&P 500 Index Fund",
-      "isin": "LU1681048804",
+      "nombre": "Amundi Index S&P 500 IHE ACC EURH",
+      "isin": "LU0996178371",
+      "tipo": "fondo_no_cotizado",
+      "ticker": null,
       "aportado": 549.79,
+      "participaciones": 0.15646,
       "valor_actual": 587.71,
       "fecha_actualizacion": "2026-07-03",
-      "ter": 0.06
+      "ter": 0.06,
+      "historico_prices": []
     },
     {
       "nombre": "iShares Physical Gold ETC",
       "isin": "IE00B4ND3602",
+      "tipo": "etf",
+      "ticker": "PPFB.DE",
       "aportado": 391.33,
-      "valor_actual": 353.3,
+      "participaciones": 5,
+      "valor_actual": 353.30,
       "fecha_actualizacion": "2026-07-03",
-      "ter": 0.12
+      "ter": 0.12,
+      "historico_prices": []
     }
   ]
 }

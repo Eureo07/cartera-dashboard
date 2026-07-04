@@ -24,6 +24,12 @@ if _PROJ_DIR not in sys.path:
 from config_loader import CFG
 import time as _ytime
 
+try:
+    from bs4 import BeautifulSoup
+    _HAS_BS4 = True
+except ImportError:
+    _HAS_BS4 = False
+
 # ========== FMP API ==========
 FMP_API_KEY = os.getenv("FMP_API_KEY", "")
 _FMP_CACHE = {}  # {"ticker_field": {"value": ..., "updated": "iso"}}
@@ -176,6 +182,48 @@ _PRICES_TTL = 120  # 2 min
 
 _WL_CACHE = {"data": None, "updated": None}
 _WL_TTL = 300  # 5 min
+
+def parsear_nav_espanol(nav_str):
+    """Convierte valor liquidativo en formato espanol a float.
+    '3.763,430000 EUR' -> 3763.43"""
+    if not nav_str or not isinstance(nav_str, str):
+        return None
+    limpio = nav_str.strip()
+    limpio = re.sub(r'\s*(EUR|€|USD|GBP)\s*$', '', limpio, flags=re.IGNORECASE).strip()
+    if not limpio:
+        return None
+    if ',' in limpio:
+        limpio = limpio.replace('.', '').replace(',', '.')
+    elif '.' in limpio and len(limpio.split('.')) > 2:
+        limpio = limpio.replace('.', '')
+    try:
+        return round(float(limpio), 4)
+    except ValueError:
+        return None
+
+def extraer_nav_quefondos(isin):
+    """Scrapea Quefondos por ISIN y devuelve (precio_unitario, fecha_str) o (None, None)."""
+    url = f'https://www.quefondos.com/es/fondos/ficha/index.html?isin={isin}'
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+    req = urllib.request.Request(url, headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            soup = BeautifulSoup(resp.read(), 'html.parser')
+    except Exception as e:
+        print(f"[quefondos] Error HTTP/parseo para ISIN {isin}: {e}")
+        return None, None
+    # Buscar span.floatleft con "Valor liquidativo" -> siguiente span.floatright
+    for fl in soup.find_all('span', class_='floatleft'):
+        if 'Valor liquidativo' in fl.get_text():
+            fr = fl.find_next_sibling('span', class_='floatright')
+            if fr:
+                precio = parsear_nav_espanol(fr.get_text(strip=True))
+                if precio is not None:
+                    from datetime import date
+                    return precio, date.today().isoformat()
+    print(f"[quefondos] No se encontro valor liquidativo para ISIN {isin}")
+    return None, None
+
 
 # ========== FONDOS INDEXADOS + CUENTA REMUNERADA ==========
 _FONDOS_CACHE = {"data": None, "updated": None}
@@ -606,33 +654,103 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             pass
 
     def _compute_fondos(self):
-        """Lee fondos_indexados.json + fondos_comparativa.json (solo ficheros locales)."""
+        """Lee fondos_indexados.json, actualiza precios via scraping/yfinance, calcula valor_actual."""
+        from datetime import date
+        hoy = date.today().isoformat()
         result = {"fondos": [], "radar": None}
+        write_back = False
         try:
             path = os.path.join(DIR, "fondos_indexados.json")
-            if os.path.exists(path):
-                with open(path, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                for fdo in data.get("fondos", []):
-                    valor = fdo.get("valor_actual", 0) or 0
-                    aportado = fdo.get("aportado", 0) or 0
-                    rent = ((valor - aportado) / aportado * 100) if aportado else 0
-                    result["fondos"].append({
-                        "nombre": fdo.get("nombre", ""),
-                        "isin": fdo.get("isin", ""),
-                        "aportado": aportado,
-                        "valor_actual": valor,
-                        "fecha_actualizacion": fdo.get("fecha_actualizacion", ""),
-                        "ter": fdo.get("ter", 0) or 0,
-                        "rentabilidad": round(rent, 2),
-                    })
-                result["total_fondos"] = round(sum(f["valor_actual"] for f in result["fondos"]), 2)
+            if not os.path.exists(path):
+                return {"error": True, "msg": "JSON no encontrado"}
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            for fdo in data.get("fondos", []):
+                nombre = fdo.get("nombre", "")
+                isin = fdo.get("isin", "")
+                tipo = fdo.get("tipo", "")
+                aportado = fdo.get("aportado", 0) or 0
+                participaciones = fdo.get("participaciones", 1) or 1
+                ter = fdo.get("ter", 0) or 0
+                fecha_act = fdo.get("fecha_actualizacion", "")
+                historico = fdo.get("historico_prices", [])
+                precio_unitario = None
+                nueva_fecha = fecha_act
+                # Intentar obtener precio si no esta actualizado hoy
+                if fecha_act < hoy:
+                    if tipo == "etf":
+                        ticker = fdo.get("ticker", "")
+                        if ticker:
+                            try:
+                                _sess = getattr(self, '_fondo_session', None)
+                                if _sess is None:
+                                    import requests as _req
+                                    _sess = _req.Session()
+                                    _sess.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                                    self._fondo_session = _sess
+                                info = yf.Ticker(ticker, session=_sess).info or {}
+                                cur = info.get("regularMarketPrice") or info.get("previousClose") or info.get("currentPrice")
+                                if cur is not None:
+                                    precio_unitario = float(cur)
+                                    if precio_unitario and precio_unitario > 0:
+                                        print(f"[fondos] {nombre} ({ticker}): yfinance -> {precio_unitario}")
+                            except Exception as e:
+                                print(f"[fondos] yfinance fallo para {ticker}: {e}")
+                                pass
+                    elif tipo == "fondo_no_cotizado" and _HAS_BS4:
+                        precio_unitario, _ = extraer_nav_quefondos(isin)
+                        if precio_unitario is not None:
+                            print(f"[fondos] {nombre} ({isin}): Quefondos -> {precio_unitario}")
+                        else:
+                            print(f"[fondos] Quefondos fallo para {nombre} ({isin}), usando fallback cache")
+                    # Fallback a ultimo precio cacheado en historico_prices
+                    if precio_unitario is None:
+                        if historico:
+                            ultimo = max(historico, key=lambda x: x["fecha"])
+                            precio_unitario = ultimo["precio"]
+                            nueva_fecha = ultimo["fecha"]
+                            print(f"[fondos] Fallback cache para {nombre}: precio={precio_unitario} ({nueva_fecha})")
+                        else:
+                            print(f"[fondos] Sin cache para {nombre}, usando valor_actual del JSON")
+                            precio_unitario = round(fdo.get("valor_actual", 0) / participaciones, 4) if participaciones else 0
+                    else:
+                        # Precio obtenido con exito hoy -> persistir en JSON
+                        nueva_fecha = hoy
+                        historico.append({"fecha": hoy, "precio": precio_unitario})
+                        fdo["historico_prices"] = historico
+                        write_back = True
+                else:
+                    # Ya actualizado hoy, usar valor_actual del JSON
+                    precio_unitario = round(fdo.get("valor_actual", 0) / participaciones, 4) if participaciones else 0
+                valor_actual = round(precio_unitario * participaciones, 2) if precio_unitario else 0
+                rent = ((valor_actual - aportado) / aportado * 100) if aportado else 0
+                result["fondos"].append({
+                    "nombre": nombre,
+                    "isin": isin,
+                    "tipo": tipo,
+                    "aportado": aportado,
+                    "valor_actual": valor_actual,
+                    "fecha_actualizacion": nueva_fecha,
+                    "ter": ter,
+                    "rentabilidad": round(rent, 2),
+                    "historico_prices": historico[-60:],  # ultimos 60 para grafica
+                })
+            result["total_fondos"] = round(sum(f["valor_actual"] for f in result["fondos"]), 2)
+            # Persistir cambios si se obtuvieron nuevos precios
+            if write_back:
+                try:
+                    with open(path, "w", encoding="utf-8") as f:
+                        json.dump(data, f, indent=2, ensure_ascii=False)
+                    print(f"[fondos] JSON actualizado con nuevos precios ({hoy})")
+                except Exception as e:
+                    print(f"[fondos] Error al escribir JSON: {e}")
             # Radar comparativo (opcional)
             radar_path = os.path.join(DIR, "fondos_comparativa.json")
             if os.path.exists(radar_path):
                 with open(radar_path, "r", encoding="utf-8") as f:
                     result["radar"] = json.load(f)
         except Exception as e:
+            print(f"[fondos] Error general: {e}")
             return {"error": True, "msg": str(e)}
         return result
 

@@ -191,7 +191,7 @@ body{font-family:'Segoe UI',-apple-system,Arial,sans-serif}
         <div class="metric-row"><span class="ml">Distancia stop<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Caída máxima asumida antes de salir</span></span><span class="mv green" data-metric="dist-stop">22.8%</span></div>
         <div class="metric-row"><span class="ml">P. Objetivo</span><span class="mv " data-metric="target">200.64 €</span></div>
         <div class="metric-row"><span class="ml">PER<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Veces que el precio recoge el beneficio anual</span></span><span class="mv warn">66.2x</span></div>
-        <div class="metric-row"><span class="ml">PER Fwd<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">PER estimado con beneficios futuros</span></span><span class="mv">28.1x</span></div>
+        <div class="metric-row"><span class="ml">PER Fwd<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">PER estimado con beneficios futuros</span></span><span class="mv">28.0x</span></div>
         <div class="metric-row"><span class="ml">P/B<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Precio respecto al valor contable. &lt;1 infravalorado</span></span><span class="mv warn">13.46</span></div>
         <div class="metric-row"><span class="ml">Beta<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Volatilidad relativa al mercado. &gt;1 amplifica movimientos.</span></span><span class="mv neg">1.90</span></div>
         <div class="metric-row"><span class="ml">ROE 2026<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">Rentabilidad sobre fondos propios</span></span><span class="mv warn">13.7%</span></div>
@@ -716,19 +716,51 @@ function renderFondos(data) {
     c.innerHTML = '<div class="ew-loading">Sin fondos registrados</div>'; return;
   }
   var h = '<div class="fondos-grid">';
-  data.fondos.forEach(function(f) {
+  data.fondos.forEach(function(f, idx) {
     var cls = 'fondo-card';
     var rentCls = f.rentabilidad >= 0 ? 'pos' : 'neg';
+    // Badge tipo
+    var tipoBadge = f.tipo === 'etf'
+      ? '<span class="badge-tu" style="margin-left:6px;font-size:10px">ETF</span>'
+      : '<span class="badge-alt" style="margin-left:6px;font-size:10px">Fondo</span>';
+    // Badge frescura
+    var hoy = new Date();
+    var hoyStr = hoy.getFullYear() + '-' + String(hoy.getMonth()+1).padStart(2,'0') + '-' + String(hoy.getDate()).padStart(2,'0');
+    var esHoy = f.fecha_actualizacion >= hoyStr;
+    var freshBadge = esHoy
+      ? '<span class="ew-badge ew-badge-ok" style="font-size:10px;margin-left:6px">Actualizado hoy</span>'
+      : '<span class="ew-badge ew-badge-alerta" style="font-size:10px;margin-left:6px">Último cierre: ' + f.fecha_actualizacion + '</span>';
     h += '<div class="' + cls + '">';
-    h += '<div class="fondo-header"><div><div class="fondo-nombre">' + f.nombre + '</div><div class="fondo-isin">' + f.isin + '</div></div></div>';
+    h += '<div class="fondo-header"><div><div class="fondo-nombre">' + f.nombre + tipoBadge + freshBadge + '</div><div class="fondo-isin">' + f.isin + '</div></div></div>';
     h += '<div class="fondo-metric"><span class="ml">Aportado</span><span class="mv">' + f.aportado.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' €</span></div>';
     h += '<div class="fondo-metric"><span class="ml">Valor actual</span><span class="mv">' + f.valor_actual.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' €</span></div>';
     h += '<div class="fondo-metric"><span class="ml">Rentabilidad</span><span class="mv ' + rentCls + '">' + (f.rentabilidad >= 0 ? '+' : '') + f.rentabilidad.toFixed(2) + '%</span></div>';
     h += '<div class="fondo-metric"><span class="ml">TER</span><span class="mv">' + f.ter.toFixed(2) + '%</span></div>';
-    if (f.fecha_actualizacion) {
-      h += '<div class="fondo-metric" style="font-size:10px;color:#5a5f6b"><span class="ml">Actualización</span><span class="mv">' + f.fecha_actualizacion + '</span></div>';
+    // Grafica evolucion si hay historico
+    if (f.historico_prices && f.historico_prices.length > 1) {
+      var cid = 'fondoChart_' + idx;
+      h += '<div style="position:relative;height:140px;margin-top:10px"><canvas id="' + cid + '"></canvas></div>';
+      setTimeout(function() {
+        var hist = f.historico_prices;
+        var labels = hist.map(function(h) { return h.fecha.slice(5); });
+        var prices = hist.map(function(h) { return h.precio; });
+        new Chart(document.getElementById(cid), {
+          type:'line',
+          data:{labels:labels, datasets:[{
+            label:f.nombre, data:prices,
+            borderColor:'#2a78d6', backgroundColor:'rgba(42,120,214,0.1)',
+            borderWidth:2, fill:true, pointRadius:0, tension:0.1
+          }]},
+          options:{
+            responsive:true, maintainAspectRatio:false,
+            plugins:{legend:{display:false}, tooltip:{mode:'index', intersect:false}},
+            scales:{x:{ticks:{color:'#5a5f6b', font:{size:9}}, grid:{color:'#1a1d2e'}},
+                    y:{ticks:{color:'#5a5f6b', font:{size:9}}, grid:{color:'#1a1d2e'}}}
+          }
+        });
+      }, 100);
     }
-    // Warn if fund name contains ESG
+    // Warn ESG
     if (f.nombre.toUpperCase().indexOf('ESG') >= 0) {
       h += '<div class="radar-warn">⚠ Este fondo replica un índice ESG, no el índice puro</div>';
     }

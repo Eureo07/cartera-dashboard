@@ -1,13 +1,13 @@
 {
-  "updated": "2026-07-01T14:51:07.232850",
+  "updated": "2026-07-04T08:19:13.939011",
   "results": [
     {
       "ticker": "BHP.L",
       "name": "BHP Group",
       "sector": "Minería",
       "score": 0.5,
-      "eper": 15.783904,
-      "rent_1a": 73.72593431483578,
+      "eper": 16.135582,
+      "rent_1a": 69.33911159263272,
       "roe": 19.51,
       "eva": 4828716654.0,
       "fcf": 9294000000.0,
@@ -15,7 +15,7 @@
         "LT"
       ],
       "support": 3026.0,
-      "current_price": 3068.0
+      "current_price": 3126.0
     }
   ]
 }
