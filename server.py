@@ -414,6 +414,12 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(json.dumps({"ticker": ticker, "price": None, "error": str(e)}).encode())
             return
+        # Redirect / → dashboard.html
+        if self.path == "/" or self.path == "":
+            self.send_response(302)
+            self.send_header("Location", "/dashboard.html")
+            self.end_headers()
+            return
         # Auth check for static files
         if not check_auth(self.headers):
             return send_401(self)
