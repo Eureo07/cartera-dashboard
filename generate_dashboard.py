@@ -78,7 +78,8 @@ def fmt(val, dec=2):
 def generar_gauge_riesgo(entry, stop, target, current):
     if stop is None or stop <= 0:
         return '<div style="font-size:11px;color:#5a5f6b;margin-top:10px">Gauge no disponible (sin Stop Loss)</div>'
-    max_val = max(target, current * 1.1, entry * 1.15)
+    fallback_max = max(current * 1.1, entry * 1.15)
+    max_val = max(target, fallback_max) if target else fallback_max
     rng = max_val - stop
     entry_pct = min(max((entry - stop) / rng * 100, 0), 100)
     cur_pct = min(max((current - stop) / rng * 100, 0), 100)
@@ -91,8 +92,8 @@ def generar_gauge_riesgo(entry, stop, target, current):
     marker_color = "#3ecf8e" if is_ok else "#e05050"
     cur_label = f"{current:.2f}"
     stop_label = f"{stop:.2f}"
-    max_label = f"{max_val:.2f}"
-    return f'''<div style="margin-top:12px">
+    max_label = f"{max_val:.2f} \u20ac" if target else "N/D"
+    return f'''<div style="margin-top:24px;padding:0 4px">
     <svg width="{w}" height="{h}" viewBox="0 0 {w} {h}" style="display:block">
       <rect x="0" y="{bar_y}" width="{w}" height="{bar_h}" rx="5" fill="#1e2235"/>
       <rect x="0" y="{bar_y}" width="{entry_x}" height="{bar_h}" rx="5" fill="#e05050" opacity="0.35"/>
@@ -103,10 +104,10 @@ def generar_gauge_riesgo(entry, stop, target, current):
       <text x="0" y="{bar_y+bar_h+12}" fill="#e05050" font-size="8">{stop_label}</text>
       <text x="{w}" y="{bar_y+bar_h+12}" text-anchor="end" fill="#3ecf8e" font-size="8">{max_label}</text>
     </svg>
-    <div style="display:flex;justify-content:space-between;font-size:9px;color:#9aa0b0;margin-top:4px">
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:#9aa0b0;margin-top:4px;padding:0 2px">
       <span>Stop Loss</span>
       <span>P. Entrada</span>
-      <span>Objetivo</span>
+      <span>{"Objetivo" if target else "Obj. N/D"}</span>
     </div>
     </div>'''
 
