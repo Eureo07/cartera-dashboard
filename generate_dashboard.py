@@ -74,6 +74,42 @@ def fmt(val, dec=2):
     if val is None: return "-"
     return f"{val:.{dec}f}"
 
+# ========== GAUGE ==========
+def generar_gauge_riesgo(entry, stop, target, current):
+    if stop is None or stop <= 0:
+        return '<div style="font-size:11px;color:#5a5f6b;margin-top:10px">Gauge no disponible (sin Stop Loss)</div>'
+    max_val = max(target, current * 1.1, entry * 1.15)
+    rng = max_val - stop
+    entry_pct = min(max((entry - stop) / rng * 100, 0), 100)
+    cur_pct = min(max((current - stop) / rng * 100, 0), 100)
+    w, h = 280, 36
+    bar_y = 14
+    bar_h = 10
+    entry_x = round(entry_pct / 100 * w)
+    cur_x = round(cur_pct / 100 * w)
+    is_ok = current >= entry
+    marker_color = "#3ecf8e" if is_ok else "#e05050"
+    cur_label = f"{current:.2f}"
+    stop_label = f"{stop:.2f}"
+    max_label = f"{max_val:.2f}"
+    return f'''<div style="margin-top:12px">
+    <svg width="{w}" height="{h}" viewBox="0 0 {w} {h}" style="display:block">
+      <rect x="0" y="{bar_y}" width="{w}" height="{bar_h}" rx="5" fill="#1e2235"/>
+      <rect x="0" y="{bar_y}" width="{entry_x}" height="{bar_h}" rx="5" fill="#e05050" opacity="0.35"/>
+      <rect x="{entry_x}" y="{bar_y}" width="{w-entry_x}" height="{bar_h}" rx="5" fill="#3ecf8e" opacity="0.35"/>
+      <line x1="{entry_x}" y1="{bar_y}" x2="{entry_x}" y2="{bar_y+bar_h}" stroke="#9aa0b0" stroke-width="1" stroke-dasharray="2,2"/>
+      <polygon points="{cur_x},{bar_y-2} {cur_x-5},{bar_y-9} {cur_x+5},{bar_y-9}" fill="{marker_color}"/>
+      <text x="{cur_x}" y="{bar_y-13}" text-anchor="middle" fill="{marker_color}" font-size="9">{cur_label} \u20ac</text>
+      <text x="0" y="{bar_y+bar_h+12}" fill="#e05050" font-size="8">{stop_label}</text>
+      <text x="{w}" y="{bar_y+bar_h+12}" text-anchor="end" fill="#3ecf8e" font-size="8">{max_label}</text>
+    </svg>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:#9aa0b0;margin-top:4px">
+      <span>Stop Loss</span>
+      <span>P. Entrada</span>
+      <span>Objetivo</span>
+    </div>
+    </div>'''
+
 # ========== LOAD DATA ==========
 DF_FILE = EXCEL_FILE
 df = pd.read_excel(DF_FILE)
@@ -973,6 +1009,7 @@ for i, p in enumerate(portfolio):
         <div class="metric-row"><span class="ml">Peso cartera{desc("% del capital total invertido en esta posici\u00f3n")}</span><span class="mv {weight_cls}" data-metric="weight">{p['weight']:.1f}%{" \u26a0" if p["weight"] > 25 else ""}</span></div>
         <div class="metric-row"><span class="ml">Stop Din\u00e1mico{desc("Stop calculado sobre soporte t\u00e9cnico (-2%)")}</span><span class="mv neg">{dyn_stop_str}{" <span style=\"color:#f0a500;font-size:9px;margin-left:4px\">\u26a0 Revisar stop</span>" if stop_alert else ""}</span></div>
       </div>
+      {generar_gauge_riesgo(p["entry"], p["stop"], p["target"], p["current"])}
       <div class="tendencia-row">
         <div class="tend-item"><div class="tend-label">Corto Plazo</div><div class="tend-val {st_cls}">{st_trend}</div></div>
         <div class="tend-item"><div class="tend-label">Largo Plazo</div><div class="tend-val {lt_cls}">{lt_trend}</div></div>

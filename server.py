@@ -803,7 +803,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         cur = float(cur)
 
                     def _choose_prev(infoprev, chartprev):
-                        if infoprev is not None and round(infoprev, 4) != round(cur, 4):
+                        if infoprev is not None:
                             return infoprev
                         return chartprev
 
