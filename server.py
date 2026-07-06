@@ -262,12 +262,20 @@ def send_401(handler):
     handler.wfile.write(b"Autenticacion requerida")
 
 LAST_REGENERATE = {"ok": False, "msg": "", "time": ""}
+_REGENERATE_LAST = 0.0
+_REGENERATE_COOLDOWN = 300  # segundos entre regeneraciones
 def regenerate():
+    global _REGENERATE_LAST
+    now = _ytime.time()
+    if now - _REGENERATE_LAST < _REGENERATE_COOLDOWN:
+        print(f"[regenerate] skipping — cooldown ({_REGENERATE_COOLDOWN}s)")
+        return
+    _REGENERATE_LAST = now
     def task():
         global LAST_REGENERATE
         try:
             r = subprocess.run(
-                ["python", "generate_dashboard.py"],
+                ["python", "generate_dashboard.py", "--skip-screener"],
                 cwd=DIR, capture_output=True, timeout=600)
             LAST_REGENERATE["ok"] = r.returncode == 0
             LAST_REGENERATE["time"] = os.popen("date 2>nul || date 2>/dev/null").read().strip()
