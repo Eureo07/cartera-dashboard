@@ -83,8 +83,8 @@ def generar_gauge_riesgo(entry, stop, target, current):
     rng = max_val - stop
     entry_pct = min(max((entry - stop) / rng * 100, 0), 100)
     cur_pct = min(max((current - stop) / rng * 100, 0), 100)
-    w, h = 280, 36
-    bar_y = 14
+    w, h = 280, 48
+    bar_y = 20
     bar_h = 10
     entry_x = round(entry_pct / 100 * w)
     cur_x = round(cur_pct / 100 * w)
@@ -92,16 +92,18 @@ def generar_gauge_riesgo(entry, stop, target, current):
     marker_color = "#3ecf8e" if is_ok else "#e05050"
     cur_label = f"{current:.2f}"
     stop_label = f"{stop:.2f}"
+    entry_label = f"{entry:.2f}"
     max_label = f"{max_val:.2f} \u20ac" if target else "N/D"
     return f'''<div style="margin-top:24px;padding:0 4px">
-    <svg width="{w}" height="{h}" viewBox="0 0 {w} {h}" style="display:block">
+    <svg width="{w}" height="{h}" viewBox="0 0 {w} {h}" style="display:block;overflow:visible">
       <rect x="0" y="{bar_y}" width="{w}" height="{bar_h}" rx="5" fill="#1e2235"/>
       <rect x="0" y="{bar_y}" width="{entry_x}" height="{bar_h}" rx="5" fill="#e05050" opacity="0.35"/>
       <rect x="{entry_x}" y="{bar_y}" width="{w-entry_x}" height="{bar_h}" rx="5" fill="#3ecf8e" opacity="0.35"/>
       <line x1="{entry_x}" y1="{bar_y}" x2="{entry_x}" y2="{bar_y+bar_h}" stroke="#9aa0b0" stroke-width="1" stroke-dasharray="2,2"/>
       <polygon points="{cur_x},{bar_y-2} {cur_x-5},{bar_y-9} {cur_x+5},{bar_y-9}" fill="{marker_color}"/>
-      <text x="{cur_x}" y="{bar_y-13}" text-anchor="middle" fill="{marker_color}" font-size="9">{cur_label} \u20ac</text>
+      <text x="{cur_x}" y="{bar_y-12}" text-anchor="middle" fill="{marker_color}" font-size="9">{cur_label} \u20ac</text>
       <text x="0" y="{bar_y+bar_h+12}" fill="#e05050" font-size="8">{stop_label}</text>
+      <text x="{entry_x}" y="{bar_y+bar_h+12}" text-anchor="middle" fill="#9aa0b0" font-size="8">{entry_label}</text>
       <text x="{w}" y="{bar_y+bar_h+12}" text-anchor="end" fill="#3ecf8e" font-size="8">{max_label}</text>
     </svg>
     <div style="display:flex;justify-content:space-between;font-size:9px;color:#9aa0b0;margin-top:4px;padding:0 2px">
