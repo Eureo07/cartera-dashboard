@@ -459,7 +459,7 @@ for p in portfolio:
             import urllib.request, json, yfinance as yf
             info = yf.Ticker(tk).info or {}
             ip = info.get("regularMarketPreviousClose") or info.get("previousClose")
-            if ip is not None and round(float(ip), 4) != round(cur_px, 4):
+            if ip is not None:
                 prev_close = float(ip)
             else:
                 url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
@@ -992,7 +992,7 @@ for i, p in enumerate(portfolio):
         pos_dyn_stop_val = None
 
     desc = lambda t: f'<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">{t}</span>'
-    html += f"""    <div class="pos-card{" neg" if p["pnl"] < 0 else ""}" data-ticker="{tk}" data-entry="{p['entry']}" data-shares="{p['shares']}" data-stop="{p['stop']}">
+    html += f"""    <div class="pos-card{" neg" if p["pnl"] < 0 else ""}" data-ticker="{tk}" data-entry="{p['entry']}" data-shares="{p['shares']}" data-stop="{p['stop']}" data-commission="{p.get('commission', 0)}">
       <div class="pos-header">
         <div><div class="ticker">{tk} — {p['name']}</div><div class="name">{sector_name} · Entrada {p['entry_date']}</div></div>
         <div class="price"><div class="current" id="price-{i}" style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}"><span class="price-val">{p['current']:.2f}</span> \u20ac{" <span style=\"color:#f0a500;font-size:11px\" title=\"Dato no actualizado\">\u26a0</span>" if p.get("data_error") else ""}</div><div class="pnl {pnl_cls_card}" id="pnl-{i}"><span class="pnl-val">{pnl_sign}{p['pnl']:,.2f}</span> \u20ac (<span class="pnl-pct-val">{pnl_pct_sign}{p['pnl_pct']:.2f}</span>%)</div></div>
@@ -1571,10 +1571,11 @@ function updatePrices(data) {
     var entry = parseFloat(card.getAttribute('data-entry'));
     var shares = parseFloat(card.getAttribute('data-shares'));
     var stop = parseFloat(card.getAttribute('data-stop'));
+    var commission = parseFloat(card.getAttribute('data-commission')) || 0;
     var pd = data.prices[tk];
     if (!pd || pd.current == null) { anyFail = true; return; }
     var cur = pd.current;
-    var cost = entry * shares;
+    var cost = entry * shares + commission;
     var value = cur * shares;
     var pnl = value - cost;
     var pnlPct = cost ? (pnl / cost) * 100 : 0;
@@ -1608,9 +1609,10 @@ function updatePrices(data) {
   cards.forEach(function(card) {
     var entry = parseFloat(card.getAttribute('data-entry'));
     var shares = parseFloat(card.getAttribute('data-shares'));
+    var commission = parseFloat(card.getAttribute('data-commission')) || 0;
     var tk = card.getAttribute('data-ticker');
     var pd = data.prices[tk];
-    var cost = entry * shares;
+    var cost = entry * shares + commission;
     totalCost += cost;
     if (pd && pd.current != null) {
       totalValue += pd.current * shares;
