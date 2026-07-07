@@ -11,6 +11,7 @@ import json, math, statistics
 from datetime import datetime, date
 from config_loader import CFG, logger, get_logger
 from screener import calcular_soporte_resistencia
+from expectancy import cargar_cartera_cerrada, calcular_expectancy
 
 _YF_SESSION = requests.Session()
 _YF_SESSION.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
@@ -398,18 +399,15 @@ total_value = sum(p["value"] for p in portfolio)
 total_pnl = total_value - total_cost
 total_pnl_pct = (total_pnl / total_cost) * 100 if total_cost else 0
 
-# ========== HISTORICAL CLOSED POSITIONS ==========
-closed_positions = [
-    {"entry_date": "15/08/2025", "name": "FERROVIAL SE", "ticker": "FER.MC", "shares": 53, "entry": 46.86, "cost": 2490.58, "support": 43.30, "stop": 41.99, "sale_price": 54.69, "pnl_eur": 400.99, "pnl_pct": 16.15},
-    {"entry_date": "18/08/2025", "name": "IBERDROLA", "ticker": "IBE.MC", "shares": 158, "entry": 16.40, "cost": 2597.41, "support": 15.10, "stop": 14.64, "sale_price": 18.86, "pnl_eur": 375.47, "pnl_pct": 14.49},
-    {"entry_date": "18/08/2025", "name": "GRENERGY RENOVABLES", "ticker": "GRE.MC", "shares": 127, "entry": 5.00, "cost": 904.00, "support": 58.60, "stop": 56.84, "sale_price": 102.00, "pnl_eur": 316.00, "pnl_pct": 35.11},
-    {"entry_date": "17/11/2025", "name": "HEIDELBERG MATERIALS", "ticker": "HEI.DE", "shares": 52, "entry": 12.00, "cost": 1064.90, "support": 184.80, "stop": 179.16, "sale_price": 179.20, "pnl_eur": -168.90, "pnl_pct": -15.93},
-]
+# ========== CLOSED POSITIONS (from cartera_cerrada.json) ==========
+closed_positions = cargar_cartera_cerrada()
 closed_total_pnl = sum(p["pnl_eur"] for p in closed_positions)
 closed_total_cost = sum(p["cost"] for p in closed_positions)
 historical_pnl = total_pnl + closed_total_pnl
 historical_cost = total_cost + closed_total_cost
 historical_return = (historical_pnl / historical_cost) * 100 if historical_cost else 0
+
+exp_metrics = calcular_expectancy(closed_positions)
 
 # ========== FONDOS INDEXADOS + CUENTA (para KPIs Rendimiento) ==========
 fondos_total = 0.0
@@ -876,6 +874,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="kpi" data-kpi="rend-fondos" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}"><div class="label">Rendimiento Fondos</div><div class="value {"neg" if rend_fondos_pct is not None and rend_fondos_pct < 0 else "pos"}" data-kpi-val="rend-fondos-pct">{"{:+.2f}%".format(rend_fondos_pct) if rend_fondos_pct is not None else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / {:,.2f} \u20ac aportados".format(rend_fondos_eur, total_aportado_fondos) if rend_fondos_pct is not None else "\u2014"}</div></div>
     <div class="kpi" data-kpi="rend-cuenta" data-rend-cuenta-eur="{rend_cuenta_eur:.2f}" data-rend-cuenta-pct="{rend_cuenta_pct:.2f}" data-tae="{cuenta_tae}"><div class="label">Rendimiento Cuenta</div><div class="value {"neg" if rend_cuenta_pct is not None and rend_cuenta_pct < 0 else "pos"}" data-kpi-val="rend-cuenta-pct">{"{:+,.2f}%".format(rend_cuenta_pct) if cuenta_saldo else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / saldo {:,.2f} \u20ac".format(rend_cuenta_eur, cuenta_saldo) if cuenta_saldo else "\u2014"}, TAE {cuenta_tae:.0f}%</div></div>
     <div class="kpi" data-kpi="rend-total-risk" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rendimiento Total (con riesgo)</div><div class="value" data-kpi-val="rend-total-risk-pct">\u2014</div><div class="sub" data-kpi-val="rend-total-risk-sub">\u2014</div></div>
+    <div class="kpi" data-kpi="expectancy"><div class="label">Expectancy del sistema</div><div class="value {"neg" if exp_metrics["expectancy"] < 0 else "pos"}">{exp_metrics["expectancy"]:+.2f}%</div><div class="sub">{exp_metrics["win_rate"]:.0f}% acierto \u00b7 Payoff {exp_metrics["payoff_ratio"]:.2f}{" \u00b7 Anual. {:+.1f}%".format(exp_metrics["annualized_return"]) if exp_metrics["annualized_return"] is not None else ""}</div></div>
   </div>
 
   <div class="section-title">An\u00e1lisis por posici\u00f3n</div>

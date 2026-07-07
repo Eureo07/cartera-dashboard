@@ -1,0 +1,58 @@
+[
+  {
+    "entry_date": "15/08/2025",
+    "fecha_cierre": "2026-03-09",
+    "name": "FERROVIAL SE",
+    "ticker": "FER.MC",
+    "shares": 53,
+    "entry": 46.86,
+    "cost": 2490.58,
+    "support": 43.30,
+    "stop": 41.99,
+    "sale_price": 54.69,
+    "pnl_eur": 400.99,
+    "pnl_pct": 16.15
+  },
+  {
+    "entry_date": "18/08/2025",
+    "fecha_cierre": "2026-03-09",
+    "name": "IBERDROLA",
+    "ticker": "IBE.MC",
+    "shares": 158,
+    "entry": 16.40,
+    "cost": 2597.41,
+    "support": 15.10,
+    "stop": 14.64,
+    "sale_price": 18.86,
+    "pnl_eur": 375.47,
+    "pnl_pct": 14.49
+  },
+  {
+    "entry_date": "18/08/2025",
+    "fecha_cierre": "2026-03-09",
+    "name": "GRENERGY RENOVABLES",
+    "ticker": "GRE.MC",
+    "shares": 12,
+    "entry": 75.00,
+    "cost": 904.00,
+    "support": 58.60,
+    "stop": 56.84,
+    "sale_price": 102.00,
+    "pnl_eur": 316.00,
+    "pnl_pct": 35.11
+  },
+  {
+    "entry_date": "17/11/2025",
+    "fecha_cierre": "2026-03-03",
+    "name": "HEIDELBERG MATERIALS",
+    "ticker": "HEI.DE",
+    "shares": 52,
+    "entry": 12.00,
+    "cost": 1064.90,
+    "support": 184.80,
+    "stop": 179.16,
+    "sale_price": 179.20,
+    "pnl_eur": -168.90,
+    "pnl_pct": -15.93
+  }
+]
