@@ -760,7 +760,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
 .metric-row .mv.neg{{color:#e05050}}
 .metric-row .mv.pos{{color:#3ecf8e}}
 .metric-row .mv.warn{{color:#f0a500}}
-.charts-row{{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}}
+.charts-row{{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}}
 .chart-card{{background:#1a1d2e;border-radius:12px;padding:18px 20px}}
 .chart-card .ctitle{{font-size:12px;color:#9aa0b0;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}}
 .bottom-row{{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}}
@@ -895,16 +895,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="kpi" data-kpi="expectancy"><div class="label">Expectancy del sistema</div><div class="value {"neg" if exp_metrics["expectancy"] < 0 else "pos"}">{exp_metrics["expectancy"]:+.2f}%</div><div class="sub">% Acierto: {exp_metrics["pct_acierto"]:.1f}% \u00b7 % Fallo: {exp_metrics["pct_fallo"]:.1f}%<br>Ganancia media: {exp_metrics["ganancia_media_pct"]:+.2f}% \u00b7 P\u00e9rdida media: {exp_metrics["perdida_media_pct"]:.2f}%<br>Payoff ratio: {exp_metrics["payoff_ratio"]:.2f} \u00b7 Anual.: {exp_metrics["rentabilidad_anualizada"]*100:.2f}%</div></div>
   </div>
 
-  <div class="section-title">Glosario de Expectancy del sistema (c\u00e1lculo real)</div>
-  <div style="font-size:11px;color:#9aa0b0;margin-bottom:14px;padding:10px 14px;background:#12151f;border-radius:8px;line-height:1.8">
-    <strong>% Acierto</strong> = {exp_metrics["n_ganadoras"]} ganadoras / {exp_metrics["n_total"]} operaciones = {exp_metrics["pct_acierto"]:.1f}%<br>
-    <strong>% Fallo</strong> = {exp_metrics["n_perdedoras"]} perdedora(s) / {exp_metrics["n_total"]} operaciones = {exp_metrics["pct_fallo"]:.1f}%<br>
-    <strong>Ganancia media</strong> = media({', '.join(f'{v:+.2f}%' for v in exp_metrics['lista_ganancias_pct'])}) = {exp_metrics["ganancia_media_pct"]:+.2f}%<br>
-    <strong>P\u00e9rdida media</strong> = media({', '.join(f'{v:.2f}%' for v in exp_metrics['lista_perdidas_pct'])}) = {exp_metrics["perdida_media_pct"]:.2f}%<br>
-    <strong>Expectancy</strong> = ({exp_metrics["pct_acierto"]:.1f}% \u00d7 {exp_metrics["ganancia_media_pct"]:.2f}%) \u2212 ({exp_metrics["pct_fallo"]:.1f}% \u00d7 {exp_metrics["perdida_media_pct"]:.2f}%) = {exp_metrics["expectancy"]:+.2f}%<br>
-    <strong>Payoff ratio</strong> = {exp_metrics["ganancia_media_pct"]:.2f}% / {exp_metrics["perdida_media_pct"]:.2f}% = {exp_metrics["payoff_ratio"]:.2f}<br>
-    <strong>Rent. anualizada</strong> = (1 + {exp_metrics["total_retorno"]:.4f}) ^ (365.25 / {exp_metrics["dias_totales"]}) \u2212 1 = {exp_metrics["rentabilidad_anualizada"]*100:.2f}%
-  </div>
+
 
   <div class="section-title">An\u00e1lisis por posici\u00f3n</div>
   <div class="positions-grid">
@@ -1099,6 +1090,18 @@ html += f"""      </div>
     <div class="chart-card">
       <div class="ctitle">P&amp;L por posici\u00f3n (\u20ac)</div>
       <div style="position:relative;height:230px"><canvas id="chartPnl" role="img" aria-label="P&L por posici\u00f3n en euros"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="ctitle">Glosario de Expectancy del sistema (c\u00e1lculo real)</div>
+      <div style="font-size:11px;color:#9aa0b0;line-height:1.8">
+        <strong>% Acierto</strong> = {exp_metrics["n_ganadoras"]} ganadoras / {exp_metrics["n_total"]} operaciones = {exp_metrics["pct_acierto"]:.1f}%<br>
+        <strong>% Fallo</strong> = {exp_metrics["n_perdedoras"]} perdedora(s) / {exp_metrics["n_total"]} operaciones = {exp_metrics["pct_fallo"]:.1f}%<br>
+        <strong>Ganancia media</strong> = media({', '.join(f'{v:+.2f}%' for v in exp_metrics['lista_ganancias_pct'])}) = {exp_metrics["ganancia_media_pct"]:+.2f}%<br>
+        <strong>P\u00e9rdida media</strong> = media({', '.join(f'{v:.2f}%' for v in exp_metrics['lista_perdidas_pct'])}) = {exp_metrics["perdida_media_pct"]:.2f}%<br>
+        <strong>Expectancy</strong> = ({exp_metrics["pct_acierto"]:.1f}% \u00d7 {exp_metrics["ganancia_media_pct"]:.2f}%) \u2212 ({exp_metrics["pct_fallo"]:.1f}% \u00d7 {exp_metrics["perdida_media_pct"]:.2f}%) = {exp_metrics["expectancy"]:+.2f}%<br>
+        <strong>Payoff ratio</strong> = {exp_metrics["ganancia_media_pct"]:.2f}% / {exp_metrics["perdida_media_pct"]:.2f}% = {exp_metrics["payoff_ratio"]:.2f}<br>
+        <strong>Rent. anualizada</strong> = (1 + {exp_metrics["total_retorno"]:.4f}) ^ (365.25 / {exp_metrics["dias_totales"]}) \u2212 1 = {exp_metrics["rentabilidad_anualizada"]*100:.2f}%
+      </div>
     </div>
   </div>
 
