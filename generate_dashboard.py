@@ -733,7 +733,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
 .kpi-row{{display:grid;grid-template-columns:repeat(auto-fill, minmax(130px,1fr));gap:14px;margin-bottom:24px}}
 .kpi{{background:#1a1d2e;border-radius:12px;padding:18px 22px}}
 .kpi .label{{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#9aa0b0;margin-bottom:8px}}
-.kpi .value{{font-size:22px;font-weight:700;color:#fff}}
+.kpi .value{{font-size:22px;font-weight:700;color:#fff;white-space:nowrap}}
 .kpi .value.neg{{color:#e05050}}
 .kpi .value.pos{{color:#3ecf8e}}
 .kpi .sub{{font-size:11px;color:#9aa0b0;margin-top:4px}}
