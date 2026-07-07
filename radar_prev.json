@@ -1,13 +1,13 @@
 {
-  "updated": "2026-07-04T08:19:13.939011",
+  "updated": "2026-07-07T08:24:09.279484",
   "results": [
     {
       "ticker": "BHP.L",
       "name": "BHP Group",
       "sector": "Minería",
       "score": 0.5,
-      "eper": 16.135582,
-      "rent_1a": 69.33911159263272,
+      "eper": 16.24488,
+      "rent_1a": 71.10016420361248,
       "roe": 19.51,
       "eva": 4828716654.0,
       "fcf": 9294000000.0,
@@ -16,6 +16,22 @@
       ],
       "support": 3026.0,
       "current_price": 3126.0
+    },
+    {
+      "ticker": "MRK",
+      "name": "Merck",
+      "sector": "Salud",
+      "score": 0.5,
+      "eper": 13.2593565,
+      "rent_1a": 56.71198564655345,
+      "roe": 34.7,
+      "eva": 10756264440.0,
+      "fcf": 12360000000.0,
+      "entry_types": [
+        "RRA"
+      ],
+      "support": 111.56999969482422,
+      "current_price": 126.77999877929688
     }
   ]
 }
