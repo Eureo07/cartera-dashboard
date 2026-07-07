@@ -402,7 +402,7 @@ total_pnl_pct = (total_pnl / total_cost) * 100 if total_cost else 0
 # ========== CLOSED POSITIONS (from cartera_cerrada.json) ==========
 closed_positions = cargar_cartera_cerrada()
 closed_total_pnl = sum(p["pnl_eur"] for p in closed_positions)
-closed_total_cost = sum(p["cost"] for p in closed_positions)
+closed_total_cost = sum(p["coste"] for p in closed_positions)
 historical_pnl = total_pnl + closed_total_pnl
 historical_cost = total_cost + closed_total_cost
 historical_return = (historical_pnl / historical_cost) * 100 if historical_cost else 0
@@ -874,7 +874,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="kpi" data-kpi="rend-fondos" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}"><div class="label">Rendimiento Fondos</div><div class="value {"neg" if rend_fondos_pct is not None and rend_fondos_pct < 0 else "pos"}" data-kpi-val="rend-fondos-pct">{"{:+.2f}%".format(rend_fondos_pct) if rend_fondos_pct is not None else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / {:,.2f} \u20ac aportados".format(rend_fondos_eur, total_aportado_fondos) if rend_fondos_pct is not None else "\u2014"}</div></div>
     <div class="kpi" data-kpi="rend-cuenta" data-rend-cuenta-eur="{rend_cuenta_eur:.2f}" data-rend-cuenta-pct="{rend_cuenta_pct:.2f}" data-tae="{cuenta_tae}"><div class="label">Rendimiento Cuenta</div><div class="value {"neg" if rend_cuenta_pct is not None and rend_cuenta_pct < 0 else "pos"}" data-kpi-val="rend-cuenta-pct">{"{:+,.2f}%".format(rend_cuenta_pct) if cuenta_saldo else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / saldo {:,.2f} \u20ac".format(rend_cuenta_eur, cuenta_saldo) if cuenta_saldo else "\u2014"}, TAE {cuenta_tae:.0f}%</div></div>
     <div class="kpi" data-kpi="rend-total-risk" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rendimiento Total (con riesgo)</div><div class="value" data-kpi-val="rend-total-risk-pct">\u2014</div><div class="sub" data-kpi-val="rend-total-risk-sub">\u2014</div></div>
-    <div class="kpi" data-kpi="expectancy"><div class="label">Expectancy del sistema</div><div class="value {"neg" if exp_metrics["expectancy"] < 0 else "pos"}">{exp_metrics["expectancy"]:+.2f}%</div><div class="sub">{exp_metrics["win_rate"]:.0f}% acierto \u00b7 Payoff {exp_metrics["payoff_ratio"]:.2f}{" \u00b7 Anual. {:+.1f}%".format(exp_metrics["annualized_return"]) if exp_metrics["annualized_return"] is not None else ""}</div></div>
+    <div class="kpi" data-kpi="expectancy"><div class="label">Expectancy del sistema</div><div class="value {"neg" if exp_metrics["expectancy"] < 0 else "pos"}">{exp_metrics["expectancy"]:+.2f}%</div><div class="sub">% Acierto: {exp_metrics["pct_acierto"]:.1f}% \u00b7 % Fallo: {exp_metrics["pct_fallo"]:.1f}%<br>Ganancia media: {exp_metrics["ganancia_media_pct"]:+.2f}% \u00b7 P\u00e9rdida media: {exp_metrics["perdida_media_pct"]:.2f}%<br>Payoff ratio: {exp_metrics["payoff_ratio"]:.2f} \u00b7 Anual.: {exp_metrics["rentabilidad_anualizada"]*100:.2f}%</div></div>
   </div>
 
   <div class="section-title">An\u00e1lisis por posici\u00f3n</div>
@@ -1214,15 +1214,15 @@ for cp in closed_positions:
     pnl_cls_c = "neg" if cp["pnl_eur"] < 0 else "pos"
     hist_rows += f"""<tr class="closed">
   <td>\U0001f534 Cerrada</td>
-  <td>{cp['entry_date']}</td>
-  <td><strong>{cp['name']}</strong></td>
-  <td>{cp['ticker']}</td>
-  <td>{cp['shares']}</td>
-  <td>{cp['entry']:.2f}</td>
-  <td>{cp['cost']:,.2f}</td>
-  <td>{cp['support']:.2f}</td>
-  <td>{cp['stop']:.2f}</td>
-  <td style="color:{"#e05050" if cp["pnl_eur"] < 0 else "#3ecf8e"}">{cp['sale_price']:.2f}</td>
+  <td>{cp['fecha_entrada']}</td>
+  <td><strong>{cp['operacion']}</strong></td>
+  <td>\u2014</td>
+  <td>{cp['acciones']}</td>
+  <td>{cp['entrada']:.2f}</td>
+  <td>{cp['coste']:,.2f}</td>
+  <td>\u2014</td>
+  <td>\u2014</td>
+  <td style="color:{"#e05050" if cp["pnl_eur"] < 0 else "#3ecf8e"}">{cp['venta']:.2f}</td>
   <td style="color:{"#e05050" if cp["pnl_eur"] < 0 else "#3ecf8e"}">{cp['pnl_eur']:+,.2f}</td>
   <td style="color:{"#e05050" if cp["pnl_eur"] < 0 else "#3ecf8e"}">{cp['pnl_pct']:+.2f}%</td>
 </tr>"""

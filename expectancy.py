@@ -1,66 +1,56 @@
 import json
-import os
 from datetime import datetime
 
 
-def cargar_cartera_cerrada(path=None):
-    if path is None:
-        path = os.path.join(os.path.dirname(__file__), "cartera_cerrada.json")
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+def cargar_cartera_cerrada(path="cartera_cerrada.json"):
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
 
 
-def calcular_expectancy(trades):
-    n = len(trades)
-    winners = [t for t in trades if t["pnl_pct"] > 0]
-    losers = [t for t in trades if t["pnl_pct"] <= 0]
+def calcular_expectancy(operaciones):
+    n = len(operaciones)
+    ganadoras = [o for o in operaciones if o["pnl_pct"] > 0]
+    perdedoras = [o for o in operaciones if o["pnl_pct"] <= 0]
 
-    n_w = len(winners)
-    n_l = len(losers)
+    n_ganadoras = len(ganadoras)
+    n_perdedoras = len(perdedoras)
 
-    win_rate = round((n_w / n) * 100, 1) if n else 0.0
-    loss_rate = round((n_l / n) * 100, 1) if n else 0.0
+    pct_acierto = round((n_ganadoras / n) * 100, 1) if n else 0.0
+    pct_fallo = round((n_perdedoras / n) * 100, 1) if n else 0.0
 
-    avg_win = round(sum(t["pnl_pct"] for t in winners) / n_w, 2) if n_w else 0.0
-    avg_loss = round(abs(sum(t["pnl_pct"] for t in losers) / n_l), 2) if n_l else 0.0
+    ganancia_media_pct = round(sum(o["pnl_pct"] for o in ganadoras) / n_ganadoras, 2) if n_ganadoras else 0.0
+    perdida_media_pct = round(abs(sum(o["pnl_pct"] for o in perdedoras) / n_perdedoras), 2) if n_perdedoras else 0.0
 
     expectancy = round(
-        (win_rate / 100 * avg_win) - (loss_rate / 100 * avg_loss), 2
+        (pct_acierto / 100 * ganancia_media_pct) - (pct_fallo / 100 * perdida_media_pct), 2
     )
 
-    payoff_ratio = round(avg_win / avg_loss, 2) if avg_loss else 0.0
+    payoff_ratio = round(ganancia_media_pct / perdida_media_pct, 2) if perdida_media_pct else None
 
-    annualized_return = None
-    dates = []
-    for t in trades:
-        if "fecha_cierre" in t and "entry_date" in t:
-            try:
-                fd = datetime.strptime(t["fecha_cierre"], "%Y-%m-%d")
-                ed = datetime.strptime(t["entry_date"], "%d/%m/%Y")
-                dates.extend([ed, fd])
-            except (ValueError, KeyError):
-                pass
-    if len(dates) == 2 * n:
-        first_entry = min(dt for i, dt in enumerate(dates) if i % 2 == 0)
-        last_close = max(dt for i, dt in enumerate(dates) if i % 2 == 1)
-        days = (last_close - first_entry).days
-        if days > 0:
-            total_cost = sum(t["cost"] for t in trades)
-            total_pnl = sum(t["pnl_eur"] for t in trades)
-            total_return = total_pnl / total_cost if total_cost else 0
-            annualized_return = round(
-                ((1 + total_return) ** (365 / days) - 1) * 100, 2
-            )
+    rentabilidad_anualizada = None
+    if n > 0 and all(o.get("fecha_entrada") and o.get("fecha_cierre") for o in operaciones):
+        try:
+            fechas_entrada = [datetime.strptime(o["fecha_entrada"], "%Y-%m-%d") for o in operaciones]
+            fechas_cierre = [datetime.strptime(o["fecha_cierre"], "%Y-%m-%d") for o in operaciones]
+            dias_totales = (max(fechas_cierre) - min(fechas_entrada)).days
+            if dias_totales > 0:
+                total_coste = sum(o["coste"] for o in operaciones)
+                total_pnl = sum(o["pnl_eur"] for o in operaciones)
+                total_retorno = total_pnl / total_coste if total_coste else 0
+                años = dias_totales / 365.25
+                rentabilidad_anualizada = round((1 + total_retorno) ** (1 / años) - 1, 4)
+        except (ValueError, KeyError):
+            pass
 
     return {
-        "total_trades": n,
-        "winners": n_w,
-        "losers": n_l,
-        "win_rate": win_rate,
-        "loss_rate": loss_rate,
-        "avg_win": avg_win,
-        "avg_loss": avg_loss,
+        "pct_acierto": pct_acierto,
+        "pct_fallo": pct_fallo,
+        "ganancia_media_pct": ganancia_media_pct,
+        "perdida_media_pct": perdida_media_pct,
         "expectancy": expectancy,
         "payoff_ratio": payoff_ratio,
-        "annualized_return": annualized_return,
+        "rentabilidad_anualizada": rentabilidad_anualizada,
     }
