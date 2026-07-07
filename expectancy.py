@@ -31,6 +31,8 @@ def calcular_expectancy(operaciones):
     payoff_ratio = round(ganancia_media_pct / perdida_media_pct, 2) if perdida_media_pct else None
 
     rentabilidad_anualizada = None
+    dias_totales = None
+    total_retorno = None
     if n > 0 and all(o.get("fecha_entrada") and o.get("fecha_cierre") for o in operaciones):
         try:
             fechas_entrada = [datetime.strptime(o["fecha_entrada"], "%Y-%m-%d") for o in operaciones]
@@ -53,4 +55,11 @@ def calcular_expectancy(operaciones):
         "expectancy": expectancy,
         "payoff_ratio": payoff_ratio,
         "rentabilidad_anualizada": rentabilidad_anualizada,
+        "n_total": n,
+        "n_ganadoras": n_ganadoras,
+        "n_perdedoras": n_perdedoras,
+        "lista_ganancias_pct": [round(o["pnl_pct"], 2) for o in ganadoras],
+        "lista_perdidas_pct": [round(abs(o["pnl_pct"]), 2) for o in perdedoras],
+        "dias_totales": dias_totales,
+        "total_retorno": round(total_retorno, 4) if total_retorno is not None else None,
     }
