@@ -8,7 +8,8 @@
     "pnl_eur": 400.99,
     "pnl_pct": 16.15,
     "fecha_entrada": "2025-08-15",
-    "fecha_cierre": "2026-03-09"
+    "fecha_cierre": "2026-03-09",
+    "regimen_entrada": null
   },
   {
     "operacion": "Iberdrola",
@@ -19,7 +20,8 @@
     "pnl_eur": 375.47,
     "pnl_pct": 14.49,
     "fecha_entrada": "2025-08-18",
-    "fecha_cierre": "2026-03-09"
+    "fecha_cierre": "2026-03-09",
+    "regimen_entrada": null
   },
   {
     "operacion": "Grenergy",
@@ -30,7 +32,8 @@
     "pnl_eur": 316.00,
     "pnl_pct": 35.11,
     "fecha_entrada": "2025-08-18",
-    "fecha_cierre": "2026-03-09"
+    "fecha_cierre": "2026-03-09",
+    "regimen_entrada": null
   },
   {
     "operacion": "Heidelberg",
@@ -41,6 +44,7 @@
     "pnl_eur": -168.90,
     "pnl_pct": -15.93,
     "fecha_entrada": "2025-11-17",
-    "fecha_cierre": "2026-03-03"
+    "fecha_cierre": "2026-03-03",
+    "regimen_entrada": null
   }
 ]

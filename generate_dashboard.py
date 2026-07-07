@@ -12,6 +12,8 @@ from datetime import datetime, date
 from config_loader import CFG, logger, get_logger
 from screener import calcular_soporte_resistencia
 from expectancy import cargar_cartera_cerrada, calcular_expectancy
+from position_sizing import calcular_tamano_posicion
+from regimen_mercado import obtener_regimen_combinado
 
 _YF_SESSION = requests.Session()
 _YF_SESSION.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
@@ -697,6 +699,22 @@ else:
     now_str = ref_date.strftime("%d/%m/%Y %H:%M")
 total_cls = "green" if total_pnl >= 0 else "red"
 
+# Régimen de mercado
+regimen_data = obtener_regimen_combinado()
+regimen = regimen_data["regimen_general"]
+if regimen == "favorable":
+    regimen_emoji = "\U0001f7e2"
+    regimen_texto = "Favorable (DAX + EuroStoxx en tendencia alcista)"
+elif regimen == "mixto":
+    regimen_emoji = "\U0001f7e1"
+    regimen_texto = "Mixto (solo un \u00edndice en tendencia alcista)"
+elif regimen == "sin_datos":
+    regimen_emoji = "\u26aa"
+    regimen_texto = "Sin datos (no se pudo calcular)"
+else:
+    regimen_emoji = "\U0001f534"
+    regimen_texto = "Desfavorable (ning\u00fan \u00edndice en tendencia alcista)"
+
 html = f"""<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -860,7 +878,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
       <h1>Dashboard Cartera</h1>
       <div class="sub">{' · '.join(p['name'] for p in portfolio)}</div>
     </div>
-    <div class="date-info">Actualizado: {now_str}<br><span style="color:#3ecf8e;font-size:13px;">{len(portfolio)} posiciones activas</span></div>
+    <div class="date-info">Actualizado: {now_str}<br><span style="color:#3ecf8e;font-size:13px;">{len(portfolio)} posiciones activas</span><br><span style="font-size:12px;margin-top:6px;display:inline-block">{regimen_emoji} R\u00e9gimen de mercado: {regimen_texto}</span></div>
   </div>
 
   <div class="kpi-row" id="kpi-row">
@@ -875,6 +893,17 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="kpi" data-kpi="rend-cuenta" data-rend-cuenta-eur="{rend_cuenta_eur:.2f}" data-rend-cuenta-pct="{rend_cuenta_pct:.2f}" data-tae="{cuenta_tae}"><div class="label">Rendimiento Cuenta</div><div class="value {"neg" if rend_cuenta_pct is not None and rend_cuenta_pct < 0 else "pos"}" data-kpi-val="rend-cuenta-pct">{"{:+,.2f}%".format(rend_cuenta_pct) if cuenta_saldo else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / saldo {:,.2f} \u20ac".format(rend_cuenta_eur, cuenta_saldo) if cuenta_saldo else "\u2014"}, TAE {cuenta_tae:.0f}%</div></div>
     <div class="kpi" data-kpi="rend-total-risk" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rendimiento Total (con riesgo)</div><div class="value" data-kpi-val="rend-total-risk-pct">\u2014</div><div class="sub" data-kpi-val="rend-total-risk-sub">\u2014</div></div>
     <div class="kpi" data-kpi="expectancy"><div class="label">Expectancy del sistema</div><div class="value {"neg" if exp_metrics["expectancy"] < 0 else "pos"}">{exp_metrics["expectancy"]:+.2f}%</div><div class="sub">% Acierto: {exp_metrics["pct_acierto"]:.1f}% \u00b7 % Fallo: {exp_metrics["pct_fallo"]:.1f}%<br>Ganancia media: {exp_metrics["ganancia_media_pct"]:+.2f}% \u00b7 P\u00e9rdida media: {exp_metrics["perdida_media_pct"]:.2f}%<br>Payoff ratio: {exp_metrics["payoff_ratio"]:.2f} \u00b7 Anual.: {exp_metrics["rentabilidad_anualizada"]*100:.2f}%</div></div>
+  </div>
+
+  <div class="section-title">Glosario de Expectancy del sistema</div>
+  <div style="font-size:11px;color:#9aa0b0;margin-bottom:14px;padding:10px 14px;background:#12151f;border-radius:8px;line-height:1.8">
+    <strong>% Acierto:</strong> Porcentaje de operaciones cerradas que terminaron en ganancia.<br>
+    <strong>% Fallo:</strong> Porcentaje de operaciones cerradas que terminaron en p\u00e9rdida.<br>
+    <strong>Ganancia media:</strong> Rentabilidad porcentual media de las operaciones ganadoras.<br>
+    <strong>P\u00e9rdida media:</strong> Rentabilidad porcentual media (en valor absoluto) de las operaciones perdedoras.<br>
+    <strong>Expectancy:</strong> Retorno medio esperado por operaci\u00f3n, combinando % de acierto y tama\u00f1o medio de ganancias/p\u00e9rdidas. F\u00f3rmula: (%Acierto \u00d7 Ganancia media) \u2212 (%Fallo \u00d7 P\u00e9rdida media).<br>
+    <strong>Payoff ratio:</strong> Cu\u00e1ntas veces mayor es la ganancia media que la p\u00e9rdida media. Un ratio de 2.0 significa que las ganadoras son el doble de grandes que las perdedoras.<br>
+    <strong>Rentabilidad anualizada:</strong> Retorno del conjunto de operaciones cerradas, ajustado al tiempo real que estuvo invertido el capital.
   </div>
 
   <div class="section-title">An\u00e1lisis por posici\u00f3n</div>
@@ -973,6 +1002,12 @@ for i, p in enumerate(portfolio):
         beta_str = "N/D"
         beta_cls = ""
         beta_desc = ""
+    # Position sizing
+    tamano = calcular_tamano_posicion(p["entry"], p["stop"])
+    if tamano["num_acciones_max"] and tamano["num_acciones_max"] > 0:
+        tamano_str = f"{tamano['num_acciones_max']} acciones (~{tamano['inversion_maxima_eur']:.0f}\u20ac)"
+    else:
+        tamano_str = "N/D"
     # Chart data for this position
     pos_hist = full_hist.get(tk)
     if pos_hist is not None and len(pos_hist) >= 5:
@@ -1009,6 +1044,7 @@ for i, p in enumerate(portfolio):
         <div class="metric-row"><span class="ml">ROE 2026{desc("Rentabilidad sobre fondos propios")}</span><span class="mv {"pos" if (roe_val or 0) >= 15 else ("warn" if (roe_val or 0) >= 5 else "neg")}">{f"{roe_val:.1f}%" if roe_val else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">FCF 2026{desc("Caja generada tras inversiones")}</span><span class="mv {fcf_cls}">{f"{fcf_val:,.0f}M \u20ac" if fcf_val else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">Peso cartera{desc("% del capital total invertido en esta posici\u00f3n")}</span><span class="mv {weight_cls}" data-metric="weight">{p['weight']:.1f}%{" \u26a0" if p["weight"] > 25 else ""}</span></div>
+        <div class="metric-row"><span class="ml">Tama\u00f1o sugerido (2% riesgo){desc("N\u00ba de acciones m\u00e1ximo recomendado seg\u00fan distancia al stop loss")}</span><span class="mv">{tamano_str}</span></div>
         <div class="metric-row"><span class="ml">Stop Din\u00e1mico{desc("Stop calculado sobre soporte t\u00e9cnico (-2%)")}</span><span class="mv neg">{dyn_stop_str}{" <span style=\"color:#f0a500;font-size:9px;margin-left:4px\">\u26a0 Revisar stop</span>" if stop_alert else ""}</span></div>
       </div>
       {generar_gauge_riesgo(p["entry"], p["stop"], p["target"], p["current"])}
