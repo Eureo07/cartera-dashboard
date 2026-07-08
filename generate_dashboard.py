@@ -475,10 +475,12 @@ for p in portfolio:
         if prev_close is not None:
             dv = (cur_px - prev_close) * p["shares"]
             p["day_var"] = dv
+            p["prev_close"] = prev_close
             day_var_total += dv
             n_day_var += 1
         else:
             p["day_var"] = None
+            p["prev_close"] = None
     else:
         p["day_var"] = None
 day_var_pct = (day_var_total / total_value) * 100 if total_value and n_day_var > 0 else None
@@ -713,6 +715,9 @@ html = f"""<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="refresh" content="300">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Dashboard Cartera</title>
 <style>
 *{{margin:0;padding:0;box-sizing:border-box}}
@@ -1009,7 +1014,8 @@ for i, p in enumerate(portfolio):
         pos_dyn_stop_val = None
 
     desc = lambda t: f'<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">{t}</span>'
-    html += f"""    <div class="pos-card{" neg" if p["pnl"] < 0 else ""}" data-ticker="{tk}" data-entry="{p['entry']}" data-shares="{p['shares']}" data-stop="{p['stop']}" data-commission="{p.get('commission', 0)}">
+    prev_close_attr = f' data-prev-close="{p.get("prev_close", "")}"' if p.get("prev_close") is not None else ""
+    html += f"""    <div class="pos-card{" neg" if p["pnl"] < 0 else ""}" data-ticker="{tk}" data-entry="{p['entry']}" data-shares="{p['shares']}" data-stop="{p['stop']}" data-commission="{p.get('commission', 0)}"{prev_close_attr}>
       <div class="pos-header">
         <div><div class="ticker">{tk} — {p['name']}</div><div class="name">{sector_name} · Entrada {p['entry_date']}</div></div>
         <div class="price"><div class="current" id="price-{i}" style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}"><span class="price-val">{p['current']:.2f}</span> \u20ac{" <span style=\"color:#f0a500;font-size:11px\" title=\"Dato no actualizado\">\u26a0</span>" if p.get("data_error") else ""}</div><div class="pnl {pnl_cls_card}" id="pnl-{i}"><span class="pnl-val">{pnl_sign}{p['pnl']:,.2f}</span> \u20ac (<span class="pnl-pct-val">{pnl_pct_sign}{p['pnl_pct']:.2f}</span>%)</div></div>
@@ -1591,6 +1597,7 @@ function renderCuenta(data) {
 }
 
 // ========== Live prices ==========
+var _prevCloseCache = {};  // persistent prev_close reference across API polls
 function updatePrices(data) {
   if (data.error || !data.prices) { console.warn('[prices] error:', data.error); return; }
   var cards = document.querySelectorAll('.pos-card');
@@ -1604,6 +1611,10 @@ function updatePrices(data) {
     var commission = parseFloat(card.getAttribute('data-commission')) || 0;
     var pd = data.prices[tk];
     if (!pd || pd.current == null) { anyFail = true; return; }
+    // Cache prev_close from first API response (consistent reference for day_var)
+    if (!_prevCloseCache[tk] && pd.prev_close != null) {
+      _prevCloseCache[tk] = pd.prev_close;
+    }
     var cur = pd.current;
     var cost = entry * shares + commission;
     var value = cur * shares;
@@ -1646,8 +1657,9 @@ function updatePrices(data) {
     totalCost += cost;
     if (pd && pd.current != null) {
       totalValue += pd.current * shares;
-      if (pd.day_var != null) {
-        totalDayVar += pd.day_var * shares;
+      var refClose = _prevCloseCache[tk];
+      if (refClose != null) {
+        totalDayVar += (pd.current - refClose) * shares;
         nDayVar++;
       }
     } else {
