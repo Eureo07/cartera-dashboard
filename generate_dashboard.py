@@ -445,6 +445,26 @@ except Exception:
 rend_cuenta_eur = cuenta_intereses
 rend_cuenta_pct = (rend_cuenta_eur / cuenta_saldo * 100) if cuenta_saldo else 0
 
+# MyInvestor cuenta remunerada
+cuenta_saldo_mi = 0.0
+cuenta_intereses_mi = 0.0
+cuenta_tae_mi = 2.5
+try:
+    _p_mi = os.path.join(CFG["base_dir"], "cuenta_remunerada_myinvestor.json")
+    if os.path.exists(_p_mi):
+        with open(_p_mi, "r", encoding="utf-8") as _f:
+            _j_mi = json.load(_f)
+        _hist_mi = _j_mi.get("historico_saldos", [])
+        if _hist_mi:
+            _ult_mi = max(_hist_mi, key=lambda x: x["fecha"])
+            cuenta_saldo_mi = _ult_mi["saldo"]
+        cuenta_intereses_mi = _j_mi.get("intereses_acumulados_periodo", 0) or 0
+        cuenta_tae_mi = _j_mi.get("tae_actual", 2.5)
+except Exception:
+    pass
+rend_mi_eur = cuenta_intereses_mi
+rend_mi_pct = (rend_mi_eur / cuenta_saldo_mi * 100) if cuenta_saldo_mi else 0
+
 # Daily variation (HOY) — cur - previousClose (real, no ajustado)
 day_var_total = 0.0
 n_day_var = 0
@@ -1225,6 +1245,9 @@ html += """  <div class="section-title">Eventos &amp; Vigilancia</div>
 
 <div class="section-title">Cuenta Remunerada</div>
 <div id="cuenta-container"><div class="ew-loading">Cargando cuenta...</div></div>
+
+<div class="section-title">Cuenta MyInvestor</div>
+<div id="cuenta-container-myinvestor"><div class="ew-loading">Cargando cuenta MyInvestor...</div></div>
 """
 # ========== HISTORIAL DE CARTERA ==========
 hist_rows = ""
@@ -1596,6 +1619,31 @@ function renderCuenta(data) {
   c.innerHTML = h;
 }
 
+// ========== Cuenta MyInvestor ==========
+function renderCuentaMyInvestor(data) {
+  var c = document.getElementById('cuenta-container-myinvestor');
+  if (data.error) {
+    c.innerHTML = '<div class="ew-loading">Cuenta MyInvestor no disponible</div>'; return;
+  }
+  var taePct = data.tae_actual.toFixed(0) + '%';
+  var saldoLabel = data.saldo_desactualizado
+    ? 'Saldo a ' + data.fecha_ultima_actualizacion
+    : 'Saldo actual';
+  var notaAntiguedad = data.saldo_desactualizado
+    ? '<div style="font-size:10px;color:#f0a500;margin-bottom:4px">\u26a0 \u00daltimo saldo conocido: ' + data.fecha_ultima_actualizacion + '</div>'
+    : '<div style="font-size:10px;color:#3ecf8e;margin-bottom:4px">\u2714 Actualizado hoy</div>';
+  var h = '<div class="cuenta-card">';
+  h += '<div class="cuenta-sub">' + (data.entidad || 'Cuenta MyInvestor') + '</div>';
+  h += notaAntiguedad;
+  h += '<div class="cuenta-saldo">' + data.saldo_actual.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' \u20ac</div>';
+  h += '<div class="cuenta-row"><span class="ml">TAE</span><span class="mv" style="color:#3ecf8e">' + taePct + '</span></div>';
+  h += '<div class="cuenta-row"><span class="ml">Inter\u00e9s diario est.</span><span class="mv">' + data.interes_diario_estimado.toFixed(2) + ' \u20ac</span></div>';
+  h += '<div class="cuenta-row"><span class="ml">Intereses acumulados</span><span class="mv" style="color:#3ecf8e">+' + data.intereses_acumulados_periodo.toFixed(2) + ' \u20ac</span></div>';
+  h += '<div class="cuenta-row"><span class="ml">Tracking desde</span><span class="mv">' + data.fecha_inicio_tracking + '</span></div>';
+  h += '</div>';
+  c.innerHTML = h;
+}
+
 // ========== Live prices ==========
 var _prevCloseCache = {};  // persistent prev_close reference across API polls
 function updatePrices(data) {
@@ -1824,6 +1872,7 @@ document.addEventListener('DOMContentLoaded', function() {
   fetch('/api/watchlist').then(function(r){ return r.json(); }).then(renderWatchlist).catch(function(){ document.getElementById('watchlist-container').innerHTML = '<div class="ew-error">Error de conexi\u00F3n</div>'; });
   fetch('/api/fondos').then(function(r){ return r.json(); }).then(renderFondos).catch(function(){ document.getElementById('fondos-container').innerHTML = '<div class="ew-error">Error al cargar fondos</div>'; });
   fetch('/api/cuenta-remunerada').then(function(r){ return r.json(); }).then(renderCuenta).catch(function(){ document.getElementById('cuenta-container').innerHTML = '<div class="ew-error">Error al cargar cuenta</div>'; });
+  fetch('/api/cuenta-remunerada-myinvestor').then(function(r){ return r.json(); }).then(renderCuentaMyInvestor).catch(function(){ document.getElementById('cuenta-container-myinvestor').innerHTML = '<div class="ew-error">Error al cargar cuenta MyInvestor</div>'; });
   fetch('/api/prices').then(function(r){ return r.json(); }).then(updatePrices).catch(function(){
     var hdr = document.querySelector('.header .date-info');
     if (hdr && !hdr.querySelector('.price-warn')) {

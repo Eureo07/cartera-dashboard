@@ -232,6 +232,9 @@ _FONDOS_TTL = 300  # 5 min (datos cambian solo cuando editas JSON)
 _CUENTA_CACHE = {"data": None, "updated": None}
 _CUENTA_TTL = 300  # 5 min
 
+_CUENTA_MI_CACHE = {"data": None, "updated": None}
+_CUENTA_MI_TTL = 300  # 5 min
+
 PORT = int(os.environ.get("PORT", "5000"))
 DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -386,7 +389,11 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         if self.path.startswith("/api/fondos"):
             self._send_json_cache(_FONDOS_CACHE, _FONDOS_TTL, self._compute_fondos)
             return
-        # API: Cuenta remunerada (JSON local, sin fuentes externas)
+        # API: Cuenta MyInvestor (JSON local, debe ir ANTES que /api/cuenta-remunerada)
+        if self.path.startswith("/api/cuenta-remunerada-myinvestor"):
+            self._send_json_cache(_CUENTA_MI_CACHE, _CUENTA_MI_TTL, self._compute_cuenta_remunerada_myinvestor)
+            return
+        # API: Cuenta remunerada Trade Republic (JSON local, sin fuentes externas)
         if self.path.startswith("/api/cuenta-remunerada"):
             self._send_json_cache(_CUENTA_CACHE, _CUENTA_TTL, self._compute_cuenta_remunerada)
             return
@@ -784,6 +791,38 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             saldo_actual = ultimo["saldo"]
             saldo_desactualizado = ultima_fecha < hoy
             # Interés diario estimado (solo informativo, no alimenta KPI)
+            interes_diario = round(saldo_actual * (data["tae_actual"] / 100) / 365, 2)
+            fecha_str = ultima_fecha.strftime("%d/%m/%Y")
+            result = {
+                "entidad": data.get("entidad", ""),
+                "saldo_actual": saldo_actual,
+                "saldo_desactualizado": saldo_desactualizado,
+                "fecha_ultima_actualizacion": fecha_str,
+                "fecha_ultima_actualizacion_iso": ultimo["fecha"],
+                "tae_actual": data["tae_actual"],
+                "interes_diario_estimado": interes_diario,
+                "intereses_acumulados_periodo": data.get("intereses_acumulados_periodo", 0),
+                "fecha_inicio_tracking": data.get("fecha_inicio_tracking", ""),
+                "historico_saldos": data.get("historico_saldos", []),
+            }
+            return result
+        except Exception as e:
+            return {"error": True, "msg": str(e)}
+
+    def _compute_cuenta_remunerada_myinvestor(self):
+        """Lee cuenta_remunerada_myinvestor.json, mismo patrón que Trade Republic."""
+        from datetime import date
+        try:
+            path = os.path.join(DIR, "cuenta_remunerada_myinvestor.json")
+            if not os.path.exists(path):
+                return {"error": True, "msg": "JSON MyInvestor no encontrado"}
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            hoy = date.today()
+            ultimo = max(data["historico_saldos"], key=lambda x: x["fecha"])
+            ultima_fecha = date.fromisoformat(ultimo["fecha"])
+            saldo_actual = ultimo["saldo"]
+            saldo_desactualizado = ultima_fecha < hoy
             interes_diario = round(saldo_actual * (data["tae_actual"] / 100) / 365, 2)
             fecha_str = ultima_fecha.strftime("%d/%m/%Y")
             result = {
