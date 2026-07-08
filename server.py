@@ -66,6 +66,45 @@ def _fetch_fmp(endpoint, ticker):
             continue
     return None, None
 
+# ========== ALPHA VANTAGE ==========
+ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY", "")
+
+def _fetch_alpha_vantage_nvda_price():
+    """Consulta NVDA (NASDAQ) via Alpha Vantage y convierte USD a EUR.
+    Retorna (current_eur, prev_close_eur) o None si falla."""
+    if not ALPHA_VANTAGE_API_KEY:
+        return None
+    try:
+        import urllib.request, json
+        # 1) GLOBAL_QUOTE para NVDA
+        url1 = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=NVDA&apikey={ALPHA_VANTAGE_API_KEY}"
+        req1 = urllib.request.Request(url1, headers={"User-Agent": "Mozilla/5.0"})
+        resp1 = urllib.request.urlopen(req1, timeout=10)
+        data1 = json.loads(resp1.read())
+        gq = data1.get("Global Quote", {})
+        if not gq:
+            return None
+        nvda_price = float(gq.get("05. price", 0))
+        nvda_prev = float(gq.get("08. previous close", 0))
+        if nvda_price == 0 or nvda_prev == 0:
+            return None
+        # 2) Tipo de cambio USD→EUR
+        url2 = f"https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=USD&to_currency=EUR&apikey={ALPHA_VANTAGE_API_KEY}"
+        req2 = urllib.request.Request(url2, headers={"User-Agent": "Mozilla/5.0"})
+        resp2 = urllib.request.urlopen(req2, timeout=10)
+        data2 = json.loads(resp2.read())
+        fx = data2.get("Realtime Currency Exchange Rate", {})
+        fx_rate = float(fx.get("5. Exchange Rate", 1))
+        if fx_rate <= 0:
+            return None
+        cur_eur = round(nvda_price * fx_rate, 2)
+        prev_eur = round(nvda_prev * fx_rate, 2)
+        print(f"[AV] NVDA={nvda_price} USD, fx={fx_rate}, cur={cur_eur} EUR, prev={prev_eur} EUR")
+        return (cur_eur, prev_eur)
+    except Exception as e:
+        print(f"[AV] Error: {e}")
+        return None
+
 # ========== EARNINGS WATCHLIST ==========
 _WATCHLIST_CACHE = {"data": None, "updated": None}
 _WATCHLIST_TTL = 24 * 3600
@@ -862,6 +901,21 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             _sess.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
 
             def fetch_ticker_price(tk):
+                # NVD.DE: usar Alpha Vantage (NVDA NASDAQ + conversión USD→EUR) a partir de 20:00
+                if tk == "NVD.DE":
+                    try:
+                        import pytz
+                        now_hour = datetime.now(pytz.timezone("Europe/Madrid")).hour
+                    except Exception:
+                        now_hour = 0
+                    if now_hour >= 20:
+                        av_result = _fetch_alpha_vantage_nvda_price()
+                        if av_result:
+                            av_cur, av_prev = av_result
+                            av_dv = round(av_cur - av_prev, 2)
+                            print(f"[prices] {tk}: Alpha Vantage -> cur={av_cur} prev={av_prev} day_var={av_dv}")
+                            return (tk, {"current": av_cur, "prev_close": av_prev, "day_var": av_dv})
+                        print(f"[prices] {tk}: Alpha Vantage falló, fallback a yfinance")
                 try:
                     info = yf.Ticker(tk, session=_sess).info or {}
                     cur = info.get("regularMarketPrice") or info.get("previousClose") or info.get("currentPrice")
