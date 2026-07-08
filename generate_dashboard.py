@@ -687,16 +687,8 @@ evol_benchmark_json = json.dumps(evol_benchmark)
 sector_alts_data = {}
 
 # ========== BUILD HTML ==========
-if last_data_date is not None:
-    ref_date = last_data_date
-    if hasattr(ref_date, 'to_pydatetime'):
-        ref_date = ref_date.to_pydatetime()
-    if ref_date.tzinfo is None:
-        ref_date = ref_date.replace(tzinfo=ZoneInfo("Europe/Madrid"))
-    now_str = ref_date.strftime("%d/%m/%Y")
-else:
-    ref_date = datetime.now(ZoneInfo("Europe/Madrid"))
-    now_str = ref_date.strftime("%d/%m/%Y %H:%M")
+ref_date = datetime.now(ZoneInfo("Europe/Madrid"))
+now_str = ref_date.strftime("%d/%m/%Y %H:%M")
 total_cls = "green" if total_pnl >= 0 else "red"
 
 # Régimen de mercado
