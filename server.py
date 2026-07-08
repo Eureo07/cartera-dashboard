@@ -792,6 +792,12 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             saldo_desactualizado = ultima_fecha < hoy
             # Interés diario estimado (solo informativo, no alimenta KPI)
             interes_diario = round(saldo_actual * (data["tae_actual"] / 100) / 365, 2)
+            # Interés acumulado del mes actual
+            primer_dia_mes = hoy.replace(day=1)
+            fecha_inicio = date.fromisoformat(data["fecha_inicio_tracking"]) if data.get("fecha_inicio_tracking") else hoy
+            inicio_mes_efectivo = max(primer_dia_mes, fecha_inicio)
+            dias_mes = (hoy - inicio_mes_efectivo).days + 1
+            interes_mes_actual = round(interes_diario * dias_mes, 2)
             fecha_str = ultima_fecha.strftime("%d/%m/%Y")
             result = {
                 "entidad": data.get("entidad", ""),
@@ -801,6 +807,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 "fecha_ultima_actualizacion_iso": ultimo["fecha"],
                 "tae_actual": data["tae_actual"],
                 "interes_diario_estimado": interes_diario,
+                "interes_mes_actual": interes_mes_actual,
                 "intereses_acumulados_periodo": data.get("intereses_acumulados_periodo", 0),
                 "fecha_inicio_tracking": data.get("fecha_inicio_tracking", ""),
                 "historico_saldos": data.get("historico_saldos", []),
@@ -824,6 +831,11 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             saldo_actual = ultimo["saldo"]
             saldo_desactualizado = ultima_fecha < hoy
             interes_diario = round(saldo_actual * (data["tae_actual"] / 100) / 365, 2)
+            primer_dia_mes = hoy.replace(day=1)
+            fecha_inicio = date.fromisoformat(data["fecha_inicio_tracking"]) if data.get("fecha_inicio_tracking") else hoy
+            inicio_mes_efectivo = max(primer_dia_mes, fecha_inicio)
+            dias_mes = (hoy - inicio_mes_efectivo).days + 1
+            interes_mes_actual = round(interes_diario * dias_mes, 2)
             fecha_str = ultima_fecha.strftime("%d/%m/%Y")
             result = {
                 "entidad": data.get("entidad", ""),
@@ -833,6 +845,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 "fecha_ultima_actualizacion_iso": ultimo["fecha"],
                 "tae_actual": data["tae_actual"],
                 "interes_diario_estimado": interes_diario,
+                "interes_mes_actual": interes_mes_actual,
                 "intereses_acumulados_periodo": data.get("intereses_acumulados_periodo", 0),
                 "fecha_inicio_tracking": data.get("fecha_inicio_tracking", ""),
                 "historico_saldos": data.get("historico_saldos", []),

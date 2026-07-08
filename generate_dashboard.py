@@ -886,6 +886,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
 .radar-table .ter-low{{color:#3ecf8e}}
 .radar-table .tr-own{{background:rgba(62,207,142,0.06)}}
 .radar-warn{{color:#f0a500;font-size:11px;padding:6px 10px;background:#2d1a1a;border-radius:6px;margin-top:8px}}
+.cuenta-remunerada-grid{{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}}
 </style>
 </head>
 <body>
@@ -1243,11 +1244,11 @@ html += """  <div class="section-title">Eventos &amp; Vigilancia</div>
 <div class="section-title">Fondos Indexados</div>
 <div id="fondos-container"><div class="ew-loading">Cargando fondos...</div></div>
 
-<div class="section-title">Cuenta Remunerada</div>
-<div id="cuenta-container"><div class="ew-loading">Cargando cuenta...</div></div>
-
-<div class="section-title">Cuenta MyInvestor</div>
-<div id="cuenta-container-myinvestor"><div class="ew-loading">Cargando cuenta MyInvestor...</div></div>
+<div class="section-title">Cuentas Remuneradas</div>
+<div class="cuenta-remunerada-grid">
+  <div id="cuenta-container"><div class="ew-loading">Cargando cuenta...</div></div>
+  <div id="cuenta-container-myinvestor"><div class="ew-loading">Cargando cuenta...</div></div>
+</div>
 """
 # ========== HISTORIAL DE CARTERA ==========
 hist_rows = ""
@@ -1614,6 +1615,7 @@ function renderCuenta(data) {
   h += '<div class="cuenta-row"><span class="ml">TAE</span><span class="mv" style="color:#3ecf8e">' + taePct + '</span></div>';
   h += '<div class="cuenta-row"><span class="ml">Inter\u00e9s diario est.</span><span class="mv">' + data.interes_diario_estimado.toFixed(2) + ' \u20ac</span></div>';
   h += '<div class="cuenta-row"><span class="ml">Intereses acumulados</span><span class="mv" style="color:#3ecf8e">+' + data.intereses_acumulados_periodo.toFixed(2) + ' \u20ac</span></div>';
+  h += '<div class="cuenta-row"><span class="ml">Inter\u00e9s acumulado (mes actual)</span><span class="mv" style="color:#3ecf8e">+' + data.interes_mes_actual.toFixed(2) + ' \u20ac</span></div>';
   h += '<div class="cuenta-row"><span class="ml">Tracking desde</span><span class="mv">' + data.fecha_inicio_tracking + '</span></div>';
   h += '</div>';
   c.innerHTML = h;
@@ -1639,6 +1641,7 @@ function renderCuentaMyInvestor(data) {
   h += '<div class="cuenta-row"><span class="ml">TAE</span><span class="mv" style="color:#3ecf8e">' + taePct + '</span></div>';
   h += '<div class="cuenta-row"><span class="ml">Inter\u00e9s diario est.</span><span class="mv">' + data.interes_diario_estimado.toFixed(2) + ' \u20ac</span></div>';
   h += '<div class="cuenta-row"><span class="ml">Intereses acumulados</span><span class="mv" style="color:#3ecf8e">+' + data.intereses_acumulados_periodo.toFixed(2) + ' \u20ac</span></div>';
+  h += '<div class="cuenta-row"><span class="ml">Inter\u00e9s acumulado (mes actual)</span><span class="mv" style="color:#3ecf8e">+' + data.interes_mes_actual.toFixed(2) + ' \u20ac</span></div>';
   h += '<div class="cuenta-row"><span class="ml">Tracking desde</span><span class="mv">' + data.fecha_inicio_tracking + '</span></div>';
   h += '</div>';
   c.innerHTML = h;
