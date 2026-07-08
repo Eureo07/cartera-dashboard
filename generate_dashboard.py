@@ -465,6 +465,15 @@ except Exception:
 rend_mi_eur = cuenta_intereses_mi
 rend_mi_pct = (rend_mi_eur / cuenta_saldo_mi * 100) if cuenta_saldo_mi else 0
 
+# Combinación de ambas cuentas para KPI superior
+saldo_combinado = cuenta_saldo + cuenta_saldo_mi
+rend_eur_combinado = cuenta_intereses + cuenta_intereses_mi
+rend_pct_combinado = (rend_eur_combinado / saldo_combinado * 100) if saldo_combinado else 0
+if saldo_combinado:
+    tae_ponderado = (cuenta_saldo * cuenta_tae + cuenta_saldo_mi * cuenta_tae_mi) / saldo_combinado
+else:
+    tae_ponderado = 0
+
 # Daily variation (HOY) — cur - previousClose (real, no ajustado)
 day_var_total = 0.0
 n_day_var = 0
@@ -908,7 +917,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     {"<div class=\"kpi\" data-kpi=\"today\"><div class=\"label\">HOY</div><div class=\"value " + ("pos" if day_var_total >= 0 else "neg") + "\" data-kpi-val=\"day-pct\">" + (f"{day_var_pct:+.2f}%" if day_var_pct is not None else "\u2014") + "</div><div class=\"sub\" data-kpi-val=\"day-eur\">" + (f"{day_var_total:+,.2f} \u20ac" if day_var_total is not None else "\u2014") + "</div></div>" if day_var_pct is not None else ""}
     <div class="kpi" data-kpi="historical" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rent. Hist\u00f3rica Acciones</div><div class="value {"neg" if historical_pnl < 0 else "pos"}" data-kpi-val="historical-return">{historical_return:+.2f}%</div><div class="sub" data-kpi-val="historical-pnl">{historical_pnl:+,.2f} \u20ac / {historical_cost:,.0f} \u20ac invertidos</div></div>
     <div class="kpi" data-kpi="rend-fondos" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}"><div class="label">Rendimiento Fondos</div><div class="value {"neg" if rend_fondos_pct is not None and rend_fondos_pct < 0 else "pos"}" data-kpi-val="rend-fondos-pct">{"{:+.2f}%".format(rend_fondos_pct) if rend_fondos_pct is not None else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / {:,.2f} \u20ac aportados".format(rend_fondos_eur, total_aportado_fondos) if rend_fondos_pct is not None else "\u2014"}</div></div>
-    <div class="kpi" data-kpi="rend-cuenta" data-rend-cuenta-eur="{rend_cuenta_eur:.2f}" data-rend-cuenta-pct="{rend_cuenta_pct:.2f}" data-tae="{cuenta_tae}"><div class="label">Rendimiento Cuenta</div><div class="value {"neg" if rend_cuenta_pct is not None and rend_cuenta_pct < 0 else "pos"}" data-kpi-val="rend-cuenta-pct">{"{:+,.2f}%".format(rend_cuenta_pct) if cuenta_saldo else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / saldo {:,.2f} \u20ac".format(rend_cuenta_eur, cuenta_saldo) if cuenta_saldo else "\u2014"}, TAE {cuenta_tae:.0f}%</div></div>
+    <div class="kpi" data-kpi="rend-cuenta" data-rend-cuenta-eur="{rend_eur_combinado:.2f}" data-rend-cuenta-pct="{rend_pct_combinado:.2f}" data-tae="{tae_ponderado:.2f}"><div class="label">Rendimiento Cuenta</div><div class="value {"neg" if rend_pct_combinado < 0 else "pos"}" data-kpi-val="rend-cuenta-pct">{"{:+,.2f}%".format(rend_pct_combinado) if saldo_combinado else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / saldo {:,.2f} \u20ac".format(rend_eur_combinado, saldo_combinado) if saldo_combinado else "\u2014"}, TAE {tae_ponderado:.2f}% (ponderado)</div></div>
     <div class="kpi" data-kpi="rend-total-risk" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rendimiento Total (con riesgo)</div><div class="value" data-kpi-val="rend-total-risk-pct">\u2014</div><div class="sub" data-kpi-val="rend-total-risk-sub">\u2014</div></div>
     <div class="kpi" data-kpi="expectancy"><div class="label">Expectancy del sistema</div><div class="value {"neg" if exp_metrics["expectancy"] < 0 else "pos"}">{exp_metrics["expectancy"]:+.2f}%</div><div class="sub">% Acierto: {exp_metrics["pct_acierto"]:.1f}% \u00b7 % Fallo: {exp_metrics["pct_fallo"]:.1f}%<br>Ganancia media: {exp_metrics["ganancia_media_pct"]:+.2f}% \u00b7 P\u00e9rdida media: {exp_metrics["perdida_media_pct"]:.2f}%<br>Payoff ratio: {exp_metrics["payoff_ratio"]:.2f} \u00b7 Anual.: {exp_metrics["rentabilidad_anualizada"]*100:.2f}%</div></div>
   </div>
