@@ -1661,6 +1661,9 @@ function updatePrices(data) {
       if (refClose != null) {
         totalDayVar += (pd.current - refClose) * shares;
         nDayVar++;
+      } else if (pd.day_var != null) {
+        totalDayVar += pd.day_var * shares;
+        nDayVar++;
       }
     } else {
       totalValue += cost;  // fallback to cost for missing prices
