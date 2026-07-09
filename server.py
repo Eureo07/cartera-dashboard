@@ -220,7 +220,7 @@ _RADAR_CACHE = {"data": None, "updated": None}
 _RADAR_TTL = 24 * 3600
 
 _PRICES_CACHE = {"data": None, "updated": None}
-_PRICES_TTL = 120  # 2 min
+_PRICES_TTL = 30  # 30s (coincide con polling JS)
 
 _WL_CACHE = {"data": None, "updated": None}
 _WL_TTL = 300  # 5 min
@@ -909,8 +909,21 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             _sess = _req.Session()
             _sess.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
 
+            def _chart_cur(tk):
+                """Fetch current price from Yahoo chart API (more real-time than .info). Returns float or None."""
+                try:
+                    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=1d"
+                    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+                    resp = urllib.request.urlopen(req, timeout=10)
+                    chart = json.loads(resp.read())
+                    meta = chart.get("chart", {}).get("result", [{}])[0].get("meta", {})
+                    rmp = meta.get("regularMarketPrice")
+                    return float(rmp) if rmp is not None else None
+                except Exception:
+                    return None
+
             def fetch_ticker_price(tk):
-                # NVD.DE: AV >=20, luego NASDAQ+FX (coincide con Degiro), luego yfinance Xetra
+                # NVD.DE: AV >=20, luego NASDAQ+FX (coincide con Degiro)
                 if tk == "NVD.DE":
                     try:
                         import pytz
@@ -925,13 +938,15 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                             print(f"[prices] {tk}: Alpha Vantage -> cur={av_cur} prev={av_prev} day_var={av_dv}")
                             return (tk, {"current": av_cur, "prev_close": av_prev, "day_var": av_dv})
                         print(f"[prices] {tk}: Alpha Vantage falló, fallback a NASDAQ+FX")
-                    # NASDAQ+FX: prev_close desde NVDA (NASDAQ) + USDEUR (coincide con Degiro)
-                    try:
+                    # Current price from chart API (real-time) -> .info fallback
+                    _cur = _chart_cur("NVD.DE")
+                    if _cur is None:
                         _nd_info = yf.Ticker("NVD.DE", session=_sess).info or {}
                         _cur = _nd_info.get("regularMarketPrice") or _nd_info.get("previousClose") or _nd_info.get("currentPrice")
+                    # Prev close from NVDA NASDAQ hist + USDEUR
+                    try:
                         _nvda_hist = yf.Ticker("NVDA", session=_sess).history(period="5d")
                         if _cur is not None and len(_nvda_hist) >= 2:
-                            # Último cierre completo de NASDAQ (iloc-1 si no es hoy, iloc-2 si hoy)
                             _last_date = _nvda_hist.index[-1].date()
                             _today = __import__('datetime').datetime.now().date()
                             if _last_date == _today:
@@ -942,23 +957,27 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                             _fr = _fx_info.get("regularMarketPrice") or _fx_info.get("previousClose")
                             if _fr:
                                 _cur = float(_cur); _pe = round(_nvda_prev_usd * float(_fr), 2); _dv = round(_cur - _pe, 2)
-                                print(f"[prices] {tk}: NASDAQ+FX -> cur(Xetra)={_cur} prev(NVDA*USDEUR)={_pe} dv={_dv}")
+                                print(f"[prices] {tk}: NASDAQ+FX -> cur={_cur} prev(NVDA*USDEUR)={_pe} dv={_dv}")
                                 return (tk, {"current": _cur, "prev_close": _pe, "day_var": _dv})
                     except Exception as e:
                         print(f"[prices] {tk}: NASDAQ+FX error: {e}")
                     print(f"[prices] {tk}: NASDAQ+FX falló, fallback a yfinance Xetra")
                 # RRU.DE: RR.L + GBPEUR (Degiro usa precio actual de RR.L, no hist)
                 if tk == "RRU.DE":
-                    try:
+                    # Current price from chart API (real-time) -> .info fallback
+                    _cur = _chart_cur("RRU.DE")
+                    if _cur is None:
                         _rru_info = yf.Ticker("RRU.DE", session=_sess).info or {}
                         _cur = _rru_info.get("regularMarketPrice") or _rru_info.get("previousClose") or _rru_info.get("currentPrice")
+                    # Prev close from RR.L current * GBPEUR
+                    try:
                         _rrl_info = yf.Ticker("RR.L", session=_sess).info or {}
                         _rrl_cur_gbp = _rrl_info.get("regularMarketPrice") or _rrl_info.get("previousClose") or _rrl_info.get("currentPrice")
                         _gfx_info = yf.Ticker("GBPEUR=X", session=_sess).info or {}
                         _gfr = _gfx_info.get("regularMarketPrice") or _gfx_info.get("previousClose")
                         if _cur and _rrl_cur_gbp and _gfr:
                             _cur = float(_cur); _pe = round(float(_rrl_cur_gbp) / 100 * float(_gfr), 3); _dv = round(_cur - _pe, 2)
-                            print(f"[prices] {tk}: RR.L+FX -> cur(Xetra)={_cur} prev(RR.L*GBPEUR)={_pe} dv={_dv}")
+                            print(f"[prices] {tk}: RR.L+FX -> cur={_cur} prev(RR.L*GBPEUR)={_pe} dv={_dv}")
                             return (tk, {"current": _cur, "prev_close": _pe, "day_var": _dv})
                     except Exception as e:
                         print(f"[prices] {tk}: RR.L+FX error: {e}")
