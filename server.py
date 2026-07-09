@@ -941,25 +941,19 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     except Exception as e:
                         print(f"[prices] {tk}: NASDAQ+FX error: {e}")
                     print(f"[prices] {tk}: NASDAQ+FX falló, fallback a yfinance Xetra")
-                # RRU.DE: RR.L (LSE) + GBPEUR (coincide con Degiro)
+                # RRU.DE: RR.L + GBPEUR (Degiro usa precio actual de RR.L, no hist)
                 if tk == "RRU.DE":
                     try:
                         _rru_info = yf.Ticker("RRU.DE", session=_sess).info or {}
                         _cur = _rru_info.get("regularMarketPrice") or _rru_info.get("previousClose") or _rru_info.get("currentPrice")
-                        _rrl_hist = yf.Ticker("RR.L", session=_sess).history(period="5d")
-                        if _cur is not None and len(_rrl_hist) >= 2:
-                            _last_date = _rrl_hist.index[-1].date()
-                            _today = __import__('datetime').datetime.now().date()
-                            if _last_date == _today:
-                                _rrl_prev_gbp = float(_rrl_hist["Close"].iloc[-2]) / 100
-                            else:
-                                _rrl_prev_gbp = float(_rrl_hist["Close"].iloc[-1]) / 100
-                            _gfx_info = yf.Ticker("GBPEUR=X", session=_sess).info or {}
-                            _gfr = _gfx_info.get("regularMarketPrice") or _gfx_info.get("previousClose")
-                            if _gfr:
-                                _cur = float(_cur); _pe = round(_rrl_prev_gbp * float(_gfr), 3); _dv = round(_cur - _pe, 2)
-                                print(f"[prices] {tk}: RR.L+FX -> cur(Xetra)={_cur} prev(RR.L*GBPEUR)={_pe} dv={_dv}")
-                                return (tk, {"current": _cur, "prev_close": _pe, "day_var": _dv})
+                        _rrl_info = yf.Ticker("RR.L", session=_sess).info or {}
+                        _rrl_cur_gbp = _rrl_info.get("regularMarketPrice") or _rrl_info.get("previousClose") or _rrl_info.get("currentPrice")
+                        _gfx_info = yf.Ticker("GBPEUR=X", session=_sess).info or {}
+                        _gfr = _gfx_info.get("regularMarketPrice") or _gfx_info.get("previousClose")
+                        if _cur and _rrl_cur_gbp and _gfr:
+                            _cur = float(_cur); _pe = round(float(_rrl_cur_gbp) / 100 * float(_gfr), 3); _dv = round(_cur - _pe, 2)
+                            print(f"[prices] {tk}: RR.L+FX -> cur(Xetra)={_cur} prev(RR.L*GBPEUR)={_pe} dv={_dv}")
+                            return (tk, {"current": _cur, "prev_close": _pe, "day_var": _dv})
                     except Exception as e:
                         print(f"[prices] {tk}: RR.L+FX error: {e}")
                     print(f"[prices] {tk}: RR.L+FX falló, fallback a yfinance Xetra")
