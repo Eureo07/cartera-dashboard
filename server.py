@@ -904,8 +904,14 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             _sess.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
 
             def fetch_ticker_price(tk):
-                # NVD.DE: usar Alpha Vantage (NVDA NASDAQ + conversión USD→EUR)
+                # NVD.DE: usar Alpha Vantage (NVDA NASDAQ + conversión USD→EUR) a partir de 20:00
                 if tk == "NVD.DE":
+                    try:
+                        import pytz
+                        now_hour = datetime.now(pytz.timezone("Europe/Madrid")).hour
+                    except Exception:
+                        now_hour = 0
+                    if now_hour >= 20:
                         av_result = _fetch_alpha_vantage_nvda_price()
                         if av_result:
                             av_cur, av_prev = av_result
