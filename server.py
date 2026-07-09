@@ -94,7 +94,10 @@ def _fetch_alpha_vantage_nvda_price():
         resp2 = urllib.request.urlopen(req2, timeout=10)
         data2 = json.loads(resp2.read())
         fx = data2.get("Realtime Currency Exchange Rate", {})
-        fx_rate = float(fx.get("5. Exchange Rate", 1))
+        fx_rate_str = fx.get("5. Exchange Rate")
+        if not fx_rate_str:
+            return None
+        fx_rate = float(fx_rate_str)
         if fx_rate <= 0:
             return None
         cur_eur = round(nvda_price * fx_rate, 2)
