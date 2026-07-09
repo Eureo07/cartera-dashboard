@@ -483,7 +483,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         return super().do_GET()
 
     def _send_json_cache(self, cache, ttl, compute_fn):
-        ERROR_TTL = 900  # 15 min for error responses
+        ERROR_TTL = min(ttl, 900)  # 15 min max for errors (respects short TTLs like prices=120s)
         now = datetime.now()
         if cache["data"] and cache["updated"]:
             effective_ttl = cache.get("_error_ttl", ttl)

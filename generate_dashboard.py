@@ -1912,12 +1912,6 @@ document.addEventListener('DOMContentLoaded', function() {
   fetch('/api/fondos').then(function(r){ return r.json(); }).then(renderFondos).catch(function(){ document.getElementById('fondos-container').innerHTML = '<div class="ew-error">Error al cargar fondos</div>'; });
   fetch('/api/cuenta-remunerada').then(function(r){ return r.json(); }).then(renderCuenta).catch(function(){ document.getElementById('cuenta-container').innerHTML = '<div class="ew-error">Error al cargar cuenta</div>'; });
   fetch('/api/cuenta-remunerada-myinvestor').then(function(r){ return r.json(); }).then(renderCuentaMyInvestor).catch(function(){ document.getElementById('cuenta-container-myinvestor').innerHTML = '<div class="ew-error">Error al cargar cuenta MyInvestor</div>'; });
-  fetch('/api/prices').then(function(r){ return r.json(); }).then(updatePrices).catch(function(){
-    var hdr = document.querySelector('.header .date-info');
-    if (hdr && !hdr.querySelector('.price-warn')) {
-      hdr.innerHTML += '<br><span class="price-warn" style="color:#e05050;font-size:11px">\u26a0 Precios no disponibles</span>';
-    }
-  });
 });
 </script>
 
