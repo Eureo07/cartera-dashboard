@@ -475,6 +475,7 @@ else:
     tae_ponderado = 0
 
 # Daily variation (HOY) — cur - previousClose (real, no ajustado)
+# Para NVD.DE usa NVDA NASDAQ + USDEUR; para RRU.DE usa RR.L + GBPEUR (coincide con Degiro)
 day_var_total = 0.0
 n_day_var = 0
 for p in portfolio:
@@ -486,18 +487,44 @@ for p in portfolio:
         prev_close = None
         try:
             import urllib.request, json, yfinance as yf
-            info = yf.Ticker(tk).info or {}
-            ip = info.get("regularMarketPreviousClose") or info.get("previousClose")
-            if ip is not None:
-                prev_close = float(ip)
+            if tk == "NVD.DE":
+                # NASDAQ+FX: último cierre completo de NVDA * USDEUR
+                _nd = yf.Ticker("NVD.DE").info or {}
+                _cur = _nd.get("regularMarketPrice") or _nd.get("previousClose") or _nd.get("currentPrice")
+                _nvda_hist = yf.Ticker("NVDA").history(period="5d")
+                if _cur and len(_nvda_hist) >= 2:
+                    _ld = _nvda_hist.index[-1].date()
+                    _td = __import__('datetime').datetime.now().date()
+                    _nvda_pu = float(_nvda_hist["Close"].iloc[-1] if _ld != _td else _nvda_hist["Close"].iloc[-2])
+                    _fx = yf.Ticker("USDEUR=X").info or {}
+                    _fr = _fx.get("regularMarketPrice") or _fx.get("previousClose")
+                    if _fr:
+                        prev_close = round(_nvda_pu * float(_fr), 2)
+                        cur_px = float(_cur)
+            elif tk == "RRU.DE":
+                # RR.L + GBPEUR: precio actual de RR.L * GBPEUR
+                _rru = yf.Ticker("RRU.DE").info or {}
+                _cur = _rru.get("regularMarketPrice") or _rru.get("previousClose") or _rru.get("currentPrice")
+                _rrl = yf.Ticker("RR.L").info or {}
+                _rrl_cur = _rrl.get("regularMarketPrice") or _rrl.get("previousClose") or _rrl.get("currentPrice")
+                _gfx = yf.Ticker("GBPEUR=X").info or {}
+                _gfr = _gfx.get("regularMarketPrice") or _gfx.get("previousClose")
+                if _cur and _rrl_cur and _gfr:
+                    prev_close = round(float(_rrl_cur) / 100 * float(_gfr), 3)
+                    cur_px = float(_cur)
             else:
-                url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
-                req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
-                resp = urllib.request.urlopen(req, timeout=10)
-                chart = json.loads(resp.read())
-                cp = chart.get("chart", {}).get("result", [{}])[0].get("meta", {}).get("chartPreviousClose")
-                if cp is not None:
-                    prev_close = float(cp)
+                info = yf.Ticker(tk).info or {}
+                ip = info.get("regularMarketPreviousClose") or info.get("previousClose")
+                if ip is not None:
+                    prev_close = float(ip)
+                else:
+                    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
+                    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+                    resp = urllib.request.urlopen(req, timeout=10)
+                    chart = json.loads(resp.read())
+                    cp = chart.get("chart", {}).get("result", [{}])[0].get("meta", {}).get("chartPreviousClose")
+                    if cp is not None:
+                        prev_close = float(cp)
         except:
             if len(close_s) >= 2:
                 prev_close = float(close_s.iloc[-2])
