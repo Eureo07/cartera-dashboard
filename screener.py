@@ -374,10 +374,18 @@ def normalized_score(series):
         return pd.Series([0.5] * len(series))
     return (series - mn) / (mx - mn)
 
-def _save_radar_cache(results):
-    """Save screener results to JSON cache with timestamp."""
-    cache = {
-        "updated": datetime.now().isoformat(),
+def _save_radar_cache(results, sector_key="global"):
+    """Save screener results to JSON cache under sector_key."""
+    now = datetime.now().isoformat()
+    cache = {}
+    if os.path.exists(RADAR_CACHE):
+        try:
+            with open(RADAR_CACHE, "r", encoding="utf-8") as f:
+                cache = json.load(f)
+        except Exception:
+            cache = {}
+    cache[sector_key] = {
+        "updated": now,
         "results": [
             {
                 "ticker": r["ticker"],
@@ -398,21 +406,27 @@ def _save_radar_cache(results):
     }
     with open(RADAR_CACHE, "w", encoding="utf-8") as f:
         json.dump(cache, f, ensure_ascii=False, indent=2)
-    log.info(f"  Resultados guardados en {RADAR_CACHE}")
+    log.info(f"  Resultados guardados en {RADAR_CACHE} (key: {sector_key})")
 
-def _load_radar_cache():
-    """Load cached screener results if fresh (< cache_ttl_hours)."""
+def _load_radar_cache(sector_key="global"):
+    """Load cached screener results for sector_key if fresh (< cache_ttl_hours)."""
     ttl = CFG.get("screener", {}).get("cache_ttl_hours", 24)
     if not os.path.exists(RADAR_CACHE):
         return None
-    with open(RADAR_CACHE, "r", encoding="utf-8") as f:
-        cache = json.load(f)
-    updated = datetime.fromisoformat(cache.get("updated", "2000-01-01"))
+    try:
+        with open(RADAR_CACHE, "r", encoding="utf-8") as f:
+            cache = json.load(f)
+    except Exception:
+        return None
+    entry = cache.get(sector_key)
+    if not entry:
+        return None
+    updated = datetime.fromisoformat(entry.get("updated", "2000-01-01"))
     age = (datetime.now() - updated).total_seconds() / 3600
     if age < ttl:
-        log.info(f"  Usando caché de {RADAR_CACHE} ({age:.1f}h de antigüedad)")
-        return cache["results"]
-    log.info(f"  Caché caducada ({age:.1f}h > {ttl}h), descargando datos nuevos...")
+        log.info(f"  Usando caché de {RADAR_CACHE} ({age:.1f}h, key: {sector_key})")
+        return entry["results"]
+    log.info(f"  Caché caducada ({age:.1f}h > {ttl}h, key: {sector_key}), descargando datos nuevos...")
     return None
 
 def ejecutar_radar(sector_filter=None, max_resultados=None):
@@ -429,8 +443,9 @@ def ejecutar_radar(sector_filter=None, max_resultados=None):
     if sector_filter:
         df_u = df_u[df_u[sec_col].str.strip() == sector_filter].copy()
     log.info(f"  {len(df_u)} empresas en el universo con datos financieros" + (f" (sector: {sector_filter})" if sector_filter else ""))
-    # Try loading from cache first
-    cached_results = _load_radar_cache()
+    # Try loading from cache first (keyed by sector_filter or "global")
+    sector_key = sector_filter or "global"
+    cached_results = _load_radar_cache(sector_key=sector_key)
     if cached_results:
         return cached_results
     # Fetch valuations and 1-year returns
@@ -566,7 +581,7 @@ def ejecutar_radar(sector_filter=None, max_resultados=None):
     final = rdf.head(limit)
     log.info(f"  {len(final)} oportunidades encontradas (Score > {SCORE_THRESHOLD})")
     results_list = final.to_dict("records")
-    _save_radar_cache(results_list)
+    _save_radar_cache(results_list, sector_key=sector_key)
     return results_list
 
 # ========== DASHBOARD INTEGRATION ==========

@@ -980,14 +980,14 @@ for i, p in enumerate(portfolio):
     sector_name = "Desconocido"
     roe_val = None
     fcf_val = None
-    if db_t:
-        row = df[df["Ticker"] == db_t]
-        if not row.empty:
-            r = row.iloc[0]
-            sector_name = r.get(sec_col_name, "Desconocido")
-            roe_val = val_metric(r.get("2026 ROE"), -500, 500)
-            fcf_v = r.get("2026 FCN")
-            fcf_val = fcf_v if pd.notna(fcf_v) else None
+    lookup_key = db_t or tk
+    row = df[df["Ticker"] == lookup_key]
+    if not row.empty:
+        r = row.iloc[0]
+        sector_name = r.get(sec_col_name, "Desconocido")
+        roe_val = val_metric(r.get("2026 ROE"), -500, 500)
+        fcf_v = r.get("2026 FCN")
+        fcf_val = fcf_v if pd.notna(fcf_v) else None
     # Signal badge
     days = p.get("days", 999)
     if days <= 14:
@@ -1088,7 +1088,7 @@ for i, p in enumerate(portfolio):
         <div class="metric-row"><span class="ml">P/B{desc("Precio respecto al valor contable. &lt;1 infravalorado")}</span><span class="mv {"warn" if (pb_val or 99) > 5 else ("pos" if pb_val and pb_val <= 3 else "")}">{f"{pb_val:.2f}" if pb_val else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">Beta{desc(beta_desc)}</span><span class="mv {beta_cls}">{beta_str}</span></div>
         <div class="metric-row"><span class="ml">ROE 2026{desc("Rentabilidad sobre fondos propios")}</span><span class="mv {"pos" if (roe_val or 0) >= 15 else ("warn" if (roe_val or 0) >= 5 else "neg")}">{f"{roe_val:.1f}%" if roe_val else "N/D"}</span></div>
-        <div class="metric-row"><span class="ml">FCF 2026{desc("Caja generada tras inversiones")}</span><span class="mv {fcf_cls}">{f"{fcf_val:,.0f}M \u20ac" if fcf_val else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">FCF 2026{desc("Caja generada tras inversiones")}</span><span class="mv {fcf_cls}">{f"{fcf_val/1_000_000:,.0f}M \u20ac" if fcf_val else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">Peso cartera{desc("% del capital total invertido en esta posici\u00f3n")}</span><span class="mv {weight_cls}" data-metric="weight">{p['weight']:.1f}%{" \u26a0" if p["weight"] > 25 else ""}</span></div>
         <div class="metric-row"><span class="ml">Tama\u00f1o sugerido (2% riesgo){desc("N\u00ba de acciones m\u00e1ximo recomendado seg\u00fan distancia al stop loss")}</span><span class="mv">{tamano_str}</span></div>
         <div class="metric-row"><span class="ml">Stop Din\u00e1mico{desc("Stop calculado sobre soporte t\u00e9cnico (-2%)")}</span><span class="mv neg">{dyn_stop_str}{" <span style=\"color:#f0a500;font-size:9px;margin-left:4px\">\u26a0 Revisar stop</span>" if stop_alert else ""}</span></div>
