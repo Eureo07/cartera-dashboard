@@ -904,7 +904,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             _sess.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
 
             def fetch_ticker_price(tk):
-                # NVD.DE: usar Alpha Vantage (NVDA NASDAQ + conversión USD→EUR) a partir de 20:00
+                # NVD.DE: AV >=20, luego NASDAQ+FX (coincide con Degiro), luego yfinance Xetra
                 if tk == "NVD.DE":
                     try:
                         import pytz
@@ -918,7 +918,51 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                             av_dv = round(av_cur - av_prev, 2)
                             print(f"[prices] {tk}: Alpha Vantage -> cur={av_cur} prev={av_prev} day_var={av_dv}")
                             return (tk, {"current": av_cur, "prev_close": av_prev, "day_var": av_dv})
-                        print(f"[prices] {tk}: Alpha Vantage falló, fallback a yfinance")
+                        print(f"[prices] {tk}: Alpha Vantage falló, fallback a NASDAQ+FX")
+                    # NASDAQ+FX: prev_close desde NVDA (NASDAQ) + USDEUR (coincide con Degiro)
+                    try:
+                        _nd_info = yf.Ticker("NVD.DE", session=_sess).info or {}
+                        _cur = _nd_info.get("regularMarketPrice") or _nd_info.get("previousClose") or _nd_info.get("currentPrice")
+                        _nvda_hist = yf.Ticker("NVDA", session=_sess).history(period="5d")
+                        if _cur is not None and len(_nvda_hist) >= 2:
+                            # Último cierre completo de NASDAQ (iloc-1 si no es hoy, iloc-2 si hoy)
+                            _last_date = _nvda_hist.index[-1].date()
+                            _today = __import__('datetime').datetime.now().date()
+                            if _last_date == _today:
+                                _nvda_prev_usd = float(_nvda_hist["Close"].iloc[-2])
+                            else:
+                                _nvda_prev_usd = float(_nvda_hist["Close"].iloc[-1])
+                            _fx_info = yf.Ticker("USDEUR=X", session=_sess).info or {}
+                            _fr = _fx_info.get("regularMarketPrice") or _fx_info.get("previousClose")
+                            if _fr:
+                                _cur = float(_cur); _pe = round(_nvda_prev_usd * float(_fr), 2); _dv = round(_cur - _pe, 2)
+                                print(f"[prices] {tk}: NASDAQ+FX -> cur(Xetra)={_cur} prev(NVDA*USDEUR)={_pe} dv={_dv}")
+                                return (tk, {"current": _cur, "prev_close": _pe, "day_var": _dv})
+                    except Exception as e:
+                        print(f"[prices] {tk}: NASDAQ+FX error: {e}")
+                    print(f"[prices] {tk}: NASDAQ+FX falló, fallback a yfinance Xetra")
+                # RRU.DE: RR.L (LSE) + GBPEUR (coincide con Degiro)
+                if tk == "RRU.DE":
+                    try:
+                        _rru_info = yf.Ticker("RRU.DE", session=_sess).info or {}
+                        _cur = _rru_info.get("regularMarketPrice") or _rru_info.get("previousClose") or _rru_info.get("currentPrice")
+                        _rrl_hist = yf.Ticker("RR.L", session=_sess).history(period="5d")
+                        if _cur is not None and len(_rrl_hist) >= 2:
+                            _last_date = _rrl_hist.index[-1].date()
+                            _today = __import__('datetime').datetime.now().date()
+                            if _last_date == _today:
+                                _rrl_prev_gbp = float(_rrl_hist["Close"].iloc[-2]) / 100
+                            else:
+                                _rrl_prev_gbp = float(_rrl_hist["Close"].iloc[-1]) / 100
+                            _gfx_info = yf.Ticker("GBPEUR=X", session=_sess).info or {}
+                            _gfr = _gfx_info.get("regularMarketPrice") or _gfx_info.get("previousClose")
+                            if _gfr:
+                                _cur = float(_cur); _pe = round(_rrl_prev_gbp * float(_gfr), 3); _dv = round(_cur - _pe, 2)
+                                print(f"[prices] {tk}: RR.L+FX -> cur(Xetra)={_cur} prev(RR.L*GBPEUR)={_pe} dv={_dv}")
+                                return (tk, {"current": _cur, "prev_close": _pe, "day_var": _dv})
+                    except Exception as e:
+                        print(f"[prices] {tk}: RR.L+FX error: {e}")
+                    print(f"[prices] {tk}: RR.L+FX falló, fallback a yfinance Xetra")
                 try:
                     info = yf.Ticker(tk, session=_sess).info or {}
                     cur = info.get("regularMarketPrice") or info.get("previousClose") or info.get("currentPrice")
