@@ -606,7 +606,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 # 1) Current price via chart API
                 cur_price = None
                 try:
-                    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
+                    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=1d"
                     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
                     resp = urllib.request.urlopen(req, timeout=10)
                     chart = json.loads(resp.read())
@@ -998,7 +998,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     if info_prev is not None:
                         info_prev = float(info_prev)
                     try:
-                        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
+url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=1d"
                         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
                         resp = urllib.request.urlopen(req, timeout=10)
                         chart = json.loads(resp.read())
@@ -1030,7 +1030,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 bcur = bench_info.get("regularMarketPrice") or bench_info.get("previousClose") or bench_info.get("currentPrice")
                 bprev = bench_info.get("regularMarketPreviousClose") or bench_info.get("previousClose")
                 try:
-                    url = "https://query1.finance.yahoo.com/v8/finance/chart/%5ESTOXX50E?interval=1d&range=5d"
+                    url = "https://query1.finance.yahoo.com/v8/finance/chart/%5ESTOXX50E?interval=1d&range=1d"
                     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
                     resp = urllib.request.urlopen(req, timeout=10)
                     chart = json.loads(resp.read())

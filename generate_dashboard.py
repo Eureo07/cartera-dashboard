@@ -518,7 +518,7 @@ for p in portfolio:
                 if ip is not None:
                     prev_close = float(ip)
                 else:
-                    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
+                    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=1d"
                     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
                     resp = urllib.request.urlopen(req, timeout=10)
                     chart = json.loads(resp.read())
