@@ -989,9 +989,9 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         cur = float(cur)
 
                     def _choose_prev(infoprev, chartprev):
-                        if infoprev is not None:
-                            return infoprev
-                        return chartprev
+                        if chartprev is not None:
+                            return chartprev
+                        return infoprev
 
                     prev_close = None
                     info_prev = info.get("regularMarketPreviousClose") or info.get("previousClose")
