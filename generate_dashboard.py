@@ -1687,6 +1687,13 @@ function renderCuentaMyInvestor(data) {
 var _prevCloseCache = {};  // persistent prev_close reference across API polls
 function updatePrices(data) {
   if (data.error || !data.prices) { console.warn('[prices] error:', data.error); return; }
+  // Update header timestamp on each successful fetch
+  var di = document.querySelector('.header .date-info');
+  if (di) {
+    var d = new Date();
+    var ds = d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'});
+    di.innerHTML = di.innerHTML.replace(/Actualizado: [^<]+/, 'Actualizado: ' + ds);
+  }
   var cards = document.querySelectorAll('.pos-card');
   if (!cards.length) { console.warn('[prices] no .pos-card found'); return; }
   var anyFail = false;
