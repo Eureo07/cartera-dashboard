@@ -922,15 +922,34 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 except Exception:
                     return None
 
+            def _get_hist_prev_close(tk, sess):
+                """Cierre del ultimo dia completo via intradia (fallback cuando Yahoo pierde dias)."""
+                try:
+                    _h = yf.Ticker(tk, session=sess).history(interval="1h", period="5d")
+                    if len(_h) < 2:
+                        return None
+                    _today_d = datetime.now().date()
+                    _i = len(_h) - 1
+                    while _i >= 0 and _h.index[_i].date() == _today_d:
+                        _i -= 1
+                    return float(_h.iloc[_i]["Close"]) if _i >= 0 else None
+                except Exception:
+                    return None
+
             def fetch_ticker_price(tk):
-                # NVD.DE: AV >=20, luego NASDAQ+FX (coincide con Degiro)
+                # NVD.DE: AV en 10:00 CET y 17:30 CET, luego NASDAQ+FX (coincide con Degiro)
                 if tk == "NVD.DE":
                     try:
                         import pytz
-                        now_hour = datetime.now(pytz.timezone("Europe/Madrid")).hour
+                        _now_dt = datetime.now(pytz.timezone("Europe/Madrid"))
+                        now_hour = _now_dt.hour
+                        now_min = _now_dt.minute
                     except Exception:
                         now_hour = 0
-                    if now_hour >= 20:
+                        now_min = 0
+                    # Ventanas AV: 10:00 CET (apertura Xetra+1h) y 17:30 CET (cierre Xetra)
+                    _av_window = (now_hour == 10) or (now_hour == 17 and now_min >= 30)
+                    if _av_window:
                         av_result = _fetch_alpha_vantage_nvda_price()
                         if av_result:
                             av_cur, av_prev = av_result
@@ -969,16 +988,16 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     if _cur is None:
                         _rru_info = yf.Ticker("RRU.DE", session=_sess).info or {}
                         _cur = _rru_info.get("regularMarketPrice") or _rru_info.get("previousClose") or _rru_info.get("currentPrice")
-                    # Prev close from RR.L current * GBPEUR
+                    # Prev close from RR.L historical close * GBPEUR
                     try:
-                        _rrl_info = yf.Ticker("RR.L", session=_sess).info or {}
-                        _rrl_cur_gbp = _rrl_info.get("regularMarketPrice") or _rrl_info.get("previousClose") or _rrl_info.get("currentPrice")
+                        _rrl_prev_gbp = _get_hist_prev_close("RR.L", _sess)
                         _gfx_info = yf.Ticker("GBPEUR=X", session=_sess).info or {}
                         _gfr = _gfx_info.get("regularMarketPrice") or _gfx_info.get("previousClose")
-                        if _cur and _rrl_cur_gbp and _gfr:
-                            _cur = float(_cur); _pe = round(float(_rrl_cur_gbp) / 100 * float(_gfr), 3); _dv = round(_cur - _pe, 2)
-                            print(f"[prices] {tk}: RR.L+FX -> cur={_cur} prev(RR.L*GBPEUR)={_pe} dv={_dv}")
+                        if _cur and _rrl_prev_gbp and _gfr:
+                            _cur = float(_cur); _pe = round(float(_rrl_prev_gbp) / 100 * float(_gfr), 3); _dv = round(_cur - _pe, 2)
+                            print(f"[prices] {tk}: RR.L+FX -> cur={_cur} prev={_pe} (RR.L hist={_rrl_prev_gbp} * GBPEUR={_gfr}) dv={_dv}")
                             return (tk, {"current": _cur, "prev_close": _pe, "day_var": _dv})
+                        print(f"[prices] {tk}: RR.L+FX datos insuficientes, cur={_cur} rrl_prev={_rrl_prev_gbp} gfr={_gfr}")
                     except Exception as e:
                         print(f"[prices] {tk}: RR.L+FX error: {e}")
                     print(f"[prices] {tk}: RR.L+FX falló, fallback a yfinance Xetra")
@@ -1006,11 +1025,28 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         cp = meta.get("chartPreviousClose")
                         if cp is not None:
                             cp = float(cp)
-                        prev_close = _choose_prev(info_prev, cp)
+                        # Validate against 5d OHLCV: if the previous day's bar is null, Yahoo has a gap -> use intradia fallback
+                        try:
+                            _vurl = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
+                            _vreq = urllib.request.Request(_vurl, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+                            _vresp = urllib.request.urlopen(_vreq, timeout=10)
+                            _vchart = json.loads(_vresp.read())
+                            _vcloses = _vchart.get("chart", {}).get("result", [{}])[0].get("indicators", {}).get("quote", [{}])[0].get("close", [])
+                            if len(_vcloses) >= 2 and _vcloses[-2] is None:
+                                _hcp = _get_hist_prev_close(tk, _sess)
+                                if _hcp is not None:
+                                    prev_close = _hcp
+                                    print(f"[prices] {tk}: Yahoo gap detectado (vela ayer=null), prev_close desde intradia={_hcp}")
+                                else:
+                                    prev_close = _choose_prev(info_prev, cp)
+                            else:
+                                prev_close = _choose_prev(info_prev, cp)
+                        except Exception:
+                            prev_close = _choose_prev(info_prev, cp)
                         rmp = meta.get("regularMarketPrice")
                         if rmp is not None:
                             cur = float(rmp)
-                    except Exception:
+                    except Exception as e:
                         prev_close = _choose_prev(info_prev, None)
                     day_var = (cur - prev_close) if (cur and prev_close) else 0
                     return (tk, {"current": cur, "prev_close": prev_close, "day_var": round(day_var, 2)})

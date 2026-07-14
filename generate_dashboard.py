@@ -25,6 +25,17 @@ EXCEL_FILE = CFG["paths"]["excel"]
 OUT_FILE = CFG["paths"]["dashboard"]
 PRICE_HISTORY = CFG["paths"]["price_history"]
 
+BLOQUES_TEMATICOS = {
+    "N\u00facleo IA": {
+        "tickers": ["ENR.DE", "NVD.DE"],
+        "descripcion": "Expuesto a reevaluaci\u00f3n de valoraci\u00f3n IA",
+    },
+    "Resto": {
+        "tickers": ["RRU.DE", "DANR.MI"],
+        "descripcion": "Expuesto a geopol\u00edtica/ciclo industrial",
+    },
+}
+
 log = get_logger("generate_dashboard")
 
 # ========== HELPERS ==========
@@ -545,6 +556,23 @@ for p in portfolio:
     p["weight"] = (p["value"] / total_value) * 100 if total_value else 0
     p["target"] = p["entry"] * 1.175  # +17.5%
 
+# ========== BLOQUES TEMATICOS ==========
+bloques_data = {}
+for blk_nombre, blk_cfg in BLOQUES_TEMATICOS.items():
+    blk_ports = [p for p in portfolio if p["ticker"] in blk_cfg["tickers"]]
+    blk_valor = sum(p["value"] for p in blk_ports)
+    blk_peso = (blk_valor / total_value) * 100 if total_value else 0
+    blk_tickers = []
+    for p in blk_ports:
+        tk_peso = (p["value"] / total_value) * 100 if total_value else 0
+        blk_tickers.append({"ticker": p["ticker"], "nombre": p["name"], "peso": tk_peso, "valor": p["value"]})
+    bloques_data[blk_nombre] = {
+        "descripcion": blk_cfg["descripcion"],
+        "valor": blk_valor,
+        "peso": blk_peso,
+        "tickers": blk_tickers,
+    }
+
 # ========== ALERTS ==========
 alerts = []
 for p in portfolio:
@@ -640,6 +668,7 @@ log.info("Fetching benchmark data...")
 entry_dates = [datetime.strptime(p["entry_date"], "%d/%m/%Y") for p in portfolio]
 bench_start = min(entry_dates).strftime("%Y-%m-%d")
 benchmark_return = None
+bench_start_px = None
 try:
     stoxx = yf.download("^STOXX50E", start=bench_start, progress=False, auto_adjust=False, session=_YF_SESSION)
     if stoxx is not None and not stoxx.empty:
@@ -923,6 +952,18 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
 .radar-table .tr-own{{background:rgba(62,207,142,0.06)}}
 .radar-warn{{color:#f0a500;font-size:11px;padding:6px 10px;background:#2d1a1a;border-radius:6px;margin-top:8px}}
 .cuenta-remunerada-grid{{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}}
+/* Bloques de riesgo tematico */
+.risk-blocks{{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}}
+.risk-block{{background:#1a1d2e;border-radius:12px;padding:20px 24px}}
+.risk-block .rb-header{{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}}
+.risk-block .rb-title{{font-size:15px;font-weight:700;color:#fff}}
+.risk-block .rb-desc{{font-size:11px;color:#9aa0b0;margin-bottom:14px}}
+.risk-block .rb-metrics{{display:flex;gap:24px;margin-bottom:12px}}
+.risk-block .rb-metric .rb-val{{font-size:20px;font-weight:700;color:#fff}}
+.risk-block .rb-metric .rb-label{{font-size:11px;color:#9aa0b0;margin-top:2px}}
+.risk-block .rb-tickers{{font-size:11px;color:#5a6070}}
+.risk-block .rb-tickers .rb-tk{{display:inline-block;margin-right:12px}}
+.risk-block .rb-tickers .rb-tk .rb-tk-w{{color:#e8eaed;font-weight:600}}
 </style>
 </head>
 <body>
@@ -949,7 +990,25 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="kpi" data-kpi="expectancy"><div class="label">Expectancy del sistema</div><div class="value {"neg" if exp_metrics["expectancy"] < 0 else "pos"}">{exp_metrics["expectancy"]:+.2f}%</div><div class="sub">% Acierto: {exp_metrics["pct_acierto"]:.1f}% \u00b7 % Fallo: {exp_metrics["pct_fallo"]:.1f}%<br>Ganancia media: {exp_metrics["ganancia_media_pct"]:+.2f}% \u00b7 P\u00e9rdida media: {exp_metrics["perdida_media_pct"]:.2f}%<br>Payoff ratio: {exp_metrics["payoff_ratio"]:.2f} \u00b7 Anual.: {exp_metrics["rentabilidad_anualizada"]*100:.2f}%</div></div>
   </div>
 
-
+  <div class="section-title">Bloques de riesgo tem\u00e1tico</div>
+  <div class="risk-blocks">
+"""
+for blk_nombre, blk_d in bloques_data.items():
+    html += f"""    <div class="risk-block">
+      <div class="rb-header">
+        <div>
+          <div class="rb-title">{blk_nombre}</div>
+          <div class="rb-desc">{blk_d["descripcion"]}</div>
+        </div>
+      </div>
+      <div class="rb-metrics">
+        <div class="rb-metric"><div class="rb-val">{blk_d["valor"]:,.0f} \u20ac</div><div class="rb-label">Valor</div></div>
+        <div class="rb-metric"><div class="rb-val">{blk_d["peso"]:.1f}%</div><div class="rb-label">Peso cartera</div></div>
+      </div>
+      <div class="rb-tickers">{"".join(f'<span class="rb-tk">{t["nombre"]} (<span class="rb-tk-w">{t["peso"]:.1f}%</span>)</span>' for t in blk_d["tickers"])}</div>
+    </div>
+"""
+html += """  </div>
 
   <div class="section-title">An\u00e1lisis por posici\u00f3n</div>
   <div class="positions-grid">
