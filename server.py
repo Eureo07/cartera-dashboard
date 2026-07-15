@@ -29,6 +29,7 @@ try:
     _HAS_BS4 = True
 except ImportError:
     _HAS_BS4 = False
+from ipc_ine import inflacion_acumulada
 
 # ========== FMP API ==========
 FMP_API_KEY = os.getenv("FMP_API_KEY", "")
@@ -793,16 +794,24 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     precio_unitario = round(fdo.get("valor_actual", 0) / participaciones, 4) if participaciones else 0
                 valor_actual = round(precio_unitario * participaciones, 2) if precio_unitario else 0
                 rent = ((valor_actual - aportado) / aportado * 100) if aportado else 0
+                aportado_fecha = fdo.get("aportado_fecha", "")
+                rent_real = None
+                if aportado_fecha and aportado > 0:
+                    inf = inflacion_acumulada(aportado_fecha, hoy)
+                    if inf is not None:
+                        rent_real = round(rent - inf * 100, 2)
                 result["fondos"].append({
                     "nombre": nombre,
                     "isin": isin,
                     "tipo": tipo,
                     "aportado": aportado,
+                    "aportado_fecha": aportado_fecha,
                     "valor_actual": valor_actual,
                     "fecha_actualizacion": nueva_fecha,
                     "ter": ter,
                     "rentabilidad": round(rent, 2),
-                    "historico_prices": historico[-60:],  # ultimos 60 para grafica
+                    "rentabilidad_real": rent_real,
+                    "historico_prices": historico[-60:],
                 })
             result["total_fondos"] = round(sum(f["valor_actual"] for f in result["fondos"]), 2)
             # Persistir cambios si se obtuvieron nuevos precios

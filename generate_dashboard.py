@@ -14,6 +14,7 @@ from screener import calcular_soporte_resistencia
 from expectancy import cargar_cartera_cerrada, calcular_expectancy
 from position_sizing import calcular_tamano_posicion
 from regimen_mercado import obtener_regimen_combinado
+from ipc_ine import inflacion_acumulada, inflacion_interanual, obtener_ipc_mensual
 
 _YF_SESSION = requests.Session()
 _YF_SESSION.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
@@ -484,6 +485,64 @@ if saldo_combinado:
     tae_ponderado = (cuenta_saldo * cuenta_tae + cuenta_saldo_mi * cuenta_tae_mi) / saldo_combinado
 else:
     tae_ponderado = 0
+
+# ========== IPC INFLATION DATA ==========
+ipc_interanual_pct = inflacion_interanual() * 100
+ipc_raw = obtener_ipc_mensual()
+ipc_mensual_js = json.dumps(ipc_raw) if ipc_raw else "{}"
+# Real interest for accounts
+tr_tae_real = round(cuenta_tae - ipc_interanual_pct, 1) if cuenta_tae else None
+mi_tae_real = round(cuenta_tae_mi - ipc_interanual_pct, 1) if cuenta_tae_mi else None
+tr_interes_real_acum = None
+mi_interes_real_acum = None
+try:
+    tr_fec = _cd.get("fecha_inicio_tracking", "")
+    if tr_fec:
+        inf_tr = inflacion_acumulada(tr_fec, now)
+        if inf_tr is not None and cuenta_saldo:
+            tr_interes_real_acum = round(cuenta_intereses - cuenta_saldo * inf_tr, 2)
+except:
+    pass
+try:
+    mi_fec = _j_mi.get("fecha_inicio_tracking", "")
+    if mi_fec:
+        inf_mi = inflacion_acumulada(mi_fec, now)
+        if inf_mi is not None and cuenta_saldo_mi:
+            mi_interes_real_acum = round(cuenta_intereses_mi - cuenta_saldo_mi * inf_mi, 2)
+except:
+    pass
+min_entry_date = None
+for p in portfolio:
+    try:
+        ed = datetime.strptime(p["entry_date"], "%d/%m/%Y")
+        inf = inflacion_acumulada(ed, now)
+        p["inflacion_acum"] = round(inf * 100, 2) if inf is not None else None
+        p["rent_real_pct"] = round(p["pnl_pct"] - p["inflacion_acum"], 2) if (inf is not None and p["pnl_pct"] is not None) else None
+        if min_entry_date is None or ed < min_entry_date:
+            min_entry_date = ed
+    except:
+        p["inflacion_acum"] = None
+        p["rent_real_pct"] = None
+for cp in closed_positions:
+    try:
+        fe = datetime.strptime(cp["fecha_entrada"], "%Y-%m-%d")
+        fc = datetime.strptime(cp["fecha_cierre"], "%Y-%m-%d")
+        inf = inflacion_acumulada(fe, fc)
+        cp["inflacion_acum"] = round(inf * 100, 2) if inf is not None else None
+        cp["rent_real_pct"] = round(cp["pnl_pct"] - cp["inflacion_acum"], 2) if (inf is not None and cp["pnl_pct"] is not None) else None
+    except:
+        cp["inflacion_acum"] = None
+        cp["rent_real_pct"] = None
+if min_entry_date:
+    inf_total = inflacion_acumulada(min_entry_date, now)
+    inf_total_pct = round(inf_total * 100, 2) if inf_total is not None else None
+else:
+    inf_total_pct = None
+historical_real_pnl = None
+historical_real_return = None
+if inf_total_pct is not None and historical_return is not None:
+    historical_real_return = round(historical_return - inf_total_pct, 2)
+    historical_real_pnl = round(historical_pnl - (historical_cost * inf_total_pct / 100), 2)
 
 # Daily variation (HOY) — cur - previousClose (real, no ajustado)
 # Para NVD.DE usa NVDA NASDAQ + USDEUR; para RRU.DE usa RR.L + GBPEUR (coincide con Degiro)
@@ -987,6 +1046,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="kpi" data-kpi="rend-fondos" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}"><div class="label">Rendimiento Fondos</div><div class="value {"neg" if rend_fondos_pct is not None and rend_fondos_pct < 0 else "pos"}" data-kpi-val="rend-fondos-pct">{"{:+.2f}%".format(rend_fondos_pct) if rend_fondos_pct is not None else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / {:,.2f} \u20ac aportados".format(rend_fondos_eur, total_aportado_fondos) if rend_fondos_pct is not None else "\u2014"}</div></div>
     <div class="kpi" data-kpi="rend-cuenta" data-rend-cuenta-eur="{rend_eur_combinado:.2f}" data-rend-cuenta-pct="{rend_pct_combinado:.2f}" data-tae="{tae_ponderado:.2f}"><div class="label">Rendimiento Cuenta</div><div class="value {"neg" if rend_pct_combinado < 0 else "pos"}" data-kpi-val="rend-cuenta-pct">{"{:+,.2f}%".format(rend_pct_combinado) if saldo_combinado else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / saldo {:,.2f} \u20ac".format(rend_eur_combinado, saldo_combinado) if saldo_combinado else "\u2014"}, TAE {tae_ponderado:.2f}% (ponderado)</div></div>
     <div class="kpi" data-kpi="rend-total-risk" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rendimiento Total (con riesgo)</div><div class="value" data-kpi-val="rend-total-risk-pct">\u2014</div><div class="sub" data-kpi-val="rend-total-risk-sub">\u2014</div></div>
+    <div class="kpi" data-kpi="rend-real" data-inf-total-pct="{inf_total_pct if inf_total_pct is not None else ''}" data-historical-cost="{historical_cost:.0f}"><div class="label">Rend. Real vs IPC</div><div class="value {"neg" if historical_real_return is not None and historical_real_return < 0 else "pos"}">{("{:+.2f}%".format(historical_real_return) if historical_real_return is not None else "\u2014")}</div><div class="sub">{("IPC acum. {:+.2f}%".format(inf_total_pct) if inf_total_pct is not None else "IPC N/D")}</div></div>
     <div class="kpi" data-kpi="expectancy"><div class="label">Expectancy del sistema</div><div class="value {"neg" if exp_metrics["expectancy"] < 0 else "pos"}">{exp_metrics["expectancy"]:+.2f}%</div><div class="sub">% Acierto: {exp_metrics["pct_acierto"]:.1f}% \u00b7 % Fallo: {exp_metrics["pct_fallo"]:.1f}%<br>Ganancia media: {exp_metrics["ganancia_media_pct"]:+.2f}% \u00b7 P\u00e9rdida media: {exp_metrics["perdida_media_pct"]:.2f}%<br>Payoff ratio: {exp_metrics["payoff_ratio"]:.2f} \u00b7 Anual.: {exp_metrics["rentabilidad_anualizada"]*100:.2f}%</div></div>
   </div>
 
@@ -1134,7 +1194,7 @@ for i, p in enumerate(portfolio):
     html += f"""    <div class="pos-card{" neg" if p["pnl"] < 0 else ""}" data-ticker="{tk}" data-entry="{p['entry']}" data-shares="{p['shares']}" data-stop="{p['stop']}" data-commission="{p.get('commission', 0)}"{prev_close_attr}>
       <div class="pos-header">
         <div><div class="ticker">{tk} — {p['name']}</div><div class="name">{sector_name} · Entrada {p['entry_date']}</div></div>
-        <div class="price"><div class="current" id="price-{i}" style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}"><span class="price-val">{p['current']:.2f}</span> \u20ac{" <span style=\"color:#f0a500;font-size:11px\" title=\"Dato no actualizado\">\u26a0</span>" if p.get("data_error") else ""}</div><div class="pnl {pnl_cls_card}" id="pnl-{i}"><span class="pnl-val">{pnl_sign}{p['pnl']:,.2f}</span> \u20ac (<span class="pnl-pct-val">{pnl_pct_sign}{p['pnl_pct']:.2f}</span>%)</div></div>
+        <div class="price"><div class="current" id="price-{i}" style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}"><span class="price-val">{p['current']:.2f}</span> \u20ac{" <span style=\"color:#f0a500;font-size:11px\" title=\"Dato no actualizado\">\u26a0</span>" if p.get("data_error") else ""}</div><div class="pnl {pnl_cls_card}" id="pnl-{i}"><span class="pnl-val">{pnl_sign}{p['pnl']:,.2f}</span> \u20ac (<span class="pnl-pct-val">{pnl_pct_sign}{p['pnl_pct']:.2f}</span>%)</div>{"<div style=\"font-size:11px;color:#9aa0b0;margin-top:-2px\">Rent. real: {:+.2f}% (vs IPC)</div>".format(p["rent_real_pct"]) if p["rent_real_pct"] is not None and p["inflacion_acum"] is not None else ""}</div>
       </div>
       <div class="signal-badge {signal_cls}">{signal_txt}</div>
       <div class="metrics-grid">
@@ -1318,7 +1378,7 @@ for p in portfolio:
         if eper is not None and eper < 15:
             alt_signal_data.append((rw["Empresa"], yf_t2, sec))
 
-html += """  <div class="section-title">Eventos &amp; Vigilancia</div>
+html += f"""  <div class="section-title">Eventos &amp; Vigilancia</div>
   <div id="earnings-watchlist"><div class="ew-loading">Cargando eventos...</div></div>
 
   <div class="section-title">Alternativas por sector</div>
@@ -1341,8 +1401,8 @@ html += """  <div class="section-title">Eventos &amp; Vigilancia</div>
 
 <div class="section-title">Cuentas Remuneradas</div>
 <div class="cuenta-remunerada-grid">
-  <div id="cuenta-container"><div class="ew-loading">Cargando cuenta...</div></div>
-  <div id="cuenta-container-myinvestor"><div class="ew-loading">Cargando cuenta...</div></div>
+  <div id="cuenta-container" data-tae-real="{tr_tae_real}" data-interes-real-acum="{tr_interes_real_acum if tr_interes_real_acum is not None else ''}"><div class="ew-loading">Cargando cuenta...</div></div>
+  <div id="cuenta-container-myinvestor" data-tae-real="{mi_tae_real}" data-interes-real-acum="{mi_interes_real_acum if mi_interes_real_acum is not None else ''}"><div class="ew-loading">Cargando cuenta...</div></div>
 </div>
 """
 # ========== HISTORIAL DE CARTERA ==========
@@ -1364,8 +1424,8 @@ for p in portfolio:
   <td style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}">{p['current']:.2f}{" \u26a0" if p.get("data_error") else ""}</td>
   <td style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}">{p['pnl']:+,.2f}</td>
   <td style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}">{p['pnl_pct']:+.2f}%</td>
+  <td style="color:{"#e05050" if p["rent_real_pct"] is not None and p["rent_real_pct"] < 0 else "#3ecf8e"}">{p["rent_real_pct"]:+.2f}%{" vs IPC" if p["inflacion_acum"] is not None else ""}</td>
 </tr>"""
-# Closed positions
 for cp in closed_positions:
     pnl_cls_c = "neg" if cp["pnl_eur"] < 0 else "pos"
     hist_rows += f"""<tr class="closed">
@@ -1381,15 +1441,16 @@ for cp in closed_positions:
   <td style="color:{"#e05050" if cp["pnl_eur"] < 0 else "#3ecf8e"}">{cp['venta']:.2f}</td>
   <td style="color:{"#e05050" if cp["pnl_eur"] < 0 else "#3ecf8e"}">{cp['pnl_eur']:+,.2f}</td>
   <td style="color:{"#e05050" if cp["pnl_eur"] < 0 else "#3ecf8e"}">{cp['pnl_pct']:+.2f}%</td>
+  <td style="color:{"#e05050" if cp["rent_real_pct"] is not None and cp["rent_real_pct"] < 0 else "#3ecf8e"}">{cp["rent_real_pct"]:+.2f}%{" vs IPC" if cp["inflacion_acum"] is not None else ""}</td>
 </tr>"""
 
 hist_table = f"""  <div class="section-title">Historial de Cartera</div>
   <div style="font-size:11px;color:#9aa0b0;margin-bottom:14px;padding:8px 12px;background:#12151f;border-radius:8px;line-height:1.6">
-    Rentabilidad global: {historical_pnl:+,.2f} \u20ac ({historical_return:+.2f}%) \u00b7 Inversi\u00f3n hist\u00f3rica total: {historical_cost:,.0f} \u20ac
+    Rentabilidad global: {historical_pnl:+,.2f} \u20ac ({historical_return:+.2f}%) \u00b7 Inversi\u00f3n hist\u00f3rica total: {historical_cost:,.0f} \u20ac{" \u00b7 Real vs IPC: {:+.2f}% ({:+.2f} \u20ac)".format(historical_real_return, historical_real_pnl) if historical_real_return is not None else ""}
   </div>
   <table class="hist-table">
     <thead><tr>
-      <th>Estado</th><th>Fecha</th><th>Empresa</th><th>Ticker</th><th>N\u00ba Acc.</th><th>PC</th><th>Inversi\u00f3n (ii)</th><th>Soporte</th><th>Stop Loss</th><th>V.Actual/Venta</th><th>Rent. (\u20ac)</th><th>Rent. (%)</th>
+      <th>Estado</th><th>Fecha</th><th>Empresa</th><th>Ticker</th><th>N\u00ba Acc.</th><th>PC</th><th>Inversi\u00f3n (ii)</th><th>Soporte</th><th>Stop Loss</th><th>V.Actual/Venta</th><th>Rent. (\u20ac)</th><th>Rent. (%)</th><th>Rent. Real (%)</th>
     </tr></thead>
     <tbody>
 {hist_rows}
@@ -1406,6 +1467,8 @@ html += """  <div class="footer">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
+var IPC_INTERANUAL = """ + f"{ipc_interanual_pct:.1f}" + """;
+var IPC_DATA = """ + ipc_mensual_js + """;
 const gridColor='rgba(255,255,255,0.06)';
 const tickColor='#9aa0b0';
 
@@ -1628,6 +1691,10 @@ function renderFondos(data) {
     h += '<div class="fondo-metric"><span class="ml">Aportado</span><span class="mv">' + f.aportado.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' \u20ac</span></div>';
     h += '<div class="fondo-metric"><span class="ml">Valor actual</span><span class="mv">' + f.valor_actual.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' \u20ac</span></div>';
     h += '<div class="fondo-metric"><span class="ml">Rentabilidad</span><span class="mv ' + rentCls + '">' + (f.rentabilidad >= 0 ? '+' : '') + f.rentabilidad.toFixed(2) + '%</span></div>';
+    if (f.rentabilidad_real != null) {
+      var rrCls = f.rentabilidad_real >= 0 ? 'pos' : 'neg';
+      h += '<div class="fondo-metric"><span class="ml">Rentabilidad real</span><span class="mv ' + rrCls + '">' + (f.rentabilidad_real >= 0 ? '+' : '') + f.rentabilidad_real.toFixed(2) + '%</span></div>';
+    }
     h += '<div class="fondo-metric"><span class="ml">TER</span><span class="mv">' + f.ter.toFixed(2) + '%</span></div>';
     // Grafica evolucion si hay historico
     if (f.historico_prices && f.historico_prices.length > 1) {
@@ -1703,13 +1770,23 @@ function renderCuenta(data) {
   var notaAntiguedad = data.saldo_desactualizado
     ? '<div style="font-size:10px;color:#f0a500;margin-bottom:4px">\u26a0 \u00daltimo saldo conocido: ' + data.fecha_ultima_actualizacion + '</div>'
     : '<div style="font-size:10px;color:#3ecf8e;margin-bottom:4px">\u2714 Actualizado hoy</div>';
+  var taeReal = parseFloat(c.getAttribute('data-tae-real'));
+  var intRealAcum = parseFloat(c.getAttribute('data-interes-real-acum'));
   var h = '<div class="cuenta-card">';
   h += '<div class="cuenta-sub">' + (data.entidad || 'Cuenta Remunerada') + '</div>';
   h += notaAntiguedad;
   h += '<div class="cuenta-saldo">' + data.saldo_actual.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' \u20ac</div>';
   h += '<div class="cuenta-row"><span class="ml">TAE</span><span class="mv" style="color:#3ecf8e">' + taePct + '</span></div>';
+  if (!isNaN(taeReal)) {
+    var trc = taeReal >= 0 ? '#3ecf8e' : '#e05050';
+    h += '<div class="cuenta-row"><span class="ml">TAE real (vs IPC)</span><span class="mv" style="color:' + trc + '">' + (taeReal >= 0 ? '+' : '') + taeReal.toFixed(1) + '%</span></div>';
+  }
   h += '<div class="cuenta-row"><span class="ml">Inter\u00e9s diario est.</span><span class="mv">' + data.interes_diario_estimado.toFixed(2) + ' \u20ac</span></div>';
   h += '<div class="cuenta-row"><span class="ml">Intereses acumulados</span><span class="mv" style="color:#3ecf8e">+' + data.intereses_acumulados_periodo.toFixed(2) + ' \u20ac</span></div>';
+  if (!isNaN(intRealAcum)) {
+    var irc = intRealAcum >= 0 ? '#3ecf8e' : '#e05050';
+    h += '<div class="cuenta-row"><span class="ml">Inter\u00e9s real acum.</span><span class="mv" style="color:' + irc + '">' + (intRealAcum >= 0 ? '+' : '') + intRealAcum.toFixed(2) + ' \u20ac</span></div>';
+  }
   h += '<div class="cuenta-row"><span class="ml">Inter\u00e9s acumulado (mes actual)</span><span class="mv" style="color:#3ecf8e">+' + data.interes_mes_actual.toFixed(2) + ' \u20ac</span></div>';
   h += '<div class="cuenta-row"><span class="ml">Tracking desde</span><span class="mv">' + data.fecha_inicio_tracking + '</span></div>';
   h += '</div>';
@@ -1729,13 +1806,23 @@ function renderCuentaMyInvestor(data) {
   var notaAntiguedad = data.saldo_desactualizado
     ? '<div style="font-size:10px;color:#f0a500;margin-bottom:4px">\u26a0 \u00daltimo saldo conocido: ' + data.fecha_ultima_actualizacion + '</div>'
     : '<div style="font-size:10px;color:#3ecf8e;margin-bottom:4px">\u2714 Actualizado hoy</div>';
+  var taeReal = parseFloat(c.getAttribute('data-tae-real'));
+  var intRealAcum = parseFloat(c.getAttribute('data-interes-real-acum'));
   var h = '<div class="cuenta-card">';
   h += '<div class="cuenta-sub">' + (data.entidad || 'Cuenta MyInvestor') + '</div>';
   h += notaAntiguedad;
   h += '<div class="cuenta-saldo">' + data.saldo_actual.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' \u20ac</div>';
   h += '<div class="cuenta-row"><span class="ml">TAE</span><span class="mv" style="color:#3ecf8e">' + taePct + '</span></div>';
+  if (!isNaN(taeReal)) {
+    var trc = taeReal >= 0 ? '#3ecf8e' : '#e05050';
+    h += '<div class="cuenta-row"><span class="ml">TAE real (vs IPC)</span><span class="mv" style="color:' + trc + '">' + (taeReal >= 0 ? '+' : '') + taeReal.toFixed(1) + '%</span></div>';
+  }
   h += '<div class="cuenta-row"><span class="ml">Inter\u00e9s diario est.</span><span class="mv">' + data.interes_diario_estimado.toFixed(2) + ' \u20ac</span></div>';
   h += '<div class="cuenta-row"><span class="ml">Intereses acumulados</span><span class="mv" style="color:#3ecf8e">+' + data.intereses_acumulados_periodo.toFixed(2) + ' \u20ac</span></div>';
+  if (!isNaN(intRealAcum)) {
+    var irc = intRealAcum >= 0 ? '#3ecf8e' : '#e05050';
+    h += '<div class="cuenta-row"><span class="ml">Inter\u00e9s real acum.</span><span class="mv" style="color:' + irc + '">' + (intRealAcum >= 0 ? '+' : '') + intRealAcum.toFixed(2) + ' \u20ac</span></div>';
+  }
   h += '<div class="cuenta-row"><span class="ml">Inter\u00e9s acumulado (mes actual)</span><span class="mv" style="color:#3ecf8e">+' + data.interes_mes_actual.toFixed(2) + ' \u20ac</span></div>';
   h += '<div class="cuenta-row"><span class="ml">Tracking desde</span><span class="mv">' + data.fecha_inicio_tracking + '</span></div>';
   h += '</div>';
