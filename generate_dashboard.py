@@ -1046,7 +1046,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="kpi" data-kpi="rend-fondos" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}"><div class="label">Rendimiento Fondos</div><div class="value {"neg" if rend_fondos_pct is not None and rend_fondos_pct < 0 else "pos"}" data-kpi-val="rend-fondos-pct">{"{:+.2f}%".format(rend_fondos_pct) if rend_fondos_pct is not None else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / {:,.2f} \u20ac aportados".format(rend_fondos_eur, total_aportado_fondos) if rend_fondos_pct is not None else "\u2014"}</div></div>
     <div class="kpi" data-kpi="rend-cuenta" data-rend-cuenta-eur="{rend_eur_combinado:.2f}" data-rend-cuenta-pct="{rend_pct_combinado:.2f}" data-tae="{tae_ponderado:.2f}"><div class="label">Rendimiento Cuenta</div><div class="value {"neg" if rend_pct_combinado < 0 else "pos"}" data-kpi-val="rend-cuenta-pct">{"{:+,.2f}%".format(rend_pct_combinado) if saldo_combinado else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / saldo {:,.2f} \u20ac".format(rend_eur_combinado, saldo_combinado) if saldo_combinado else "\u2014"}, TAE {tae_ponderado:.2f}% (ponderado)</div></div>
     <div class="kpi" data-kpi="rend-total-risk" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rendimiento Total (con riesgo)</div><div class="value" data-kpi-val="rend-total-risk-pct">\u2014</div><div class="sub" data-kpi-val="rend-total-risk-sub">\u2014</div></div>
-    <div class="kpi" data-kpi="rend-real" data-inf-total-pct="{inf_total_pct if inf_total_pct is not None else ''}" data-historical-cost="{historical_cost:.0f}"><div class="label">Rend. Real vs IPC</div><div class="value {"neg" if historical_real_return is not None and historical_real_return < 0 else "pos"}">{("{:+.2f}%".format(historical_real_return) if historical_real_return is not None else "\u2014")}</div><div class="sub">{("IPC acum. {:+.2f}%".format(inf_total_pct) if inf_total_pct is not None else "IPC N/D")}</div></div>
+    <div class="kpi" data-kpi="rend-real" data-inf-total-pct="{inf_total_pct if inf_total_pct is not None else ''}" data-historical-cost="{historical_cost:.0f}"><div class="label">Rend. Real vs IPC</div><div class="value {"neg" if historical_real_return is not None and historical_real_return < 0 else "pos"}">{("{:+.2f}%".format(historical_real_return) if historical_real_return is not None else "\u2014")}</div><div class="sub">{("IPC acum. {:+.2f}%<div style=\"font-size:10px;color:#6b7280;font-weight:400\">IPC General (INE) \u00b7 acumulado</div>".format(inf_total_pct) if inf_total_pct is not None else "IPC N/D")}</div></div>
     <div class="kpi" data-kpi="expectancy"><div class="label">Expectancy del sistema</div><div class="value {"neg" if exp_metrics["expectancy"] < 0 else "pos"}">{exp_metrics["expectancy"]:+.2f}%</div><div class="sub">% Acierto: {exp_metrics["pct_acierto"]:.1f}% \u00b7 % Fallo: {exp_metrics["pct_fallo"]:.1f}%<br>Ganancia media: {exp_metrics["ganancia_media_pct"]:+.2f}% \u00b7 P\u00e9rdida media: {exp_metrics["perdida_media_pct"]:.2f}%<br>Payoff ratio: {exp_metrics["payoff_ratio"]:.2f} \u00b7 Anual.: {exp_metrics["rentabilidad_anualizada"]*100:.2f}%</div></div>
   </div>
 
@@ -1194,7 +1194,7 @@ for i, p in enumerate(portfolio):
     html += f"""    <div class="pos-card{" neg" if p["pnl"] < 0 else ""}" data-ticker="{tk}" data-entry="{p['entry']}" data-shares="{p['shares']}" data-stop="{p['stop']}" data-commission="{p.get('commission', 0)}"{prev_close_attr}>
       <div class="pos-header">
         <div><div class="ticker">{tk} — {p['name']}</div><div class="name">{sector_name} · Entrada {p['entry_date']}</div></div>
-        <div class="price"><div class="current" id="price-{i}" style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}"><span class="price-val">{p['current']:.2f}</span> \u20ac{" <span style=\"color:#f0a500;font-size:11px\" title=\"Dato no actualizado\">\u26a0</span>" if p.get("data_error") else ""}</div><div class="pnl {pnl_cls_card}" id="pnl-{i}"><span class="pnl-val">{pnl_sign}{p['pnl']:,.2f}</span> \u20ac (<span class="pnl-pct-val">{pnl_pct_sign}{p['pnl_pct']:.2f}</span>%)</div>{"<div style=\"font-size:11px;color:#9aa0b0;margin-top:-2px\">Rent. real: {:+.2f}% (vs IPC)</div>".format(p["rent_real_pct"]) if p["rent_real_pct"] is not None and p["inflacion_acum"] is not None else ""}</div>
+        <div class="price"><div class="current" id="price-{i}" style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}"><span class="price-val">{p['current']:.2f}</span> \u20ac{" <span style=\"color:#f0a500;font-size:11px\" title=\"Dato no actualizado\">\u26a0</span>" if p.get("data_error") else ""}</div><div class="pnl {pnl_cls_card}" id="pnl-{i}"><span class="pnl-val">{pnl_sign}{p['pnl']:,.2f}</span> \u20ac (<span class="pnl-pct-val">{pnl_pct_sign}{p['pnl_pct']:.2f}</span>%)</div>{"<div style=\"font-size:11px;color:#9aa0b0;margin-top:-2px\">Rent. real: {:+.2f}% (vs IPC General)</div>".format(p["rent_real_pct"]) if p["rent_real_pct"] is not None and p["inflacion_acum"] is not None else ""}</div>
       </div>
       <div class="signal-badge {signal_cls}">{signal_txt}</div>
       <div class="metrics-grid">
@@ -1424,7 +1424,7 @@ for p in portfolio:
   <td style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}">{p['current']:.2f}{" \u26a0" if p.get("data_error") else ""}</td>
   <td style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}">{p['pnl']:+,.2f}</td>
   <td style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}">{p['pnl_pct']:+.2f}%</td>
-  <td style="color:{"#e05050" if p["rent_real_pct"] is not None and p["rent_real_pct"] < 0 else "#3ecf8e"}">{p["rent_real_pct"]:+.2f}%{" vs IPC" if p["inflacion_acum"] is not None else ""}</td>
+  <td style="color:{"#e05050" if p["rent_real_pct"] is not None and p["rent_real_pct"] < 0 else "#3ecf8e"}">{p["rent_real_pct"]:+.2f}%{" vs IPC Gral" if p["inflacion_acum"] is not None else ""}</td>
 </tr>"""
 for cp in closed_positions:
     pnl_cls_c = "neg" if cp["pnl_eur"] < 0 else "pos"
@@ -1441,12 +1441,12 @@ for cp in closed_positions:
   <td style="color:{"#e05050" if cp["pnl_eur"] < 0 else "#3ecf8e"}">{cp['venta']:.2f}</td>
   <td style="color:{"#e05050" if cp["pnl_eur"] < 0 else "#3ecf8e"}">{cp['pnl_eur']:+,.2f}</td>
   <td style="color:{"#e05050" if cp["pnl_eur"] < 0 else "#3ecf8e"}">{cp['pnl_pct']:+.2f}%</td>
-  <td style="color:{"#e05050" if cp["rent_real_pct"] is not None and cp["rent_real_pct"] < 0 else "#3ecf8e"}">{cp["rent_real_pct"]:+.2f}%{" vs IPC" if cp["inflacion_acum"] is not None else ""}</td>
+  <td style="color:{"#e05050" if cp["rent_real_pct"] is not None and cp["rent_real_pct"] < 0 else "#3ecf8e"}">{cp["rent_real_pct"]:+.2f}%{" vs IPC Gral" if cp["inflacion_acum"] is not None else ""}</td>
 </tr>"""
 
 hist_table = f"""  <div class="section-title">Historial de Cartera</div>
   <div style="font-size:11px;color:#9aa0b0;margin-bottom:14px;padding:8px 12px;background:#12151f;border-radius:8px;line-height:1.6">
-    Rentabilidad global: {historical_pnl:+,.2f} \u20ac ({historical_return:+.2f}%) \u00b7 Inversi\u00f3n hist\u00f3rica total: {historical_cost:,.0f} \u20ac{" \u00b7 Real vs IPC: {:+.2f}% ({:+.2f} \u20ac)".format(historical_real_return, historical_real_pnl) if historical_real_return is not None else ""}
+    Rentabilidad global: {historical_pnl:+,.2f} \u20ac ({historical_return:+.2f}%) \u00b7 Inversi\u00f3n hist\u00f3rica total: {historical_cost:,.0f} \u20ac{" \u00b7 Real vs IPC Gral (acum): {:+.2f}% ({:+.2f} \u20ac)".format(historical_real_return, historical_real_pnl) if historical_real_return is not None else ""}
   </div>
   <table class="hist-table">
     <thead><tr>

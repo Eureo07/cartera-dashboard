@@ -17,5 +17,26 @@
       "support": 362.010009765625,
       "current_price": 388.54998779296875
     }
-  ]
+  ],
+  "global": {
+    "updated": "2026-07-15T11:40:28.049472",
+    "results": [
+      {
+        "ticker": "ACS.MC",
+        "name": "ACS",
+        "sector": "Construcción",
+        "score": 0.5,
+        "eper": 24.944267,
+        "rent_1a": 117.95332111854044,
+        "roe": 19.74,
+        "eva": 169563750.0,
+        "fcf": 2303003000.0,
+        "entry_types": [
+          "LT"
+        ],
+        "support": 117.69999694824219,
+        "current_price": 121.4000015258789
+      }
+    ]
+  }
 }
