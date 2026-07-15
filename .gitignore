@@ -1,5 +1,6 @@
 __pycache__/
 *.pyc
+*.docx
 logs/
 fin_data_complete.*
 fin_data_mega.*
