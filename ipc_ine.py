@@ -2,6 +2,7 @@ import json, os, requests
 from datetime import datetime, timedelta
 
 CACHE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ipc_cache.json")
+CACHE_MAX_DAYS = 7
 IPC_TABLE_ID = "50902"
 API_URL = f"https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/{IPC_TABLE_ID}"
 # Real IPC values from INE API (Base 2021). 2026 values are estimates.
@@ -68,7 +69,16 @@ def _fetch_api():
 def obtener_ipc_mensual(force_refresh=False):
     cache = _cargar_cache()
     if not force_refresh and cache.get("ipc_mensual"):
-        return cache["ipc_mensual"]
+        ult_act = cache.get("ultima_actualizacion", "")
+        if ult_act:
+            try:
+                dif = (datetime.now() - datetime.fromisoformat(ult_act)).days
+                if dif < CACHE_MAX_DAYS:
+                    return cache["ipc_mensual"]
+            except:
+                return cache["ipc_mensual"]
+        else:
+            return cache["ipc_mensual"]
     data = _fetch_api()
     if data:
         merged = dict(data)
