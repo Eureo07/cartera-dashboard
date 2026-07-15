@@ -1692,8 +1692,8 @@ function renderFondos(data) {
     h += '<div class="fondo-metric"><span class="ml">Valor actual</span><span class="mv">' + f.valor_actual.toLocaleString('es-ES', {minimumFractionDigits:2}) + ' \u20ac</span></div>';
     h += '<div class="fondo-metric"><span class="ml">Rentabilidad</span><span class="mv ' + rentCls + '">' + (f.rentabilidad >= 0 ? '+' : '') + f.rentabilidad.toFixed(2) + '%</span></div>';
     if (f.rentabilidad_real != null) {
-      var rrCls = f.rentabilidad_real >= 0 ? 'pos' : 'neg';
-      h += '<div class="fondo-metric"><span class="ml">Rentabilidad real</span><span class="mv ' + rrCls + '">' + (f.rentabilidad_real >= 0 ? '+' : '') + f.rentabilidad_real.toFixed(2) + '%</span></div>';
+      var rrc = f.rentabilidad_real >= 0 ? '#3ecf8e' : '#e05050';
+      h += '<div class="fondo-metric"><span class="ml">Rentabilidad real</span><span class="mv" style="color:' + rrc + '">' + (f.rentabilidad_real >= 0 ? '+' : '') + f.rentabilidad_real.toFixed(2) + '%</span></div>';
     }
     h += '<div class="fondo-metric"><span class="ml">TER</span><span class="mv">' + f.ter.toFixed(2) + '%</span></div>';
     // Grafica evolucion si hay historico
