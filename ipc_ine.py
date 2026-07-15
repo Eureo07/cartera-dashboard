@@ -72,10 +72,12 @@ def obtener_ipc_mensual(force_refresh=False):
     data = _fetch_api()
     if data:
         merged = dict(data)
+        ultimo_api = max(data.keys())
         for k, v in _FALLBACK.items():
             if k not in merged:
                 merged[k] = v
         cache["ipc_mensual"] = merged
+        cache["ultimo_mes_api"] = ultimo_api
         cache["ultima_actualizacion"] = datetime.now().isoformat()
         _guardar_cache(cache)
         return merged
@@ -141,3 +143,34 @@ def inflacion_interanual():
     if ult in ipc_data and ant in ipc_data and ipc_data[ant] > 0:
         return (ipc_data[ult] - ipc_data[ant]) / ipc_data[ant]
     return _ESTIMATED_INTERANUAL
+
+_MESES_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"]
+
+def _fmt_mes_es(key):
+    m = int(key[5:7])
+    return f"{_MESES_ES[m-1]} {key[:4]}"
+
+def inflacion_interanual_rolling():
+    """IPC interanual rolling 12m sobre el último mes con dato definitivo del INE.
+    Returns: (tasa_float, mes_desde_str, mes_hasta_str) o (None, None, None)."""
+    cache = _cargar_cache()
+    ipc_data = cache.get("ipc_mensual")
+    if not ipc_data:
+        ipc_data = obtener_ipc_mensual()
+    meses = sorted(ipc_data.keys())
+    if len(meses) < 13:
+        return None, None, None
+    ultimo_api = cache.get("ultimo_mes_api")
+    ahora = datetime.now()
+    mes_actual = f"{ahora.year}-{ahora.month:02d}"
+    if ultimo_api and ultimo_api in ipc_data:
+        ult = ultimo_api
+    else:
+        ult = meses[-1]
+        if ult == mes_actual and len(meses) >= 2:
+            ult = meses[-2]
+    ant = f"{int(ult[:4]) - 1}-{ult[5:]}"
+    if ult in ipc_data and ant in ipc_data and ipc_data[ant] > 0:
+        tasa = (ipc_data[ult] - ipc_data[ant]) / ipc_data[ant]
+        return tasa, ant, ult
+    return None, None, None

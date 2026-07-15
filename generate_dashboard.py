@@ -14,7 +14,7 @@ from screener import calcular_soporte_resistencia
 from expectancy import cargar_cartera_cerrada, calcular_expectancy
 from position_sizing import calcular_tamano_posicion
 from regimen_mercado import obtener_regimen_combinado
-from ipc_ine import inflacion_acumulada, inflacion_interanual, obtener_ipc_mensual
+from ipc_ine import inflacion_acumulada, inflacion_interanual, obtener_ipc_mensual, inflacion_interanual_rolling, _fmt_mes_es
 
 _YF_SESSION = requests.Session()
 _YF_SESSION.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
@@ -533,11 +533,21 @@ for cp in closed_positions:
     except:
         cp["inflacion_acum"] = None
         cp["rent_real_pct"] = None
-if min_entry_date:
-    inf_total = inflacion_acumulada(min_entry_date, now)
-    inf_total_pct = round(inf_total * 100, 2) if inf_total is not None else None
-else:
-    inf_total_pct = None
+inf_inter_tasa, inf_inter_desde, inf_inter_hasta = inflacion_interanual_rolling()
+inf_total_pct = round(inf_inter_tasa * 100, 2) if inf_inter_tasa is not None else None
+inf_inter_label = ""
+if inf_inter_desde and inf_inter_hasta:
+    inf_inter_label = f"{_fmt_mes_es(inf_inter_desde)} - {_fmt_mes_es(inf_inter_hasta)}"
+    try:
+        ahora = datetime.now()
+        mes_actual = f"{ahora.year}-{ahora.month:02d}"
+        yy, mm = int(inf_inter_hasta[:4]), int(inf_inter_hasta[5:7])
+        mes_hasta_dt = datetime(yy + (mm // 12), (mm % 12) + 1, 1) if mm == 12 else datetime(yy, mm + 1, 1)
+        diff_meses = (ahora.year - mes_hasta_dt.year) * 12 + (ahora.month - mes_hasta_dt.month)
+        if diff_meses > 2:
+            inf_inter_label += " (dato m\u00e1s reciente disponible)"
+    except:
+        pass
 historical_real_pnl = None
 historical_real_return = None
 if inf_total_pct is not None and historical_return is not None:
@@ -1046,7 +1056,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="kpi" data-kpi="rend-fondos" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}"><div class="label">Rendimiento Fondos</div><div class="value {"neg" if rend_fondos_pct is not None and rend_fondos_pct < 0 else "pos"}" data-kpi-val="rend-fondos-pct">{"{:+.2f}%".format(rend_fondos_pct) if rend_fondos_pct is not None else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / {:,.2f} \u20ac aportados".format(rend_fondos_eur, total_aportado_fondos) if rend_fondos_pct is not None else "\u2014"}</div></div>
     <div class="kpi" data-kpi="rend-cuenta" data-rend-cuenta-eur="{rend_eur_combinado:.2f}" data-rend-cuenta-pct="{rend_pct_combinado:.2f}" data-tae="{tae_ponderado:.2f}"><div class="label">Rendimiento Cuenta</div><div class="value {"neg" if rend_pct_combinado < 0 else "pos"}" data-kpi-val="rend-cuenta-pct">{"{:+,.2f}%".format(rend_pct_combinado) if saldo_combinado else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / saldo {:,.2f} \u20ac".format(rend_eur_combinado, saldo_combinado) if saldo_combinado else "\u2014"}, TAE {tae_ponderado:.2f}% (ponderado)</div></div>
     <div class="kpi" data-kpi="rend-total-risk" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rendimiento Total (con riesgo)</div><div class="value" data-kpi-val="rend-total-risk-pct">\u2014</div><div class="sub" data-kpi-val="rend-total-risk-sub">\u2014</div></div>
-    <div class="kpi" data-kpi="rend-real" data-inf-total-pct="{inf_total_pct if inf_total_pct is not None else ''}" data-historical-cost="{historical_cost:.0f}"><div class="label">Rend. Real vs IPC</div><div class="value {"neg" if historical_real_return is not None and historical_real_return < 0 else "pos"}">{("{:+.2f}%".format(historical_real_return) if historical_real_return is not None else "\u2014")}</div><div class="sub">{("IPC acum. {:+.2f}%<div style=\"font-size:10px;color:#6b7280;font-weight:400\">IPC General (INE) \u00b7 acumulado</div>".format(inf_total_pct) if inf_total_pct is not None else "IPC N/D")}</div></div>
+    <div class="kpi" data-kpi="rend-real" data-inf-total-pct="{inf_total_pct if inf_total_pct is not None else ''}" data-historical-cost="{historical_cost:.0f}"><div class="label">Rend. Real vs IPC</div><div class="value {"neg" if historical_real_return is not None and historical_real_return < 0 else "pos"}">{("{:+.2f}%".format(historical_real_return) if historical_real_return is not None else "\u2014")}</div><div class="sub">{("IPC interanual {:+.2f}%<div style=\"font-size:10px;color:#6b7280;font-weight:400\">IPC General (INE) \u00b7 {} </div>".format(inf_total_pct, inf_inter_label) if inf_total_pct is not None else "IPC N/D")}</div></div>
     <div class="kpi" data-kpi="expectancy"><div class="label">Expectancy del sistema</div><div class="value {"neg" if exp_metrics["expectancy"] < 0 else "pos"}">{exp_metrics["expectancy"]:+.2f}%</div><div class="sub">% Acierto: {exp_metrics["pct_acierto"]:.1f}% \u00b7 % Fallo: {exp_metrics["pct_fallo"]:.1f}%<br>Ganancia media: {exp_metrics["ganancia_media_pct"]:+.2f}% \u00b7 P\u00e9rdida media: {exp_metrics["perdida_media_pct"]:.2f}%<br>Payoff ratio: {exp_metrics["payoff_ratio"]:.2f} \u00b7 Anual.: {exp_metrics["rentabilidad_anualizada"]*100:.2f}%</div></div>
   </div>
 
