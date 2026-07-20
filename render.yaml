@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: cartera-dashboard
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: DASHBOARD_PASSWORD
+        sync: false
+      - key: DASHBOARD_USER
+        sync: false
+      - key: ALPHA_VANTAGE_API_KEY
+        sync: false
+      - key: GMAIL_PASSWORD
+        sync: false
+    plan: free
