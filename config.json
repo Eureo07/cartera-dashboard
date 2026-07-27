@@ -14,7 +14,8 @@
     "screener": {
         "max_results": 20,
         "score_threshold": 0.3,
-        "cache_ttl_hours": 24
+        "cache_ttl_hours": 24,
+        "extra_sectors": ["Construcción", "Consumo discrecional"]
     },
     "paths": {
         "excel": "fin_data_final.xlsx",

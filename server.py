@@ -543,6 +543,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     ticker_sectors[p["ticker"]] = str(match.iloc[0][sec_col]).strip()
                     break
         unique_sectors = sorted(set(ticker_sectors.values()))
+        extra = CFG.get("screener", {}).get("extra_sectors", [])
+        unique_sectors = sorted(set(list(unique_sectors) + extra))
         results = []
         for sec in unique_sectors:
             try:

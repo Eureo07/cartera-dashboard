@@ -271,6 +271,7 @@ def get_valuation(t):
             "div_yield": div_yield,
             "ps": info.get("priceToSalesTrailing12Months"),
             "beta": beta_v,
+            "Sector": info.get("sector"),
         }
     except:
         return {"per": None, "fwd_per": None, "pb": None, "ev_ebitda": None, "mcap": None, "eps": None, "div_yield": None, "ps": None, "beta": None}
@@ -1138,6 +1139,18 @@ for i, p in enumerate(portfolio):
         roe_val = val_metric(r.get("2026 ROE"), -500, 500)
         fcf_v = r.get("2026 FCN")
         fcf_val = fcf_v if pd.notna(fcf_v) else None
+    else:
+        yf_sec = v.get("Sector")
+        if yf_sec:
+            _map = {
+                "Industrials": "Industrial", "Technology": "Tecnología",
+                "Energy": "Energía", "Consumer Cyclical": "Consumo discrecional",
+                "Consumer Defensive": "Consumo básico", "Healthcare": "Salud",
+                "Financial Services": "Financiero", "Communication Services": "Comunicaciones",
+                "Basic Materials": "Materiales", "Utilities": "Utilities",
+                "Real Estate": "Real Estate",
+            }
+            sector_name = _map.get(yf_sec, yf_sec)
     # Signal badge
     days = p.get("days", 999)
     if days <= 14:
