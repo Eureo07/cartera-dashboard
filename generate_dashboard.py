@@ -1222,7 +1222,7 @@ for i, p in enumerate(portfolio):
 
     desc = lambda t: f'<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">{t}</span>'
     prev_close_attr = f' data-prev-close="{p.get("prev_close", "")}"' if p.get("prev_close") is not None else ""
-    html += f"""    <div class="pos-card{" neg" if p["pnl"] < 0 else ""}" data-ticker="{tk}" data-entry="{p['entry']}" data-shares="{p['shares']}" data-stop="{p['stop']}" data-commission="{p.get('commission', 0)}"{prev_close_attr}>
+    html += f"""    <div class="pos-card{" neg" if p["pnl"] < 0 else ""}" data-ticker="{tk}" data-current="{p['current']}" data-entry="{p['entry']}" data-shares="{p['shares']}" data-stop="{p['stop']}" data-commission="{p.get('commission', 0)}"{prev_close_attr}>
       <div class="pos-header">
         <div><div class="ticker">{tk} — {p['name']}</div><div class="name">{sector_name} · Entrada {p['entry_date']}</div></div>
         <div class="price"><div class="current" id="price-{i}" style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}"><span class="price-val">{p['current']:.2f}</span> \u20ac{" <span style=\"color:#f0a500;font-size:11px\" title=\"Dato no actualizado\">\u26a0</span>" if p.get("data_error") else ""}</div><div class="pnl {pnl_cls_card}" id="pnl-{i}"><span class="pnl-val">{pnl_sign}{p['pnl']:,.2f}</span> \u20ac (<span class="pnl-pct-val">{pnl_pct_sign}{p['pnl_pct']:.2f}</span>%)</div>{"<div style=\"font-size:11px;color:#9aa0b0;margin-top:-2px\">Rent. real: {:+.2f}% (vs IPC General)</div>".format(p["rent_real_pct"]) if p["rent_real_pct"] is not None and p["inflacion_acum"] is not None else ""}</div>
@@ -1923,6 +1923,7 @@ function updatePrices(data) {
     var shares = parseFloat(card.getAttribute('data-shares'));
     var commission = parseFloat(card.getAttribute('data-commission')) || 0;
     var tk = card.getAttribute('data-ticker');
+    var curAttr = parseFloat(card.getAttribute('data-current'));
     var pd = data.prices[tk];
     var cost = entry * shares + commission;
     totalCost += cost;
@@ -1936,8 +1937,10 @@ function updatePrices(data) {
         totalDayVar += pd.day_var * shares;
         nDayVar++;
       }
+    } else if (curAttr != null && !isNaN(curAttr)) {
+      totalValue += curAttr * shares;
     } else {
-      totalValue += cost;  // fallback to cost for missing prices
+      totalValue += cost;
     }
   });
   var totalPnl = totalValue - totalCost;
