@@ -512,7 +512,15 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Content-Type", "application/json")
         self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
-        self.wfile.write(json.dumps(data, default=str).encode())
+        def _clean(obj):
+            if isinstance(obj, dict):
+                return {k: _clean(v) for k, v in obj.items()}
+            if isinstance(obj, list):
+                return [_clean(v) for v in obj]
+            if isinstance(obj, float) and (obj != obj or obj == float('inf') or obj == float('-inf')):
+                return None
+            return obj
+        self.wfile.write(json.dumps(_clean(data), default=str).encode())
 
     def _compute_alternatives(self):
         from screener import ejecutar_radar
