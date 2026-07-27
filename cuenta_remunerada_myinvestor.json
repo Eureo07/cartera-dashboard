@@ -1,10 +1,11 @@
 {
   "entidad": "MyInvestor",
-  "saldo_actual": 3563.05,
+  "saldo_actual": 3513.18,
   "tae_actual": 2.5,
   "historico_saldos": [
-    {"fecha": "2026-07-08", "saldo": 3563.05}
+    {"fecha": "2026-07-08", "saldo": 3563.05},
+    {"fecha": "2026-07-27", "saldo": 3513.18}
   ],
-  "intereses_acumulados_periodo": 3.13,
+  "intereses_acumulados_periodo": 7.77,
   "fecha_inicio_tracking": "2026-07-08"
 }

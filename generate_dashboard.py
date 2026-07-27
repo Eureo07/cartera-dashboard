@@ -26,6 +26,14 @@ EXCEL_FILE = CFG["paths"]["excel"]
 OUT_FILE = CFG["paths"]["dashboard"]
 PRICE_HISTORY = CFG["paths"]["price_history"]
 
+def _cargar_ultimos_precios():
+    try:
+        df = pd.read_csv(PRICE_HISTORY)
+        ultimos = df.groupby("ticker").last().reset_index()
+        return dict(zip(ultimos["ticker"], ultimos["precio"]))
+    except:
+        return {}
+
 BLOQUES_TEMATICOS = {
     "N\u00facleo IA": {
         "tickers": ["ENR.DE", "NVD.DE"],
@@ -141,6 +149,7 @@ bench_hist = None
 hist_path = CFG["paths"]["price_history"]
 log.info("Downloading price histories...")
 last_data_date = None
+ultimos_precios_cache = _cargar_ultimos_precios()
 for p in portfolio:
     tk = p["ticker"]
     try:
@@ -171,13 +180,25 @@ for p in portfolio:
             if raw is not None:
                 p["current"] = float(raw)
             else:
-                p["current"] = 0
-                p["data_error"] = True
-                log.error(f"  {tk}: fallback SIN DATOS — todas las fuentes yfinance devolvieron None")
+                cached = ultimos_precios_cache.get(tk)
+                if cached is not None and cached > 0:
+                    p["current"] = float(cached)
+                    p["data_error"] = True
+                    log.warning(f"  {tk}: usando último precio cacheado ({cached}) — fuentes en vivo devolvieron None")
+                else:
+                    p["current"] = p.get("entry", 0)
+                    p["data_error"] = True
+                    log.error(f"  {tk}: fallback SIN DATOS — sin caché ni fuentes en vivo")
         except Exception as e:
-            log.error(f"  {tk}: fallback EXCEPTION — {e}")
-            p["current"] = 0
-            p["data_error"] = True
+            cached = ultimos_precios_cache.get(tk)
+            if cached is not None and cached > 0:
+                p["current"] = float(cached)
+                p["data_error"] = True
+                log.warning(f"  {tk}: usando último precio cacheado ({cached}) — error en vivo ({e})")
+            else:
+                log.error(f"  {tk}: fallback EXCEPTION — {e}")
+                p["current"] = p.get("entry", 0)
+                p["data_error"] = True
 # Support/resistance for each position
 for p in portfolio:
     tk = p["ticker"]
