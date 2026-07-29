@@ -1079,7 +1079,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="kpi" data-kpi="rend-total-risk" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rendimiento Total (con riesgo)</div><div class="value" data-kpi-val="rend-total-risk-pct">\u2014</div><div class="sub" data-kpi-val="rend-total-risk-sub">\u2014</div></div>
     <div class="kpi" data-kpi="rend-real" data-inf-total-pct="{inf_total_pct if inf_total_pct is not None else ''}" data-historical-cost="{historical_cost:.0f}"><div class="label">Rend. Real vs IPC</div><div class="value {"neg" if historical_real_return is not None and historical_real_return < 0 else "pos"}">{("{:+.2f}%".format(historical_real_return) if historical_real_return is not None else "\u2014")}</div><div class="sub">{("IPC interanual {:+.2f}%<div style=\"font-size:10px;color:#6b7280;font-weight:400\">IPC General (INE) \u00b7 {} </div>".format(inf_total_pct, inf_inter_label) if inf_total_pct is not None else "IPC N/D")}</div></div>
     <div class="kpi" data-kpi="historical" data-closed-pnl="{closed_total_pnl:.2f}" data-closed-cost="{closed_total_cost:.2f}"><div class="label">Rent. Hist\u00f3rica Acciones</div><div class="value {"neg" if historical_pnl < 0 else "pos"}" data-kpi-val="historical-return">{historical_return:+.2f}%</div><div class="sub" data-kpi-val="historical-pnl">{historical_pnl:+,.2f} \u20ac / {historical_cost:,.0f} \u20ac invertidos</div></div>
-    <div class="kpi" data-kpi="expectancy"><div class="label">Expectancy del sistema</div><div class="value {"neg" if exp_metrics["expectancy"] < 0 else "pos"}">{exp_metrics["expectancy"]:+.2f}%</div><div class="sub">% Acierto: {exp_metrics["pct_acierto"]:.1f}% \u00b7 % Fallo: {exp_metrics["pct_fallo"]:.1f}%<br>Ganancia media: {exp_metrics["ganancia_media_pct"]:+.2f}% \u00b7 P\u00e9rdida media: {exp_metrics["perdida_media_pct"]:.2f}%<br>Payoff ratio: {exp_metrics["payoff_ratio"]:.2f} \u00b7 Anual.: {exp_metrics["rentabilidad_anualizada"]*100:.2f}%</div></div>
+    <div class="kpi" data-kpi="expectancy"><div class="label">Expectancy del sistema</div><div class="value {"neg" if exp_metrics["expectancy"] < 0 else "pos"}">{exp_metrics["expectancy"]:+.2f}%</div><div class="sub">% Acierto: {exp_metrics["pct_acierto"]:.1f}% \u00b7 % Fallo: {exp_metrics["pct_fallo"]:.1f}%<br>Ganancia media: {exp_metrics["ganancia_media_pct"]:+.2f}% \u00b7 P\u00e9rdida media: {exp_metrics["perdida_media_pct"]:.2f}%<br>Payoff ratio (%): {exp_metrics["payoff_ratio"]:.2f} \u00b7 R Payoff: {exp_metrics["r_payoff"] if exp_metrics.get("r_payoff") is not None else "N/D"} \u00b7 Anual.: {exp_metrics["rentabilidad_anualizada"]*100:.2f}%<br>R\u26a1 medio: G {exp_metrics["r_medio_ganadoras"] if exp_metrics.get("r_medio_ganadoras") is not None else "N/D"} / P {exp_metrics["r_medio_perdedoras"] if exp_metrics.get("r_medio_perdedoras") is not None else "N/D"} ({int(exp_metrics.get("n_con_r",0))} ops con R)</div></div>
   </div>
 
   <div class="section-title">Bloques de riesgo tem\u00e1tico</div>
@@ -1317,8 +1317,9 @@ html += f"""      </div>
         <strong>Ganancia media</strong> = media({', '.join(f'{v:+.2f}%' for v in exp_metrics['lista_ganancias_pct'])}) = {exp_metrics["ganancia_media_pct"]:+.2f}%<br>
         <strong>P\u00e9rdida media</strong> = media({', '.join(f'{v:.2f}%' for v in exp_metrics['lista_perdidas_pct'])}) = {exp_metrics["perdida_media_pct"]:.2f}%<br>
         <strong>Expectancy</strong> = ({exp_metrics["pct_acierto"]:.1f}% \u00d7 {exp_metrics["ganancia_media_pct"]:.2f}%) \u2212 ({exp_metrics["pct_fallo"]:.1f}% \u00d7 {exp_metrics["perdida_media_pct"]:.2f}%) = {exp_metrics["expectancy"]:+.2f}%<br>
-        <strong>Payoff ratio</strong> = {exp_metrics["ganancia_media_pct"]:.2f}% / {exp_metrics["perdida_media_pct"]:.2f}% = {exp_metrics["payoff_ratio"]:.2f}<br>
-        <strong>Rent. anualizada</strong> = (1 + {exp_metrics["total_retorno"]:.4f}) ^ (365.25 / {exp_metrics["dias_totales"]}) \u2212 1 = {exp_metrics["rentabilidad_anualizada"]*100:.2f}%
+        <strong>Payoff ratio (%)</strong> = {exp_metrics["ganancia_media_pct"]:.2f}% / {exp_metrics["perdida_media_pct"]:.2f}% = {exp_metrics["payoff_ratio"]:.2f}<br>
+        {"<strong>Payoff ratio (R)</strong> = {:.2f}R / {:.2f}R = <strong>{:.2f}</strong> (objetivo Minervini 2:1)<br>".format(exp_metrics["r_medio_ganadoras"], exp_metrics["r_medio_perdedoras"], exp_metrics["r_payoff"]) if exp_metrics.get("r_payoff") else ""}<strong>Rent. anualizada</strong> = (1 + {exp_metrics["total_retorno"]:.4f}) ^ (365.25 / {exp_metrics["dias_totales"]}) \u2212 1 = {exp_metrics["rentabilidad_anualizada"]*100:.2f}%<br>
+        {"<strong>Motivos de cierre:</strong> " + " · ".join(f"{m}: {c}" for m, c in sorted(exp_metrics["motivo_desglose"].items(), key=lambda x: -x[1])) if exp_metrics.get("motivo_desglose") else ""}
       </div>
     </div>
   </div>
@@ -1470,8 +1471,12 @@ for p in portfolio:
   <td style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}">{p['pnl_pct']:+.2f}%</td>
   <td style="color:{"#e05050" if p["rent_real_pct"] is not None and p["rent_real_pct"] < 0 else "#3ecf8e"}">{p["rent_real_pct"]:+.2f}%{" vs IPC Gral" if p["inflacion_acum"] is not None else ""}</td>
 </tr>"""
-for cp in closed_positions:
+for idx, cp in enumerate(closed_positions):
     pnl_cls_c = "neg" if cp["pnl_eur"] < 0 else "pos"
+    r_val = exp_metrics["lista_r"][idx] if idx < len(exp_metrics["lista_r"]) else None
+    r_str = f"{r_val:+.2f}R" if r_val is not None else "\u2014"
+    motivo = cp.get("motivo_cierre") or ""
+    motivo_badge = f'<span style="font-size:10px;padding:1px 6px;border-radius:4px;background:#2a2d3e;color:#9aa0b0">{motivo}</span>' if motivo else "\u2014"
     hist_rows += f"""<tr class="closed">
   <td>\U0001f534 Cerrada</td>
   <td>{cp['fecha_entrada']}</td>
@@ -1486,6 +1491,8 @@ for cp in closed_positions:
   <td style="color:{"#e05050" if cp["pnl_eur"] < 0 else "#3ecf8e"}">{cp['pnl_eur']:+,.2f}</td>
   <td style="color:{"#e05050" if cp["pnl_eur"] < 0 else "#3ecf8e"}">{cp['pnl_pct']:+.2f}%</td>
   <td style="color:{"#e05050" if cp["rent_real_pct"] is not None and cp["rent_real_pct"] < 0 else "#3ecf8e"}">{cp["rent_real_pct"]:+.2f}%{" vs IPC Gral" if cp["inflacion_acum"] is not None else ""}</td>
+  <td>{r_str}</td>
+  <td>{motivo_badge}</td>
 </tr>"""
 
 hist_table = f"""  <div class="section-title">Historial de Cartera</div>
@@ -1494,7 +1501,7 @@ hist_table = f"""  <div class="section-title">Historial de Cartera</div>
   </div>
   <table class="hist-table">
     <thead><tr>
-      <th>Estado</th><th>Fecha</th><th>Empresa</th><th>Ticker</th><th>N\u00ba Acc.</th><th>PC</th><th>Inversi\u00f3n (ii)</th><th>Soporte</th><th>Stop Loss</th><th>V.Actual/Venta</th><th>Rent. (\u20ac)</th><th>Rent. (%)</th><th>Rent. Real (%)</th>
+      <th>Estado</th><th>Fecha</th><th>Empresa</th><th>Ticker</th><th>N\u00ba Acc.</th><th>PC</th><th>Inversi\u00f3n (ii)</th><th>Soporte</th><th>Stop Loss</th><th>V.Actual/Venta</th><th>Rent. (\u20ac)</th><th>Rent. (%)</th><th>Rent. Real (%)</th><th>R</th><th>Motivo</th>
     </tr></thead>
     <tbody>
 {hist_rows}

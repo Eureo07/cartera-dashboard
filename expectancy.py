@@ -10,6 +10,16 @@ def cargar_cartera_cerrada(path="cartera_cerrada.json"):
         return []
 
 
+def _calc_r_multiple(o):
+    soporte = o.get("precio_soporte_entrada")
+    if soporte is None or soporte <= 0:
+        return None
+    riesgo = o["entrada"] - soporte
+    if riesgo <= 0:
+        return None
+    return round(abs(o["venta"] - o["entrada"]) / riesgo, 2)
+
+
 def calcular_expectancy(operaciones):
     n = len(operaciones)
     ganadoras = [o for o in operaciones if o["pnl_pct"] > 0]
@@ -30,6 +40,26 @@ def calcular_expectancy(operaciones):
 
     payoff_ratio = round(ganancia_media_pct / perdida_media_pct, 2) if perdida_media_pct else None
 
+    # R-multiple metrics (only for positions with precio_soporte_entrada)
+    ops_con_r = [o for o in operaciones if _calc_r_multiple(o) is not None]
+    r_multiple_ganadoras = [
+        _calc_r_multiple(o) for o in ops_con_r if o["pnl_pct"] > 0
+    ]
+    r_multiple_perdedoras = [
+        _calc_r_multiple(o) for o in ops_con_r if o["pnl_pct"] <= 0
+    ]
+
+    r_medio_ganadoras = round(sum(r_multiple_ganadoras) / len(r_multiple_ganadoras), 2) if r_multiple_ganadoras else None
+    r_medio_perdedoras = round(sum(r_multiple_perdedoras) / len(r_multiple_perdedoras), 2) if r_multiple_perdedoras else None
+    r_payoff = round(r_medio_ganadoras / r_medio_perdedoras, 2) if (r_medio_ganadoras and r_medio_perdedoras) else None
+
+    # Motivo desglose
+    motivos = {}
+    for o in operaciones:
+        m = o.get("motivo_cierre")
+        if m:
+            motivos[m] = motivos.get(m, 0) + 1
+
     rentabilidad_anualizada = None
     dias_totales = None
     total_retorno = None
@@ -47,6 +77,9 @@ def calcular_expectancy(operaciones):
         except (ValueError, KeyError):
             pass
 
+    # R-multiple listas para la tabla
+    r_list = [_calc_r_multiple(o) for o in operaciones]
+
     return {
         "pct_acierto": pct_acierto,
         "pct_fallo": pct_fallo,
@@ -62,4 +95,12 @@ def calcular_expectancy(operaciones):
         "lista_perdidas_pct": [round(abs(o["pnl_pct"]), 2) for o in perdedoras],
         "dias_totales": dias_totales,
         "total_retorno": round(total_retorno, 4) if total_retorno is not None else None,
+        # R-multiple
+        "r_medio_ganadoras": r_medio_ganadoras,
+        "r_medio_perdedoras": r_medio_perdedoras,
+        "r_payoff": r_payoff,
+        "n_con_r": len(ops_con_r),
+        "lista_r": r_list,
+        # Motivo desglose
+        "motivo_desglose": motivos,
     }

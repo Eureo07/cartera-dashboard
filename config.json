@@ -1,7 +1,6 @@
 {
     "base_dir": ".",
     "portfolio": [
-        {"ticker": "ENR.DE", "db_ticker": "ENR.DE", "name": "Siemens Energy", "shares": 5, "entry": 170.76, "commission": 4.90, "stop": 129.83, "entry_date": "14/04/2026"},
         {"ticker": "NVD.DE", "db_ticker": "NVDA", "name": "NVIDIA", "shares": 5, "entry": 182.34, "commission": 3.90, "stop": 140.20, "entry_date": "27/04/2026"},
         {"ticker": "RRU.DE", "db_ticker": "RR.L", "name": "Rolls-Royce", "shares": 90, "entry": 16.47, "commission": 3.90, "stop": 12.15, "entry_date": "17/06/2026"},
         {"ticker": "DANR.MI", "db_ticker": null, "name": "Danieli", "shares": 18, "entry": 48.72, "commission": 4.90, "stop": 38.82, "entry_date": "06/05/2026"}
@@ -53,36 +52,6 @@
                     "descripcion": "Vigilar evolución",
                     "direccion": "mayor_es_peor",
                     "formato": "ratio"
-                }
-            ]
-        },
-        {
-            "ticker": "ENR.DE",
-            "nombre": "Siemens Energy",
-            "fecha_earnings": "2026-08-05",
-            "condicion_venta_texto": "Vender si PER forward supera 40 o pierde contratos clave de hidrógeno",
-            "metricas": [
-                {
-                    "nombre": "PER forward",
-                    "fmp_campo": "priceEarningsRatio",
-                    "yf_campo": "forwardPE",
-                    "xlsx_campo": null,
-                    "umbral_alerta": 35,
-                    "umbral_venta": 40,
-                    "descripcion": "Condición de venta si supera 40",
-                    "direccion": "mayor_es_peor",
-                    "formato": "ratio"
-                },
-                {
-                    "nombre": "Margen EBIT",
-                    "fmp_campo": "ebitPerRevenue",
-                    "yf_campo": "ebitdaMargins",
-                    "xlsx_campo": "2026 M.EBIT",
-                    "umbral_alerta": 0.08,
-                    "umbral_venta": null,
-                    "descripcion": "Vigilar degradación",
-                    "direccion": "menor_es_peor",
-                    "formato": "porcentaje"
                 }
             ]
         },

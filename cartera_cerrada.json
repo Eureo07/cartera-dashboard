@@ -1,5 +1,19 @@
 [
   {
+    "operacion": "Siemens Energy",
+    "entrada": 170.76,
+    "acciones": 5,
+    "coste": 858.70,
+    "venta": 135.00,
+    "pnl_eur": -188.60,
+    "pnl_pct": -21.96,
+    "precio_soporte_entrada": 129.83,
+    "motivo_cierre": "stop ejecutado",
+    "fecha_entrada": "2026-04-14",
+    "fecha_cierre": "2026-07-29",
+    "regimen_entrada": null
+  },
+  {
     "operacion": "Ferrovial",
     "entrada": 46.86,
     "acciones": 53,
@@ -7,6 +21,8 @@
     "venta": 54.69,
     "pnl_eur": 400.99,
     "pnl_pct": 16.15,
+    "precio_soporte_entrada": null,
+    "motivo_cierre": null,
     "fecha_entrada": "2025-08-15",
     "fecha_cierre": "2026-03-09",
     "regimen_entrada": null
@@ -19,6 +35,8 @@
     "venta": 18.86,
     "pnl_eur": 375.47,
     "pnl_pct": 14.49,
+    "precio_soporte_entrada": null,
+    "motivo_cierre": null,
     "fecha_entrada": "2025-08-18",
     "fecha_cierre": "2026-03-09",
     "regimen_entrada": null
@@ -31,6 +49,8 @@
     "venta": 102.00,
     "pnl_eur": 316.00,
     "pnl_pct": 35.11,
+    "precio_soporte_entrada": null,
+    "motivo_cierre": null,
     "fecha_entrada": "2025-08-18",
     "fecha_cierre": "2026-03-09",
     "regimen_entrada": null
@@ -43,6 +63,8 @@
     "venta": 179.20,
     "pnl_eur": -168.90,
     "pnl_pct": -15.93,
+    "precio_soporte_entrada": null,
+    "motivo_cierre": null,
     "fecha_entrada": "2025-11-17",
     "fecha_cierre": "2026-03-03",
     "regimen_entrada": null
