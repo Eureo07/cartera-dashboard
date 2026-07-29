@@ -586,6 +586,10 @@ for p in portfolio:
     if hist is not None and len(hist) >= 2:
         close_s = hist["Close"].dropna()
         cur_px = float(close_s.iloc[-1])
+        if math.isnan(cur_px):
+            p["day_var"] = None
+            p["prev_close"] = None
+            continue
         prev_close = None
         try:
             import urllib.request, json, yfinance as yf
@@ -617,7 +621,7 @@ for p in portfolio:
             else:
                 info = yf.Ticker(tk).info or {}
                 ip = info.get("regularMarketPreviousClose") or info.get("previousClose")
-                if ip is not None:
+                if ip is not None and not math.isnan(float(ip)):
                     prev_close = float(ip)
                 else:
                     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=1d"
@@ -630,7 +634,9 @@ for p in portfolio:
         except:
             if len(close_s) >= 2:
                 prev_close = float(close_s.iloc[-2])
-        if prev_close is not None:
+                if math.isnan(prev_close):
+                    prev_close = None
+        if prev_close is not None and not math.isnan(prev_close):
             dv = (cur_px - prev_close) * p["shares"]
             p["day_var"] = dv
             p["prev_close"] = prev_close
@@ -641,7 +647,7 @@ for p in portfolio:
             p["prev_close"] = None
     else:
         p["day_var"] = None
-day_var_pct = (day_var_total / total_value) * 100 if total_value and n_day_var > 0 else None
+day_var_pct = (day_var_total / total_value) * 100 if total_value and n_day_var > 0 and not math.isnan(day_var_total) else None
 
 MAX_WEIGHT_PCT = CFG.get("risk_limits", {}).get("max_weight_per_position", 30)
 SECTOR_TO_THEME = CFG.get("temas_exposicion", {}).get("sector_to_theme", {})
@@ -778,6 +784,7 @@ entry_dates = [datetime.strptime(p["entry_date"], "%d/%m/%Y") for p in portfolio
 bench_start = min(entry_dates).strftime("%Y-%m-%d")
 benchmark_return = None
 bench_start_px = None
+bench_start_attr = ''
 try:
     stoxx = yf.download("^STOXX50E", start=bench_start, progress=False, auto_adjust=False, session=_YF_SESSION)
     if stoxx is not None and not stoxx.empty:
@@ -791,6 +798,7 @@ try:
         bench_start_px = float(stoxx_close.iloc[0])
         bench_end_px = float(stoxx_close.iloc[-1])
         benchmark_return = (bench_end_px / bench_start_px - 1) * 100
+        bench_start_attr = f'data-bench-start="{bench_start_px:.4f}"'
         log.info(f"  ^STOXX50E: {bench_start_px:.0f} -> {bench_end_px:.0f} ({benchmark_return:+.2f}%)")
 except Exception as e:
     log.error(f"  Benchmark error: {e}")
@@ -1090,7 +1098,7 @@ body{{font-family:'Segoe UI',-apple-system,Arial,sans-serif}}
     <div class="kpi" data-kpi="total-value"><div class="label">Valor Actual</div><div class="value {"neg" if total_pnl < 0 else "pos"}" data-kpi-val="total-value">{total_value:,.0f} \u20ac</div></div>
     <div class="kpi" data-kpi="total-pnl"><div class="label">Resultado Activo</div><div class="value {"neg" if total_pnl < 0 else "pos"}" data-kpi-val="total-pnl">{total_pnl:+,.2f} \u20ac</div></div>
     <div class="kpi" data-kpi="total-pnl-pct"><div class="label">Rentabilidad Activa</div><div class="value {"neg" if total_pnl_pct < 0 else "pos"}" data-kpi-val="total-pnl-pct">{total_pnl_pct:+.2f}%</div><div class="sub">Cartera</div></div>
-    <div class="kpi" data-kpi="vs-benchmark" data-bench-start="{bench_start_px:.4f}" data-bench-start-date="{bench_start}"><div class="label">vs Euro Stoxx 50</div><div class="value {"neg" if benchmark_return is not None and (total_pnl_pct - benchmark_return) < 0 else "pos"}" data-kpi-val="vs-benchmark">{("" if benchmark_return is None else f"{(total_pnl_pct - benchmark_return):+.2f}%")}</div><div class="sub" data-kpi-sub="benchmark-ret">{f"\u00cdndice {benchmark_return:+.2f}%" if benchmark_return is not None else "N/D"}</div></div>
+    <div class="kpi" data-kpi="vs-benchmark" {bench_start_attr} data-bench-start-date="{bench_start}"><div class="label">vs Euro Stoxx 50</div><div class="value {"neg" if benchmark_return is not None and (total_pnl_pct - benchmark_return) < 0 else "pos"}" data-kpi-val="vs-benchmark">{("" if benchmark_return is None else f"{(total_pnl_pct - benchmark_return):+.2f}%")}</div><div class="sub" data-kpi-sub="benchmark-ret">{f"\u00cdndice {benchmark_return:+.2f}%" if benchmark_return is not None else "N/D"}</div></div>
     {"<div class=\"kpi\" data-kpi=\"today\"><div class=\"label\">HOY</div><div class=\"value " + ("pos" if day_var_total >= 0 else "neg") + "\" data-kpi-val=\"day-pct\">" + (f"{day_var_pct:+.2f}%" if day_var_pct is not None else "\u2014") + "</div><div class=\"sub\" data-kpi-val=\"day-eur\">" + (f"{day_var_total:+,.2f} \u20ac" if day_var_total is not None else "\u2014") + "</div></div>" if day_var_pct is not None else ""}
     <div class="kpi" data-kpi="rend-fondos" data-rend-fondos-eur="{rend_fondos_eur:.2f}" data-total-aportado-fondos="{total_aportado_fondos:.2f}"><div class="label">Rendimiento Fondos</div><div class="value {"neg" if rend_fondos_pct is not None and rend_fondos_pct < 0 else "pos"}" data-kpi-val="rend-fondos-pct">{"{:+.2f}%".format(rend_fondos_pct) if rend_fondos_pct is not None else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / {:,.2f} \u20ac aportados".format(rend_fondos_eur, total_aportado_fondos) if rend_fondos_pct is not None else "\u2014"}</div></div>
     <div class="kpi" data-kpi="rend-cuenta" data-rend-cuenta-eur="{rend_eur_combinado:.2f}" data-rend-cuenta-pct="{rend_pct_combinado:.2f}" data-tae="{tae_ponderado:.2f}"><div class="label">Rendimiento Cuenta</div><div class="value {"neg" if rend_pct_combinado < 0 else "pos"}" data-kpi-val="rend-cuenta-pct">{"{:+,.2f}%".format(rend_pct_combinado) if saldo_combinado else "\u2014"}</div><div class="sub">{"{:+,.2f} \u20ac / saldo {:,.2f} \u20ac".format(rend_eur_combinado, saldo_combinado) if saldo_combinado else "\u2014"}, TAE {tae_ponderado:.2f}% (ponderado)</div></div>
@@ -1252,7 +1260,7 @@ for i, p in enumerate(portfolio):
         pos_dyn_stop_val = None
 
     desc = lambda t: f'<span style="display:block;font-size:10px;color:#9aa0b0;font-weight:400;line-height:1.3">{t}</span>'
-    prev_close_attr = f' data-prev-close="{p.get("prev_close", "")}"' if p.get("prev_close") is not None else ""
+    prev_close_attr = f' data-prev-close="{p.get("prev_close", "")}"' if p.get("prev_close") is not None and not (isinstance(p.get("prev_close"), float) and math.isnan(p["prev_close"])) else ""
     html += f"""    <div class="pos-card{" neg" if p["pnl"] < 0 else ""}" data-ticker="{tk}" data-current="{p['current']}" data-entry="{p['entry']}" data-shares="{p['shares']}" data-stop="{p['stop']}" data-commission="{p.get('commission', 0)}"{prev_close_attr}>
       <div class="pos-header">
         <div><div class="ticker">{tk} — {p['name']}</div><div class="name">{sector_name} · Entrada {p['entry_date']}</div></div>
