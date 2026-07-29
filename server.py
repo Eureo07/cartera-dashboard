@@ -223,6 +223,22 @@ _RADAR_TTL = 24 * 3600
 _PRICES_CACHE = {"data": None, "updated": None}
 _PRICES_TTL = 30  # 30s (coincide con polling JS)
 
+LIVE_PRICES_FILE = os.path.join(_PROJ_DIR, "live_prices_cache.json")
+
+def _load_live_prices():
+    try:
+        with open(LIVE_PRICES_FILE, "r") as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+def _save_live_prices(data):
+    try:
+        with open(LIVE_PRICES_FILE, "w") as f:
+            json.dump(data, f)
+    except Exception:
+        pass
+
 _WL_CACHE = {"data": None, "updated": None}
 _WL_TTL = 300  # 5 min
 
@@ -1079,6 +1095,15 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     tk, result = f.result()
                     if result:
                         data[tk] = result
+            # Fill nulls from file cache for tickers that failed
+            cached = _load_live_prices()
+            for p in CFG.get("portfolio", []):
+                tk = p["ticker"]
+                if tk not in data or data[tk].get("current") is None:
+                    c = cached.get(tk)
+                    if c and c.get("current") is not None:
+                        data[tk] = c
+                        print(f"[prices] {tk}: usando cach\u00e9 persistente (fallback)")
             # Benchmark ^STOXX50E
             try:
                 bench_info = yf.Ticker("^STOXX50E", session=_sess).info or {}
@@ -1104,9 +1129,22 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     bcur = float(bcur)
                 data["^STOXX50E"] = {"current": bcur, "prev_close": bprev}
             except Exception:
-                data["^STOXX50E"] = {"current": None, "prev_close": None}
+                bc = cached.get("^STOXX50E") if cached else None
+                if bc and bc.get("current") is not None:
+                    data["^STOXX50E"] = bc
+                    print("[prices] ^STOXX50E: usando cach\u00e9 persistente (fallback)")
+                else:
+                    data["^STOXX50E"] = {"current": None, "prev_close": None}
+            # Persist successful results to file cache
+            _save_live_prices(data)
             return {"prices": data, "updated": datetime.now().isoformat()}
         except Exception as e:
+            # On total failure, serve file cache if available
+            cached = _load_live_prices()
+            if cached:
+                # Mark as stale but usable
+                stale_ts = (datetime.now() - timedelta(hours=1)).isoformat()
+                return {"prices": cached, "updated": stale_ts, "stale": True, "msg": str(e)}
             return {"error": True, "msg": str(e), "prices": {}}
 
     def log_message(self, format, *args):
