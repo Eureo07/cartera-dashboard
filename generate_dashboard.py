@@ -643,9 +643,19 @@ for p in portfolio:
         p["day_var"] = None
 day_var_pct = (day_var_total / total_value) * 100 if total_value and n_day_var > 0 else None
 
+MAX_WEIGHT_PCT = CFG.get("risk_limits", {}).get("max_weight_per_position", 30)
+SECTOR_TO_THEME = CFG.get("temas_exposicion", {}).get("sector_to_theme", {})
+THEMES_CFG = CFG.get("temas_exposicion", {}).get("themes", {})
+
 for p in portfolio:
     p["weight"] = (p["value"] / total_value) * 100 if total_value else 0
     p["target"] = p["entry"] * 1.175  # +17.5%
+    p["tema_exposicion"] = p.get("tema_exposicion", "N/D")
+
+theme_counts = {}
+for p in portfolio:
+    tema = p["tema_exposicion"]
+    theme_counts[tema] = theme_counts.get(tema, 0) + 1
 
 # ========== BLOQUES TEMATICOS ==========
 bloques_data = {}
@@ -692,10 +702,18 @@ for p in portfolio:
     if p["current"] >= p["target"]:
         alerts.append(f"{p['name']}: Objetivo alcanzado \u2014 revisar soporte")
     # Concentration alerts
-    if p["weight"] > 30:
-        alerts.insert(0, f'<span class="alert-red">\u26a0 {p["name"]}: peso elevado ({p["weight"]:.1f}% de la cartera)</span>')
-    elif p["weight"] > 25:
+    if p["weight"] > MAX_WEIGHT_PCT:
+        alerts.insert(0, f'<span class="alert-red">\u26a0 {p["name"]}: peso elevado ({p["weight"]:.1f}% de la cartera) \u2014 supera el {MAX_WEIGHT_PCT}% permitido</span>')
+    elif p["weight"] > MAX_WEIGHT_PCT - 5:
         alerts.insert(0, f'<span class="alert-yellow">\u00b7 {p["name"]}: peso alto ({p["weight"]:.1f}% de la cartera)</span>')
+
+# Theme concentration alerts
+for tema, count in theme_counts.items():
+    if tema != "N/D":
+        thresh = THEMES_CFG.get(tema, {}).get("umbral_concentracion", 2)
+        if count >= thresh:
+            level = "elevada" if count >= thresh + 1 else "alta"
+            alerts.insert(0, f'<span class="alert-yellow">\u00b7 Concentraci\u00f3n tem\u00e1tica {level}: {count} posiciones en &quot;{tema}&quot;</span>')
 
 # ========== DIVERSIFICATION INFO ==========
 defensive_sectors = {"Salud", "Utilities", "Consumo básico", "Telecomunicaciones", "Comunicaciones", "Alimentación", "Consumo", "Farma"}
@@ -718,10 +736,10 @@ div_info = get_diversification_info()
 
 # Indicator 1: Max concentration
 max_w = max(p["weight"] for p in portfolio)
-if max_w > 35:
+if max_w > MAX_WEIGHT_PCT:
     worst_name = [p['name'] for p in portfolio if abs(p['weight'] - max_w) < 0.01][0]
     conc_icon, conc_text = "\U0001f534", f"Concentraci\u00f3n cr\u00edtica ({worst_name} {max_w:.1f}%)"  # red circle
-elif max_w > 25:
+elif max_w > MAX_WEIGHT_PCT - 5:
     worst = [p['name'] for p in portfolio if p['weight']==max_w]
     conc_icon, conc_text = "\U0001f7e1", f"Concentraci\u00f3n alta ({worst[0]} {max_w:.1f}%)"  # yellow circle
 else:
@@ -1610,7 +1628,7 @@ function renderAlternatives(data) {
     h += '<div style="margin-bottom:20px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
     h += '<h3 style="color:#e8eaed;font-size:14px;font-weight:600;margin:0">' + s.sector + '</h3>';
     h += '<span style="color:#9aa0b0;font-size:11px">' + s.n_analizadas + ' empresas analizadas</span></div>';
-    h += '<table class="alt-table"><thead><tr><th>Empresa</th><th>Ticker</th><th>Score</th><th>PER</th><th>Rent.1A</th><th>Se\u00F1al</th></tr></thead><tbody>';
+    h += '<table class="alt-table"><thead><tr><th>Empresa</th><th>Ticker</th><th>Score</th><th>PER</th><th>Rent.1A</th><th>Tema</th><th>Se\u00F1al</th></tr></thead><tbody>';
     if (s.empresas && s.empresas.length) {
       s.empresas.forEach(function(r) {
         var scorePct = Math.max(1, Math.min(100, r.score * 100));
@@ -1622,12 +1640,20 @@ function renderAlternatives(data) {
         if (r.entry_types && r.entry_types.length) {
           r.entry_types.forEach(function(t) { entryBadges += '<span class="badge-alt" style="margin:1px 2px">' + t + '</span>'; });
         }
+        var tema = TEMAS.sector_to_theme[s.sector] || 'N/D';
+        var temaCount = TEMAS.portfolio_themes[tema] || 0;
+        var temaBadge = tema;
+        if (temaCount >= 2) {
+          temaBadge = '<span style="color:#f0a500">\u26a0 ' + tema + ' (' + temaCount + ' en cartera)</span>';
+        } else if (temaCount === 1) {
+          temaBadge = '<span style="color:#9aa0b0">' + tema + ' (' + temaCount + ' en cartera)</span>';
+        }
         h += '<tr><td><strong>' + r.name + '</strong></td><td>' + r.ticker + '</td>';
         h += '<td><div class="score-bar-bg"><div class="score-bar-fill" style="width:' + scorePct + '%;background:' + scoreCol + '"></div></div> ' + r.score.toFixed(3) + '</td>';
-        h += '<td>' + eperStr + '</td><td style="color:' + rentCol + '">' + rentStr + '</td><td>' + entryBadges + '</td></tr>';
+        h += '<td>' + eperStr + '</td><td style="color:' + rentCol + '">' + rentStr + '</td><td style="font-size:11px">' + temaBadge + '</td><td>' + entryBadges + '</td></tr>';
       });
     } else {
-      h += '<tr><td colspan="6" style="color:#5a5f6b;text-align:center">' + (s.error ? 'Error al procesar sector' : 'Sin candidatos') + '</td></tr>';
+      h += '<tr><td colspan="7" style="color:#5a5f6b;text-align:center">' + (s.error ? 'Error al procesar sector' : 'Sin candidatos') + '</td></tr>';
     }
     h += '</tbody></table></div>';
   });
@@ -1647,7 +1673,7 @@ function renderRadar(data) {
   h += '<span style="color:#5a5f6b;display:block;margin-top:2px;font-size:10px">';
   h += 'Criterios: Rent.1A > 30%, PER 0\u201330, Score > 0.3, EVA > 0, ROE > 0, Soporte en vigor \u00B7 No en cartera \u00B7 T\u00E9cnico: RRA/RR/LT/LTA/PER';
   h += '</span></div>';
-  h += '<table class="alt-table"><thead><tr><th>#</th><th>Empresa</th><th>Ticker</th><th>Sector</th><th>Score</th><th>PER</th><th>Rent.1A</th><th>ROE</th><th>EVA</th><th>FCF</th><th>Soporte</th><th>Tipo Entrada</th></tr></thead><tbody>';
+  h += '<table class="alt-table"><thead><tr><th>#</th><th>Empresa</th><th>Ticker</th><th>Sector</th><th>Tema</th><th>Score</th><th>PER</th><th>Rent.1A</th><th>ROE</th><th>EVA</th><th>FCF</th><th>Soporte</th><th>Tipo Entrada</th></tr></thead><tbody>';
   data.oportunidades.forEach(function(r, i) {
     var eperStr = r.eper !== null ? r.eper.toFixed(1) + 'x' : 'N/D';
     var roeStr = r.roe !== null ? r.roe.toFixed(1) + '%' : 'N/D';
@@ -1663,7 +1689,16 @@ function renderRadar(data) {
     }
     var soporteStr = r.support !== null ? r.support.toFixed(2) + ' \u20AC' : 'N/D';
     var soporteCol = (r.current_price && r.support && r.current_price > r.support) ? '#3ecf8e' : (r.current_price && r.support && r.current_price <= r.support) ? '#e05050' : '#5a5f6b';
+    var tema = r.sector ? (TEMAS.sector_to_theme[r.sector] || 'N/D') : 'N/D';
+    var temaCount = TEMAS.portfolio_themes[tema] || 0;
+    var temaBadge = tema;
+    if (temaCount >= 2) {
+      temaBadge = '<span style="color:#f0a500">\u26a0 ' + tema + ' (' + temaCount + ' en cartera)</span>';
+    } else if (temaCount === 1) {
+      temaBadge = '<span style="color:#9aa0b0">' + tema + ' (' + temaCount + ' en cartera)</span>';
+    }
     h += '<tr><td>' + (i+1) + '</td><td><strong>' + r.name + '</strong></td><td>' + r.ticker + '</td><td>' + (r.sector || '') + '</td>';
+    h += '<td style="font-size:11px">' + temaBadge + '</td>';
     h += '<td><div class="score-bar-bg"><div class="score-bar-fill" style="width:' + scorePct + '%;background:' + scoreCol + '"></div></div> ' + r.score.toFixed(3) + '</td>';
     h += '<td>' + eperStr + '</td><td style="color:' + rentCol + '">' + rentStr + '</td>';
     h += '<td style="color:' + (r.roe >= 15 ? '#3ecf8e' : r.roe >= 5 ? '#f0a500' : '#e05050') + '">' + roeStr + '</td>';
@@ -2043,8 +2078,9 @@ function updatePrices(data) {
     var weightEl = card.querySelector('[data-metric="weight"]');
     if (weightEl && cur !== null && totalValue > 0) {
       var w = (cur * shares / totalValue) * 100;
-      weightEl.textContent = w.toFixed(1) + '%' + (w > 25 ? ' \u26a0' : '');
-      weightEl.className = 'mv' + (w > 25 ? ' warn' : w > 20 ? '' : '');
+      var maxW = RISK_LIMITS.max_weight_pct;
+      weightEl.textContent = w.toFixed(1) + '%' + (w > maxW ? ' \u26a0' : '');
+      weightEl.className = 'mv' + (w > maxW ? ' warn' : w > maxW - 5 ? '' : '');
     }
   });
 
@@ -2149,6 +2185,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
 const SIG_DATA = SIGNAL_DATA_JSON;
 const SIG_DSC = SIGNAL_DESC_JSON;
+const RISK_LIMITS = RISK_LIMITS_JSON;
+const TEMAS = TEMAS_JSON;
 function closeSigModal(){document.getElementById('sigModal').style.display='none';sessionStorage.setItem('sigClosed','1')}
 document.addEventListener('DOMContentLoaded',function(){
   if(sessionStorage.getItem('sigClosed'))return;
@@ -2213,7 +2251,10 @@ SIG_DESC_JSON = json.dumps({
     "PER < 15": {"label": "PER < 15 \u2014 Baratas", "desc": "Alternativas con PER estimado inferior a 15 (infravaloradas)", "color": "#a855f7"},
 })
 # Replace placeholders with actual signal data
+RISK_LIMITS_JSON = json.dumps({"max_weight_pct": MAX_WEIGHT_PCT})
+TEMAS_JSON = json.dumps({"sector_to_theme": SECTOR_TO_THEME, "themes": THEMES_CFG, "portfolio_themes": theme_counts})
 html = html.replace("SIGNAL_DATA_JSON", SIG_DATA_JSON).replace("SIGNAL_DESC_JSON", SIG_DESC_JSON)
+html = html.replace("RISK_LIMITS_JSON", RISK_LIMITS_JSON).replace("TEMAS_JSON", TEMAS_JSON)
 
 with open(OUT_FILE, "w", encoding="utf-8") as f:
     f.write(html)
