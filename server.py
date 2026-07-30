@@ -248,6 +248,20 @@ def _seed_live_prices_from_csv():
             px = float(row["precio"])
             data[tk] = {"current": px, "prev_close": px}
             print(f"[prices] {tk}: semilla desde price_history.csv ({px})")
+        # Try to seed ^STOXX50E via chart API (quick one-shot)
+        try:
+            _sto_url = "https://query1.finance.yahoo.com/v8/finance/chart/%5ESTOXX50E?interval=1d&range=1d"
+            _sto_req = urllib.request.Request(_sto_url, headers={"User-Agent": "Mozilla/5.0"})
+            _sto_resp = urllib.request.urlopen(_sto_req, timeout=10)
+            _sto_chart = json.loads(_sto_resp.read())
+            _sto_meta = _sto_chart.get("chart", {}).get("result", [{}])[0].get("meta", {})
+            _sto_cur = _sto_meta.get("regularMarketPrice") or _sto_meta.get("chartPreviousClose")
+            _sto_prev = _sto_meta.get("chartPreviousClose") or _sto_cur
+            if _sto_cur is not None:
+                data["^STOXX50E"] = {"current": float(_sto_cur), "prev_close": float(_sto_prev) if _sto_prev else None}
+                print(f"[prices] ^STOXX50E: semilla desde chart API ({_sto_cur})")
+        except Exception:
+            print("[prices] ^STOXX50E: no se pudo obtener semilla via chart API")
         _save_live_prices(data)
         return data
     except Exception:
