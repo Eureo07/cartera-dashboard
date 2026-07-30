@@ -230,6 +230,27 @@ def _load_live_prices():
         with open(LIVE_PRICES_FILE, "r") as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
+        return _seed_live_prices_from_csv()
+
+def _seed_live_prices_from_csv():
+    """Seed cache from price_history.csv on first deploy."""
+    csv_path = os.path.join(_PROJ_DIR, "price_history.csv")
+    if not os.path.isfile(csv_path):
+        return {}
+    try:
+        df = pd.read_csv(csv_path)
+        if "fecha" not in df.columns or "ticker" not in df.columns or "precio" not in df.columns:
+            return {}
+        last = df.groupby("ticker").last().reset_index()
+        data = {}
+        for _, row in last.iterrows():
+            tk = row["ticker"]
+            px = float(row["precio"])
+            data[tk] = {"current": px, "prev_close": px}
+            print(f"[prices] {tk}: semilla desde price_history.csv ({px})")
+        _save_live_prices(data)
+        return data
+    except Exception:
         return {}
 
 def _save_live_prices(data):
