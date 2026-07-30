@@ -4,6 +4,35 @@
     "name": "Alphabet",
     "entry_level": 408,
     "entry_signal": "RR",
-    "notes": "Ruptura de m\u00e1ximo hist\u00f3rico, nivel 408"
+    "notes": "Ruptura de máximo histórico, nivel 408"
+  },
+  {
+    "ticker": "ACS.MC",
+    "name": "ACS",
+    "entry_level": 139.20,
+    "entry_signal": "RR",
+    "support": 100.85,
+    "theme": "IA/Centros de datos",
+    "notes": "Infraestructura centros datos/IA — solapa con NVIDIA (en cartera)"
+  },
+  {
+    "ticker": "SAF.PA",
+    "name": "Safran",
+    "entry_level": 276.15,
+    "entry_signal": "LT",
+    "support": 259.68,
+    "proximity_entry": true,
+    "proximity_pct": 5,
+    "theme": "Aeroespacial/Defensa",
+    "notes": "LT ya rota — esperar retroceso a soporte. Solapa con Rolls-Royce (en cartera)"
+  },
+  {
+    "ticker": "THEON.AS",
+    "name": "Theon International",
+    "entry_level": 36.67,
+    "entry_signal": "RR",
+    "support": 23.34,
+    "theme": "Aeroespacial/Defensa",
+    "notes": "Visión nocturna/defensa — solapa con Rolls-Royce (en cartera)"
   }
 ]

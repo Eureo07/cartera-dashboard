@@ -1724,7 +1724,7 @@ function renderWatchlist(data) {
   if (data.error || !data.items || !data.items.length) {
     c.innerHTML = '<div class="ew-loading">Watchlist vac\u00EDa o no disponible</div>'; return;
   }
-  var h = '<table class="alt-table"><thead><tr><th>Empresa</th><th>Nivel / Precio</th><th>Distancia</th><th>Se\u00F1al</th><th>Soporte</th><th>F1/F2/F3</th><th>Estado</th><th>Notas</th></tr></thead><tbody>';
+  var h = '<table class="alt-table"><thead><tr><th>Empresa</th><th>Tema</th><th>Nivel / Precio</th><th>Distancia</th><th>Se\u00F1al</th><th>Soporte</th><th>F1/F2/F3</th><th>Estado</th><th>Notas</th></tr></thead><tbody>';
   data.items.forEach(function(r) {
     var priceStr = r.current_price !== null ? r.current_price.toFixed(2) + ' \u20ac' : 'N/D';
     var levelStr = r.entry_level.toFixed(2) + ' \u20ac';
@@ -1737,17 +1737,28 @@ function renderWatchlist(data) {
       else distColor = '#e05050';
     }
     var signalDetected = r.signal_active ? '\u2705 ' + r.entry_signal : '\u274c ' + r.entry_signal;
+    if (r.proximity_entry) {
+      signalDetected = '\u23f3 ' + r.entry_signal + ' (proximidad)';
+    }
     var supportStr = r.support_ok ? '\u2705 ' + (r.support !== null ? r.support.toFixed(2) + ' \u20ac' : '') : '\u274c ' + (r.support !== null ? r.support.toFixed(2) + ' \u20ac' : 'N/D');
     var f1 = r.f1_ok ? '\u2705' : '\u274c';
     var f2 = r.f2_ok ? '\u2705' : '\u274c';
     var f3 = r.f3_ok ? '\u2705' : '\u274c';
-    var filterStr = (r.signal_active ? '' : '\u23f3 ') + 'F1' + f1 + ' F2' + f2 + ' F3' + f3;
+    var filterStr = (r.signal_active || r.proximity_entry ? '' : '\u23f3 ') + 'F1' + f1 + ' F2' + f2 + ' F3' + f3;
     var statusMap = {
       'confirmado': ['\U0001F7E2 Confirmado', '#3ecf8e', '#1a3d2e'],
       'activa': ['\U0001F7E1 Activa', '#f0a500', '#2d2a1a'],
     };
+    if (r.proximity_entry && r.visual_status === 'activa') {
+      statusMap['activa'] = ['\u23f3 Esperando retroceso', '#3ecf8e', '#1a3d2e'];
+    }
     var st = statusMap[r.visual_status] || ['\U0001F534 Sin se\u00F1al', '#e05050', '#3d1a1a'];
+    var themeBadge = '';
+    if (r.theme) {
+      themeBadge = '<span style="font-size:10px;color:#f0a500;border:1px solid #f0a500;border-radius:4px;padding:1px 6px;display:inline-block">\u26a0 ' + r.theme + '</span>';
+    }
     h += '<tr><td><strong>' + r.name + '</strong><br><span style="color:#9aa0b0;font-size:11px">' + r.ticker + '</span></td>';
+    h += '<td style="font-size:11px">' + themeBadge + '</td>';
     h += '<td>' + levelStr + '<br><span style="color:#9aa0b0;font-size:11px">' + priceStr + '</span></td>';
     h += '<td style="color:' + distColor + ';font-weight:700">' + distStr + '</td>';
     h += '<td style="font-size:11px">' + signalDetected + '</td>';

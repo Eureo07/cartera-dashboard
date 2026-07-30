@@ -665,6 +665,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 tk = item["ticker"]
                 entry_level = item["entry_level"]
                 entry_signal = item["entry_signal"]
+                proximity_entry = item.get("proximity_entry", False)
+                proximity_pct = item.get("proximity_pct", 5)
                 # 1) Current price via chart API
                 cur_price = None
                 try:
@@ -680,44 +682,79 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     pass
                 # 2) Distance to entry level
                 dist_pct = ((cur_price - entry_level) / entry_level) * 100 if cur_price else None
-                # 3) Entry types from screener
-                detected_types = get_entry_types(tk)
-                signal_active = entry_signal in detected_types
-                # 4) Support
-                support_val = None
+                # 3) Support: manual from JSON if provided, else computed
+                support_val = item.get("support")
                 support_ok = False
-                try:
-                    sv, _, _, sok = calcular_soporte_resistencia(tk)
-                    support_val = sv
-                    support_ok = sok
-                except Exception:
-                    pass
-                # 5) Weekly granular F1/F2/F3 check (only if signal active)
-                f1_ok = f2_ok = f3_ok = False
-                if signal_active:
+                if support_val is not None:
                     try:
-                        weekly = yf.Ticker(tk).history(period="2y", interval="1wk")
-                        if weekly is not None and not weekly.empty and len(weekly) >= 22:
-                            c = weekly['Close'].values; h = weekly['High'].values; v = weekly['Volume'].values
-                            ld = weekly.index[-1].to_pydatetime() if hasattr(weekly.index[-1], 'to_pydatetime') else weekly.index[-1]
-                            hrs = (datetime.now(timezone.utc) - ld).total_seconds() / 3600
-                            ref = -2 if hrs < 48 else -1
-                            if abs(ref) + 22 <= len(weekly):
-                                ws = max(0, ref - 52); pm = float(max(h[ws:ref]))
-                                f1_ok = c[ref] > pm
-                                vs = max(0, ref - 20); vm = float(sum(v[vs:ref]) / (ref - vs))
-                                f2_ok = v[ref] > vm
-                                cp = float(c[-1]); lb = pm * 0.95
-                                f3_ok = lb <= cp <= pm if entry_signal in ('RR','RRA') else True
+                        support_val = float(support_val)
+                        sv, _, _, sok = calcular_soporte_resistencia(tk)
+                        support_ok = sok
                     except Exception:
                         pass
-                # 6) Visual status (only 3 states)
-                if signal_active and f1_ok and f2_ok and f3_ok and support_ok:
-                    visual_status = "confirmado"
-                elif signal_active and f2_ok and f3_ok and not f1_ok:
-                    visual_status = "activa"
                 else:
-                    visual_status = "sin_senal"
+                    try:
+                        sv, _, _, sok = calcular_soporte_resistencia(tk)
+                        support_val = sv
+                        support_ok = sok
+                    except Exception:
+                        pass
+                # 4) Proximity mode vs standard mode
+                if proximity_entry:
+                    signal_active = False
+                    dist_to_support = ((cur_price - support_val) / support_val) * 100 if cur_price and support_val else None
+                    proximo = dist_to_support is not None and dist_to_support <= proximity_pct
+                    weekly_ok = False
+                    if proximo:
+                        try:
+                            weekly = yf.Ticker(tk).history(period="2y", interval="1wk")
+                            if weekly is not None and not weekly.empty and len(weekly) >= 22:
+                                c = weekly['Close'].values; h = weekly['High'].values; v = weekly['Volume'].values
+                                ld = weekly.index[-1].to_pydatetime() if hasattr(weekly.index[-1], 'to_pydatetime') else weekly.index[-1]
+                                hrs = (datetime.now(timezone.utc) - ld).total_seconds() / 3600
+                                ref = -2 if hrs < 48 else -1
+                                if abs(ref) + 22 <= len(weekly):
+                                    vs = max(0, ref - 20); vm = float(sum(v[vs:ref]) / (ref - vs))
+                                    weekly_ok = v[ref] > vm
+                        except Exception:
+                            pass
+                    f1_ok = f2_ok = f3_ok = weekly_ok
+                    if proximo and support_ok and weekly_ok:
+                        visual_status = "confirmado"
+                    elif proximo:
+                        visual_status = "activa"
+                    else:
+                        visual_status = "sin_senal"
+                else:
+                    # 4a) Entry types from screener
+                    detected_types = get_entry_types(tk)
+                    signal_active = entry_signal in detected_types
+                    # 5) Weekly granular F1/F2/F3 check (only if signal active)
+                    f1_ok = f2_ok = f3_ok = False
+                    if signal_active:
+                        try:
+                            weekly = yf.Ticker(tk).history(period="2y", interval="1wk")
+                            if weekly is not None and not weekly.empty and len(weekly) >= 22:
+                                c = weekly['Close'].values; h = weekly['High'].values; v = weekly['Volume'].values
+                                ld = weekly.index[-1].to_pydatetime() if hasattr(weekly.index[-1], 'to_pydatetime') else weekly.index[-1]
+                                hrs = (datetime.now(timezone.utc) - ld).total_seconds() / 3600
+                                ref = -2 if hrs < 48 else -1
+                                if abs(ref) + 22 <= len(weekly):
+                                    ws = max(0, ref - 52); pm = float(max(h[ws:ref]))
+                                    f1_ok = c[ref] > pm
+                                    vs = max(0, ref - 20); vm = float(sum(v[vs:ref]) / (ref - vs))
+                                    f2_ok = v[ref] > vm
+                                    cp = float(c[-1]); lb = pm * 0.95
+                                    f3_ok = lb <= cp <= pm if entry_signal in ('RR','RRA') else True
+                        except Exception:
+                            pass
+                    # 6) Visual status (only 3 states)
+                    if signal_active and f1_ok and f2_ok and f3_ok and support_ok:
+                        visual_status = "confirmado"
+                    elif signal_active and f2_ok and f3_ok and not f1_ok:
+                        visual_status = "activa"
+                    else:
+                        visual_status = "sin_senal"
                 results.append({
                     "ticker": tk,
                     "name": item.get("name", tk),
@@ -725,14 +762,17 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     "entry_signal": entry_signal,
                     "current_price": cur_price,
                     "distance_pct": round(dist_pct, 2) if dist_pct is not None else None,
-                    "detected_types": detected_types,
+                    "detected_types": detected_types if not proximity_entry else [],
                     "signal_active": signal_active,
+                    "proximity_entry": proximity_entry,
+                    "proximity_pct": proximity_pct if proximity_entry else None,
                     "support": support_val,
                     "support_ok": support_ok,
                     "f1_ok": f1_ok,
                     "f2_ok": f2_ok,
                     "f3_ok": f3_ok,
                     "visual_status": visual_status,
+                    "theme": item.get("theme", ""),
                     "notes": item.get("notes", ""),
                 })
             # 7) Alert on status change
