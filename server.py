@@ -652,7 +652,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         "name": r["name"],
                         "score": r["score"],
                         "eper": r["eper"],
-                        "peg": r.get("peg"),
+                        "peg": None if (r.get("peg") is None or (isinstance(r.get("peg"), float) and r.get("peg") != r.get("peg"))) else r.get("peg"),
                         "current_price": r.get("current_price"),
                         "rent_1a": r.get("rent_1a"),
                         "entry_types": r.get("entry_types", []),

@@ -421,6 +421,12 @@ def normalized_score(series):
 
 def _save_radar_cache(results, sector_key="global"):
     """Save screener results to JSON cache under sector_key."""
+    # No cachear resultados degradados (todas las valoraciones .info fallaron).
+    # Así el siguiente /api/radar reintentará con datos reales.
+    epers = [r.get("eper") for r in results if r.get("eper") is not None]
+    if results and not epers:
+        log.warning(f"  Caché radar NO guardada ({sector_key}): PER/PEG null en todos los resultados (yfinance .info falló)")
+        return
     now = datetime.now().isoformat()
     cache = {}
     if os.path.exists(RADAR_CACHE):
@@ -438,7 +444,7 @@ def _save_radar_cache(results, sector_key="global"):
                 "sector": r["sector"],
                 "score": r["score"],
                 "eper": r["eper"],
-                "peg": r.get("peg"),
+                "peg": None if (r.get("peg") is None or (isinstance(r.get("peg"), float) and r.get("peg") != r.get("peg"))) else r.get("peg"),
                 "rent_1a": r["rent_1a"],
                 "roe": r["roe"],
                 "eva": r.get("eva"),
