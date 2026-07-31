@@ -635,6 +635,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         "name": r["name"],
                         "score": r["score"],
                         "eper": r["eper"],
+                        "peg": r.get("peg"),
                         "current_price": r.get("current_price"),
                         "rent_1a": r.get("rent_1a"),
                         "entry_types": r.get("entry_types", []),
@@ -649,6 +650,14 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         except Exception as e:
             print(f"[radar] ERROR: {e}")
             return {"error": True, "msg": str(e), "oportunidades": [], "total": 0}
+
+    def _wl_peg(self, ticker):
+        """PEG ratio for a watchlist ticker (None si no hay dato)."""
+        try:
+            from screener import get_valuation
+            return get_valuation(ticker).get("peg")
+        except Exception:
+            return None
 
     def _compute_watchlist_study(self):
         """Compute watchlist study data. Only 3 states: sin_senal/activa/confirmado."""
@@ -773,6 +782,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     "f3_ok": f3_ok,
                     "visual_status": visual_status,
                     "theme": item.get("theme", ""),
+                    "peg": self._wl_peg(tk),
                     "notes": item.get("notes", ""),
                 })
             # 7) Alert on status change

@@ -53,6 +53,50 @@ def is_in_portfolio(ticker, name):
 
 # ========== TICKER HELPERS ==========
 _yf_cache = {}
+
+def calcular_peg_desde_info(info):
+    """PEG ratio desde dict de yfinance .info.
+    Prioridad: 1) priceEarningsToGrowth nativo, 2) PER efectivo / crecimiento EPS.
+    Crecimiento EPS: earningsGrowth (YoY anual) como primario, earningsQuarterlyGrowth (YoY trimestral) como fallback.
+    earningsGrowth viene como ratio decimal (0.218 = 21.8%), por lo que el PEG se divide entre growth*100 (convencion estandar).
+    Devuelve float > 0 o None."""
+    if not isinstance(info, dict):
+        return None
+    try:
+        peg = info.get("priceEarningsToGrowth")
+        if peg is not None:
+            peg = float(peg)
+            if peg > 0 and not (peg != peg):  # >0 y no NaN
+                return peg
+    except (TypeError, ValueError):
+        pass
+    try:
+        fwd = info.get("forwardPE")
+        per = info.get("trailingPE")
+        eper = None
+        if fwd is not None:
+            try:
+                fwd = float(fwd)
+                if fwd > 0:
+                    eper = fwd
+            except (TypeError, ValueError):
+                pass
+        if eper is None and per is not None:
+            try:
+                per = float(per)
+                if per > 0:
+                    eper = per
+            except (TypeError, ValueError):
+                pass
+        growth = info.get("earningsGrowth")
+        if growth is None or growth <= 0:
+            growth = info.get("earningsQuarterlyGrowth")
+        if eper is not None and growth is not None and growth > 0:
+            return eper / (float(growth) * 100.0)
+    except (TypeError, ValueError):
+        pass
+    return None
+
 def get_valuation(t):
     if t in _yf_cache:
         return _yf_cache[t]
@@ -63,6 +107,7 @@ def get_valuation(t):
             result = {
                 "per": info.get("trailingPE"),
                 "fwd_per": info.get("forwardPE"),
+                "peg": calcular_peg_desde_info(info),
                 "pb": info.get("priceToBook"),
                 "mcap": info.get("marketCap"),
                 "div_yield": info.get("dividendYield"),
@@ -393,6 +438,7 @@ def _save_radar_cache(results, sector_key="global"):
                 "sector": r["sector"],
                 "score": r["score"],
                 "eper": r["eper"],
+                "peg": r.get("peg"),
                 "rent_1a": r["rent_1a"],
                 "roe": r["roe"],
                 "eva": r.get("eva"),
@@ -496,6 +542,11 @@ def ejecutar_radar(sector_filter=None, max_resultados=None):
         if tr is not None and tr > 0:
             return tr
         return None
+    def cached_peg(t):
+        if t not in val_cache:
+            val_cache[t] = get_valuation(t) or {}
+            _ytime.sleep(0.2)
+        return val_cache[t].get("peg")
     def cached_rent(t):
         return rent_cache.get(t)
     def cached_hist(t):
@@ -557,6 +608,7 @@ def ejecutar_radar(sector_filter=None, max_resultados=None):
             "ticker": ticker, "name": name, "sector": sector,
             "roe": roe, "roe_missing": roe_missing, "eva": eva, "fcf": fcf,
             "eper": eper, "per_missing": per_missing, "rent_1a": rent_1a,
+            "peg": cached_peg(ticker),
             "entry_types": entry_types, "_sec_key": sector,
             "support": support_val, "current_price": current_price,
         })

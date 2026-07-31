@@ -10,7 +10,7 @@ import requests
 import json, math, statistics
 from datetime import datetime, date
 from config_loader import CFG, logger, get_logger
-from screener import calcular_soporte_resistencia
+from screener import calcular_soporte_resistencia, calcular_peg_desde_info
 from expectancy import cargar_cartera_cerrada, calcular_expectancy
 from position_sizing import calcular_tamano_posicion
 from regimen_mercado import obtener_regimen_combinado
@@ -264,6 +264,7 @@ def get_valuation(t):
         return {
             "per": val_metric(info.get("trailingPE"), 0, 200),
             "fwd_per": info.get("forwardPE"),
+            "peg": calcular_peg_desde_info(info),
             "pb": val_metric(info.get("priceToBook"), 0, 100),
             "ev_ebitda": ev / ebitda if (ev and ebitda and ebitda != 0) else None,
             "mcap": info.get("marketCap"),
@@ -274,7 +275,7 @@ def get_valuation(t):
             "Sector": info.get("sector"),
         }
     except:
-        return {"per": None, "fwd_per": None, "pb": None, "ev_ebitda": None, "mcap": None, "eps": None, "div_yield": None, "ps": None, "beta": None}
+        return {"per": None, "fwd_per": None, "peg": None, "pb": None, "ev_ebitda": None, "mcap": None, "eps": None, "div_yield": None, "ps": None, "beta": None}
 
 _rent_cache = {}
 def get_1y_return(t):
@@ -686,10 +687,13 @@ for p in portfolio:
     v = valuation.get(p["ticker"], {})
     per = v.get("per")
     pb = v.get("pb")
+    peg = v.get("peg")
     if per and per > 30:
         alerts.append(f"{p['name']}: PER alto ({per:.1f})")
     if per and per < 5:
         alerts.append(f"{p['name']}: PER muy bajo ({per:.1f}), posible distress")
+    if peg and peg > 2:
+        alerts.append(f"{p['name']}: PEG alto ({peg:.2f}x, cara relativa a su crecimiento)")
     if pb and pb > 5:
         alerts.append(f"{p['name']}: P/B elevado ({pb:.2f})")
     if p["dist_stop"] < 8 and p["dist_stop"] > 0:
@@ -1152,6 +1156,7 @@ for i, p in enumerate(portfolio):
     per = v.get("per")
     pb_val = v.get("pb")
     fwd_per = v.get("fwd_per")
+    peg_val = v.get("peg")
     beta_val = v.get("beta")
     db_t = p.get("db_ticker")
     sector_name = "Desconocido"
@@ -1215,6 +1220,13 @@ for i, p in enumerate(portfolio):
     roe_cls = metric_class("roe", roe_val)
     dist_cls = metric_class("dist_stop", p["dist_stop"])
     fcf_cls = "pos" if (fcf_val or 0) > 0 else "neg"
+    # PEG colors: <1 verde, 1-2 ambar, >2 ambar+aviso, N/D gris
+    if peg_val is not None:
+        peg_str = f"{peg_val:.2f}x"
+        peg_cls = "pos" if peg_val < 1 else ("warn" if peg_val <= 2 else "warn")
+    else:
+        peg_str = "N/D"
+        peg_cls = ""
     weight_warn = "warn" if p["weight"] > 25 else ("danger" if p["weight"] > 30 else "")
     weight_cls = "warn" if p["weight"] > 25 else ""
     peso_bar_cls = "danger" if p["weight"] > 30 else ("warn" if p["weight"] > 25 else "")
@@ -1274,6 +1286,7 @@ for i, p in enumerate(portfolio):
         <div class="metric-row"><span class="ml">P. Objetivo</span><span class="mv {"pos" if p["current"] >= p["target"] else ""}" data-metric="target">{p['target']:.2f} \u20ac</span></div>
         <div class="metric-row"><span class="ml">PER{desc("Veces que el precio recoge el beneficio anual")}</span><span class="mv {"warn" if (per or 99) > 30 else ("pos" if per and per <= 20 else "")}">{f"{per:.1f}x" if per else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">PER Fwd{desc("PER estimado con beneficios futuros")}</span><span class="mv">{f"{fwd_per:.1f}x" if fwd_per else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">PEG{desc("PER / crecimiento EPS. &lt;1 barato relativo a su crecimiento, 1-2 razonable, &gt;2 caro")}</span><span class="mv {peg_cls}">{peg_str}{" <span style=\"color:#f0a500;font-size:9px;margin-left:4px\">\u26a0 PEG alto</span>" if peg_val and peg_val > 2 else ""}</span></div>
         <div class="metric-row"><span class="ml">P/B{desc("Precio respecto al valor contable. &lt;1 infravalorado")}</span><span class="mv {"warn" if (pb_val or 99) > 5 else ("pos" if pb_val and pb_val <= 3 else "")}">{f"{pb_val:.2f}" if pb_val else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">Beta{desc(beta_desc)}</span><span class="mv {beta_cls}">{beta_str}</span></div>
         <div class="metric-row"><span class="ml">ROE 2026{desc("Rentabilidad sobre fondos propios")}</span><span class="mv {"pos" if (roe_val or 0) >= 15 else ("warn" if (roe_val or 0) >= 5 else "neg")}">{f"{roe_val:.1f}%" if roe_val else "N/D"}</span></div>
@@ -1681,9 +1694,11 @@ function renderRadar(data) {
   h += '<span style="color:#5a5f6b;display:block;margin-top:2px;font-size:10px">';
   h += 'Criterios: Rent.1A > 30%, PER 0\u201330, Score > 0.3, EVA > 0, ROE > 0, Soporte en vigor \u00B7 No en cartera \u00B7 T\u00E9cnico: RRA/RR/LT/LTA/PER';
   h += '</span></div>';
-  h += '<table class="alt-table"><thead><tr><th>#</th><th>Empresa</th><th>Ticker</th><th>Sector</th><th>Tema</th><th>Score</th><th>PER</th><th>Rent.1A</th><th>ROE</th><th>EVA</th><th>FCF</th><th>Soporte</th><th>Tipo Entrada</th></tr></thead><tbody>';
+  h += '<table class="alt-table"><thead><tr><th>#</th><th>Empresa</th><th>Ticker</th><th>Sector</th><th>Tema</th><th>Score</th><th>PER</th><th>PEG</th><th>Rent.1A</th><th>ROE</th><th>EVA</th><th>FCF</th><th>Soporte</th><th>Tipo Entrada</th></tr></thead><tbody>';
   data.oportunidades.forEach(function(r, i) {
     var eperStr = r.eper !== null ? r.eper.toFixed(1) + 'x' : 'N/D';
+    var pegStr = r.peg !== null ? r.peg.toFixed(2) + 'x' : 'N/D';
+    var pegCol = r.peg !== null ? (r.peg < 1 ? '#3ecf8e' : r.peg <= 2 ? '#f0a500' : '#e05050') : '#5a5f6b';
     var roeStr = r.roe !== null ? r.roe.toFixed(1) + '%' : 'N/D';
     var evaStr = r.eva !== null ? Number(r.eva).toLocaleString() : 'N/D';
     var fcfStr = r.fcf !== null ? Number(r.fcf).toLocaleString() : 'N/D';
@@ -1708,7 +1723,7 @@ function renderRadar(data) {
     h += '<tr><td>' + (i+1) + '</td><td><strong>' + r.name + '</strong></td><td>' + r.ticker + '</td><td>' + (r.sector || '') + '</td>';
     h += '<td style="font-size:11px">' + temaBadge + '</td>';
     h += '<td><div class="score-bar-bg"><div class="score-bar-fill" style="width:' + scorePct + '%;background:' + scoreCol + '"></div></div> ' + r.score.toFixed(3) + '</td>';
-    h += '<td>' + eperStr + '</td><td style="color:' + rentCol + '">' + rentStr + '</td>';
+    h += '<td>' + eperStr + '</td><td style="color:' + pegCol + '">' + pegStr + '</td><td style="color:' + rentCol + '">' + rentStr + '</td>';
     h += '<td style="color:' + (r.roe >= 15 ? '#3ecf8e' : r.roe >= 5 ? '#f0a500' : '#e05050') + '">' + roeStr + '</td>';
     h += '<td>' + evaStr + '</td><td>' + fcfStr + '</td>';
     h += '<td style="color:' + soporteCol + '">' + soporteStr + '</td><td>' + entryBadges + '</td></tr>';
@@ -1724,7 +1739,7 @@ function renderWatchlist(data) {
   if (data.error || !data.items || !data.items.length) {
     c.innerHTML = '<div class="ew-loading">Watchlist vac\u00EDa o no disponible</div>'; return;
   }
-  var h = '<table class="alt-table"><thead><tr><th>Empresa</th><th>Tema</th><th>Nivel / Precio</th><th>Distancia</th><th>Se\u00F1al</th><th>Soporte</th><th>F1/F2/F3</th><th>Estado</th><th>Notas</th></tr></thead><tbody>';
+  var h = '<table class="alt-table"><thead><tr><th>Empresa</th><th>Tema</th><th>Nivel / Precio</th><th>Distancia</th><th>Se\u00F1al</th><th>PEG</th><th>Soporte</th><th>F1/F2/F3</th><th>Estado</th><th>Notas</th></tr></thead><tbody>';
   data.items.forEach(function(r) {
     var priceStr = r.current_price !== null ? r.current_price.toFixed(2) + ' \u20ac' : 'N/D';
     var levelStr = r.entry_level.toFixed(2) + ' \u20ac';
@@ -1740,6 +1755,8 @@ function renderWatchlist(data) {
     if (r.proximity_entry) {
       signalDetected = '\u23f3 ' + r.entry_signal + ' (proximidad)';
     }
+    var pegStr = r.peg !== null ? r.peg.toFixed(2) + 'x' : 'N/D';
+    var pegCol = r.peg !== null ? (r.peg < 1 ? '#3ecf8e' : r.peg <= 2 ? '#f0a500' : '#e05050') : '#5a5f6b';
     var supportStr = r.support_ok ? '\u2705 ' + (r.support !== null ? r.support.toFixed(2) + ' \u20ac' : '') : '\u274c ' + (r.support !== null ? r.support.toFixed(2) + ' \u20ac' : 'N/D');
     var f1 = r.f1_ok ? '\u2705' : '\u274c';
     var f2 = r.f2_ok ? '\u2705' : '\u274c';
@@ -1762,6 +1779,7 @@ function renderWatchlist(data) {
     h += '<td>' + levelStr + '<br><span style="color:#9aa0b0;font-size:11px">' + priceStr + '</span></td>';
     h += '<td style="color:' + distColor + ';font-weight:700">' + distStr + '</td>';
     h += '<td style="font-size:11px">' + signalDetected + '</td>';
+    h += '<td style="font-size:11px;color:' + pegCol + '">' + pegStr + '</td>';
     h += '<td style="font-size:11px">' + supportStr + '</td><td style="font-size:11px">' + filterStr + '</td>';
     h += '<td><span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;background:' + st[2] + ';color:' + st[1] + ';border:1px solid ' + st[1] + '">' + st[0] + '</span></td>';
     h += '<td style="font-size:11px;color:#9aa0b0">' + (r.notes || '') + '</td></tr>';
