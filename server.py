@@ -219,6 +219,7 @@ _ALT_TTL = 24 * 3600
 
 _RADAR_CACHE = {"data": None, "updated": None}
 _RADAR_TTL = 24 * 3600
+_RADAR_FORCE_REFRESH = {"flag": False}
 
 _PRICES_CACHE = {"data": None, "updated": None}
 _PRICES_TTL = 30  # 30s (coincide con polling JS)
@@ -463,6 +464,12 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             return
         # API: Radar (no auth — same origin from logged-in page)
         if self.path.startswith("/api/radar"):
+            qs = self.path.split("?", 1)[1] if "?" in self.path else ""
+            params = dict(p.split("=", 1) for p in qs.split("&") if "=" in p) if qs else {}
+            if "refresh" in params:
+                _RADAR_CACHE["data"] = None
+                _RADAR_CACHE["updated"] = None
+                _RADAR_FORCE_REFRESH["flag"] = True
             self._send_json_cache(_RADAR_CACHE, _RADAR_TTL, self._compute_radar)
             return
         # API: Live prices for portfolio positions (no auth)
@@ -477,6 +484,11 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             return
         # API: Watchlist (study list, no auth)
         if self.path.startswith("/api/watchlist"):
+            qs = self.path.split("?", 1)[1] if "?" in self.path else ""
+            params = dict(p.split("=", 1) for p in qs.split("&") if "=" in p) if qs else {}
+            if "refresh" in params:
+                _WL_CACHE["data"] = None
+                _WL_CACHE["updated"] = None
             self._send_json_cache(_WL_CACHE, _WL_TTL, self._compute_watchlist_study)
             return
         # API: Fondos indexados (JSON local, sin fuentes externas)
@@ -550,6 +562,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             if "_error_ttl" in cache:
                 del cache["_error_ttl"]
             if isinstance(result, dict) and result.get("error"):
+                cache["_error_ttl"] = ERROR_TTL
+            elif isinstance(result, dict) and result.get("degraded"):
                 cache["_error_ttl"] = ERROR_TTL
             self._send_json(result)
         except Exception as e:
@@ -627,8 +641,11 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
     def _compute_radar(self):
         from screener import ejecutar_radar
         try:
-            empresas = ejecutar_radar(max_resultados=15)
-            return {
+            force = _RADAR_FORCE_REFRESH.get("flag", False)
+            empresas = ejecutar_radar(max_resultados=15, force_refresh=force)
+            if force:
+                _RADAR_FORCE_REFRESH["flag"] = False
+            result = {
                 "oportunidades": [
                     {
                         "ticker": r["ticker"],
@@ -647,6 +664,12 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 "total": len(empresas),
                 "updated": datetime.now().isoformat(),
             }
+            # Si el cálculo vino de datos con PER/PEG null (yfinance .info falló),
+            # trata como degradado para no cachear 24h basura.
+            vals = [o.get("eper") for o in result["oportunidades"]]
+            if result["oportunidades"] and all(v is None for v in vals):
+                result["degraded"] = True
+            return result
         except Exception as e:
             print(f"[radar] ERROR: {e}")
             return {"error": True, "msg": str(e), "oportunidades": [], "total": 0}

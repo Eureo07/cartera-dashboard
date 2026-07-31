@@ -11,7 +11,7 @@ RUN pip install --no-cache-dir -r requirements.txt && pip install --upgrade --no
 # Copy all project files
 COPY config.json config_loader.py generate_dashboard.py server.py screener.py start.sh dashboard.html ./
 COPY fondos_indexados.json cuenta_remunerada.json fondos_comparativa.json cuenta_remunerada_myinvestor.json ./
-COPY fin_data_final.xlsx tickers_universo.json price_history.csv ./
+COPY fin_data_final.xlsx tickers_universo.json price_history.csv watchlist.json ./
 COPY ipc_ine.py ipc_cache.json expectancy.py position_sizing.py regimen_mercado.py alertas.py ./
 
 RUN chmod +x start.sh

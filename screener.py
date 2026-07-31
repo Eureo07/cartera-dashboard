@@ -475,10 +475,11 @@ def _load_radar_cache(sector_key="global"):
     log.info(f"  Caché caducada ({age:.1f}h > {ttl}h, key: {sector_key}), descargando datos nuevos...")
     return None
 
-def ejecutar_radar(sector_filter=None, max_resultados=None):
+def ejecutar_radar(sector_filter=None, max_resultados=None, force_refresh=False):
     """Ejecuta el pipeline completo de filtrado y scoring.
     - sector_filter: string opcional para filtrar por sector
     - max_resultados: límite de resultados (defecto: MAX_RESULTS de config)
+    - force_refresh: ignora el caché en disco y recalcula
     - Devuelve: lista de dicts con resultados ordenados por score"""
     log.info("Cargando datos financieros...")
     df = pd.read_excel(EXCEL_FILE)
@@ -491,7 +492,7 @@ def ejecutar_radar(sector_filter=None, max_resultados=None):
     log.info(f"  {len(df_u)} empresas en el universo con datos financieros" + (f" (sector: {sector_filter})" if sector_filter else ""))
     # Try loading from cache first (keyed by sector_filter or "global")
     sector_key = sector_filter or "global"
-    cached_results = _load_radar_cache(sector_key=sector_key)
+    cached_results = None if force_refresh else _load_radar_cache(sector_key=sector_key)
     if cached_results:
         return cached_results
     # Fetch valuations and 1-year returns
