@@ -1065,6 +1065,38 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 except Exception:
                     return None
 
+            def _chart_quote_and_prev(tk):
+                """(current, prev_close) desde chart API range=5d.
+                prev_close = close[-2] (cierre de ayer), que Yahoo SI puebla en los
+                tickers europeos, a diferencia de meta.previousClose (siempre None).
+                Devuelve None si el chart API falla por completo (entonces no hay
+                prev_close fiable). current usa regularMarketPrice o cierre de hoy."""
+                try:
+                    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
+                    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+                    resp = urllib.request.urlopen(req, timeout=10)
+                    chart = json.loads(resp.read())
+                    res = chart.get("chart", {}).get("result", [{}])
+                    if not res:
+                        return None
+                    meta = res[0].get("meta", {})
+                    closes = res[0].get("indicators", {}).get("quote", [{}])[0].get("close", []) or []
+                    cur = meta.get("regularMarketPrice")
+                    if cur is None and len(closes) >= 1:
+                        cur = closes[-1]
+                    prev_close = None
+                    if len(closes) >= 2:
+                        prev_close = closes[-2]
+                    if prev_close is None:
+                        cp = meta.get("chartPreviousClose") or meta.get("previousClose")
+                        if cp is not None:
+                            prev_close = cp
+                    if cur is None:
+                        return None
+                    return float(cur), (float(prev_close) if prev_close is not None else None)
+                except Exception:
+                    return None
+
             def _get_hist_prev_close(tk, sess):
                 """Cierre del ultimo dia completo via intradia (fallback cuando Yahoo pierde dias)."""
                 try:
@@ -1144,57 +1176,30 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     except Exception as e:
                         print(f"[prices] {tk}: RR.L+FX error: {e}")
                     print(f"[prices] {tk}: RR.L+FX falló, fallback a yfinance Xetra")
+                # GENERIC: chart API (v8, urllib) as PRIMARY, mandatory source.
+                # Yahoo bloquea quoteSummary (.info) desde datacenter IPs de Render;
+                # el chart API es la unica via fiable. prev_close = close[-2] del rango 5d.
+                result = _chart_quote_and_prev(tk)
+                if result is not None:
+                    cur, prev_close = result
+                    if cur is not None:
+                        day_var = (cur - prev_close) if prev_close else 0
+                        return (tk, {"current": cur, "prev_close": prev_close, "day_var": round(day_var, 2)})
+                # Last-resort: best-effort via .info, without aborting if quoteSummary fails
                 try:
                     info = yf.Ticker(tk, session=_sess).info or {}
                     cur = info.get("regularMarketPrice") or info.get("previousClose") or info.get("currentPrice")
+                    prev_close = info.get("regularMarketPreviousClose") or info.get("previousClose")
                     if cur is not None:
                         cur = float(cur)
-
-                    def _choose_prev(infoprev, chartprev):
-                        if chartprev is not None:
-                            return chartprev
-                        return infoprev
-
-                    prev_close = None
-                    info_prev = info.get("regularMarketPreviousClose") or info.get("previousClose")
-                    if info_prev is not None:
-                        info_prev = float(info_prev)
-                    try:
-                        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=1d"
-                        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
-                        resp = urllib.request.urlopen(req, timeout=10)
-                        chart = json.loads(resp.read())
-                        meta = chart.get("chart", {}).get("result", [{}])[0].get("meta", {})
-                        cp = meta.get("chartPreviousClose")
-                        if cp is not None:
-                            cp = float(cp)
-                        # Validate against 5d OHLCV: if the previous day's bar is null, Yahoo has a gap -> use intradia fallback
-                        try:
-                            _vurl = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
-                            _vreq = urllib.request.Request(_vurl, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
-                            _vresp = urllib.request.urlopen(_vreq, timeout=10)
-                            _vchart = json.loads(_vresp.read())
-                            _vcloses = _vchart.get("chart", {}).get("result", [{}])[0].get("indicators", {}).get("quote", [{}])[0].get("close", [])
-                            if len(_vcloses) >= 2 and _vcloses[-2] is None:
-                                _hcp = _get_hist_prev_close(tk, _sess)
-                                if _hcp is not None:
-                                    prev_close = _hcp
-                                    print(f"[prices] {tk}: Yahoo gap detectado (vela ayer=null), prev_close desde intradia={_hcp}")
-                                else:
-                                    prev_close = _choose_prev(info_prev, cp)
-                            else:
-                                prev_close = _choose_prev(info_prev, cp)
-                        except Exception:
-                            prev_close = _choose_prev(info_prev, cp)
-                        rmp = meta.get("regularMarketPrice")
-                        if rmp is not None:
-                            cur = float(rmp)
-                    except Exception as e:
-                        prev_close = _choose_prev(info_prev, None)
-                    day_var = (cur - prev_close) if (cur and prev_close) else 0
-                    return (tk, {"current": cur, "prev_close": prev_close, "day_var": round(day_var, 2)})
+                    if prev_close is not None:
+                        prev_close = float(prev_close)
+                    if cur is not None:
+                        day_var = (cur - prev_close) if prev_close else 0
+                        return (tk, {"current": cur, "prev_close": prev_close, "day_var": round(day_var, 2)})
                 except Exception:
-                    return (tk, None)
+                    pass
+                return (tk, None)
 
             data = {}
             with concurrent.futures.ThreadPoolExecutor(max_workers=4) as exec:
