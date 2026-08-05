@@ -1067,10 +1067,10 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
 
             def _chart_quote_and_prev(tk):
                 """(current, prev_close) desde chart API range=5d.
-                prev_close = close[-2] (cierre de ayer), que Yahoo SI puebla en los
-                tickers europeos, a diferencia de meta.previousClose (siempre None).
-                Devuelve None si el chart API falla por completo (entonces no hay
-                prev_close fiable). current usa regularMarketPrice o cierre de hoy."""
+                prev_close = ultima vela diaria COMPLETA anterior a la actual.
+                Yahoo a veces devuelve velas con close=None (dias con gap, ej. feriados
+                parciales o datos perdidos) — se filtran para no usar un cierre viejo
+                como 'ayer' (daba day_var inflado). Devuelve None si no hay datos."""
                 try:
                     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=5d"
                     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
@@ -1081,16 +1081,13 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         return None
                     meta = res[0].get("meta", {})
                     closes = res[0].get("indicators", {}).get("quote", [{}])[0].get("close", []) or []
+                    valid = [c for c in closes if c is not None]
                     cur = meta.get("regularMarketPrice")
-                    if cur is None and len(closes) >= 1:
-                        cur = closes[-1]
+                    if cur is None and valid:
+                        cur = valid[-1]
                     prev_close = None
-                    if len(closes) >= 2:
-                        prev_close = closes[-2]
-                    if prev_close is None:
-                        cp = meta.get("chartPreviousClose") or meta.get("previousClose")
-                        if cp is not None:
-                            prev_close = cp
+                    if len(valid) >= 2:
+                        prev_close = valid[-2]
                     if cur is None:
                         return None
                     return float(cur), (float(prev_close) if prev_close is not None else None)
