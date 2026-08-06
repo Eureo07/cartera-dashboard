@@ -1108,6 +1108,24 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 except Exception:
                     return None
 
+            def _yf_hist_fallback(tk):
+                """(cur, prev_close) via yfinance.history(period='5d').
+                Fallback cuando el chart API crudo devuelve 404 (bloqueo anti-bot de Yahoo).
+                yfinance usa cookie+crumb, por lo que es mas fiable desde Render.
+                prev_close = ultima vela diaria COMPLETA anterior a la actual (close[-2])."""
+                try:
+                    _h = yf.Ticker(tk, session=_sess).history(period="5d", auto_adjust=False)
+                    if _h is None or _h.empty:
+                        return None
+                    _cl = [ll for ll in _h["Close"].tolist() if ll is not None]
+                    if not _cl:
+                        return None
+                    _cur = float(_cl[-1])
+                    _prev = float(_cl[-2]) if len(_cl) >= 2 else _cur
+                    return _cur, _prev
+                except Exception:
+                    return None
+
             def fetch_ticker_price(tk):
                 # NVD.DE: AV en 10:00 CET y 17:30 CET, luego NASDAQ+FX (coincide con Degiro)
                 if tk == "NVD.DE":
@@ -1182,6 +1200,13 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     if cur is not None:
                         day_var = (cur - prev_close) if prev_close else 0
                         return (tk, {"current": cur, "prev_close": prev_close, "day_var": round(day_var, 2)})
+                # Fallback: yfinance.history (cookie+crumb). El chart API crudo a veces da 404 (anti-bot).
+                fb = _yf_hist_fallback(tk)
+                if fb is not None:
+                    cur, prev_close = fb
+                    day_var = (cur - prev_close) if prev_close else 0
+                    print(f"[prices] {tk}: history fallback -> cur={cur} prev={prev_close} dv={round(day_var,2)}")
+                    return (tk, {"current": cur, "prev_close": prev_close, "day_var": round(day_var, 2)})
                 # Last-resort: best-effort via .info, without aborting if quoteSummary fails
                 try:
                     info = yf.Ticker(tk, session=_sess).info or {}
@@ -1215,36 +1240,40 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         data[tk] = c
                         print(f"[prices] {tk}: usando cach\u00e9 persistente (fallback)")
             # Benchmark ^STOXX50E
+            bcur = bprev = None
             try:
-                bench_info = yf.Ticker("^STOXX50E", session=_sess).info or {}
-                bcur = bench_info.get("regularMarketPrice") or bench_info.get("previousClose") or bench_info.get("currentPrice")
-                bprev = bench_info.get("regularMarketPreviousClose") or bench_info.get("previousClose")
+                url = "https://query1.finance.yahoo.com/v8/finance/chart/%5ESTOXX50E?interval=1d&range=1d"
+                req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+                resp = urllib.request.urlopen(req, timeout=10)
+                chart = json.loads(resp.read())
+                meta = chart.get("chart", {}).get("result", [{}])[0].get("meta", {})
+                cp = meta.get("chartPreviousClose")
+                if cp is not None:
+                    bprev = float(cp)
+                rmp = meta.get("regularMarketPrice")
+                if rmp is not None:
+                    bcur = float(rmp)
+            except Exception:
+                pass
+            if bcur is None or bprev is None:
+                bfb = _yf_hist_fallback("^STOXX50E")
+                if bfb is not None:
+                    bcur, bprev = bfb
+                    print(f"[prices] ^STOXX50E: history fallback -> cur={bcur} prev={bprev}")
+            if (bcur is None or bprev is None):
                 try:
-                    url = "https://query1.finance.yahoo.com/v8/finance/chart/%5ESTOXX50E?interval=1d&range=1d"
-                    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
-                    resp = urllib.request.urlopen(req, timeout=10)
-                    chart = json.loads(resp.read())
-                    meta = chart.get("chart", {}).get("result", [{}])[0].get("meta", {})
-                    cp = meta.get("chartPreviousClose")
-                    if cp is not None:
-                        bprev = float(cp)
-                    rmp = meta.get("regularMarketPrice")
-                    if rmp is not None:
-                        bcur = float(rmp)
+                    bench_info = yf.Ticker("^STOXX50E", session=_sess).info or {}
+                    if bcur is None:
+                        bcur = bench_info.get("regularMarketPrice") or bench_info.get("previousClose") or bench_info.get("currentPrice")
+                    if bprev is None:
+                        bprev = bench_info.get("regularMarketPreviousClose") or bench_info.get("previousClose")
                 except Exception:
                     pass
-                if bprev is not None:
-                    bprev = float(bprev)
-                if bcur is not None:
-                    bcur = float(bcur)
-                data["^STOXX50E"] = {"current": bcur, "prev_close": bprev}
-            except Exception:
-                bc = cached.get("^STOXX50E") if cached else None
-                if bc and bc.get("current") is not None:
-                    data["^STOXX50E"] = bc
-                    print("[prices] ^STOXX50E: usando cach\u00e9 persistente (fallback)")
-                else:
-                    data["^STOXX50E"] = {"current": None, "prev_close": None}
+            if bprev is not None:
+                bprev = float(bprev)
+            if bcur is not None:
+                bcur = float(bcur)
+            data["^STOXX50E"] = {"current": bcur if bcur is not None else (cached.get("^STOXX50E", {}).get("current") if cached else None), "prev_close": bprev if bprev is not None else (cached.get("^STOXX50E", {}).get("prev_close") if cached else None)}
             # Persist successful results to file cache
             _save_live_prices(data)
             return {"prices": data, "updated": datetime.now().isoformat()}
