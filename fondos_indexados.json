@@ -11,7 +11,12 @@
       "valor_actual": 587.71,
       "fecha_actualizacion": "2026-07-03",
       "ter": 0.06,
-      "historico_prices": []
+      "historico_prices": [
+        {
+          "fecha": "2026-08-10",
+          "precio": 3879.58
+        }
+      ]
     },
     {
       "nombre": "iShares Physical Gold ETC",
@@ -21,10 +26,15 @@
       "aportado": 391.33,
       "aportado_fecha": "2026-04-01",
       "participaciones": 5,
-      "valor_actual": 353.30,
+      "valor_actual": 353.3,
       "fecha_actualizacion": "2026-07-03",
       "ter": 0.12,
-      "historico_prices": []
+      "historico_prices": [
+        {
+          "fecha": "2026-08-10",
+          "precio": 73.1
+        }
+      ]
     }
   ]
 }

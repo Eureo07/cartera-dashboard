@@ -885,6 +885,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     if tipo == "etf":
                         ticker = fdo.get("ticker", "")
                         if ticker:
+                            precio_unitario = None
                             try:
                                 _sess = getattr(self, '_fondo_session', None)
                                 if _sess is None:
@@ -899,8 +900,21 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                                     if precio_unitario and precio_unitario > 0:
                                         print(f"[fondos] {nombre} ({ticker}): yfinance -> {precio_unitario}")
                             except Exception as e:
-                                print(f"[fondos] yfinance fallo para {ticker}: {e}")
-                                pass
+                                print(f"[fondos] yfinance .info fallo para {ticker}: {e}")
+                            # Fallback: history(period='5d') cuando .info no da precio valido
+                            # (mismo patron que _yf_hist_fallback para precios de cartera)
+                            if precio_unitario is None:
+                                try:
+                                    _h = yf.Ticker(ticker, session=_sess).history(period="5d", auto_adjust=False)
+                                    if _h is not None and not _h.empty:
+                                        _cl = [ll for ll in _h["Close"].tolist() if ll is not None]
+                                        if _cl and _cl[-1] is not None and _cl[-1] > 0:
+                                            precio_unitario = float(_cl[-1])
+                                            print(f"[fondos] {nombre} ({ticker}): history fallback -> {precio_unitario}")
+                                except Exception as e:
+                                    print(f"[fondos] yfinance history fallback fallo para {ticker}: {e}")
+                            if precio_unitario is not None and not (precio_unitario > 0):
+                                precio_unitario = None
                     elif tipo == "fondo_no_cotizado" and _HAS_BS4:
                         precio_unitario, _ = extraer_nav_quefondos(isin)
                         if precio_unitario is not None:
