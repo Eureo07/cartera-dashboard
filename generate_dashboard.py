@@ -11,6 +11,7 @@ import json, math, statistics
 from datetime import datetime, date
 from config_loader import CFG, logger, get_logger
 from screener import calcular_soporte_resistencia, calcular_peg_desde_info
+from per_futuro import get_per_futuro
 from expectancy import cargar_cartera_cerrada, calcular_expectancy
 from position_sizing import calcular_tamano_posicion
 from regimen_mercado import obtener_regimen_combinado
@@ -1158,6 +1159,17 @@ for i, p in enumerate(portfolio):
     fwd_per = v.get("fwd_per")
     peg_val = v.get("peg")
     beta_val = v.get("beta")
+    # PER futuro / PEG / rev_growth con jerarquia AV -> yfinance -> manual
+    pfu = get_per_futuro(tk)
+    fwd_per_fuente = pfu.get("fuente_per")
+    peg_fuente = pfu.get("fuente_peg")
+    rev_fuente = pfu.get("fuente_rev")
+    fecha_manual = pfu.get("fecha_manual")
+    if fwd_per is None:
+        fwd_per = pfu.get("fwd_per")
+    if peg_val is None:
+        peg_val = pfu.get("peg")
+    rev_growth_val = pfu.get("rev_growth")
     db_t = p.get("db_ticker")
     sector_name = "Desconocido"
     roe_val = None
@@ -1227,6 +1239,29 @@ for i, p in enumerate(portfolio):
     else:
         peg_str = "N/D"
         peg_cls = ""
+    # Badge para dato manual (fuente 3): etiqueta clara de no-en-vivo
+    def _fmt_fecha_manual(f):
+        if not f:
+            return ""
+        try:
+            return datetime.strptime(f, "%Y-%m-%d").strftime("%d/%m")
+        except Exception:
+            return f
+    _fecha_fmt = _fmt_fecha_manual(fecha_manual)
+    def _manual_badge(fuente):
+        if fuente != "manual":
+            return ""
+        if _fecha_fmt:
+            return f' <span style="color:#f0a500;font-size:9px;margin-left:4px" title="Dato manual, no en vivo">(consenso {_fecha_fmt})</span>'
+        return ' <span style="color:#f0a500;font-size:9px;margin-left:4px" title="Dato manual, no en vivo">(consenso)</span>'
+    # Rev. crecimiento estimado (rev_growth)
+    if rev_growth_val is not None:
+        rev_str = f"{rev_growth_val:+.1f}%"
+        rev_cls = "pos" if rev_growth_val > 0 else "neg"
+    else:
+        rev_str = "N/D"
+        rev_cls = ""
+
     weight_warn = "warn" if p["weight"] > 25 else ("danger" if p["weight"] > 30 else "")
     weight_cls = "warn" if p["weight"] > 25 else ""
     peso_bar_cls = "danger" if p["weight"] > 30 else ("warn" if p["weight"] > 25 else "")
@@ -1285,12 +1320,13 @@ for i, p in enumerate(portfolio):
         <div class="metric-row"><span class="ml">Distancia stop{desc("Ca\u00edda m\u00e1xima asumida antes de salir")}</span><span class="mv {dist_cls}" data-metric="dist-stop">{p['dist_stop']:.1f}%</span></div>
         <div class="metric-row"><span class="ml">P. Objetivo</span><span class="mv {"pos" if p["current"] >= p["target"] else ""}" data-metric="target">{p['target']:.2f} \u20ac</span></div>
         <div class="metric-row"><span class="ml">PER{desc("Veces que el precio recoge el beneficio anual")}</span><span class="mv {"warn" if (per or 99) > 30 else ("pos" if per and per <= 20 else "")}">{f"{per:.1f}x" if per else "N/D"}</span></div>
-        <div class="metric-row"><span class="ml">PER Fwd{desc("PER estimado con beneficios futuros")}</span><span class="mv">{f"{fwd_per:.1f}x" if fwd_per else "N/D"}</span></div>
-        <div class="metric-row"><span class="ml">PEG{desc("PER / crecimiento EPS. &lt;1 barato relativo a su crecimiento, 1-2 razonable, &gt;2 caro")}</span><span class="mv {peg_cls}">{peg_str}{" <span style=\"color:#f0a500;font-size:9px;margin-left:4px\">\u26a0 PEG alto</span>" if peg_val and peg_val > 2 else ""}</span></div>
+        <div class="metric-row"><span class="ml">PER Fwd{desc("PER estimado con beneficios futuros")}</span><span class="mv">{f"{fwd_per:.1f}x" if fwd_per else "N/D"}{_manual_badge(fwd_per_fuente)}</span></div>
+        <div class="metric-row"><span class="ml">PEG{desc("PER / crecimiento EPS. &lt;1 barato relativo a su crecimiento, 1-2 razonable, &gt;2 caro")}</span><span class="mv {peg_cls}">{peg_str}{_manual_badge(peg_fuente)}{" <span style=\"color:#f0a500;font-size:9px;margin-left:4px\">\u26a0 PEG alto</span>" if peg_val and peg_val > 2 else ""}</span></div>
         <div class="metric-row"><span class="ml">P/B{desc("Precio respecto al valor contable. &lt;1 infravalorado")}</span><span class="mv {"warn" if (pb_val or 99) > 5 else ("pos" if pb_val and pb_val <= 3 else "")}">{f"{pb_val:.2f}" if pb_val else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">Beta{desc(beta_desc)}</span><span class="mv {beta_cls}">{beta_str}</span></div>
         <div class="metric-row"><span class="ml">ROE 2026{desc("Rentabilidad sobre fondos propios")}</span><span class="mv {"pos" if (roe_val or 0) >= 15 else ("warn" if (roe_val or 0) >= 5 else "neg")}">{f"{roe_val:.1f}%" if roe_val else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">FCF 2026{desc("Caja generada tras inversiones")}</span><span class="mv {fcf_cls}">{f"{fcf_val/1_000_000:,.0f}M \u20ac" if fcf_val else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">Rev. Crec.{desc("Crecimiento estimado de ingresos (YoY)")}</span><span class="mv {rev_cls}">{rev_str}{_manual_badge(rev_fuente)}</span></div>
         <div class="metric-row"><span class="ml">Peso cartera{desc("% del capital total invertido en esta posici\u00f3n")}</span><span class="mv {weight_cls}" data-metric="weight">{p['weight']:.1f}%{" \u26a0" if p["weight"] > 25 else ""}</span></div>
         <div class="metric-row"><span class="ml">Tama\u00f1o sugerido (2% riesgo){desc("N\u00ba de acciones m\u00e1ximo recomendado seg\u00fan distancia al stop loss")}</span><span class="mv">{tamano_str}</span></div>
         <div class="metric-row"><span class="ml">Stop Din\u00e1mico{desc("Stop calculado sobre soporte t\u00e9cnico (-2%)")}</span><span class="mv neg">{dyn_stop_str}{" <span style=\"color:#f0a500;font-size:9px;margin-left:4px\">\u26a0 Revisar stop</span>" if stop_alert else ""}</span></div>
@@ -1694,11 +1730,17 @@ function renderRadar(data) {
   h += '<span style="color:#5a5f6b;display:block;margin-top:2px;font-size:10px">';
   h += 'Criterios: Rent.1A > 30%, PER 0\u201330, Score > 0.3, EVA > 0, ROE > 0, Soporte en vigor \u00B7 No en cartera \u00B7 T\u00E9cnico: RRA/RR/LT/LTA/PER';
   h += '</span></div>';
-  h += '<table class="alt-table"><thead><tr><th>#</th><th>Empresa</th><th>Ticker</th><th>Sector</th><th>Tema</th><th>Score</th><th>PER</th><th>PEG</th><th>Rent.1A</th><th>ROE</th><th>EVA</th><th>FCF</th><th>Soporte</th><th>Tipo Entrada</th></tr></thead><tbody>';
+  h += '<table class="alt-table"><thead><tr><th>#</th><th>Empresa</th><th>Ticker</th><th>Sector</th><th>Tema</th><th>Score</th><th>PER</th><th>PER Fwd</th><th>PEG</th><th>Rev Crec</th><th>Rent.1A</th><th>ROE</th><th>EVA</th><th>FCF</th><th>Soporte</th><th>Tipo Entrada</th></tr></thead><tbody>';
   data.oportunidades.forEach(function(r, i) {
     var eperStr = r.eper !== null ? r.eper.toFixed(1) + 'x' : 'N/D';
+    var fwdPerStr = r.fwd_per !== null && r.fwd_per !== undefined ? r.fwd_per.toFixed(1) + 'x' : 'N/D';
+    var fwdPerBadge = (r.fuente_per === 'manual') ? ' <span style="color:#f0a500;font-size:9px" title="Dato manual, no en vivo">(consenso)</span>' : '';
     var pegStr = r.peg !== null ? r.peg.toFixed(2) + 'x' : 'N/D';
     var pegCol = r.peg !== null ? (r.peg < 1 ? '#3ecf8e' : r.peg <= 2 ? '#f0a500' : '#e05050') : '#5a5f6b';
+    var pegBadge = (r.fuente_peg === 'manual') ? ' <span style="color:#f0a500;font-size:9px" title="Dato manual, no en vivo">(consenso)</span>' : '';
+    var revStr = (r.rev_growth !== null && r.rev_growth !== undefined) ? (r.rev_growth > 0 ? '+' : '') + r.rev_growth.toFixed(1) + '%' : 'N/D';
+    var revCol = (r.rev_growth !== null && r.rev_growth !== undefined) ? (r.rev_growth >= 0 ? '#3ecf8e' : '#e05050') : '#5a5f6b';
+    var revBadge = (r.fuente_rev === 'manual') ? ' <span style="color:#f0a500;font-size:9px" title="Dato manual, no en vivo">(consenso)</span>' : '';
     var roeStr = r.roe !== null ? r.roe.toFixed(1) + '%' : 'N/D';
     var evaStr = r.eva !== null ? Number(r.eva).toLocaleString() : 'N/D';
     var fcfStr = r.fcf !== null ? Number(r.fcf).toLocaleString() : 'N/D';
@@ -1723,7 +1765,8 @@ function renderRadar(data) {
     h += '<tr><td>' + (i+1) + '</td><td><strong>' + r.name + '</strong></td><td>' + r.ticker + '</td><td>' + (r.sector || '') + '</td>';
     h += '<td style="font-size:11px">' + temaBadge + '</td>';
     h += '<td><div class="score-bar-bg"><div class="score-bar-fill" style="width:' + scorePct + '%;background:' + scoreCol + '"></div></div> ' + r.score.toFixed(3) + '</td>';
-    h += '<td>' + eperStr + '</td><td style="color:' + pegCol + '">' + pegStr + '</td><td style="color:' + rentCol + '">' + rentStr + '</td>';
+    h += '<td>' + eperStr + '</td><td>' + fwdPerStr + fwdPerBadge + '</td>';
+    h += '<td style="color:' + pegCol + '">' + pegStr + pegBadge + '</td><td style="color:' + revCol + '">' + revStr + revBadge + '</td><td style="color:' + rentCol + '">' + rentStr + '</td>';
     h += '<td style="color:' + (r.roe >= 15 ? '#3ecf8e' : r.roe >= 5 ? '#f0a500' : '#e05050') + '">' + roeStr + '</td>';
     h += '<td>' + evaStr + '</td><td>' + fcfStr + '</td>';
     h += '<td style="color:' + soporteCol + '">' + soporteStr + '</td><td>' + entryBadges + '</td></tr>';
@@ -1739,7 +1782,7 @@ function renderWatchlist(data) {
   if (data.error || !data.items || !data.items.length) {
     c.innerHTML = '<div class="ew-loading">Watchlist vac\u00EDa o no disponible</div>'; return;
   }
-  var h = '<table class="alt-table"><thead><tr><th>Empresa</th><th>Tema</th><th>Nivel / Precio</th><th>Distancia</th><th>Se\u00F1al</th><th>PEG</th><th>Soporte</th><th>F1/F2/F3</th><th>Estado</th><th>Notas</th></tr></thead><tbody>';
+  var h = '<table class="alt-table"><thead><tr><th>Empresa</th><th>Tema</th><th>Nivel / Precio</th><th>Distancia</th><th>Se\u00F1al</th><th>PEG</th><th>PER Fwd</th><th>Rev Crec</th><th>Soporte</th><th>F1/F2/F3</th><th>Estado</th><th>Notas</th></tr></thead><tbody>';
   data.items.forEach(function(r) {
     var priceStr = r.current_price !== null ? r.current_price.toFixed(2) + ' \u20ac' : 'N/D';
     var levelStr = r.entry_level.toFixed(2) + ' \u20ac';
@@ -1757,6 +1800,12 @@ function renderWatchlist(data) {
     }
     var pegStr = r.peg !== null ? r.peg.toFixed(2) + 'x' : 'N/D';
     var pegCol = r.peg !== null ? (r.peg < 1 ? '#3ecf8e' : r.peg <= 2 ? '#f0a500' : '#e05050') : '#5a5f6b';
+    var pegBadge = (r.fuente_peg === 'manual') ? ' <span style="color:#f0a500;font-size:9px" title="Dato manual, no en vivo">(consenso)</span>' : '';
+    var fwdPerStr = (r.fwd_per !== null && r.fwd_per !== undefined) ? r.fwd_per.toFixed(1) + 'x' : 'N/D';
+    var fwdPerBadge = (r.fuente_per === 'manual') ? ' <span style="color:#f0a500;font-size:9px" title="Dato manual, no en vivo">(consenso)</span>' : '';
+    var revStr = (r.rev_growth !== null && r.rev_growth !== undefined) ? (r.rev_growth > 0 ? '+' : '') + r.rev_growth.toFixed(1) + '%' : 'N/D';
+    var revCol = (r.rev_growth !== null && r.rev_growth !== undefined) ? (r.rev_growth >= 0 ? '#3ecf8e' : '#e05050') : '#5a5f6b';
+    var revBadge = (r.fuente_rev === 'manual') ? ' <span style="color:#f0a500;font-size:9px" title="Dato manual, no en vivo">(consenso)</span>' : '';
     var supportStr = r.support_ok ? '\u2705 ' + (r.support !== null ? r.support.toFixed(2) + ' \u20ac' : '') : '\u274c ' + (r.support !== null ? r.support.toFixed(2) + ' \u20ac' : 'N/D');
     var f1 = r.f1_ok ? '\u2705' : '\u274c';
     var f2 = r.f2_ok ? '\u2705' : '\u274c';
@@ -1779,7 +1828,9 @@ function renderWatchlist(data) {
     h += '<td>' + levelStr + '<br><span style="color:#9aa0b0;font-size:11px">' + priceStr + '</span></td>';
     h += '<td style="color:' + distColor + ';font-weight:700">' + distStr + '</td>';
     h += '<td style="font-size:11px">' + signalDetected + '</td>';
-    h += '<td style="font-size:11px;color:' + pegCol + '">' + pegStr + '</td>';
+    h += '<td style="font-size:11px;color:' + pegCol + '">' + pegStr + pegBadge + '</td>';
+    h += '<td style="font-size:11px">' + fwdPerStr + fwdPerBadge + '</td>';
+    h += '<td style="font-size:11px;color:' + revCol + '">' + revStr + revBadge + '</td>';
     h += '<td style="font-size:11px">' + supportStr + '</td><td style="font-size:11px">' + filterStr + '</td>';
     h += '<td><span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;background:' + st[2] + ';color:' + st[1] + ';border:1px solid ' + st[1] + '">' + st[0] + '</span></td>';
     h += '<td style="font-size:11px;color:#9aa0b0">' + (r.notes || '') + '</td></tr>';

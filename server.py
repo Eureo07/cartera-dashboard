@@ -22,6 +22,7 @@ _PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 if _PROJ_DIR not in sys.path:
     sys.path.insert(0, _PROJ_DIR)
 from config_loader import CFG
+from per_futuro import get_per_futuro
 import time as _ytime
 
 try:
@@ -658,6 +659,11 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         "entry_types": r.get("entry_types", []),
                         "support": r.get("support"),
                         "resistance": r.get("resistance"),
+                        "fwd_per": self._radar_per_futuro(r["ticker"], "fwd_per"),
+                        "fuente_per": self._radar_per_futuro(r["ticker"], "fuente_per"),
+                        "fuente_peg": self._radar_per_futuro(r["ticker"], "fuente_peg"),
+                        "rev_growth": self._radar_per_futuro(r["ticker"], "rev_growth"),
+                        "fuente_rev": self._radar_per_futuro(r["ticker"], "fuente_rev"),
                     }
                     for r in empresas
                 ],
@@ -681,6 +687,14 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             return get_valuation(ticker).get("peg")
         except Exception:
             return None
+
+    def _radar_per_futuro(self, ticker, key):
+        """Campo de get_per_futuro para el radar, con cache en memoria."""
+        if not hasattr(self, "_radar_pfu_cache"):
+            self._radar_pfu_cache = {}
+        if ticker not in self._radar_pfu_cache:
+            self._radar_pfu_cache[ticker] = get_per_futuro(ticker)
+        return self._radar_pfu_cache[ticker].get(key)
 
     def _compute_watchlist_study(self):
         """Compute watchlist study data. Only 3 states: sin_senal/activa/confirmado."""
@@ -806,6 +820,11 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     "visual_status": visual_status,
                     "theme": item.get("theme", ""),
                     "peg": self._wl_peg(tk),
+                    "fwd_per": self._radar_per_futuro(tk, "fwd_per"),
+                    "fuente_per": self._radar_per_futuro(tk, "fuente_per"),
+                    "fuente_peg": self._radar_per_futuro(tk, "fuente_peg"),
+                    "rev_growth": self._radar_per_futuro(tk, "rev_growth"),
+                    "fuente_rev": self._radar_per_futuro(tk, "fuente_rev"),
                     "notes": item.get("notes", ""),
                 })
             # 7) Alert on status change
