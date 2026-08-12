@@ -9,7 +9,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt && pip install --upgrade --no-cache-dir "yfinance>=1.3"
 
 # Copy all project files
-COPY config.json config_loader.py generate_dashboard.py server.py screener.py start.sh dashboard.html ./
+COPY config.json config_loader.py generate_dashboard.py server.py screener.py start.sh dashboard.html per_futuro.py per_futuro_manual.json ./
 COPY fondos_indexados.json cuenta_remunerada.json fondos_comparativa.json cuenta_remunerada_myinvestor.json ./
 COPY fin_data_final.xlsx tickers_universo.json price_history.csv watchlist.json ./
 COPY ipc_ine.py ipc_cache.json expectancy.py position_sizing.py regimen_mercado.py alertas.py ./
