@@ -34,5 +34,54 @@
     "support": 23.34,
     "theme": "Aeroespacial/Defensa",
     "notes": "Visión nocturna/defensa — solapa con Rolls-Royce (en cartera)"
+  },
+  {
+    "ticker": "XTN",
+    "name": "SPDR S&P Transportation ETF",
+    "entry_level": 120.76,
+    "entry_signal": "RR",
+    "theme": "Transporte/Logística"
+  },
+  {
+    "ticker": "XPO",
+    "name": "XPO Logistics Inc",
+    "entry_level": 232.06,
+    "entry_signal": "RR",
+    "theme": "Transporte/Logística"
+  },
+  {
+    "ticker": "XSMO",
+    "name": "Invesco S&P SmallCap Momentum ETF",
+    "entry_level": 84.33,
+    "entry_signal": "LT",
+    "theme": "Momentum/Small Cap"
+  },
+  {
+    "ticker": "XNTK",
+    "name": "SPDR NYSE Technology ETF",
+    "entry_level": 293.69,
+    "entry_signal": "LT",
+    "theme": "Tecnología"
+  },
+  {
+    "ticker": "XNAS.DE",
+    "name": "Xtrackers NASDAQ 100 UCITS ETF 1C",
+    "entry_level": 62.17,
+    "entry_signal": "RR",
+    "theme": "Tecnología/Nasdaq100"
+  },
+  {
+    "ticker": "XSD",
+    "name": "SPDR S&P Semiconductor ETF",
+    "entry_level": 657.91,
+    "entry_signal": "RR",
+    "theme": "Semiconductores"
+  },
+  {
+    "ticker": "XMMO",
+    "name": "Invesco S&P MidCap Momentum ETF",
+    "entry_level": 173.96,
+    "entry_signal": "RR",
+    "theme": "Momentum/Mid Cap"
   }
 ]
