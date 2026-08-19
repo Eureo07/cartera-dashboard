@@ -1,0 +1,115 @@
+{
+  "items": [
+    {
+      "ticker": "GOOGL",
+      "tag": "",
+      "tipo_entrada": "RR",
+      "precio_trigger": 408,
+      "precio_soporte": null,
+      "requiere_cierre_semanal": true,
+      "alertado": false,
+      "fecha_ultima_alerta": null
+    },
+    {
+      "ticker": "ACS.MC",
+      "tag": "IA/Centros de datos",
+      "tipo_entrada": "RR",
+      "precio_trigger": 139.2,
+      "precio_soporte": 100.85,
+      "requiere_cierre_semanal": true,
+      "alertado": false,
+      "fecha_ultima_alerta": null
+    },
+    {
+      "ticker": "SAF.PA",
+      "tag": "Aeroespacial/Defensa",
+      "tipo_entrada": "LT",
+      "precio_trigger": 276.15,
+      "precio_soporte": 259.68,
+      "requiere_cierre_semanal": false,
+      "alertado": false,
+      "fecha_ultima_alerta": null
+    },
+    {
+      "ticker": "THEON.AS",
+      "tag": "Aeroespacial/Defensa",
+      "tipo_entrada": "RR",
+      "precio_trigger": 36.67,
+      "precio_soporte": 23.34,
+      "requiere_cierre_semanal": true,
+      "alertado": false,
+      "fecha_ultima_alerta": null
+    },
+    {
+      "ticker": "XTN",
+      "tag": "Transporte/Logística",
+      "tipo_entrada": "RR",
+      "precio_trigger": 120.76,
+      "precio_soporte": null,
+      "requiere_cierre_semanal": true,
+      "alertado": false,
+      "fecha_ultima_alerta": null
+    },
+    {
+      "ticker": "XPO",
+      "tag": "Transporte/Logística",
+      "tipo_entrada": "RR",
+      "precio_trigger": 232.06,
+      "precio_soporte": null,
+      "requiere_cierre_semanal": true,
+      "alertado": false,
+      "fecha_ultima_alerta": null
+    },
+    {
+      "ticker": "XSMO",
+      "tag": "Momentum/Small Cap",
+      "tipo_entrada": "LT",
+      "precio_trigger": 84.33,
+      "precio_soporte": null,
+      "requiere_cierre_semanal": false,
+      "alertado": false,
+      "fecha_ultima_alerta": null
+    },
+    {
+      "ticker": "XNTK",
+      "tag": "Tecnología",
+      "tipo_entrada": "LT",
+      "precio_trigger": 293.69,
+      "precio_soporte": null,
+      "requiere_cierre_semanal": false,
+      "alertado": false,
+      "fecha_ultima_alerta": null
+    },
+    {
+      "ticker": "XNAS.DE",
+      "tag": "Tecnología/Nasdaq100",
+      "tipo_entrada": "RR",
+      "precio_trigger": 62.17,
+      "precio_soporte": null,
+      "requiere_cierre_semanal": true,
+      "alertado": false,
+      "fecha_ultima_alerta": null
+    },
+    {
+      "ticker": "XSD",
+      "tag": "Semiconductores",
+      "tipo_entrada": "RR",
+      "precio_trigger": 657.91,
+      "precio_soporte": null,
+      "requiere_cierre_semanal": true,
+      "alertado": false,
+      "fecha_ultima_alerta": null
+    },
+    {
+      "ticker": "XMMO",
+      "tag": "Momentum/Mid Cap",
+      "tipo_entrada": "RR",
+      "precio_trigger": 173.96,
+      "precio_soporte": null,
+      "requiere_cierre_semanal": true,
+      "alertado": false,
+      "fecha_ultima_alerta": null
+    }
+  ],
+  "updated": "2026-08-19T12:34:17.366849"
+}

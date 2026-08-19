@@ -1,0 +1,114 @@
+{
+  "name": "Alertas Watchlist - Cartera Dashboard",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "35 17 * * 1-5" }] }
+      },
+      "id": "trigger1",
+      "name": "Cron diario 17:35 CET",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://TU-APP.onrender.com/api/alertas",
+        "options": {}
+      },
+      "id": "http1",
+      "name": "GET /api/alertas",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "items",
+        "options": {}
+      },
+      "id": "split1",
+      "name": "Split tickers",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "url": "=https://query1.finance.yahoo.com/v8/finance/chart/{{ $json.ticker }}",
+        "options": {}
+      },
+      "id": "http2",
+      "name": "Precio actual Yahoo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const alerta = $('Split tickers').item.json;\nconst priceData = $json;\n\nlet currentPrice = null;\ntry {\n  currentPrice = priceData.chart.result[0].meta.regularMarketPrice;\n} catch(e) {}\n\nconst today = new Date();\nconst isFriday = today.getDay() === 5;\n\nlet condicionCumplida = false;\n\nif (alerta.tipo_entrada === 'LT' || alerta.tipo_entrada === 'LTA') {\n  if (currentPrice !== null && alerta.precio_trigger) {\n    condicionCumplida = currentPrice <= alerta.precio_trigger * 1.01;\n  }\n} else if (alerta.tipo_entrada === 'RR' || alerta.tipo_entrada === 'RRA') {\n  if (currentPrice !== null && alerta.precio_trigger) {\n    condicionCumplida = currentPrice >= alerta.precio_trigger;\n    if (alerta.requiere_cierre_semanal && !isFriday) {\n      condicionCumplida = false;\n    }\n  }\n}\n\nreturn [{\n  json: {\n    ...alerta,\n    precio_actual: currentPrice,\n    condicion_cumplida: condicionCumplida,\n    es_viernes: isFriday\n  }\n}];"
+      },
+      "id": "code1",
+      "name": "Comparar trigger",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            { "leftValue": "={{$json.condicion_cumplida}}", "rightValue": true, "operator": { "type": "boolean", "operation": "equals" } },
+            { "leftValue": "={{$json.alertado}}", "rightValue": false, "operator": { "type": "boolean", "operation": "equals" } }
+          ]
+        }
+      },
+      "id": "if1",
+      "name": "IF dispara alerta",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "sendTo": "TU-EMAIL@gmail.com",
+        "subject": "=🔔 Alerta watchlist: {{$json.ticker}} ha alcanzado nivel de entrada",
+        "message": "=Ticker: {{$json.ticker}}\nTag: {{$json.tag}}\nTipo señal: {{$json.tipo_entrada}}\nPrecio trigger: {{$json.precio_trigger}}\nPrecio actual: {{$json.precio_actual}}\n\nRecuerda confirmar en el dashboard antes de operar (cierre semanal del viernes si aplica).",
+        "options": {}
+      },
+      "id": "gmail1",
+      "name": "Enviar email Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1560, 220],
+      "credentials": { "gmailOAuth2": { "id": "PENDIENTE", "name": "Gmail account" } }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://TU-APP.onrender.com/api/alertas/marcar",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"ticker\": $json.ticker } }}",
+        "options": {}
+      },
+      "id": "http3",
+      "name": "POST marcar alertado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 220]
+    }
+  ],
+  "connections": {
+    "Cron diario 17:35 CET": { "main": [[{ "node": "GET /api/alertas", "type": "main", "index": 0 }]] },
+    "GET /api/alertas": { "main": [[{ "node": "Split tickers", "type": "main", "index": 0 }]] },
+    "Split tickers": { "main": [[{ "node": "Precio actual Yahoo", "type": "main", "index": 0 }]] },
+    "Precio actual Yahoo": { "main": [[{ "node": "Comparar trigger", "type": "main", "index": 0 }]] },
+    "Comparar trigger": { "main": [[{ "node": "IF dispara alerta", "type": "main", "index": 0 }]] },
+    "IF dispara alerta": { "main": [[{ "node": "Enviar email Gmail", "type": "main", "index": 0 }], []] },
+    "Enviar email Gmail": { "main": [[{ "node": "POST marcar alertado", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" }
+}
