@@ -279,6 +279,26 @@ def _save_live_prices(data):
 _WL_CACHE = {"data": None, "updated": None}
 _WL_TTL = 300  # 5 min
 
+# ========== ALERTAS STATE (dedup para n8n) ==========
+# Estado separado de watchlist.json: solo alertado/fecha_ultima_alerta por ticker.
+# Si un ticker de watchlist.json no tiene entrada aqui, se trata como alertado=false.
+ALERTAS_STATE_FILE = os.path.join(_PROJ_DIR, "alertas_state.json")
+
+def _load_alertas_state():
+    try:
+        with open(ALERTAS_STATE_FILE, "r", encoding="utf-8") as f:
+            state = json.load(f)
+            return state if isinstance(state, dict) else {}
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+def _save_alertas_state(state):
+    try:
+        with open(ALERTAS_STATE_FILE, "w", encoding="utf-8") as f:
+            json.dump(state, f, indent=2, ensure_ascii=False)
+    except Exception:
+        pass
+
 def parsear_nav_espanol(nav_str):
     """Convierte valor liquidativo en formato espanol a float.
     '3.763,430000 EUR' -> 3763.43"""
@@ -492,6 +512,10 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 _WL_CACHE["updated"] = None
             self._send_json_cache(_WL_CACHE, _WL_TTL, self._compute_watchlist_study)
             return
+        # API: Alertas para n8n (lee watchlist.json + alertas_state.json en caliente, no cache)
+        if self.path.split("?")[0] == "/api/alertas":
+            self._send_json(self._compute_alertas())
+            return
         # API: Fondos indexados (JSON local, sin fuentes externas)
         if self.path.startswith("/api/fondos"):
             self._send_json_cache(_FONDOS_CACHE, _FONDOS_TTL, self._compute_fondos)
@@ -546,6 +570,108 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         if not check_auth(self.headers):
             return send_401(self)
         return super().do_GET()
+
+    def do_POST(self):
+        # Marcar ticker como alertado (dedup n8n). Body JSON: {"ticker": "XTN"}
+        if self.path.startswith("/api/alertas/marcar"):
+            self._handle_alertas_marcar()
+            return
+        self.send_error(405, "Method Not Allowed")
+
+    def _send_json_status(self, status, data):
+        body = json.dumps(data, ensure_ascii=False)
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Content-Length", str(len(body.encode("utf-8"))))
+        self.end_headers()
+        self.wfile.write(body.encode("utf-8"))
+
+    def _handle_alertas_marcar(self):
+        """Marca un ticker como alertado. Acepta JSON body {"ticker": "XTN"}
+        o query param ?ticker=XTN. Idempotente: repetir solo actualiza la fecha."""
+        ticker = None
+        error = None
+        body_raw = b""
+        try:
+            length = int(self.headers.get("Content-Length", 0) or 0)
+            if length > 0:
+                body_raw = self.rfile.read(length)
+        except Exception:
+            error = "Error leyendo body"
+        if not error and body_raw:
+            try:
+                payload = json.loads(body_raw.decode("utf-8"))
+                if isinstance(payload, dict):
+                    ticker = str(payload.get("ticker") or "").strip()
+                else:
+                    error = "Body JSON debe ser un objeto"
+            except (json.JSONDecodeError, ValueError):
+                error = "Body JSON invalido"
+        if not error and not ticker:
+            qs = self.path.split("?", 1)[1] if "?" in self.path else ""
+            for p in qs.split("&"):
+                if p.startswith("ticker="):
+                    import urllib.parse
+                    ticker = urllib.parse.unquote(p.split("=", 1)[1]).strip()
+                    break
+        if not error and not ticker:
+            error = "Falta el campo 'ticker'"
+        if error:
+            self._send_json_status(400, {"ok": False, "error": error})
+            return
+        wl_path = os.path.join(DIR, "watchlist.json")
+        valid = False
+        try:
+            if os.path.exists(wl_path):
+                with open(wl_path, "r", encoding="utf-8") as f:
+                    valid = any(str(i.get("ticker")) == ticker for i in json.load(f))
+        except Exception:
+            valid = False
+        if not valid:
+            self._send_json_status(404, {"ok": False, "error": f"Ticker '{ticker}' no está en watchlist.json"})
+            return
+        state = _load_alertas_state()
+        now_iso = datetime.now().isoformat()
+        state[ticker] = {"alertado": True, "fecha_ultima_alerta": now_iso}
+        _save_alertas_state(state)
+        print(f"[alertas] marcar {ticker} -> alertado (fecha {now_iso})")
+        self._send_json({"ok": True, "ticker": ticker, "alertado": True, "fecha_ultima_alerta": now_iso})
+
+    def _compute_alertas(self):
+        """Estado de señales para n8n: entrada activa = toda entrada de watchlist.json.
+        Lee ambos JSON en caliente por request (server.py es proceso vivo e independiente
+        del build estático de generate_dashboard.py), sin llamadas de red.
+        requiere_cierre_semanal = true para entradas RR/RRA (se confirman en cierre
+        semanal del viernes según la metodología)."""
+        try:
+            wl_path = os.path.join(DIR, "watchlist.json")
+            if not os.path.exists(wl_path):
+                return {"error": True, "msg": "watchlist.json no encontrado", "items": []}
+            with open(wl_path, "r", encoding="utf-8") as f:
+                watchlist = json.load(f)
+            state = _load_alertas_state()
+            items = []
+            for item in watchlist:
+                tk = str(item.get("ticker") or "").strip()
+                if not tk:
+                    continue
+                tipo = item.get("entry_signal") or ""
+                st = state.get(tk, {}) if isinstance(state, dict) else {}
+                items.append({
+                    "ticker": tk,
+                    "tag": item.get("theme") or "",
+                    "tipo_entrada": tipo,
+                    "precio_trigger": item.get("entry_level"),
+                    "precio_soporte": item.get("support"),
+                    "requiere_cierre_semanal": tipo in ("RR", "RRA"),
+                    "alertado": bool(st.get("alertado", False)),
+                    "fecha_ultima_alerta": st.get("fecha_ultima_alerta"),
+                })
+            return {"items": items, "updated": datetime.now().isoformat()}
+        except Exception as e:
+            print(f"[alertas] ERROR: {e}")
+            return {"error": True, "msg": str(e), "items": []}
 
     def _send_json_cache(self, cache, ttl, compute_fn):
         ERROR_TTL = min(ttl, 900)  # 15 min max for errors (respects short TTLs like prices=120s)
