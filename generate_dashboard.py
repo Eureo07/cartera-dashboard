@@ -8,7 +8,7 @@ import pandas as pd
 import yfinance as yf
 import requests
 import json, math, statistics
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from config_loader import CFG, logger, get_logger
 from screener import calcular_soporte_resistencia, calcular_peg_desde_info
 from per_futuro import get_per_futuro
@@ -34,6 +34,16 @@ def _cargar_ultimos_precios():
         return dict(zip(ultimos["ticker"], ultimos["precio"]))
     except:
         return {}
+
+def _usd_to_eur_rate():
+    """Tipo de cambio USD->EUR (USDEUR=X) para posiciones con currency=USD.
+    Devuelve float o None si falla (la posición degrada sin romper el build)."""
+    try:
+        _fx = yf.Ticker("USDEUR=X", session=_YF_SESSION).info or {}
+        r = _fx.get("regularMarketPrice") or _fx.get("previousClose")
+        return float(r) if r else None
+    except Exception:
+        return None
 
 BLOQUES_TEMATICOS = {
     "N\u00facleo IA": {
@@ -155,7 +165,7 @@ for p in portfolio:
     tk = p["ticker"]
     try:
         entry_dt = datetime.strptime(p["entry_date"], "%d/%m/%Y")
-        start_str = entry_dt.strftime("%Y-%m-%d")
+        start_str = (entry_dt - timedelta(days=20)).strftime("%Y-%m-%d")
         stock = yf.Ticker(tk, session=_YF_SESSION)
         hist = stock.history(start=start_str, auto_adjust=False)
         if hist is not None and len(hist) > 2:
@@ -163,6 +173,17 @@ for p in portfolio:
             if len(close) < 2:
                 log.warning(f"  {tk}: menos de 2 Close validos ({len(close)})")
                 continue
+            if p.get("currency") == "USD":
+                fxr = _usd_to_eur_rate()
+                if fxr:
+                    for col in ("Open", "High", "Low", "Close"):
+                        if col in hist.columns:
+                            hist.loc[:, col] = hist[col] * fxr
+                    close = hist["Close"].dropna()
+                    log.info(f"  {tk}: conversión USD->EUR (fx={fxr:.4f})")
+                else:
+                    p["data_error"] = True
+                    log.warning(f"  {tk}: sin tipo de cambio USD->EUR, usando precio USD")
             price_hist[tk] = close
             full_hist[tk] = hist
             p["current"] = float(close.iloc[-1])
@@ -180,6 +201,10 @@ for p in portfolio:
             raw = info.get("regularMarketPrice") or info.get("previousClose") or info.get("currentPrice")
             if raw is not None:
                 p["current"] = float(raw)
+                if p.get("currency") == "USD":
+                    fxr = _usd_to_eur_rate()
+                    if fxr:
+                        p["current"] *= fxr
             else:
                 cached = ultimos_precios_cache.get(tk)
                 if cached is not None and cached > 0:
@@ -620,6 +645,11 @@ for p in portfolio:
                 if _cur and _rrl_cur and _gfr:
                     prev_close = round(float(_rrl_cur) / 100 * float(_gfr), 3)
                     cur_px = float(_cur)
+            elif tk == "MRNA":
+                # NASDAQ en USD ya convertido a EUR en el bucle principal; el previo
+                # es la vela anterior de la misma serie (herramientas EUR)
+                if len(close_s) >= 2:
+                    prev_close = float(close_s.iloc[-2])
             else:
                 info = yf.Ticker(tk).info or {}
                 ip = info.get("regularMarketPreviousClose") or info.get("previousClose")
@@ -1208,6 +1238,13 @@ for i, p in enumerate(portfolio):
     else:
         signal_cls = "hold"
         signal_txt = "HOLD (seguimiento)"
+    # Satellite badge (posición fuera de método)
+    if p.get("categoria") == "satelite":
+        satellite_badge = ('<div style="display:inline-block;margin-top:8px;font-size:10px;font-weight:700;'
+                           'color:#a855f7;border:1px solid #a855f7;border-radius:4px;padding:2px 8px;'
+                           'letter-spacing:0.5px">SAT\u00c9LITE \u00b7 Fuera de m\u00e9todo</div>')
+    else:
+        satellite_badge = ""
     # Trends
     ma20 = ma20_data.get(tk)
     ma50 = ma50_data.get(tk)
@@ -1314,6 +1351,7 @@ for i, p in enumerate(portfolio):
         <div class="price"><div class="current" id="price-{i}" style="color:{"#e05050" if p["pnl"] < 0 else "#3ecf8e"}"><span class="price-val">{p['current']:.2f}</span> \u20ac{" <span style=\"color:#f0a500;font-size:11px\" title=\"Dato no actualizado\">\u26a0</span>" if p.get("data_error") else ""}</div><div class="pnl {pnl_cls_card}" id="pnl-{i}"><span class="pnl-val">{pnl_sign}{p['pnl']:,.2f}</span> \u20ac (<span class="pnl-pct-val">{pnl_pct_sign}{p['pnl_pct']:.2f}</span>%)</div>{"<div style=\"font-size:11px;color:#9aa0b0;margin-top:-2px\">Rent. real: {:+.2f}% (vs IPC General)</div>".format(p["rent_real_pct"]) if p["rent_real_pct"] is not None and p["inflacion_acum"] is not None else ""}</div>
       </div>
       <div class="signal-badge {signal_cls}">{signal_txt}</div>
+      {satellite_badge}
       <div class="metrics-grid">
         <div class="metric-row"><span class="ml">P. Entrada</span><span class="mv">{p['entry']:.2f} \u20ac</span></div>
         <div class="metric-row"><span class="ml">Stop Loss</span><span class="mv">{p['stop']:.2f} \u20ac</span></div>

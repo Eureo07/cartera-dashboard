@@ -1350,6 +1350,29 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     except Exception as e:
                         print(f"[prices] {tk}: RR.L+FX error: {e}")
                     print(f"[prices] {tk}: RR.L+FX falló, fallback a yfinance Xetra")
+                # MRNA: NASDAQ en USD -> EUR (DEGIRO la muestra en EUR con el FX de la operación)
+                if tk == "MRNA":
+                    _cur = _chart_cur("MRNA")
+                    if _cur is None:
+                        try:
+                            _m_info = yf.Ticker("MRNA", session=_sess).info or {}
+                            _cur = _m_info.get("regularMarketPrice") or _m_info.get("previousClose") or _m_info.get("currentPrice")
+                        except Exception:
+                            _cur = None
+                    _m_prev_usd = None
+                    try:
+                        _m_prev_usd = _get_hist_prev_close("MRNA", _sess)
+                    except Exception:
+                        _m_prev_usd = None
+                    _mx_info = yf.Ticker("USDEUR=X", session=_sess).info or {}
+                    _mfr = _mx_info.get("regularMarketPrice") or _mx_info.get("previousClose")
+                    if _mfr and _cur:
+                        _cur = float(_cur)
+                        _pe = round(float(_m_prev_usd) * float(_mfr), 2) if _m_prev_usd else round(_cur, 2)
+                        _dv = round(_cur - _pe, 2)
+                        print(f"[prices] {tk}: USD+FX -> cur={_cur} prev={_pe} (hist USD={_m_prev_usd} * USDEUR={_mfr}) dv={_dv}")
+                        return (tk, {"current": _cur, "prev_close": _pe, "day_var": _dv})
+                    print(f"[prices] {tk}: USD+FX datos insuficientes, cur={_cur} fx={_mfr} -> best-effort directo")
                 # GENERIC: chart API (v8, urllib) as PRIMARY, mandatory source.
                 # Yahoo bloquea quoteSummary (.info) desde datacenter IPs de Render;
                 # el chart API es la unica via fiable. prev_close = close[-2] del rango 5d.

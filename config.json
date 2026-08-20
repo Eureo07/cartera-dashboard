@@ -3,7 +3,8 @@
     "portfolio": [
         {"ticker": "NVD.DE", "db_ticker": "NVDA", "name": "NVIDIA", "shares": 5, "entry": 182.34, "commission": 3.90, "stop": 140.20, "entry_date": "27/04/2026", "tema_exposicion": "Ciclo IA/Industrial"},
         {"ticker": "RRU.DE", "db_ticker": "RR.L", "name": "Rolls-Royce", "shares": 90, "entry": 16.47, "commission": 3.90, "stop": 12.48, "entry_date": "17/06/2026", "tema_exposicion": "Ciclo IA/Industrial"},
-        {"ticker": "DANR.MI", "db_ticker": null, "name": "Danieli", "shares": 18, "entry": 48.72, "commission": 4.90, "stop": 38.82, "entry_date": "06/05/2026", "tema_exposicion": "Ciclo IA/Industrial"}
+        {"ticker": "DANR.MI", "db_ticker": null, "name": "Danieli", "shares": 18, "entry": 48.72, "commission": 4.90, "stop": 38.82, "entry_date": "06/05/2026", "tema_exposicion": "Ciclo IA/Industrial"},
+        {"ticker": "MRNA", "db_ticker": null, "name": "Moderna", "shares": 1, "entry": 139.73, "commission": 2.35, "stop": 125.76, "entry_date": "19/08/2026", "tema_exposicion": "Satélite / Fuera de método", "currency": "USD", "categoria": "satelite"}
     ],
     "email": {
         "gmail_user": "franlopez.ef@gmail.com",
@@ -169,6 +170,12 @@
             "motivo": "Empresa familiar italiana infravalorada, P/B bajo, especialista en acerías con cartera de pedidos sólida",
             "precio_objetivo": 57.25,
             "condicion_venta": "Si el ciclo del acero se deteriora significativamente"
+        },
+        "MRNA": {
+            "fecha_entrada": "19/08/2026",
+            "motivo": "Compra satélite/intuición — catalizador: datos fase 3 de la vacuna oncológica Moderna/Merck. Fuera de la metodología sistemática (sin tipo de entrada técnico)",
+            "precio_objetivo": "",
+            "condicion_venta": "Stop -10% (125,76 €) o si se invalida el catalizador"
         }
     }
 }
