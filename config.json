@@ -2,9 +2,7 @@
     "base_dir": ".",
     "portfolio": [
         {"ticker": "NVD.DE", "db_ticker": "NVDA", "name": "NVIDIA", "shares": 5, "entry": 182.34, "commission": 3.90, "stop": 140.20, "entry_date": "27/04/2026", "tema_exposicion": "Ciclo IA/Industrial"},
-        {"ticker": "RRU.DE", "db_ticker": "RR.L", "name": "Rolls-Royce", "shares": 90, "entry": 16.47, "commission": 3.90, "stop": 12.48, "entry_date": "17/06/2026", "tema_exposicion": "Ciclo IA/Industrial"},
-        {"ticker": "DANR.MI", "db_ticker": null, "name": "Danieli", "shares": 18, "entry": 48.72, "commission": 4.90, "stop": 38.82, "entry_date": "06/05/2026", "tema_exposicion": "Ciclo IA/Industrial"},
-        {"ticker": "MRNA", "db_ticker": null, "name": "Moderna", "shares": 1, "entry": 139.73, "commission": 2.35, "stop": 125.76, "entry_date": "19/08/2026", "tema_exposicion": "Satélite / Fuera de método", "currency": "USD", "categoria": "satelite"}
+        {"ticker": "DANR.MI", "db_ticker": null, "name": "Danieli", "shares": 18, "entry": 48.72, "commission": 4.90, "stop": 38.82, "entry_date": "06/05/2026", "tema_exposicion": "Ciclo IA/Industrial"}
     ],
     "email": {
         "gmail_user": "franlopez.ef@gmail.com",
@@ -55,36 +53,6 @@
         "logs": "logs"
     },
     "earnings_watchlist": [
-        {
-            "ticker": "RRU.DE",
-            "nombre": "Rolls-Royce",
-            "fecha_earnings": "2026-07-30",
-            "condicion_venta_texto": "Vender si márgenes EBIT caen por debajo del 10%",
-            "metricas": [
-                {
-                    "nombre": "Margen EBIT grupo",
-                    "fmp_campo": "ebitPerRevenue",
-                    "yf_campo": "ebitdaMargins",
-                    "xlsx_campo": "2026 M.EBIT",
-                    "umbral_alerta": 0.15,
-                    "umbral_venta": 0.10,
-                    "descripcion": "Condición de venta si cae por debajo del 10%",
-                    "direccion": "menor_es_peor",
-                    "formato": "porcentaje"
-                },
-                {
-                    "nombre": "PER forward",
-                    "fmp_campo": "priceEarningsRatio",
-                    "yf_campo": "forwardPE",
-                    "xlsx_campo": null,
-                    "umbral_alerta": 35,
-                    "umbral_venta": null,
-                    "descripcion": "Vigilar evolución",
-                    "direccion": "mayor_es_peor",
-                    "formato": "ratio"
-                }
-            ]
-        },
         {
             "ticker": "NVD.DE",
             "nombre": "NVIDIA",
@@ -159,23 +127,11 @@
             "precio_objetivo": 214.25,
             "condicion_venta": "Si AMD supera 25% de cuota en IA o regulación antimonopolio"
         },
-        "RRU.DE": {
-            "fecha_entrada": "17/06/2026",
-            "motivo": "Turnaround completado, contratos TotalCare con visibilidad a largo plazo, exposición a aviación y defensa",
-            "precio_objetivo": 19.35,
-            "condicion_venta": "Si márgenes EBIT caen por debajo del 10%"
-        },
         "DANR.MI": {
             "fecha_entrada": "06/05/2026",
             "motivo": "Empresa familiar italiana infravalorada, P/B bajo, especialista en acerías con cartera de pedidos sólida",
             "precio_objetivo": 57.25,
             "condicion_venta": "Si el ciclo del acero se deteriora significativamente"
-        },
-        "MRNA": {
-            "fecha_entrada": "19/08/2026",
-            "motivo": "Compra satélite/intuición — catalizador: datos fase 3 de la vacuna oncológica Moderna/Merck. Fuera de la metodología sistemática (sin tipo de entrada técnico)",
-            "precio_objetivo": "",
-            "condicion_venta": "Stop -10% (125,76 €) o si se invalida el catalizador"
         }
     }
 }

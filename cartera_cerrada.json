@@ -68,5 +68,33 @@
     "fecha_entrada": "2025-11-17",
     "fecha_cierre": "2026-03-03",
     "regimen_entrada": null
+  },
+  {
+    "operacion": "Rolls-Royce",
+    "entrada": 16.46,
+    "acciones": 90,
+    "coste": 1485.30,
+    "venta": 17.25,
+    "pnl_eur": 63.30,
+    "pnl_pct": 4.26,
+    "precio_soporte_entrada": 12.48,
+    "motivo_cierre": "stop dinámico (≈17,30 €)",
+    "fecha_entrada": "2026-06-17",
+    "fecha_cierre": "2026-08-20",
+    "regimen_entrada": null
+  },
+  {
+    "operacion": "Moderna",
+    "entrada": 139.73,
+    "acciones": 1,
+    "coste": 142.08,
+    "venta": 125.45,
+    "pnl_eur": -18.95,
+    "pnl_pct": -13.34,
+    "precio_soporte_entrada": 125.76,
+    "motivo_cierre": "stoploss automático -10% satélite",
+    "fecha_entrada": "2026-08-19",
+    "fecha_cierre": "2026-08-20",
+    "regimen_entrada": null
   }
 ]
