@@ -98,6 +98,83 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [1780, 220]
+    },
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "35 17 * * 5" }] }
+      },
+      "id": "trigger2",
+      "name": "Cron viernes 17:35 CET (candidatos)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 560]
+    },
+    {
+      "parameters": {
+        "url": "https://TU-APP.onrender.com/api/candidatos",
+        "options": {}
+      },
+      "id": "http4",
+      "name": "GET /api/candidatos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 560]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "items",
+        "options": {}
+      },
+      "id": "split2",
+      "name": "Split candidatos",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [680, 560]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            { "leftValue": "={{$json.signal_active}}", "rightValue": true, "operator": { "type": "boolean", "operation": "equals" } },
+            { "leftValue": "={{$json.alertado}}", "rightValue": false, "operator": { "type": "boolean", "operation": "equals" } }
+          ]
+        }
+      },
+      "id": "if2",
+      "name": "IF candidato relevante",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [900, 560]
+    },
+    {
+      "parameters": {
+        "sendTo": "TU-EMAIL@gmail.com",
+        "subject": "=📋 Candidato watchlist: {{$json.ticker}} cumple el modelo ({{$json.distancia_pct}}% del nivel)",
+        "message": "=Ticker: {{$json.ticker}} ({{$json.name}})\nTipo señal: {{$json.tipo_senal}} — detectadas: {{$json.detected_types.join(', ')}}\nNivel entrada: {{$json.entry_level}}   Stop/soporte: {{$json.stop}}\nDistancia al nivel: {{$json.distancia_pct}}%\nScore watchlist (ROE 50%/EVA 25%/FCF 25%): {{$json.score_watchlist}}\nPER TTM: {{$json.per_ttm}}   PER futuro: {{$json.per_futuro}}   PEG: {{$json.peg}}\nDeuda neta/EBITDA: {{$json.deuda_neta_ebitda}}\nTamaño sugerido: {{$json.tamano_sugerido.num_acciones_max}} acciones (~{{$json.tamano_sugerido.inversion_maxima_eur}}€, capital 10.000€)\n\nAvisos: {{$json.warnings.join('; ')}}\n\nRecuerda confirmar en el dashboard antes de operar (cierre semanal del viernes si aplica).",
+        "options": {}
+      },
+      "id": "gmail2",
+      "name": "Enviar email candidatos",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1120, 480],
+      "credentials": { "gmailOAuth2": { "id": "PENDIENTE", "name": "Gmail account" } }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://TU-APP.onrender.com/api/candidatos/marcar",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"ticker\": $json.ticker } }}",
+        "options": {}
+      },
+      "id": "http5",
+      "name": "POST marcar candidato",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 480]
     }
   ],
   "connections": {
@@ -107,7 +184,12 @@
     "Precio actual Yahoo": { "main": [[{ "node": "Comparar trigger", "type": "main", "index": 0 }]] },
     "Comparar trigger": { "main": [[{ "node": "IF dispara alerta", "type": "main", "index": 0 }]] },
     "IF dispara alerta": { "main": [[{ "node": "Enviar email Gmail", "type": "main", "index": 0 }], []] },
-    "Enviar email Gmail": { "main": [[{ "node": "POST marcar alertado", "type": "main", "index": 0 }]] }
+    "Enviar email Gmail": { "main": [[{ "node": "POST marcar alertado", "type": "main", "index": 0 }]] },
+    "Cron viernes 17:35 CET (candidatos)": { "main": [[{ "node": "GET /api/candidatos", "type": "main", "index": 0 }]] },
+    "GET /api/candidatos": { "main": [[{ "node": "Split candidatos", "type": "main", "index": 0 }]] },
+    "Split candidatos": { "main": [[{ "node": "IF candidato relevante", "type": "main", "index": 0 }]] },
+    "IF candidato relevante": { "main": [[{ "node": "Enviar email candidatos", "type": "main", "index": 0 }], []] },
+    "Enviar email candidatos": { "main": [[{ "node": "POST marcar candidato", "type": "main", "index": 0 }]] }
   },
   "active": false,
   "settings": { "executionOrder": "v1" }

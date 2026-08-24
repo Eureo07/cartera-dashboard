@@ -2386,6 +2386,21 @@ with open(OUT_FILE, "w", encoding="utf-8") as f:
     f.write(html)
 log.info(f"Dashboard generado: {OUT_FILE} ({os.path.getsize(OUT_FILE):,} bytes)")
 
+# ========== DEUDA NETA / EBITDA (solo local, cache para /api/candidatos) ==========
+# yfinance .info esta bloqueado en Render, por eso este calculo solo se hace
+# aqui (ejecucion local) y se cachea; server.py en Render solo lee el cache.
+try:
+    from deuda_ebitda import actualizar_cache as _actualizar_deuda_ebitda_cache
+    _wl_path = os.path.join(CFG["base_dir"], "watchlist.json")
+    if os.path.exists(_wl_path):
+        with open(_wl_path, "r", encoding="utf-8") as _f:
+            _wl_tickers = sorted(set(str(i.get("ticker")) for i in json.load(_f) if i.get("ticker")))
+        log.info(f"Actualizando cache deuda neta/EBITDA para {len(_wl_tickers)} tickers de watchlist...")
+        _actualizar_deuda_ebitda_cache(_wl_tickers)
+        log.info("Cache deuda neta/EBITDA actualizada.")
+except Exception as e:
+    log.warning(f"No se pudo actualizar cache deuda neta/EBITDA: {e}")
+
 # ========== RUN SCREENER ==========
 if not any("skip_screener" in a for a in sys.argv):
     try:

@@ -174,6 +174,37 @@ def val_metric(val, min_v, max_v):
         return val
     return None
 
+# ========== FUNDAMENTALES POR TICKER (sin filtrar universo/portfolio) ==========
+_fundamentales_df_cache = {"df": None}
+
+def obtener_fundamentales(ticker):
+    """Busca ROE/EVA/FCN/ROI (proxy ROIC) de un ticker suelto en el mismo
+    CSV/Excel de Eurekers que usa ejecutar_radar() (EXCEL_FILE), sin filtrar
+    por universo ni portfolio. Solo lectura de fichero local (bundled con el
+    repo) — nunca llama a yfinance .info, por eso es seguro en Render.
+
+    Devuelve dict {"name","sector","roe","eva","fcf","roi"} o None si el
+    ticker no aparece en el fichero."""
+    try:
+        if _fundamentales_df_cache["df"] is None:
+            _fundamentales_df_cache["df"] = pd.read_excel(EXCEL_FILE)
+        df = _fundamentales_df_cache["df"]
+        sec_col = df.columns[4]
+        match = df[df["Ticker"].astype(str).str.strip() == ticker]
+        if match.empty:
+            return None
+        row = match.iloc[0]
+        return {
+            "name": str(row["Empresa"]).strip(),
+            "sector": str(row[sec_col]).strip(),
+            "roe": val_metric(row["2026 ROE"], -500, 500),
+            "eva": val_metric(row["2026 EVA"], -1e12, 1e12),
+            "fcf": val_metric(row["2026 FCN"], -1e12, 1e12),
+            "roi": val_metric(row["2026 ROI"], -500, 500),
+        }
+    except Exception:
+        return None
+
 # ========== DOWNLOAD UNIVERSE ==========
 def download_index_tickers():
     tickers = []

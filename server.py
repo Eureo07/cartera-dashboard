@@ -516,6 +516,11 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         if self.path.split("?")[0] == "/api/alertas":
             self._send_json(self._compute_alertas())
             return
+        # API: Candidatos que cumplen el modelo, para n8n (watchlist.json + alertas_state.json
+        # en caliente, no cache — mismo patron que /api/alertas)
+        if self.path.split("?")[0] == "/api/candidatos":
+            self._send_json(self._compute_candidatos())
+            return
         # API: Fondos indexados (JSON local, sin fuentes externas)
         if self.path.startswith("/api/fondos"):
             self._send_json_cache(_FONDOS_CACHE, _FONDOS_TTL, self._compute_fondos)
@@ -573,7 +578,10 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
         # Marcar ticker como alertado (dedup n8n). Body JSON: {"ticker": "XTN"}
-        if self.path.startswith("/api/alertas/marcar"):
+        # Mismo handler y mismo alertas_state.json (dedup por ticker) para
+        # /api/alertas y /api/candidatos: si un ticker ya se marco desde
+        # cualquiera de los dos flujos, el otro tambien lo respeta.
+        if self.path.startswith("/api/alertas/marcar") or self.path.startswith("/api/candidatos/marcar"):
             self._handle_alertas_marcar()
             return
         self.send_error(405, "Method Not Allowed")
@@ -1003,6 +1011,155 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 json.dump(new_prev, f, indent=2)
         except Exception:
             pass
+
+    def _compute_candidatos(self):
+        """Listado de tickers de watchlist.json que cumplen (o estan cerca
+        de cumplir) el modelo de inversion, para que n8n lo consuma igual
+        que /api/alertas. Deliberadamente NO reutiliza _compute_watchlist_study():
+        esa funcion tiene el efecto lateral de mandar email cuando cambia el
+        estado visual (_wl_check_alerts) y no queremos disparar eso desde
+        aqui, asi que recalcula precio/soporte/distancia con las mismas
+        funciones de base (get_entry_types, calcular_soporte_resistencia).
+
+        Deuda neta/EBITDA solo se lee de deuda_ebitda_cache.json (nunca se
+        recalcula aqui: yfinance .info esta bloqueado en Render, el cache
+        se rellena en local via generate_dashboard.py)."""
+        from screener import get_entry_types, calcular_soporte_resistencia, obtener_fundamentales, get_valuation, normalized_score
+        from position_sizing import calcular_tamano_posicion
+        from deuda_ebitda import get_deuda_neta_ebitda_cacheada
+        try:
+            wl_path = os.path.join(DIR, "watchlist.json")
+            if not os.path.exists(wl_path):
+                return {"error": True, "msg": "watchlist.json no encontrado", "items": []}
+            with open(wl_path, "r", encoding="utf-8") as f:
+                watchlist = json.load(f)
+            state = _load_alertas_state()
+
+            SECTOR_TO_THEME = CFG.get("temas_exposicion", {}).get("sector_to_theme", {})
+            THEMES_CFG = CFG.get("temas_exposicion", {}).get("themes", {})
+            portfolio_theme_counts = {}
+            for p in CFG.get("portfolio", []):
+                tema = p.get("tema_exposicion", "N/D")
+                portfolio_theme_counts[tema] = portfolio_theme_counts.get(tema, 0) + 1
+
+            items = []
+            for item in watchlist:
+                tk = str(item.get("ticker") or "").strip()
+                if not tk:
+                    continue
+                entry_level = item.get("entry_level")
+                entry_signal = item.get("entry_signal") or ""
+
+                cur_price = None
+                try:
+                    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=1d"
+                    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+                    resp = urllib.request.urlopen(req, timeout=10)
+                    chart = json.loads(resp.read())
+                    meta = chart.get("chart", {}).get("result", [{}])[0].get("meta", {})
+                    cur_price = meta.get("regularMarketPrice")
+                    if cur_price is not None:
+                        cur_price = float(cur_price)
+                except Exception:
+                    pass
+                distancia_pct = ((cur_price - entry_level) / entry_level) * 100 if (cur_price and entry_level) else None
+
+                support_val = item.get("support")
+                if support_val is not None:
+                    try:
+                        support_val = float(support_val)
+                    except Exception:
+                        support_val = None
+                if support_val is None:
+                    try:
+                        sv, _, _, sok = calcular_soporte_resistencia(tk)
+                        support_val = sv if sok else None
+                    except Exception:
+                        support_val = None
+
+                try:
+                    detected_types = get_entry_types(tk)
+                except Exception:
+                    detected_types = []
+                signal_active = entry_signal in detected_types
+
+                fund = obtener_fundamentales(tk) or {}
+                roe, eva, fcf, roic = fund.get("roe"), fund.get("eva"), fund.get("fcf"), fund.get("roi")
+
+                try:
+                    per_ttm = get_valuation(tk).get("per")
+                except Exception:
+                    per_ttm = None
+                pfu = get_per_futuro(tk)
+                peg = pfu.get("peg")
+
+                deuda_cache = get_deuda_neta_ebitda_cacheada(tk)
+                deuda_ratio = deuda_cache.get("deuda_neta_ebitda") if deuda_cache else None
+
+                if entry_level and support_val:
+                    tamano = calcular_tamano_posicion(entry_level, support_val, capital_sistema=10000)
+                else:
+                    tamano = {"riesgo_eur": None, "distancia_stop_pct": None, "inversion_maxima_eur": None, "num_acciones_max": None}
+
+                warnings = []
+                if deuda_ratio is None:
+                    warnings.append("Deuda neta/EBITDA no disponible (solo se calcula en la generación local del dashboard)")
+                elif deuda_ratio > 3.5:
+                    warnings.append(f"Deuda neta/EBITDA en zona de precaución ({deuda_ratio}x)")
+                elif deuda_ratio > 2:
+                    warnings.append(f"Deuda neta/EBITDA a vigilar ({deuda_ratio}x)")
+                if roic is not None and roe is not None and roe > 0 and (roic / roe) < 0.5:
+                    warnings.append(f"ROIC ({roic}%) muy por debajo de ROE ({roe}%) — posible apalancamiento")
+                if peg is not None and peg > 2:
+                    warnings.append(f"PEG caro ({peg}x)")
+                tema_candidato = SECTOR_TO_THEME.get(fund.get("sector", ""))
+                if tema_candidato:
+                    count = portfolio_theme_counts.get(tema_candidato, 0)
+                    thresh = THEMES_CFG.get(tema_candidato, {}).get("umbral_concentracion", 2)
+                    if count >= thresh:
+                        warnings.append(f'Concentración temática: ya hay {count} posiciones en "{tema_candidato}"')
+                if item.get("notes"):
+                    warnings.append(item["notes"])
+
+                st = state.get(tk, {}) if isinstance(state, dict) else {}
+                items.append({
+                    "ticker": tk,
+                    "name": item.get("name", tk),
+                    "tipo_senal": entry_signal,
+                    "entry_level": entry_level,
+                    "stop": support_val,
+                    "distancia_pct": round(distancia_pct, 2) if distancia_pct is not None else None,
+                    "signal_active": signal_active,
+                    "detected_types": detected_types,
+                    "roe": roe, "eva": eva, "fcf": fcf, "roic": roic,
+                    "_score_inputs_ok": roe is not None and eva is not None and fcf is not None,
+                    "per_ttm": per_ttm, "per_futuro": pfu.get("fwd_per"), "peg": peg,
+                    "deuda_neta_ebitda": deuda_ratio,
+                    "tamano_sugerido": tamano,
+                    "warnings": warnings,
+                    "alertado": bool(st.get("alertado", False)),
+                    "fecha_ultima_alerta": st.get("fecha_ultima_alerta"),
+                })
+
+            # Score Eurekers (ROE 50% / EVA 25% / FCF 25%) relativo dentro de la
+            # watchlist, reutilizando normalized_score() de screener.py — no es
+            # comparable con el score del radar de universo completo.
+            validos = [it for it in items if it["_score_inputs_ok"]]
+            if validos:
+                n_roe = normalized_score(pd.Series([it["roe"] for it in validos]))
+                n_eva = normalized_score(pd.Series([it["eva"] for it in validos]))
+                n_fcf = normalized_score(pd.Series([it["fcf"] for it in validos]))
+                for it, r, e, fcv in zip(validos, n_roe, n_eva, n_fcf):
+                    it["score_watchlist"] = round(float(r * 0.5 + e * 0.25 + fcv * 0.25), 3)
+            for it in items:
+                it.setdefault("score_watchlist", None)
+                del it["_score_inputs_ok"]
+
+            items.sort(key=lambda it: (it["distancia_pct"] is None, abs(it["distancia_pct"]) if it["distancia_pct"] is not None else 0))
+            return {"items": items, "updated": datetime.now().isoformat()}
+        except Exception as e:
+            print(f"[candidatos] ERROR: {e}")
+            return {"error": True, "msg": str(e), "items": []}
 
     def _compute_fondos(self):
         """Lee fondos_indexados.json, actualiza precios via scraping/yfinance, calcula valor_actual."""
