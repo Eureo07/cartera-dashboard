@@ -410,6 +410,95 @@ def calcular_soporte_resistencia(ticker, hist_data=None, periodo='1y'):
     except Exception:
         return None, None, None, False
 
+# ========== ASCENDING TRENDLINE (LTA) ==========
+def calcular_trendline_lta(ticker, hist_data=None, periodo='2y'):
+    """Ajusta una recta de tendencia ascendente sobre minimos crecientes
+    (pivot lows) y proyecta su valor a la sesion mas reciente. Generica y
+    reutilizable para cualquier ticker con senal LT/LTA, no solo para un
+    ticker concreto.
+
+    Logica:
+    - Pivot low en i: low[i] es el minimo de la ventana [i-5, i+5] (pivot
+      confirmado por barras a ambos lados).
+    - Recorre los pivots cronologicamente construyendo la secuencia
+      ascendente mas reciente: cada pivot debe superar al anterior de la
+      secuencia; uno que no la supera la reinicia (nueva secuencia desde ahi).
+    - Ajusta una regresion lineal por minimos cuadrados sobre los pivots mas
+      recientes de esa secuencia (hasta 4, minimo 2 si no hay mas) y
+      proyecta el valor de la recta a la ultima sesion disponible.
+    - Invalidacion: si algun cierre posterior al ultimo pivot usado ha
+      cerrado mas de un 2% por debajo de la recta proyectada en su fecha
+      (misma tolerancia que usa calcular_soporte_resistencia), valido=False.
+
+    Devuelve dict {"valor_actual", "pendiente", "puntos_ancla", "valido"}.
+    Todo None/[]/False si no hay datos o pivots suficientes."""
+    vacio = {"valor_actual": None, "pendiente": None, "puntos_ancla": [], "valido": False}
+    try:
+        hist = hist_data
+        if hist is None:
+            stock = yf.Ticker(ticker, session=_YF_SESSION)
+            hist = stock.history(period=periodo, auto_adjust=False)
+        if hist is None or hist.empty or len(hist) < 30:
+            return vacio
+        lows = hist['Low'].values.astype(float)
+        closes = hist['Close'].values.astype(float)
+        dates = hist.index
+        n = len(lows)
+
+        window = 5
+        pivot_idxs = []
+        for i in range(window, n - window):
+            seg = lows[i - window:i + window + 1]
+            if lows[i] == seg.min():
+                pivot_idxs.append(i)
+        if len(pivot_idxs) < 2:
+            return vacio
+
+        # Secuencia ascendente mas reciente (se reinicia si un pivot rompe por debajo)
+        seq = [pivot_idxs[0]]
+        for idx in pivot_idxs[1:]:
+            if lows[idx] > lows[seq[-1]]:
+                seq.append(idx)
+            else:
+                seq = [idx]
+        if len(seq) < 2:
+            return vacio
+
+        anchor_idxs = seq[-4:] if len(seq) >= 4 else seq
+        origen = dates[anchor_idxs[0]]
+        xs = [(dates[i] - origen).days for i in anchor_idxs]
+        ys = [float(lows[i]) for i in anchor_idxs]
+        m = len(xs)
+        sum_x = sum(xs); sum_y = sum(ys)
+        sum_xy = sum(x * y for x, y in zip(xs, ys))
+        sum_x2 = sum(x * x for x in xs)
+        denom = m * sum_x2 - sum_x * sum_x
+        if denom == 0:
+            return vacio
+        pendiente = (m * sum_xy - sum_x * sum_y) / denom
+        intercepto = (sum_y - pendiente * sum_x) / m
+
+        x_last = (dates[-1] - origen).days
+        valor_actual = intercepto + pendiente * x_last
+
+        valido = True
+        for i in range(anchor_idxs[-1] + 1, n):
+            x_i = (dates[i] - origen).days
+            linea_i = intercepto + pendiente * x_i
+            if closes[i] < linea_i * 0.98:
+                valido = False
+                break
+
+        puntos_ancla = [(dates[i].strftime('%Y-%m-%d'), round(float(lows[i]), 4)) for i in anchor_idxs]
+        return {
+            "valor_actual": round(float(valor_actual), 4),
+            "pendiente": round(float(pendiente), 6),
+            "puntos_ancla": puntos_ancla,
+            "valido": valido,
+        }
+    except Exception:
+        return vacio
+
 # ========== SCREENING ==========
 RADAR_CACHE = CFG["paths"]["radar_prev"]  # radar_prev.json
 

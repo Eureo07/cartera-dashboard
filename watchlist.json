@@ -83,5 +83,13 @@
     "entry_level": 173.96,
     "entry_signal": "RR",
     "theme": "Momentum/Mid Cap"
+  },
+  {
+    "ticker": "ITX.MC",
+    "name": "Inditex",
+    "entry_level": 59.04,
+    "entry_signal": "RR",
+    "theme": "Consumo doméstico",
+    "notes": "Ruptura de máximo histórico 59.04€, confirmación de cierre semanal (viernes) por encima del nivel. Rama LTA pendiente: sin trendline ascendente válida por ahora (ver sanity check calcular_trendline_lta)."
   }
 ]

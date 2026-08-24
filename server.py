@@ -643,7 +643,9 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         Lee ambos JSON en caliente por request (server.py es proceso vivo e independiente
         del build estático de generate_dashboard.py), sin llamadas de red.
         requiere_cierre_semanal = true para entradas RR/RRA (se confirman en cierre
-        semanal del viernes según la metodología)."""
+        semanal del viernes según la metodología), o para cualquier entrada con
+        "requiere_cierre_semanal_manual": true en watchlist.json (p.ej. una LTA
+        que también exige confirmación de cierre semanal)."""
         try:
             wl_path = os.path.join(DIR, "watchlist.json")
             if not os.path.exists(wl_path):
@@ -664,7 +666,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     "tipo_entrada": tipo,
                     "precio_trigger": item.get("entry_level"),
                     "precio_soporte": item.get("support"),
-                    "requiere_cierre_semanal": tipo in ("RR", "RRA"),
+                    "requiere_cierre_semanal": tipo in ("RR", "RRA") or bool(item.get("requiere_cierre_semanal_manual")),
                     "alertado": bool(st.get("alertado", False)),
                     "fecha_ultima_alerta": st.get("fecha_ultima_alerta"),
                 })
