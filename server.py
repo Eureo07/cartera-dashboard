@@ -1087,9 +1087,12 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 roe, eva, fcf, roic = fund.get("roe"), fund.get("eva"), fund.get("fcf"), fund.get("roi")
 
                 try:
-                    per_ttm = get_valuation(tk).get("per")
+                    valuation = get_valuation(tk)
+                    per_ttm = valuation.get("per")
+                    pb = valuation.get("pb")
                 except Exception:
                     per_ttm = None
+                    pb = None
                 pfu = get_per_futuro(tk)
                 peg = pfu.get("peg")
 
@@ -1112,6 +1115,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     warnings.append(f"ROIC ({roic}%) muy por debajo de ROE ({roe}%) — posible apalancamiento")
                 if peg is not None and peg > 2:
                     warnings.append(f"PEG caro ({peg}x)")
+                if pb is not None and pb > 5:
+                    warnings.append(f"P/B elevado ({pb:.2f}x)")
                 tema_candidato = SECTOR_TO_THEME.get(fund.get("sector", ""))
                 if tema_candidato:
                     count = portfolio_theme_counts.get(tema_candidato, 0)
@@ -1133,7 +1138,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     "detected_types": detected_types,
                     "roe": roe, "eva": eva, "fcf": fcf, "roic": roic,
                     "_score_inputs_ok": roe is not None and eva is not None and fcf is not None,
-                    "per_ttm": per_ttm, "per_futuro": pfu.get("fwd_per"), "peg": peg,
+                    "per_ttm": per_ttm, "per_futuro": pfu.get("fwd_per"), "peg": peg, "pb": pb,
                     "deuda_neta_ebitda": deuda_ratio,
                     "tamano_sugerido": tamano,
                     "warnings": warnings,

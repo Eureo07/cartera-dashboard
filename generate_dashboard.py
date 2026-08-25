@@ -838,6 +838,36 @@ try:
 except Exception as e:
     log.error(f"  Benchmark error: {e}")
 
+# ========== INDICE DE REFERENCIA POR POSICION ==========
+# Metrica nueva por posicion (retorno de la posicion desde su entrada vs
+# retorno de SU indice desde esa misma fecha) - no sustituye al KPI
+# agregado de arriba. Mapeo fijo en config.json (indices_referencia,
+# mismo patron que temas_exposicion); fallback a Euro Stoxx 50 marcado
+# como aproximacion si el ticker no tiene mapeo explicito.
+log.info("Calculando indice de referencia por posicion...")
+INDICES_REF_CFG = CFG.get("indices_referencia", {})
+INDICES_REF_MAPEO = INDICES_REF_CFG.get("mapeo", {})
+INDICES_REF_DEFAULT = INDICES_REF_CFG.get("default", {"simbolo": "^STOXX50E", "nombre": "Euro Stoxx 50 (aprox.)"})
+indice_ref_por_posicion = {}
+for p in portfolio:
+    ref = INDICES_REF_MAPEO.get(p["ticker"], INDICES_REF_DEFAULT)
+    simbolo = ref["simbolo"]
+    try:
+        p_entry_dt = datetime.strptime(p["entry_date"], "%d/%m/%Y").strftime("%Y-%m-%d")
+        idx_hist = yf.download(simbolo, start=p_entry_dt, progress=False, auto_adjust=False, session=_YF_SESSION)
+        if idx_hist is not None and not idx_hist.empty:
+            if isinstance(idx_hist.columns, pd.MultiIndex):
+                idx_close = idx_hist.xs(simbolo, level=1, axis=1)["Close"]
+            else:
+                idx_close = idx_hist["Close"] if "Close" in idx_hist.columns else idx_hist.iloc[:, 0]
+            idx_close = idx_close.dropna()
+            if len(idx_close) >= 2:
+                idx_ret = (float(idx_close.iloc[-1]) / float(idx_close.iloc[0]) - 1) * 100
+                indice_ref_por_posicion[p["ticker"]] = {"nombre": ref["nombre"], "retorno_pct": round(idx_ret, 2)}
+                log.info(f"  {p['ticker']} vs {ref['nombre']} ({simbolo}): {idx_ret:+.2f}% desde {p_entry_dt}")
+    except Exception as e:
+        log.warning(f"  Indice referencia {p['ticker']} ({simbolo}): error - {e}")
+
 # ========== CORRELATION MATRIX ==========
 log.info("Computing correlation matrix...")
 corr_tickers = [p["ticker"] for p in portfolio if p["ticker"]]
@@ -1186,6 +1216,7 @@ for i, p in enumerate(portfolio):
     v = valuation.get(tk, {})
     per = v.get("per")
     pb_val = v.get("pb")
+    idx_ref = indice_ref_por_posicion.get(tk)
     fwd_per = v.get("fwd_per")
     peg_val = v.get("peg")
     beta_val = v.get("beta")
@@ -1361,6 +1392,7 @@ for i, p in enumerate(portfolio):
         <div class="metric-row"><span class="ml">PER Fwd{desc("PER estimado con beneficios futuros")}</span><span class="mv">{f"{fwd_per:.1f}x" if fwd_per else "N/D"}{_manual_badge(fwd_per_fuente)}</span></div>
         <div class="metric-row"><span class="ml">PEG{desc("PER / crecimiento EPS. &lt;1 barato relativo a su crecimiento, 1-2 razonable, &gt;2 caro")}</span><span class="mv {peg_cls}">{peg_str}{_manual_badge(peg_fuente)}{" <span style=\"color:#f0a500;font-size:9px;margin-left:4px\">\u26a0 PEG alto</span>" if peg_val and peg_val > 2 else ""}</span></div>
         <div class="metric-row"><span class="ml">P/B{desc("Precio respecto al valor contable. &lt;1 infravalorado")}</span><span class="mv {"warn" if (pb_val or 99) > 5 else ("pos" if pb_val and pb_val <= 3 else "")}">{f"{pb_val:.2f}" if pb_val else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">vs {idx_ref['nombre'] if idx_ref else 'índice'}{desc("Retorno de la posición desde su entrada frente al retorno de su índice de referencia en el mismo periodo")}</span><span class="mv {"pos" if idx_ref and (p["pnl_pct"] - idx_ref["retorno_pct"]) >= 0 else ("neg" if idx_ref else "")}">{f"{(p['pnl_pct'] - idx_ref['retorno_pct']):+.2f}pp" if idx_ref else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">Beta{desc(beta_desc)}</span><span class="mv {beta_cls}">{beta_str}</span></div>
         <div class="metric-row"><span class="ml">ROE 2026{desc("Rentabilidad sobre fondos propios")}</span><span class="mv {"pos" if (roe_val or 0) >= 15 else ("warn" if (roe_val or 0) >= 5 else "neg")}">{f"{roe_val:.1f}%" if roe_val else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">FCF 2026{desc("Caja generada tras inversiones")}</span><span class="mv {fcf_cls}">{f"{fcf_val/1_000_000:,.0f}M \u20ac" if fcf_val else "N/D"}</span></div>

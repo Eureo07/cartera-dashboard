@@ -44,6 +44,15 @@
             }
         }
     },
+    "indices_referencia": {
+        "mapeo": {
+            "NVD.DE": {"simbolo": "^GSPC", "nombre": "S&P 500"},
+            "RRU.DE": {"simbolo": "^FTSE", "nombre": "FTSE 100"},
+            "DANR.MI": {"simbolo": "FTSEMIB.MI", "nombre": "FTSE MIB"},
+            "ITX.MC": {"simbolo": "^IBEX", "nombre": "IBEX 35"}
+        },
+        "default": {"simbolo": "^STOXX50E", "nombre": "Euro Stoxx 50 (aprox.)"}
+    },
     "paths": {
         "excel": "fin_data_final.xlsx",
         "dashboard": "dashboard.html",
