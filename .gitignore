@@ -7,3 +7,4 @@ fin_data_mega.*
 .env
 .venv/
 venv/
+.claude/settings.local.json
