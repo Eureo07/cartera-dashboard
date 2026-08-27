@@ -91,5 +91,15 @@
     "entry_signal": "RR",
     "theme": "Consumo doméstico",
     "notes": "Ruptura de máximo histórico 59.04€, confirmación de cierre semanal (viernes) por encima del nivel. Rama LTA pendiente: sin trendline ascendente válida por ahora (ver sanity check calcular_trendline_lta)."
+  },
+  {
+    "ticker": "RRU.DE",
+    "name": "Rolls-Royce",
+    "entry_signal": "LT",
+    "entry_level": 15.69,
+    "support": 12.48,
+    "stop": 12.09,
+    "requiere_cierre_semanal_manual": true,
+    "notes": "Entrada por línea de tendencia ascendente (pendiente 0.7514). Posición anterior cerrada; monitorizar reentrada solo con retroceso a la línea y confirmación de cierre semanal (viernes)."
   }
 ]

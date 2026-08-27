@@ -279,6 +279,43 @@ def _save_live_prices(data):
 _WL_CACHE = {"data": None, "updated": None}
 _WL_TTL = 300  # 5 min
 
+# Cache de calcular_trendline_lta() por ticker, compartida entre _compute_alertas,
+# _compute_candidatos y _compute_watchlist_study. TTL largo porque la trendline
+# no cambia intradia -- evita descargar historico de yfinance (~2s/ticker) en
+# cada request a /api/alertas (que no tiene cache propia).
+_TRENDLINE_LTA_CACHE = {}
+_TRENDLINE_LTA_TTL = 6 * 3600  # 6h
+
+def _get_trendline_lta_cached(ticker):
+    from screener import calcular_trendline_lta
+    now = datetime.now()
+    entry = _TRENDLINE_LTA_CACHE.get(ticker)
+    if entry and (now - entry["updated"]).total_seconds() < _TRENDLINE_LTA_TTL:
+        return entry["data"]
+    data = calcular_trendline_lta(ticker)
+    _TRENDLINE_LTA_CACHE[ticker] = {"data": data, "updated": now}
+    return data
+
+def _resolver_nivel_lta(item):
+    """Para entradas LT/LTA, resuelve el nivel de entrada operativo contra la
+    trendline recalculada en vivo (cacheada, ver arriba), no el entry_level
+    estatico de watchlist.json. entry_level se conserva solo como metadato
+    informativo (cuando se detecto la senal por primera vez).
+    Devuelve (nivel, fuente) donde fuente es 'trendline' | 'manual_fallback' | 'fijo'.
+    Para RR/RRA/otros, nivel = entry_level tal cual (fuente 'fijo')."""
+    entry_level = item.get("entry_level")
+    tipo = item.get("entry_signal") or ""
+    if tipo not in ("LT", "LTA"):
+        return entry_level, "fijo"
+    tk = str(item.get("ticker") or "").strip()
+    try:
+        trend = _get_trendline_lta_cached(tk)
+    except Exception:
+        trend = None
+    if trend and trend.get("valido") and trend.get("valor_actual") is not None:
+        return trend["valor_actual"], "trendline"
+    return entry_level, "manual_fallback"
+
 # ========== ALERTAS STATE (dedup para n8n) ==========
 # Estado separado de watchlist.json: solo alertado/fecha_ultima_alerta por ticker.
 # Si un ticker de watchlist.json no tiene entrada aqui, se trata como alertado=false.
@@ -649,7 +686,9 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
     def _compute_alertas(self):
         """Estado de señales para n8n: entrada activa = toda entrada de watchlist.json.
         Lee ambos JSON en caliente por request (server.py es proceso vivo e independiente
-        del build estático de generate_dashboard.py), sin llamadas de red.
+        del build estático de generate_dashboard.py). Para LT/LTA, precio_trigger
+        viene de la trendline recalculada en vivo (cacheada 6h, ver _resolver_nivel_lta),
+        no de entry_level -- eso solo se expone como entry_level_detectado, informativo.
         requiere_cierre_semanal = true para entradas RR/RRA (se confirman en cierre
         semanal del viernes según la metodología), o para cualquier entrada con
         "requiere_cierre_semanal_manual": true en watchlist.json (p.ej. una LTA
@@ -667,12 +706,15 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 if not tk:
                     continue
                 tipo = item.get("entry_signal") or ""
+                nivel, nivel_fuente = _resolver_nivel_lta(item)
                 st = state.get(tk, {}) if isinstance(state, dict) else {}
                 items.append({
                     "ticker": tk,
                     "tag": item.get("theme") or "",
                     "tipo_entrada": tipo,
-                    "precio_trigger": item.get("entry_level"),
+                    "precio_trigger": nivel,
+                    "entry_level_detectado": item.get("entry_level"),
+                    "nivel_fuente": nivel_fuente,
                     "precio_soporte": item.get("support"),
                     "requiere_cierre_semanal": tipo in ("RR", "RRA") or bool(item.get("requiere_cierre_semanal_manual")),
                     "alertado": bool(st.get("alertado", False)),
@@ -845,8 +887,9 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             results = []
             for item in watchlist:
                 tk = item["ticker"]
-                entry_level = item["entry_level"]
                 entry_signal = item["entry_signal"]
+                entry_level, nivel_fuente = _resolver_nivel_lta(item)
+                entry_level_detectado = item.get("entry_level")
                 proximity_entry = item.get("proximity_entry", False)
                 proximity_pct = item.get("proximity_pct", 5)
                 # 1) Current price via chart API
@@ -941,6 +984,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     "ticker": tk,
                     "name": item.get("name", tk),
                     "entry_level": entry_level,
+                    "entry_level_detectado": entry_level_detectado,
+                    "nivel_fuente": nivel_fuente,
                     "entry_signal": entry_signal,
                     "current_price": cur_price,
                     "distance_pct": round(dist_pct, 2) if dist_pct is not None else None,
@@ -950,6 +995,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     "proximity_pct": proximity_pct if proximity_entry else None,
                     "support": support_val,
                     "support_ok": support_ok,
+                    "stop": item.get("stop", support_val),
                     "f1_ok": f1_ok,
                     "f2_ok": f2_ok,
                     "f3_ok": f3_ok,
@@ -1047,8 +1093,9 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 tk = str(item.get("ticker") or "").strip()
                 if not tk:
                     continue
-                entry_level = item.get("entry_level")
                 entry_signal = item.get("entry_signal") or ""
+                entry_level, nivel_fuente = _resolver_nivel_lta(item)
+                entry_level_detectado = item.get("entry_level")
 
                 cur_price = None
                 try:
@@ -1077,6 +1124,19 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     except Exception:
                         support_val = None
 
+                # "stop" es el nivel operativo de riesgo (puede ser distinto del
+                # soporte técnico, p.ej. soporte menos margen). Si watchlist.json
+                # no lo especifica, se usa el soporte como stop (comportamiento
+                # previo, sin cambios para entradas existentes).
+                stop_val = item.get("stop")
+                if stop_val is not None:
+                    try:
+                        stop_val = float(stop_val)
+                    except Exception:
+                        stop_val = None
+                if stop_val is None:
+                    stop_val = support_val
+
                 try:
                     detected_types = get_entry_types(tk)
                 except Exception:
@@ -1099,8 +1159,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 deuda_cache = get_deuda_neta_ebitda_cacheada(tk)
                 deuda_ratio = deuda_cache.get("deuda_neta_ebitda") if deuda_cache else None
 
-                if entry_level and support_val:
-                    tamano = calcular_tamano_posicion(entry_level, support_val, capital_sistema=10000)
+                if entry_level and stop_val:
+                    tamano = calcular_tamano_posicion(entry_level, stop_val, capital_sistema=10000)
                 else:
                     tamano = {"riesgo_eur": None, "distancia_stop_pct": None, "inversion_maxima_eur": None, "num_acciones_max": None}
 
@@ -1132,7 +1192,10 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     "name": item.get("name", tk),
                     "tipo_senal": entry_signal,
                     "entry_level": entry_level,
-                    "stop": support_val,
+                    "entry_level_detectado": entry_level_detectado,
+                    "nivel_fuente": nivel_fuente,
+                    "stop": stop_val,
+                    "support": support_val,
                     "distancia_pct": round(distancia_pct, 2) if distancia_pct is not None else None,
                     "signal_active": signal_active,
                     "detected_types": detected_types,
