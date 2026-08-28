@@ -2007,7 +2007,7 @@ function renderCuenta(data) {
   if (data.error) {
     c.innerHTML = '<div class="ew-loading">Cuenta no disponible</div>'; return;
   }
-  var taePct = data.tae_actual.toFixed(0) + '%';
+  var taePct = data.tae_actual.toFixed(2).replace(/\.?0+$/, '') + '%';
   var saldoLabel = data.saldo_desactualizado
     ? 'Saldo a ' + data.fecha_ultima_actualizacion
     : 'Saldo actual';

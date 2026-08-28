@@ -1,7 +1,9 @@
 {
   "entidad": "Trade Republic",
   "saldo_actual": 30089.33,
-  "tae_actual": 3.0,
+  "tae_actual": 2.25,
+  "tae_anterior": 3.0,
+  "tae_efectiva_desde": "2026-08-27",
   "historico_saldos": [
     {"fecha": "2026-07-03", "saldo": 30089.33}
   ],

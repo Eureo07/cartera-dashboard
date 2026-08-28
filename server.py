@@ -1477,7 +1477,27 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             fecha_inicio = date.fromisoformat(data["fecha_inicio_tracking"]) if data.get("fecha_inicio_tracking") else hoy
             inicio_mes_efectivo = max(primer_dia_mes, fecha_inicio)
             dias_mes = (hoy - inicio_mes_efectivo).days + 1
-            interes_mes_actual = round(interes_diario * dias_mes, 2)
+            # Si hay un cambio de TAE registrado dentro de la ventana del mes en curso,
+            # parte el devengo en dos tramos (tae_anterior antes del corte, tae_actual
+            # desde el corte) en vez de aplicar el TAE actual a todo el mes -- evita
+            # falsear retroactivamente los dias ya devengados al tipo anterior.
+            fecha_cambio_str = data.get("tae_efectiva_desde")
+            tae_anterior = data.get("tae_anterior")
+            if fecha_cambio_str and tae_anterior is not None:
+                fecha_cambio = date.fromisoformat(fecha_cambio_str)
+                if inicio_mes_efectivo < fecha_cambio <= hoy:
+                    dias_antes = (fecha_cambio - inicio_mes_efectivo).days
+                    dias_despues = (hoy - fecha_cambio).days + 1
+                    interes_antes = saldo_actual * (tae_anterior / 100) / 365 * dias_antes
+                    interes_despues = saldo_actual * (data["tae_actual"] / 100) / 365 * dias_despues
+                    interes_mes_actual = round(interes_antes + interes_despues, 2)
+                elif hoy < fecha_cambio:
+                    # El cambio aun no ha entrado en vigor: todo el tramo devenga al tipo anterior
+                    interes_mes_actual = round(saldo_actual * (tae_anterior / 100) / 365 * dias_mes, 2)
+                else:
+                    interes_mes_actual = round(interes_diario * dias_mes, 2)
+            else:
+                interes_mes_actual = round(interes_diario * dias_mes, 2)
             fecha_str = ultima_fecha.strftime("%d/%m/%Y")
             result = {
                 "entidad": data.get("entidad", ""),
