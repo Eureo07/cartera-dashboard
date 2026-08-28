@@ -863,7 +863,16 @@ for p in portfolio:
             idx_close = idx_close.dropna()
             if len(idx_close) >= 2:
                 idx_ret = (float(idx_close.iloc[-1]) / float(idx_close.iloc[0]) - 1) * 100
-                indice_ref_por_posicion[p["ticker"]] = {"nombre": ref["nombre"], "retorno_pct": round(idx_ret, 2)}
+                entry_ref = {"nombre": ref["nombre"], "retorno_pct": round(idx_ret, 2)}
+                # Retorno anualizado del indice, mismo umbral (30 dias) y mismo
+                # periodo (p["days"]) que el CAGR de la posicion (p["cagr"],
+                # calculado arriba) -- no se anualiza el delta bruto directamente,
+                # se anualiza cada retorno por separado y se resta despues.
+                if p.get("days", 0) >= 30 and p.get("cagr") is not None:
+                    idx_anual_pct = ((1 + idx_ret / 100) ** (365 / p["days"]) - 1) * 100
+                    entry_ref["retorno_anualizado_pct"] = round(idx_anual_pct, 2)
+                    entry_ref["delta_anualizado_pp"] = round(p["cagr"] * 100 - idx_anual_pct, 2)
+                indice_ref_por_posicion[p["ticker"]] = entry_ref
                 log.info(f"  {p['ticker']} vs {ref['nombre']} ({simbolo}): {idx_ret:+.2f}% desde {p_entry_dt}")
     except Exception as e:
         log.warning(f"  Indice referencia {p['ticker']} ({simbolo}): error - {e}")
@@ -1393,6 +1402,7 @@ for i, p in enumerate(portfolio):
         <div class="metric-row"><span class="ml">PEG{desc("PER / crecimiento EPS. &lt;1 barato relativo a su crecimiento, 1-2 razonable, &gt;2 caro")}</span><span class="mv {peg_cls}">{peg_str}{_manual_badge(peg_fuente)}{" <span style=\"color:#f0a500;font-size:9px;margin-left:4px\">\u26a0 PEG alto</span>" if peg_val and peg_val > 2 else ""}</span></div>
         <div class="metric-row"><span class="ml">P/B{desc("Precio respecto al valor contable. &lt;1 infravalorado")}</span><span class="mv {"warn" if (pb_val or 99) > 5 else ("pos" if pb_val and pb_val <= 3 else "")}">{f"{pb_val:.2f}" if pb_val else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">vs {idx_ref['nombre'] if idx_ref else 'índice'}{desc("Retorno de la posición desde su entrada frente al retorno de su índice de referencia en el mismo periodo")}</span><span class="mv {"pos" if idx_ref and (p["pnl_pct"] - idx_ref["retorno_pct"]) >= 0 else ("neg" if idx_ref else "")}">{f"{(p['pnl_pct'] - idx_ref['retorno_pct']):+.2f}pp" if idx_ref else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">vs {idx_ref['nombre'] if idx_ref else 'índice'} (anualizado){desc("Mismo retorno pero anualizado por separado (posición e índice) antes de restar — permite comparar el ritmo entre posiciones con distinta antigüedad. Solo a partir de 30 días en posición, mismo umbral que el CAGR")}</span><span class="mv {"pos" if idx_ref and idx_ref.get("delta_anualizado_pp") is not None and idx_ref["delta_anualizado_pp"] >= 0 else ("neg" if idx_ref and idx_ref.get("delta_anualizado_pp") is not None else "")}">{f"{idx_ref['delta_anualizado_pp']:+.2f}pp" if idx_ref and idx_ref.get("delta_anualizado_pp") is not None else "N/D (<30d)"}</span></div>
         <div class="metric-row"><span class="ml">Beta{desc(beta_desc)}</span><span class="mv {beta_cls}">{beta_str}</span></div>
         <div class="metric-row"><span class="ml">ROE 2026{desc("Rentabilidad sobre fondos propios")}</span><span class="mv {"pos" if (roe_val or 0) >= 15 else ("warn" if (roe_val or 0) >= 5 else "neg")}">{f"{roe_val:.1f}%" if roe_val else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">FCF 2026{desc("Caja generada tras inversiones")}</span><span class="mv {fcf_cls}">{f"{fcf_val/1_000_000:,.0f}M \u20ac" if fcf_val else "N/D"}</span></div>

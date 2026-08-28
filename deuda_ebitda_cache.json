@@ -1,19 +1,19 @@
 {
   "ACS.MC": {
     "deuda_neta_ebitda": 0.2,
-    "fecha_actualizacion": "2026-08-28T15:51:28.724007"
+    "fecha_actualizacion": "2026-08-28T16:17:18.894108"
   },
   "GOOGL": {
     "deuda_neta_ebitda": -0.7,
-    "fecha_actualizacion": "2026-08-28T15:51:28.724007"
+    "fecha_actualizacion": "2026-08-28T16:17:18.894108"
   },
   "ITX.MC": {
     "deuda_neta_ebitda": -0.5,
-    "fecha_actualizacion": "2026-08-28T15:51:28.724007"
+    "fecha_actualizacion": "2026-08-28T16:17:18.894108"
   },
   "SAF.PA": {
     "deuda_neta_ebitda": -0.26,
-    "fecha_actualizacion": "2026-08-28T15:51:28.724007"
+    "fecha_actualizacion": "2026-08-28T16:17:18.894108"
   },
   "THEON.AS": {
     "deuda_neta_ebitda": -1.09,
@@ -21,10 +21,10 @@
   },
   "XPO": {
     "deuda_neta_ebitda": 2.71,
-    "fecha_actualizacion": "2026-08-28T15:51:28.724007"
+    "fecha_actualizacion": "2026-08-28T16:17:18.894108"
   },
   "RRU.DE": {
     "deuda_neta_ebitda": -0.41,
-    "fecha_actualizacion": "2026-08-28T15:51:28.724007"
+    "fecha_actualizacion": "2026-08-28T16:17:18.894108"
   }
 }
