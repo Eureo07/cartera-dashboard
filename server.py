@@ -279,12 +279,16 @@ def _save_live_prices(data):
 _WL_CACHE = {"data": None, "updated": None}
 _WL_TTL = 300  # 5 min
 
-# Cache de calcular_trendline_lta() por ticker, compartida entre _compute_alertas,
-# _compute_candidatos y _compute_watchlist_study. TTL largo porque la trendline
-# no cambia intradia -- evita descargar historico de yfinance (~2s/ticker) en
-# cada request a /api/alertas (que no tiene cache propia).
+# Cache de calcular_trendline_lta()/calcular_media_movil_entrada() por ticker,
+# compartida entre _compute_alertas, _compute_candidatos y _compute_watchlist_study.
+# TTL largo porque ninguna de las dos cambia intradia -- evita descargar
+# historico de yfinance (~2s/ticker) en cada request a /api/alertas (que no
+# tiene cache propia). Caches separadas: un ticker puede tener entradas LT y
+# MA a la vez (ej. RRU.DE), cada una con su propio calculo.
 _TRENDLINE_LTA_CACHE = {}
 _TRENDLINE_LTA_TTL = 6 * 3600  # 6h
+_MEDIA_MOVIL_CACHE = {}
+_MEDIA_MOVIL_TTL = 6 * 3600  # 6h
 
 def _get_trendline_lta_cached(ticker):
     from screener import calcular_trendline_lta
@@ -296,18 +300,65 @@ def _get_trendline_lta_cached(ticker):
     _TRENDLINE_LTA_CACHE[ticker] = {"data": data, "updated": now}
     return data
 
-def _resolver_nivel_lta(item):
-    """Para entradas LT/LTA, resuelve el nivel de entrada operativo contra la
-    trendline recalculada en vivo (cacheada, ver arriba), no el entry_level
-    estatico de watchlist.json. entry_level se conserva solo como metadato
-    informativo (cuando se detecto la senal por primera vez).
-    Devuelve (nivel, fuente) donde fuente es 'trendline' | 'manual_fallback' | 'fijo'.
-    Para RR/RRA/otros, nivel = entry_level tal cual (fuente 'fijo')."""
+def _get_media_movil_cached(ticker):
+    from screener import calcular_media_movil_entrada
+    now = datetime.now()
+    entry = _MEDIA_MOVIL_CACHE.get(ticker)
+    if entry and (now - entry["updated"]).total_seconds() < _MEDIA_MOVIL_TTL:
+        return entry["data"]
+    data = calcular_media_movil_entrada(ticker)
+    _MEDIA_MOVIL_CACHE[ticker] = {"data": data, "updated": now}
+    return data
+
+_ATR14_CACHE = {}
+_ATR14_TTL = 6 * 3600  # 6h
+
+def _get_atr14_cached(ticker):
+    from screener import calcular_atr14
+    now = datetime.now()
+    entry = _ATR14_CACHE.get(ticker)
+    if entry and (now - entry["updated"]).total_seconds() < _ATR14_TTL:
+        return entry["data"]
+    data = calcular_atr14(ticker)
+    _ATR14_CACHE[ticker] = {"data": data, "updated": now}
+    return data
+
+def _fetch_precio_actual(ticker):
+    """Precio actual via Yahoo chart API, mismo patron que el resto de
+    endpoints de este fichero. Devuelve float o None."""
+    try:
+        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?interval=1d&range=1d"
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
+        resp = urllib.request.urlopen(req, timeout=10)
+        chart = json.loads(resp.read())
+        meta = chart.get("chart", {}).get("result", [{}])[0].get("meta", {})
+        price = meta.get("regularMarketPrice")
+        return float(price) if price is not None else None
+    except Exception:
+        return None
+
+def _resolver_nivel_senal(item):
+    """Para entradas LT/LTA/MA, resuelve el nivel de entrada operativo contra
+    el calculo en vivo correspondiente (trendline o EMA20 semanal, ambos
+    cacheados 6h), no el entry_level estatico de watchlist.json. entry_level
+    se conserva solo como metadato informativo (cuando se detecto la senal
+    por primera vez).
+    Devuelve (nivel, fuente) donde fuente es 'trendline' | 'media_movil' |
+    'manual_fallback' | 'fijo'. Para RR/RRA/otros, nivel = entry_level tal
+    cual (fuente 'fijo')."""
     entry_level = item.get("entry_level")
     tipo = item.get("entry_signal") or ""
+    tk = str(item.get("ticker") or "").strip()
+    if tipo == "MA":
+        try:
+            ma = _get_media_movil_cached(tk)
+        except Exception:
+            ma = None
+        if ma and ma.get("valido") and ma.get("valor_actual") is not None:
+            return ma["valor_actual"], "media_movil"
+        return entry_level, "manual_fallback"
     if tipo not in ("LT", "LTA"):
         return entry_level, "fijo"
-    tk = str(item.get("ticker") or "").strip()
     try:
         trend = _get_trendline_lta_cached(tk)
     except Exception:
@@ -633,9 +684,14 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(body.encode("utf-8"))
 
     def _handle_alertas_marcar(self):
-        """Marca un ticker como alertado. Acepta JSON body {"ticker": "XTN"}
-        o query param ?ticker=XTN. Idempotente: repetir solo actualiza la fecha."""
+        """Marca un ticker como alertado (confirmacion) o vigilando (aviso de
+        proximidad). Acepta JSON body {"ticker": "XTN"} o {"ticker": "XTN",
+        "tipo": "vigilancia"}, o query params ?ticker=XTN&tipo=vigilancia.
+        Sin "tipo" (o tipo distinto de "vigilancia") marca confirmacion,
+        igual que antes. Idempotente. Los dos flags (alertado/vigilando) son
+        independientes -- marcar uno no borra el otro."""
         ticker = None
+        tipo = None
         error = None
         body_raw = b""
         try:
@@ -649,17 +705,19 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 payload = json.loads(body_raw.decode("utf-8"))
                 if isinstance(payload, dict):
                     ticker = str(payload.get("ticker") or "").strip()
+                    tipo = payload.get("tipo")
                 else:
                     error = "Body JSON debe ser un objeto"
             except (json.JSONDecodeError, ValueError):
                 error = "Body JSON invalido"
-        if not error and not ticker:
+        if not error and (not ticker or tipo is None):
             qs = self.path.split("?", 1)[1] if "?" in self.path else ""
-            for p in qs.split("&"):
-                if p.startswith("ticker="):
-                    import urllib.parse
-                    ticker = urllib.parse.unquote(p.split("=", 1)[1]).strip()
-                    break
+            import urllib.parse
+            params = dict(p.split("=", 1) for p in qs.split("&") if "=" in p)
+            if not ticker:
+                ticker = urllib.parse.unquote(params.get("ticker", "")).strip()
+            if tipo is None and "tipo" in params:
+                tipo = urllib.parse.unquote(params["tipo"])
         if not error and not ticker:
             error = "Falta el campo 'ticker'"
         if error:
@@ -678,16 +736,27 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             return
         state = _load_alertas_state()
         now_iso = datetime.now().isoformat()
-        state[ticker] = {"alertado": True, "fecha_ultima_alerta": now_iso}
-        _save_alertas_state(state)
-        print(f"[alertas] marcar {ticker} -> alertado (fecha {now_iso})")
-        self._send_json({"ok": True, "ticker": ticker, "alertado": True, "fecha_ultima_alerta": now_iso})
+        entry = state.get(ticker, {}) if isinstance(state, dict) else {}
+        if tipo == "vigilancia":
+            entry["vigilando"] = True
+            entry["fecha_ultima_vigilancia"] = now_iso
+            state[ticker] = entry
+            _save_alertas_state(state)
+            print(f"[alertas] marcar {ticker} -> vigilando (fecha {now_iso})")
+            self._send_json({"ok": True, "ticker": ticker, "vigilando": True, "fecha_ultima_vigilancia": now_iso})
+        else:
+            entry["alertado"] = True
+            entry["fecha_ultima_alerta"] = now_iso
+            state[ticker] = entry
+            _save_alertas_state(state)
+            print(f"[alertas] marcar {ticker} -> alertado (fecha {now_iso})")
+            self._send_json({"ok": True, "ticker": ticker, "alertado": True, "fecha_ultima_alerta": now_iso})
 
     def _compute_alertas(self):
         """Estado de señales para n8n: entrada activa = toda entrada de watchlist.json.
         Lee ambos JSON en caliente por request (server.py es proceso vivo e independiente
         del build estático de generate_dashboard.py). Para LT/LTA, precio_trigger
-        viene de la trendline recalculada en vivo (cacheada 6h, ver _resolver_nivel_lta),
+        viene de la trendline recalculada en vivo (cacheada 6h, ver _resolver_nivel_senal),
         no de entry_level -- eso solo se expone como entry_level_detectado, informativo.
         requiere_cierre_semanal = true para entradas RR/RRA (se confirman en cierre
         semanal del viernes según la metodología), o para cualquier entrada con
@@ -700,14 +769,42 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             with open(wl_path, "r", encoding="utf-8") as f:
                 watchlist = json.load(f)
             state = _load_alertas_state()
+            state_dirty = False
             items = []
             for item in watchlist:
                 tk = str(item.get("ticker") or "").strip()
                 if not tk:
                     continue
                 tipo = item.get("entry_signal") or ""
-                nivel, nivel_fuente = _resolver_nivel_lta(item)
+                nivel, nivel_fuente = _resolver_nivel_senal(item)
                 st = state.get(tk, {}) if isinstance(state, dict) else {}
+                alertado = bool(st.get("alertado", False))
+                vigilando = bool(st.get("vigilando", False))
+
+                # Aviso de proximidad (solo LT/LTA/MA, nivel dinamico): banda
+                # de 1xATR14 alrededor del nivel resuelto en vivo. "confirmada"
+                # una vez ya disparo la alerta real; "vigilar" si esta dentro
+                # de la banda sin confirmar todavia; None si esta lejos.
+                estado_lta = None
+                atr_val = None
+                if tipo in ("LT", "LTA", "MA"):
+                    if alertado:
+                        estado_lta = "confirmada"
+                    elif nivel is not None:
+                        atr_info = _get_atr14_cached(tk)
+                        atr_val = atr_info.get("atr")
+                        cur_price = _fetch_precio_actual(tk)
+                        if cur_price is not None and atr_info.get("valido"):
+                            if abs(cur_price - nivel) <= atr_val:
+                                estado_lta = "vigilar"
+                            elif vigilando:
+                                # salio de la banda sin confirmar: resetea el
+                                # flag para poder volver a avisar si se acerca de nuevo
+                                vigilando = False
+                                state.setdefault(tk, {})
+                                state[tk]["vigilando"] = False
+                                state_dirty = True
+
                 items.append({
                     "ticker": tk,
                     "tag": item.get("theme") or "",
@@ -717,9 +814,15 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     "nivel_fuente": nivel_fuente,
                     "precio_soporte": item.get("support"),
                     "requiere_cierre_semanal": tipo in ("RR", "RRA") or bool(item.get("requiere_cierre_semanal_manual")),
-                    "alertado": bool(st.get("alertado", False)),
+                    "alertado": alertado,
                     "fecha_ultima_alerta": st.get("fecha_ultima_alerta"),
+                    "estado_lta": estado_lta,
+                    "atr14": atr_val,
+                    "vigilando": vigilando,
+                    "fecha_ultima_vigilancia": st.get("fecha_ultima_vigilancia"),
                 })
+            if state_dirty:
+                _save_alertas_state(state)
             return {"items": items, "updated": datetime.now().isoformat()}
         except Exception as e:
             print(f"[alertas] ERROR: {e}")
@@ -888,7 +991,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             for item in watchlist:
                 tk = item["ticker"]
                 entry_signal = item["entry_signal"]
-                entry_level, nivel_fuente = _resolver_nivel_lta(item)
+                entry_level, nivel_fuente = _resolver_nivel_senal(item)
                 entry_level_detectado = item.get("entry_level")
                 proximity_entry = item.get("proximity_entry", False)
                 proximity_pct = item.get("proximity_pct", 5)
@@ -1094,7 +1197,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 if not tk:
                     continue
                 entry_signal = item.get("entry_signal") or ""
-                entry_level, nivel_fuente = _resolver_nivel_lta(item)
+                entry_level, nivel_fuente = _resolver_nivel_senal(item)
                 entry_level_detectado = item.get("entry_level")
 
                 cur_price = None

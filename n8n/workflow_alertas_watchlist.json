@@ -46,7 +46,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const alerta = $('Split tickers').item.json;\nconst priceData = $json;\n\nlet currentPrice = null;\ntry {\n  currentPrice = priceData.chart.result[0].meta.regularMarketPrice;\n} catch(e) {}\n\nconst today = new Date();\nconst isFriday = today.getDay() === 5;\n\nlet condicionCumplida = false;\n\nif (alerta.tipo_entrada === 'LT' || alerta.tipo_entrada === 'LTA') {\n  if (currentPrice !== null && alerta.precio_trigger) {\n    condicionCumplida = currentPrice <= alerta.precio_trigger * 1.01;\n    if (alerta.requiere_cierre_semanal && !isFriday) {\n      condicionCumplida = false;\n    }\n  }\n} else if (alerta.tipo_entrada === 'RR' || alerta.tipo_entrada === 'RRA') {\n  if (currentPrice !== null && alerta.precio_trigger) {\n    condicionCumplida = currentPrice >= alerta.precio_trigger;\n    if (alerta.requiere_cierre_semanal && !isFriday) {\n      condicionCumplida = false;\n    }\n  }\n}\n\nreturn [{\n  json: {\n    ...alerta,\n    precio_actual: currentPrice,\n    condicion_cumplida: condicionCumplida,\n    es_viernes: isFriday\n  }\n}];"
+        "jsCode": "const alerta = $('Split tickers').item.json;\nconst priceData = $json;\n\nlet currentPrice = null;\ntry {\n  currentPrice = priceData.chart.result[0].meta.regularMarketPrice;\n} catch(e) {}\n\nconst today = new Date();\nconst isFriday = today.getDay() === 5;\n\nlet condicionCumplida = false;\n\nif (alerta.tipo_entrada === 'LT' || alerta.tipo_entrada === 'LTA' || alerta.tipo_entrada === 'MA') {\n  if (currentPrice !== null && alerta.precio_trigger) {\n    condicionCumplida = currentPrice <= alerta.precio_trigger * 1.01;\n    if (alerta.requiere_cierre_semanal && !isFriday) {\n      condicionCumplida = false;\n    }\n  }\n} else if (alerta.tipo_entrada === 'RR' || alerta.tipo_entrada === 'RRA') {\n  if (currentPrice !== null && alerta.precio_trigger) {\n    condicionCumplida = currentPrice >= alerta.precio_trigger;\n    if (alerta.requiere_cierre_semanal && !isFriday) {\n      condicionCumplida = false;\n    }\n  }\n}\n\nreturn [{\n  json: {\n    ...alerta,\n    precio_actual: currentPrice,\n    condicion_cumplida: condicionCumplida,\n    es_viernes: isFriday\n  }\n}];"
       },
       "id": "code1",
       "name": "Comparar trigger",
@@ -98,6 +98,51 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [1780, 220]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            { "leftValue": "={{$json.estado_lta}}", "rightValue": "vigilar", "operator": { "type": "string", "operation": "equals" } },
+            { "leftValue": "={{$json.vigilando}}", "rightValue": false, "operator": { "type": "boolean", "operation": "equals" } }
+          ]
+        }
+      },
+      "id": "if3",
+      "name": "IF vigilar",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1340, 400]
+    },
+    {
+      "parameters": {
+        "sendTo": "TU-EMAIL@gmail.com",
+        "subject": "=👁 Vigilar {{$json.ticker}}: acercándose a su línea de tendencia",
+        "message": "=Ticker: {{$json.ticker}}\nTag: {{$json.tag}}\nTipo señal: {{$json.tipo_entrada}}\nNivel ({{$json.nivel_fuente}}): {{$json.precio_trigger}}\nPrecio actual: {{$json.precio_actual}}\nATR(14): {{$json.atr14}}\nDistancia al nivel: {{ Math.abs($json.precio_actual - $json.precio_trigger).toFixed(4) }} € ({{ (Math.abs($json.precio_actual - $json.precio_trigger) / $json.atr14).toFixed(2) }}x ATR)\n\nTodavía NO ha confirmado — esto es un aviso de acercamiento, no de entrada. La confirmación real llega por separado con el cierre semanal del viernes por encima del nivel.",
+        "options": {}
+      },
+      "id": "gmail3",
+      "name": "Enviar email vigilar",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1560, 400],
+      "credentials": { "gmailOAuth2": { "id": "PENDIENTE", "name": "Gmail account" } }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://TU-APP.onrender.com/api/alertas/marcar",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"ticker\": $json.ticker, \"tipo\": \"vigilancia\" } }}",
+        "options": {}
+      },
+      "id": "http6",
+      "name": "POST marcar vigilancia",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 400]
     },
     {
       "parameters": {
@@ -182,9 +227,11 @@
     "GET /api/alertas": { "main": [[{ "node": "Split tickers", "type": "main", "index": 0 }]] },
     "Split tickers": { "main": [[{ "node": "Precio actual Yahoo", "type": "main", "index": 0 }]] },
     "Precio actual Yahoo": { "main": [[{ "node": "Comparar trigger", "type": "main", "index": 0 }]] },
-    "Comparar trigger": { "main": [[{ "node": "IF dispara alerta", "type": "main", "index": 0 }]] },
+    "Comparar trigger": { "main": [[{ "node": "IF dispara alerta", "type": "main", "index": 0 }, { "node": "IF vigilar", "type": "main", "index": 0 }]] },
     "IF dispara alerta": { "main": [[{ "node": "Enviar email Gmail", "type": "main", "index": 0 }], []] },
     "Enviar email Gmail": { "main": [[{ "node": "POST marcar alertado", "type": "main", "index": 0 }]] },
+    "IF vigilar": { "main": [[{ "node": "Enviar email vigilar", "type": "main", "index": 0 }], []] },
+    "Enviar email vigilar": { "main": [[{ "node": "POST marcar vigilancia", "type": "main", "index": 0 }]] },
     "Cron viernes 17:35 CET (candidatos)": { "main": [[{ "node": "GET /api/candidatos", "type": "main", "index": 0 }]] },
     "GET /api/candidatos": { "main": [[{ "node": "Split candidatos", "type": "main", "index": 0 }]] },
     "Split candidatos": { "main": [[{ "node": "IF candidato relevante", "type": "main", "index": 0 }]] },

@@ -26,3 +26,28 @@ El campo `deuda_neta_ebitda` solo se rellena si se ha ejecutado
 está bloqueado en Render); si no hay cache, sale `null` y el candidato
 lleva un aviso "no disponible" en `warnings`, sin bloquear el resto de
 criterios.
+
+## Rama de "vigilar" (proximidad ATR, señales LT/LTA/MA)
+
+Para entradas `LT`/`LTA`/`MA` (nivel dinámico, no fijo como RR/RRA),
+`/api/alertas` calcula `estado_lta`: `"vigilar"` si el precio está dentro
+de 1×ATR(14) del nivel resuelto en vivo (trendline o EMA20 semanal) y
+todavía no ha confirmado, `"confirmada"` si ya disparó la alerta real,
+`null` si está lejos. La rama "IF vigilar" (paralela a "IF dispara
+alerta", ambas cuelgan del mismo nodo "Comparar trigger") envía un email
+distinto — asunto "👁 Vigilar..." en vez de "🔔 Alerta..." — cuando
+`estado_lta === "vigilar"` y `vigilando === false`, y marca el ticker con
+`POST /api/alertas/marcar {"ticker":..., "tipo":"vigilancia"}`.
+
+Este flag (`vigilando`) es independiente del flag de confirmación
+(`alertado`) en `alertas_state.json` — marcar uno no borra el otro, y
+`vigilando` se resetea solo cuando el precio sale de la banda de 1 ATR sin
+haber confirmado, para poder volver a avisar si se vuelve a acercar más
+adelante.
+
+**RRU.DE es el primer caso con dos entradas activas a la vez** (`LT` y
+`MA`, mismo ticker) — comparten el dedup de confirmación por ticker en
+`alertas_state.json` (la primera que confirme marca ambas como
+`alertado`), pero el aviso de "vigilar" es independiente por señal: pueden
+avisar las dos, una, o ninguna, según lo cerca que esté el precio de cada
+nivel.

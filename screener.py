@@ -303,6 +303,12 @@ def get_entry_types(ticker):
     # PER: current between low52 and low52 + 10%
     if low52 <= current <= low52 * 1.10:
         types.append("PER")
+    # MA: precio dentro de +/-5% de la EMA20 semanal, fuera de zona de minimos
+    # (mismo guard que LT, evita marcar MA en plena caida libre)
+    ma = calcular_media_movil_entrada(ticker, hist_data=hist)
+    if ma["valido"] and abs(current - ma["valor_actual"]) / ma["valor_actual"] <= 0.05 \
+       and current > low52 + 0.20 * (high52 - low52):
+        types.append("MA")
     return types
 
 # ========== ADVANCED TECHNICAL FILTERS (weekly) ==========
@@ -527,6 +533,78 @@ def calcular_trendline_lta(ticker, hist_data=None, periodo='2y'):
             "puntos_ancla": puntos_ancla,
             "valido": valido,
         }
+    except Exception:
+        return vacio
+
+# ========== MOVING AVERAGE ENTRY (MA) ==========
+def calcular_media_movil_entrada(ticker, hist_data=None, periodo='2y'):
+    """EMA de 20 semanas sobre cierres diarios resampleados a semanal
+    (viernes). Alternativa a calcular_trendline_lta() para tendencias muy
+    verticales que no retroceden hasta tocar una linea de pivots.
+
+    Elegida frente a SMA(50 diaria) tras comparacion empirica (menos
+    whipsaws en tickers de tendencia fuerte como RRU.DE/NVD.DE).
+
+    Devuelve dict {"valor_actual", "distancia_pct", "valido"}.
+    valido=False si hay menos de 20 semanas de historial."""
+    vacio = {"valor_actual": None, "distancia_pct": None, "valido": False}
+    try:
+        hist = hist_data
+        if hist is None:
+            stock = yf.Ticker(ticker, session=_YF_SESSION)
+            hist = stock.history(period=periodo, auto_adjust=False)
+        if hist is None or hist.empty:
+            return vacio
+        close = hist['Close'].dropna()
+        if len(close) < 2:
+            return vacio
+        weekly = close.resample('W-FRI').last().dropna()
+        if len(weekly) < 20:
+            return vacio
+        ema20 = weekly.ewm(span=20, adjust=False).mean()
+        valor_actual = float(ema20.iloc[-1])
+        current = float(close.iloc[-1])
+        distancia_pct = (current - valor_actual) / valor_actual * 100
+        return {
+            "valor_actual": round(valor_actual, 4),
+            "distancia_pct": round(distancia_pct, 2),
+            "valido": True,
+        }
+    except Exception:
+        return vacio
+
+# ========== ATR (proximidad LT/LTA/MA) ==========
+def calcular_atr14(ticker, hist_data=None, periodo='1y'):
+    """ATR de 14 sesiones sobre historico diario. True Range = max(high-low,
+    |high-cierre_anterior|, |low-cierre_anterior|), ATR = media movil de 14
+    sesiones. Usado para la banda de proximidad del aviso "vigilar" en
+    senales LT/LTA/MA (banda = 1xATR alrededor del nivel resuelto en vivo).
+
+    Devuelve dict {"atr": float|None, "valido": bool}."""
+    vacio = {"atr": None, "valido": False}
+    try:
+        hist = hist_data
+        if hist is None:
+            stock = yf.Ticker(ticker, session=_YF_SESSION)
+            hist = stock.history(period=periodo, auto_adjust=False)
+        if hist is None or hist.empty or len(hist) < 15:
+            return vacio
+        highs = hist['High'].dropna()
+        lows = hist['Low'].dropna()
+        closes = hist['Close'].dropna()
+        df = pd.DataFrame({'High': highs, 'Low': lows, 'Close': closes}).dropna()
+        if len(df) < 15:
+            return vacio
+        prev_close = df['Close'].shift(1)
+        tr = pd.concat([
+            df['High'] - df['Low'],
+            (df['High'] - prev_close).abs(),
+            (df['Low'] - prev_close).abs(),
+        ], axis=1).max(axis=1)
+        atr = tr.rolling(14).mean().iloc[-1]
+        if pd.isna(atr):
+            return vacio
+        return {"atr": round(float(atr), 4), "valido": True}
     except Exception:
         return vacio
 

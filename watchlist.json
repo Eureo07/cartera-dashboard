@@ -101,5 +101,15 @@
     "stop": 12.09,
     "requiere_cierre_semanal_manual": true,
     "notes": "Entrada por línea de tendencia ascendente (pendiente 0.7514). Posición anterior cerrada; monitorizar reentrada solo con retroceso a la línea y confirmación de cierre semanal (viernes)."
+  },
+  {
+    "ticker": "RRU.DE",
+    "name": "Rolls-Royce",
+    "entry_signal": "MA",
+    "entry_level": 16.26,
+    "support": 12.48,
+    "stop": 12.09,
+    "requiere_cierre_semanal_manual": true,
+    "notes": "Señal MA (EMA20 semanal) — alternativa a LT para tendencia muy vertical que puede no retroceder hasta la línea de pivots. Exclusión mutua con la entrada LT vía alertas_state.json (mismo ticker)."
   }
 ]
