@@ -1,0 +1,5634 @@
+[
+  {
+    "ticker": "GDDY",
+    "nombre": "GoDaddy Inc.",
+    "indice": "S&P 500",
+    "roe": 442.86,
+    "fcf_musd": 1205.0,
+    "deuda_neta_ebitda": 1.91,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "STX",
+    "nombre": "Seagate Technology Holdings PLC",
+    "indice": "S&P 500",
+    "roe": 371.53,
+    "fcf_musd": 1943.8,
+    "deuda_neta_ebitda": 0.49,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "RMV.L",
+    "nombre": "RIGHTMOVE PLC ORD 0.1P",
+    "indice": "FTSE 250",
+    "roe": 282.36,
+    "fcf_musd": 193.4,
+    "deuda_neta_ebitda": -0.1,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MA",
+    "nombre": "Mastercard Incorporated",
+    "indice": "S&P 500",
+    "roe": 241.2,
+    "fcf_musd": 16961.3,
+    "deuda_neta_ebitda": 0.59,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "TPR",
+    "nombre": "Tapestry, Inc.",
+    "indice": "S&P 500",
+    "roe": 197.13,
+    "fcf_musd": 1399.9,
+    "deuda_neta_ebitda": 1.39,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "HALO",
+    "nombre": "Halozyme Therapeutics, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 173.67,
+    "fcf_musd": 337.3,
+    "deuda_neta_ebitda": 1.85,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "BA",
+    "nombre": "Boeing Company (The)",
+    "indice": "S&P 500",
+    "roe": 173.54,
+    "fcf_musd": 5625.4,
+    "deuda_neta_ebitda": -10.02,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "HAS",
+    "nombre": "Hasbro, Inc.",
+    "indice": "S&P 500",
+    "roe": 159.56,
+    "fcf_musd": 688.2,
+    "deuda_neta_ebitda": 1.92,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AAPL",
+    "nombre": "Apple Inc.",
+    "indice": "S&P 500",
+    "roe": 148.75,
+    "fcf_musd": 107721.9,
+    "deuda_neta_ebitda": 0.13,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "WKL.AS",
+    "nombre": "WOLTERS KLUWER",
+    "indice": "AEX",
+    "roe": 146.14,
+    "fcf_musd": 1247.9,
+    "deuda_neta_ebitda": 2.08,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "REN.AS",
+    "nombre": "RELX",
+    "indice": "AEX",
+    "roe": 131.86,
+    "fcf_musd": 2232.4,
+    "deuda_neta_ebitda": 2.64,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "REL.L",
+    "nombre": "RELX PLC ORD 14 51/116P",
+    "indice": "FTSE 100",
+    "roe": 131.86,
+    "fcf_musd": 2232.4,
+    "deuda_neta_ebitda": 2.64,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "WDC",
+    "nombre": "Western Digital Corporation",
+    "indice": "S&P 500",
+    "roe": 130.85,
+    "fcf_musd": 2268.8,
+    "deuda_neta_ebitda": -0.08,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "DRR.AX",
+    "nombre": "DETERRA RE FPO [DRR]",
+    "indice": "ASX 200",
+    "roe": 122.86,
+    "fcf_musd": 258.7,
+    "deuda_neta_ebitda": 0.58,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "LOV.AX",
+    "nombre": "LOVISA FPO [LOV]",
+    "indice": "ASX 200",
+    "roe": 122.15,
+    "fcf_musd": 150.6,
+    "deuda_neta_ebitda": 2.12,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "IT",
+    "nombre": "Gartner, Inc.",
+    "indice": "S&P 500",
+    "roe": 113.58,
+    "fcf_musd": 1052.6,
+    "deuda_neta_ebitda": 1.33,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "NTAP",
+    "nombre": "NetApp, Inc.",
+    "indice": "S&P 500",
+    "roe": 106.73,
+    "fcf_musd": 1295.3,
+    "deuda_neta_ebitda": -0.45,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "KMB",
+    "nombre": "Kimberly-Clark Corporation",
+    "indice": "S&P 500",
+    "roe": 104.91,
+    "fcf_musd": 941.1,
+    "deuda_neta_ebitda": 1.6,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "L1G.AX",
+    "nombre": "L1 GROUP FPO [L1G]",
+    "indice": "ASX 200",
+    "roe": 102.73,
+    "fcf_musd": 338.8,
+    "deuda_neta_ebitda": -0.23,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "DOL.TO",
+    "nombre": "DOLLARAMA INC",
+    "indice": "TSX 60",
+    "roe": 99.47,
+    "fcf_musd": 1060.7,
+    "deuda_neta_ebitda": 2.83,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "COKE",
+    "nombre": "Coca-Cola Consolidated, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 97.33,
+    "fcf_musd": 443.5,
+    "deuda_neta_ebitda": 0.88,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "COR",
+    "nombre": "Cencora, Inc.",
+    "indice": "S&P 500",
+    "roe": 96.87,
+    "fcf_musd": 2043.3,
+    "deuda_neta_ebitda": 2.1,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MANH",
+    "nombre": "Manhattan Associates, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 96.38,
+    "fcf_musd": 321.1,
+    "deuda_neta_ebitda": -0.46,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "SNDK",
+    "nombre": "Sandisk Corporation",
+    "indice": "S&P 500",
+    "roe": 91.64,
+    "fcf_musd": 7720.9,
+    "deuda_neta_ebitda": -0.36,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MSI",
+    "nombre": "Motorola Solutions, Inc.",
+    "indice": "S&P 500",
+    "roe": 91.57,
+    "fcf_musd": 1979.0,
+    "deuda_neta_ebitda": 2.37,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "AMGN",
+    "nombre": "Amgen Inc.",
+    "indice": "S&P 500",
+    "roe": 91.47,
+    "fcf_musd": 8645.6,
+    "deuda_neta_ebitda": 2.51,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "EXPE",
+    "nombre": "Expedia Group, Inc.",
+    "indice": "S&P 500",
+    "roe": 89.49,
+    "fcf_musd": 3434.4,
+    "deuda_neta_ebitda": -0.5,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "LMT",
+    "nombre": "Lockheed Martin Corporation",
+    "indice": "S&P 500",
+    "roe": 89.17,
+    "fcf_musd": 5562.6,
+    "deuda_neta_ebitda": 1.73,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "KLAC",
+    "nombre": "KLA Corporation",
+    "indice": "S&P 500",
+    "roe": 87.5,
+    "fcf_musd": 2624.6,
+    "deuda_neta_ebitda": 0.21,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MUSA",
+    "nombre": "Murphy USA Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 86.39,
+    "fcf_musd": 386.8,
+    "deuda_neta_ebitda": 2.1,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "DNLM.L",
+    "nombre": "DUNELM GROUP PLC ORD 1P",
+    "indice": "FTSE 250",
+    "roe": 86.09,
+    "fcf_musd": 163.9,
+    "deuda_neta_ebitda": 1.0,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GEV",
+    "nombre": "GE Vernova Inc.",
+    "indice": "S&P 500",
+    "roe": 82.58,
+    "fcf_musd": 15722.1,
+    "deuda_neta_ebitda": -2.29,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PME.AX",
+    "nombre": "PROMEDICUS FPO [PME]",
+    "indice": "ASX 200",
+    "roe": 74.97,
+    "fcf_musd": 98.9,
+    "deuda_neta_ebitda": -1.27,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "FOUR.L",
+    "nombre": "4IMPRINT GROUP PLC ORD 38 6/13P",
+    "indice": "FTSE 250",
+    "roe": 70.09,
+    "fcf_musd": 88.4,
+    "deuda_neta_ebitda": -0.96,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "WMG",
+    "nombre": "Warner Music Group Corp.",
+    "indice": "S&P MidCap 400",
+    "roe": 70.07,
+    "fcf_musd": 382.2,
+    "deuda_neta_ebitda": 2.57,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BAH",
+    "nombre": "Booz Allen Hamilton Holding Cor",
+    "indice": "S&P MidCap 400",
+    "roe": 68.64,
+    "fcf_musd": 860.9,
+    "deuda_neta_ebitda": 2.88,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GAW.L",
+    "nombre": "GAMES WORKSHOP GROUP PLC ORD 5P",
+    "indice": "FTSE 100",
+    "roe": 66.87,
+    "fcf_musd": 178.3,
+    "deuda_neta_ebitda": -0.43,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MU",
+    "nombre": "Micron Technology, Inc.",
+    "indice": "S&P 500",
+    "roe": 66.64,
+    "fcf_musd": 7639.5,
+    "deuda_neta_ebitda": -0.29,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "JBL",
+    "nombre": "Jabil Inc.",
+    "indice": "S&P 500",
+    "roe": 65.88,
+    "fcf_musd": 1211.6,
+    "deuda_neta_ebitda": 1.08,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SHW",
+    "nombre": "Sherwin-Williams Company (The)",
+    "indice": "S&P 500",
+    "roe": 65.12,
+    "fcf_musd": 2506.0,
+    "deuda_neta_ebitda": 3.13,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "LRCX",
+    "nombre": "Lam Research Corporation",
+    "indice": "S&P 500",
+    "roe": 65.07,
+    "fcf_musd": 3090.5,
+    "deuda_neta_ebitda": -0.17,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CHWY",
+    "nombre": "Chewy, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 63.82,
+    "fcf_musd": 463.3,
+    "deuda_neta_ebitda": 0.01,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ADBE",
+    "nombre": "Adobe Inc.",
+    "indice": "S&P 500",
+    "roe": 62.95,
+    "fcf_musd": 9218.4,
+    "deuda_neta_ebitda": 0.15,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ALFA.L",
+    "nombre": "ALFA FINANCIAL SOFTWARE HOLDING",
+    "indice": "FTSE 250",
+    "roe": 61.49,
+    "fcf_musd": 25.1,
+    "deuda_neta_ebitda": -0.45,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "V",
+    "nombre": "Visa Inc.",
+    "indice": "S&P 500",
+    "roe": 61.19,
+    "fcf_musd": 20404.0,
+    "deuda_neta_ebitda": 0.32,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "AUTO.L",
+    "nombre": "AUTOTRADER GROUP PLC ORD 1P",
+    "indice": "FTSE 100",
+    "roe": 60.2,
+    "fcf_musd": 243.7,
+    "deuda_neta_ebitda": 0.48,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CVNA",
+    "nombre": "Carvana Co.",
+    "indice": "S&P 500",
+    "roe": 58.77,
+    "fcf_musd": 424.4,
+    "deuda_neta_ebitda": 1.02,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BYIT.L",
+    "nombre": "BYTES TECHNOLOGY GROUP PLC ORD ",
+    "indice": "FTSE 250",
+    "roe": 57.25,
+    "fcf_musd": 39.1,
+    "deuda_neta_ebitda": -1.49,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "CAT",
+    "nombre": "Caterpillar, Inc.",
+    "indice": "S&P 500",
+    "roe": 56.97,
+    "fcf_musd": 5049.0,
+    "deuda_neta_ebitda": 2.41,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "FIX",
+    "nombre": "Comfort Systems USA, Inc.",
+    "indice": "S&P 500",
+    "roe": 55.29,
+    "fcf_musd": 1841.9,
+    "deuda_neta_ebitda": 0.12,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "WSM",
+    "nombre": "Williams-Sonoma, Inc.",
+    "indice": "S&P 500",
+    "roe": 54.96,
+    "fcf_musd": 1069.3,
+    "deuda_neta_ebitda": 0.3,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PEGA",
+    "nombre": "Pegasystems Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 54.69,
+    "fcf_musd": 507.4,
+    "deuda_neta_ebitda": -1.38,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "LTMC.MI",
+    "nombre": "LOTTOMATICA GROUP",
+    "indice": "FTSE MIB",
+    "roe": 54.61,
+    "fcf_musd": 279.3,
+    "deuda_neta_ebitda": 3.2,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GEBN.SW",
+    "nombre": "GEBERIT N",
+    "indice": "SMI",
+    "roe": 54.1,
+    "fcf_musd": 482.2,
+    "deuda_neta_ebitda": 1.44,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ASML.AS",
+    "nombre": "ASML HOLDING",
+    "indice": "AEX",
+    "roe": 53.94,
+    "fcf_musd": 8437.7,
+    "deuda_neta_ebitda": -0.41,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ADSK",
+    "nombre": "Autodesk, Inc.",
+    "indice": "S&P 500",
+    "roe": 53.85,
+    "fcf_musd": 3157.5,
+    "deuda_neta_ebitda": -0.2,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "FRES.L",
+    "nombre": "FRESNILLO PLC ORD USD0.50",
+    "indice": "FTSE 100",
+    "roe": 52.98,
+    "fcf_musd": 1999.8,
+    "deuda_neta_ebitda": -0.41,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CLS.TO",
+    "nombre": "CELESTICA INC",
+    "indice": "TSX 60",
+    "roe": 52.69,
+    "fcf_musd": 729.1,
+    "deuda_neta_ebitda": 0.28,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "NXT.L",
+    "nombre": "NEXT PLC ORD 10P",
+    "indice": "FTSE 100",
+    "roe": 50.81,
+    "fcf_musd": 829.1,
+    "deuda_neta_ebitda": 1.21,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "FSG.L",
+    "nombre": "FORESIGHT GROUP HOLDINGS LIMITE",
+    "indice": "FTSE 250",
+    "roe": 50.51,
+    "fcf_musd": 22.9,
+    "deuda_neta_ebitda": -0.18,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "SCT.L",
+    "nombre": "SOFTCAT PLC",
+    "indice": "FTSE 250",
+    "roe": 49.77,
+    "fcf_musd": 193.0,
+    "deuda_neta_ebitda": -0.82,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "CMG",
+    "nombre": "Chipotle Mexican Grill, Inc.",
+    "indice": "S&P 500",
+    "roe": 49.56,
+    "fcf_musd": 1116.5,
+    "deuda_neta_ebitda": 2.08,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "NFLX",
+    "nombre": "Netflix, Inc.",
+    "indice": "S&P 500",
+    "roe": 49.54,
+    "fcf_musd": 25387.6,
+    "deuda_neta_ebitda": 0.51,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GOOG",
+    "nombre": "Alphabet Inc.",
+    "indice": "S&P 500",
+    "roe": 48.68,
+    "fcf_musd": 22665.0,
+    "deuda_neta_ebitda": -0.7,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GGP.AX",
+    "nombre": "GREATLAND FPO [GGP]",
+    "indice": "ASX 200",
+    "roe": 48.36,
+    "fcf_musd": 503.5,
+    "deuda_neta_ebitda": -0.97,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GE",
+    "nombre": "GE Aerospace",
+    "indice": "S&P 500",
+    "roe": 48.23,
+    "fcf_musd": 6594.6,
+    "deuda_neta_ebitda": 0.9,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "RKT.L",
+    "nombre": "RECKITT BENCKISER GROUP PLC ORD",
+    "indice": "FTSE 100",
+    "roe": 48.02,
+    "fcf_musd": 3094.0,
+    "deuda_neta_ebitda": 2.61,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "TEL2-B.ST",
+    "nombre": "Tele2 AB ser. B",
+    "indice": "OMXS30",
+    "roe": 47.62,
+    "fcf_musd": 7559.9,
+    "deuda_neta_ebitda": 2.25,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "VNT.AX",
+    "nombre": "VENTIA FPO [VNT]",
+    "indice": "ASX 200",
+    "roe": 47.07,
+    "fcf_musd": 228.2,
+    "deuda_neta_ebitda": 1.56,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "EBAY",
+    "nombre": "eBay Inc.",
+    "indice": "S&P 500",
+    "roe": 46.61,
+    "fcf_musd": 1579.6,
+    "deuda_neta_ebitda": 1.24,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BMY",
+    "nombre": "Bristol-Myers Squibb Company",
+    "indice": "S&P 500",
+    "roe": 46.6,
+    "fcf_musd": 8114.4,
+    "deuda_neta_ebitda": 1.8,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "HON",
+    "nombre": "Honeywell International Inc.",
+    "indice": "S&P 500",
+    "roe": 46.58,
+    "fcf_musd": 2610.4,
+    "deuda_neta_ebitda": 3.03,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BCO",
+    "nombre": "Brinks Company (The)",
+    "indice": "S&P MidCap 400",
+    "roe": 46.24,
+    "fcf_musd": 391.2,
+    "deuda_neta_ebitda": 3.28,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ULTA",
+    "nombre": "Ulta Beauty, Inc.",
+    "indice": "S&P 500",
+    "roe": 46.12,
+    "fcf_musd": 914.1,
+    "deuda_neta_ebitda": 1.19,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "RACE.MI",
+    "nombre": "FERRARI",
+    "indice": "FTSE MIB",
+    "roe": 45.44,
+    "fcf_musd": 1002.0,
+    "deuda_neta_ebitda": 0.7,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BESI.AS",
+    "nombre": "BE Semiconductor Industries N.V",
+    "indice": "AEX",
+    "roe": 44.87,
+    "fcf_musd": 172.2,
+    "deuda_neta_ebitda": -0.54,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AON",
+    "nombre": "Aon plc",
+    "indice": "S&P 500",
+    "roe": 44.7,
+    "fcf_musd": 3190.9,
+    "deuda_neta_ebitda": 2.5,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "EXEL",
+    "nombre": "Exelixis, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 44.39,
+    "fcf_musd": 739.7,
+    "deuda_neta_ebitda": -0.66,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "KNIN.SW",
+    "nombre": "KUEHNE+NAGEL INT N",
+    "indice": "SMI",
+    "roe": 44.27,
+    "fcf_musd": 327.8,
+    "deuda_neta_ebitda": 2.44,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "CDW",
+    "nombre": "CDW Corporation",
+    "indice": "S&P 500",
+    "roe": 44.01,
+    "fcf_musd": 676.8,
+    "deuda_neta_ebitda": 3.02,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "VRT",
+    "nombre": "Vertiv Holdings, LLC",
+    "indice": "S&P 500",
+    "roe": 43.94,
+    "fcf_musd": 2696.5,
+    "deuda_neta_ebitda": 0.08,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PAF.L",
+    "nombre": "PAN AFRICAN RESOURCES PLC ORD 1",
+    "indice": "FTSE 250",
+    "roe": 43.55,
+    "fcf_musd": 209.4,
+    "deuda_neta_ebitda": 0.1,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "EXPD",
+    "nombre": "Expeditors International of Was",
+    "indice": "S&P 500",
+    "roe": 42.67,
+    "fcf_musd": 797.6,
+    "deuda_neta_ebitda": -0.37,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "ROST",
+    "nombre": "Ross Stores, Inc.",
+    "indice": "S&P 500",
+    "roe": 42.63,
+    "fcf_musd": 2156.3,
+    "deuda_neta_ebitda": 0.12,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CROX",
+    "nombre": "Crocs, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 42.3,
+    "fcf_musd": 533.9,
+    "deuda_neta_ebitda": 1.64,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "HOC.L",
+    "nombre": "HOCHSCHILD MINING PLC ORD 1P",
+    "indice": "FTSE 250",
+    "roe": 42.16,
+    "fcf_musd": 336.9,
+    "deuda_neta_ebitda": -0.03,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "IAG.MC",
+    "nombre": "INTL CONSOLIDATED AIRLINES GROU",
+    "indice": "IBEX 35",
+    "roe": 42.14,
+    "fcf_musd": 1088.7,
+    "deuda_neta_ebitda": 0.74,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "IAG.L",
+    "nombre": "INTERNATIONAL CONSOLIDATED AIRL",
+    "indice": "FTSE 100",
+    "roe": 42.14,
+    "fcf_musd": 1088.7,
+    "deuda_neta_ebitda": 0.74,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MPC",
+    "nombre": "Marathon Petroleum Corporation",
+    "indice": "S&P 500",
+    "roe": 42.1,
+    "fcf_musd": 9249.4,
+    "deuda_neta_ebitda": 1.72,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "KO",
+    "nombre": "Coca-Cola Company (The)",
+    "indice": "S&P 500",
+    "roe": 42.05,
+    "fcf_musd": 5218.7,
+    "deuda_neta_ebitda": 1.64,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "GEN",
+    "nombre": "Gen Digital Inc.",
+    "indice": "S&P 500",
+    "roe": 41.94,
+    "fcf_musd": 1547.1,
+    "deuda_neta_ebitda": 3.17,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "AMAT",
+    "nombre": "Applied Materials, Inc.",
+    "indice": "S&P 500",
+    "roe": 41.07,
+    "fcf_musd": 3075.4,
+    "deuda_neta_ebitda": -0.19,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BR",
+    "nombre": "Broadridge Financial Solutions,",
+    "indice": "S&P 500",
+    "roe": 40.92,
+    "fcf_musd": 1194.5,
+    "deuda_neta_ebitda": 1.72,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "EME",
+    "nombre": "EMCOR Group, Inc.",
+    "indice": "S&P 500",
+    "roe": 40.35,
+    "fcf_musd": 978.3,
+    "deuda_neta_ebitda": -0.19,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "STRL",
+    "nombre": "Sterling Infrastructure, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 40.01,
+    "fcf_musd": 349.4,
+    "deuda_neta_ebitda": -0.18,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CSL",
+    "nombre": "Carlisle Companies Incorporated",
+    "indice": "S&P MidCap 400",
+    "roe": 39.18,
+    "fcf_musd": 669.7,
+    "deuda_neta_ebitda": 1.83,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ULS",
+    "nombre": "UL Solutions Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 38.71,
+    "fcf_musd": 420.5,
+    "deuda_neta_ebitda": 0.06,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "DXCM",
+    "nombre": "DexCom, Inc.",
+    "indice": "S&P 500",
+    "roe": 38.49,
+    "fcf_musd": 1021.2,
+    "deuda_neta_ebitda": -0.39,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "STJ.L",
+    "nombre": "ST. JAMES'S PLACE PLC ORD 15P",
+    "indice": "FTSE 100",
+    "roe": 38.46,
+    "fcf_musd": 1368.5,
+    "deuda_neta_ebitda": 0.06,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PLTR",
+    "nombre": "Palantir Technologies Inc.",
+    "indice": "S&P 500",
+    "roe": 38.1,
+    "fcf_musd": 2159.1,
+    "deuda_neta_ebitda": -3.45,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "LECO",
+    "nombre": "Lincoln Electric Holdings, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 37.74,
+    "fcf_musd": 307.1,
+    "deuda_neta_ebitda": 1.08,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "RRL.AX",
+    "nombre": "REGIS FPO [RRL]",
+    "indice": "ASX 200",
+    "roe": 37.67,
+    "fcf_musd": 709.6,
+    "deuda_neta_ebitda": -0.85,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "RL",
+    "nombre": "Ralph Lauren Corporation",
+    "indice": "S&P 500",
+    "roe": 37.54,
+    "fcf_musd": 880.1,
+    "deuda_neta_ebitda": 0.67,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AVGO",
+    "nombre": "Broadcom Inc.",
+    "indice": "S&P 500",
+    "roe": 37.28,
+    "fcf_musd": 27212.2,
+    "deuda_neta_ebitda": 1.08,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "UBER",
+    "nombre": "Uber Technologies, Inc.",
+    "indice": "S&P 500",
+    "roe": 37.16,
+    "fcf_musd": 7244.7,
+    "deuda_neta_ebitda": 1.25,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CHRW",
+    "nombre": "C.H. Robinson Worldwide, Inc.",
+    "indice": "S&P 500",
+    "roe": 37.12,
+    "fcf_musd": 480.6,
+    "deuda_neta_ebitda": 1.95,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "K.TO",
+    "nombre": "KINROSS GOLD CORP.",
+    "indice": "TSX 60",
+    "roe": 36.99,
+    "fcf_musd": 2994.9,
+    "deuda_neta_ebitda": -0.35,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "WAF.AX",
+    "nombre": "WESTAFRICA FPO [WAF]",
+    "indice": "ASX 200",
+    "roe": 36.94,
+    "fcf_musd": 236.7,
+    "deuda_neta_ebitda": -0.14,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "TT",
+    "nombre": "Trane Technologies plc",
+    "indice": "S&P 500",
+    "roe": 36.64,
+    "fcf_musd": 3121.7,
+    "deuda_neta_ebitda": 0.77,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "TER",
+    "nombre": "Teradyne, Inc.",
+    "indice": "S&P 500",
+    "roe": 36.46,
+    "fcf_musd": 437.4,
+    "deuda_neta_ebitda": -0.17,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GMD.AX",
+    "nombre": "GEN MINS FPO [GMD]",
+    "indice": "ASX 200",
+    "roe": 36.13,
+    "fcf_musd": 436.6,
+    "deuda_neta_ebitda": -0.2,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "FTI",
+    "nombre": "TechnipFMC plc",
+    "indice": "S&P MidCap 400",
+    "roe": 35.81,
+    "fcf_musd": 1463.4,
+    "deuda_neta_ebitda": 0.13,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "IMI.L",
+    "nombre": "IMI PLC ORD 28 4/7P",
+    "indice": "FTSE 100",
+    "roe": 35.78,
+    "fcf_musd": 315.2,
+    "deuda_neta_ebitda": 1.2,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "KNOS.L",
+    "nombre": "KAINOS GROUP PLC ORD 0.5P",
+    "indice": "FTSE 250",
+    "roe": 35.65,
+    "fcf_musd": 44.9,
+    "deuda_neta_ebitda": -1.29,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "LOGN.SW",
+    "nombre": "LOGITECH N",
+    "indice": "SMI",
+    "roe": 35.29,
+    "fcf_musd": 723.4,
+    "deuda_neta_ebitda": -1.73,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SFM",
+    "nombre": "Sprouts Farmers Market, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 35.2,
+    "fcf_musd": 398.7,
+    "deuda_neta_ebitda": 2.23,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "TXN",
+    "nombre": "Texas Instruments Incorporated",
+    "indice": "S&P 500",
+    "roe": 35.18,
+    "fcf_musd": 3545.3,
+    "deuda_neta_ebitda": 0.74,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PTC",
+    "nombre": "PTC Inc.",
+    "indice": "S&P 500",
+    "roe": 35.05,
+    "fcf_musd": 1031.4,
+    "deuda_neta_ebitda": 0.98,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PGR",
+    "nombre": "Progressive Corporation (The)",
+    "indice": "S&P 500",
+    "roe": 34.94,
+    "fcf_musd": 15114.5,
+    "deuda_neta_ebitda": 0.4,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "REA.AX",
+    "nombre": "REA GROUP FPO [REA]",
+    "indice": "ASX 200",
+    "roe": 34.88,
+    "fcf_musd": 515.7,
+    "deuda_neta_ebitda": -0.32,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "HWM",
+    "nombre": "Howmet Aerospace Inc.",
+    "indice": "S&P 500",
+    "roe": 34.73,
+    "fcf_musd": 1189.9,
+    "deuda_neta_ebitda": 1.47,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "HM-B.ST",
+    "nombre": "Hennes & Mauritz AB, H & M ser.",
+    "indice": "OMXS30",
+    "roe": 34.67,
+    "fcf_musd": 22312.2,
+    "deuda_neta_ebitda": 2.42,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ABNB",
+    "nombre": "Airbnb, Inc.",
+    "indice": "S&P 500",
+    "roe": 34.54,
+    "fcf_musd": 3206.9,
+    "deuda_neta_ebitda": -3.47,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "RSG.AX",
+    "nombre": "RESOLUTE FPO [RSG]",
+    "indice": "ASX 200",
+    "roe": 34.53,
+    "fcf_musd": 213.1,
+    "deuda_neta_ebitda": -0.72,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "IBM",
+    "nombre": "International Business Machines",
+    "indice": "S&P 500",
+    "roe": 34.46,
+    "fcf_musd": 12049.8,
+    "deuda_neta_ebitda": 3.47,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "DUOL",
+    "nombre": "Duolingo, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 34.42,
+    "fcf_musd": 300.2,
+    "deuda_neta_ebitda": -6.86,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "VLTO",
+    "nombre": "Veralto Corp",
+    "indice": "S&P 500",
+    "roe": 34.31,
+    "fcf_musd": 807.1,
+    "deuda_neta_ebitda": 1.06,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GAP",
+    "nombre": "Gap, Inc. (The)",
+    "indice": "S&P MidCap 400",
+    "roe": 33.78,
+    "fcf_musd": 246.4,
+    "deuda_neta_ebitda": 2.2,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "QCOM",
+    "nombre": "QUALCOMM Incorporated",
+    "indice": "S&P 500",
+    "roe": 33.75,
+    "fcf_musd": 10241.0,
+    "deuda_neta_ebitda": 0.58,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ALLE",
+    "nombre": "Allegion plc",
+    "indice": "S&P 500",
+    "roe": 33.73,
+    "fcf_musd": 484.4,
+    "deuda_neta_ebitda": 1.81,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "VAL",
+    "nombre": "Valaris Limited",
+    "indice": "S&P MidCap 400",
+    "roe": 33.62,
+    "fcf_musd": 79.7,
+    "deuda_neta_ebitda": 1.47,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "TNE.AX",
+    "nombre": "TECH ONE FPO [TNE]",
+    "indice": "ASX 200",
+    "roe": 33.53,
+    "fcf_musd": 152.0,
+    "deuda_neta_ebitda": -1.03,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "WES.AX",
+    "nombre": "WESFARMER FPO [WES]",
+    "indice": "ASX 200",
+    "roe": 33.48,
+    "fcf_musd": 3584.9,
+    "deuda_neta_ebitda": 2.53,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GSK.L",
+    "nombre": "GSK PLC ORD 31 1/4P",
+    "indice": "FTSE 100",
+    "roe": 33.38,
+    "fcf_musd": 3482.6,
+    "deuda_neta_ebitda": 1.4,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "EMR.AX",
+    "nombre": "EMERALD FPO [EMR]",
+    "indice": "ASX 200",
+    "roe": 33.0,
+    "fcf_musd": 263.0,
+    "deuda_neta_ebitda": -1.01,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PRI",
+    "nombre": "Primerica, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 32.97,
+    "fcf_musd": 1039.0,
+    "deuda_neta_ebitda": 1.04,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CVLT",
+    "nombre": "Commvault Systems, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 32.77,
+    "fcf_musd": 303.7,
+    "deuda_neta_ebitda": -0.1,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ABBN.SW",
+    "nombre": "ABB LTD N",
+    "indice": "SMI",
+    "roe": 32.57,
+    "fcf_musd": 1570.5,
+    "deuda_neta_ebitda": 0.46,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ABB.ST",
+    "nombre": "ABB Ltd",
+    "indice": "OMXS30",
+    "roe": 32.57,
+    "fcf_musd": 1570.5,
+    "deuda_neta_ebitda": 0.46,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "HLNE",
+    "nombre": "Hamilton Lane Incorporated",
+    "indice": "S&P MidCap 400",
+    "roe": 32.42,
+    "fcf_musd": 231.4,
+    "deuda_neta_ebitda": 0.07,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "APPF",
+    "nombre": "AppFolio, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 32.09,
+    "fcf_musd": 198.9,
+    "deuda_neta_ebitda": -0.95,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MORN",
+    "nombre": "Morningstar, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 31.96,
+    "fcf_musd": 497.8,
+    "deuda_neta_ebitda": 2.03,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "UNA.AS",
+    "nombre": "UNILEVER PLC",
+    "indice": "AEX",
+    "roe": 31.87,
+    "fcf_musd": 6732.6,
+    "deuda_neta_ebitda": 2.41,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ULVR.L",
+    "nombre": "UNILEVER PLC ORD 3.5P",
+    "indice": "FTSE 100",
+    "roe": 31.87,
+    "fcf_musd": 6732.6,
+    "deuda_neta_ebitda": 2.41,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "NVR",
+    "nombre": "NVR, Inc.",
+    "indice": "S&P 500",
+    "roe": 31.54,
+    "fcf_musd": 918.3,
+    "deuda_neta_ebitda": -0.0,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ANET",
+    "nombre": "Arista Networks, Inc.",
+    "indice": "S&P 500",
+    "roe": 31.48,
+    "fcf_musd": 3891.5,
+    "deuda_neta_ebitda": -2.88,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "EDV.L",
+    "nombre": "ENDEAVOUR MINING PLC ORD USD0.0",
+    "indice": "FTSE 100",
+    "roe": 31.34,
+    "fcf_musd": 1764.0,
+    "deuda_neta_ebitda": -0.06,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ALK.AX",
+    "nombre": "ALKANE FPO [ALK]",
+    "indice": "ASX 200",
+    "roe": 31.3,
+    "fcf_musd": 240.4,
+    "deuda_neta_ebitda": -0.88,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "EXPO",
+    "nombre": "Exponent, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 31.2,
+    "fcf_musd": 76.9,
+    "deuda_neta_ebitda": 0.1,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AVY",
+    "nombre": "Avery Dennison Corporation",
+    "indice": "S&P 500",
+    "roe": 31.16,
+    "fcf_musd": 1004.6,
+    "deuda_neta_ebitda": 2.28,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "FHI",
+    "nombre": "Federated Hermes, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 31.14,
+    "fcf_musd": 371.5,
+    "deuda_neta_ebitda": -0.05,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "CDA.AX",
+    "nombre": "CODAN FPO [CDA]",
+    "indice": "ASX 200",
+    "roe": 30.94,
+    "fcf_musd": 166.7,
+    "deuda_neta_ebitda": 0.03,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "SPK.AX",
+    "nombre": "SPARK NZ FPO NZX [SPK]",
+    "indice": "ASX 200",
+    "roe": 30.69,
+    "fcf_musd": 975.2,
+    "deuda_neta_ebitda": 1.79,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "INCY",
+    "nombre": "Incyte Corporation",
+    "indice": "S&P 500",
+    "roe": 30.67,
+    "fcf_musd": 1180.7,
+    "deuda_neta_ebitda": -2.32,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "ROK",
+    "nombre": "Rockwell Automation, Inc.",
+    "indice": "S&P 500",
+    "roe": 30.63,
+    "fcf_musd": 1303.9,
+    "deuda_neta_ebitda": 1.5,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AMZN",
+    "nombre": "Amazon.com, Inc.",
+    "indice": "S&P 500",
+    "roe": 30.56,
+    "fcf_musd": 3219.1,
+    "deuda_neta_ebitda": 0.76,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "NOVN.SW",
+    "nombre": "NOVARTIS N",
+    "indice": "SMI",
+    "roe": 30.35,
+    "fcf_musd": 11900.3,
+    "deuda_neta_ebitda": 1.79,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "PG",
+    "nombre": "Procter & Gamble Company (The)",
+    "indice": "S&P 500",
+    "roe": 30.29,
+    "fcf_musd": 13280.9,
+    "deuda_neta_ebitda": 1.01,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GFRD.L",
+    "nombre": "GALLIFORD TRY HOLDINGS PLC ORD ",
+    "indice": "FTSE 250",
+    "roe": 30.27,
+    "fcf_musd": 50.0,
+    "deuda_neta_ebitda": -3.36,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "KNSL",
+    "nombre": "Kinsale Capital Group, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 30.27,
+    "fcf_musd": 982.1,
+    "deuda_neta_ebitda": 0.02,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ITRK.L",
+    "nombre": "INTERTEK GROUP PLC ORD 1P",
+    "indice": "FTSE 100",
+    "roe": 29.94,
+    "fcf_musd": 457.4,
+    "deuda_neta_ebitda": 1.86,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "CF",
+    "nombre": "CF Industries Holdings, Inc.",
+    "indice": "S&P 500",
+    "roe": 29.87,
+    "fcf_musd": 1276.7,
+    "deuda_neta_ebitda": 0.29,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "META",
+    "nombre": "Meta Platforms, Inc.",
+    "indice": "S&P 500",
+    "roe": 29.85,
+    "fcf_musd": 21553.6,
+    "deuda_neta_ebitda": 0.2,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "WM",
+    "nombre": "Waste Management, Inc.",
+    "indice": "S&P 500",
+    "roe": 29.84,
+    "fcf_musd": 2348.4,
+    "deuda_neta_ebitda": 2.93,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "VMI",
+    "nombre": "Valmont Industries, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 29.78,
+    "fcf_musd": 142.8,
+    "deuda_neta_ebitda": 1.09,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "UPS",
+    "nombre": "United Parcel Service, Inc.",
+    "indice": "S&P 500",
+    "roe": 29.6,
+    "fcf_musd": 5557.7,
+    "deuda_neta_ebitda": 2.0,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AZM.MI",
+    "nombre": "AZIMUT",
+    "indice": "FTSE MIB",
+    "roe": 29.35,
+    "fcf_musd": 297.7,
+    "deuda_neta_ebitda": -0.53,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "CYL.AX",
+    "nombre": "CAT METALS FPO [CYL]",
+    "indice": "ASX 200",
+    "roe": 29.23,
+    "fcf_musd": 14.1,
+    "deuda_neta_ebitda": -0.84,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CPAY",
+    "nombre": "Corpay, Inc.",
+    "indice": "S&P 500",
+    "roe": 29.22,
+    "fcf_musd": 1946.2,
+    "deuda_neta_ebitda": 2.7,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "COST",
+    "nombre": "Costco Wholesale Corporation",
+    "indice": "S&P 500",
+    "roe": 29.15,
+    "fcf_musd": 6954.4,
+    "deuda_neta_ebitda": -0.07,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ELE.MC",
+    "nombre": "ENDESA,S.A.",
+    "indice": "IBEX 35",
+    "roe": 29.05,
+    "fcf_musd": 1975.1,
+    "deuda_neta_ebitda": 1.86,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "VNT",
+    "nombre": "Vontier Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 28.9,
+    "fcf_musd": 347.6,
+    "deuda_neta_ebitda": 2.38,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "URI",
+    "nombre": "United Rentals, Inc.",
+    "indice": "S&P 500",
+    "roe": 28.89,
+    "fcf_musd": 1706.2,
+    "deuda_neta_ebitda": 3.26,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "IHP.L",
+    "nombre": "INTEGRAFIN HOLDINGS PLC ORD 1P",
+    "indice": "FTSE 250",
+    "roe": 28.85,
+    "fcf_musd": 72.5,
+    "deuda_neta_ebitda": -2.13,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "BXB.AX",
+    "nombre": "BRAMB LTD FPO [BXB]",
+    "indice": "ASX 200",
+    "roe": 28.82,
+    "fcf_musd": 540.2,
+    "deuda_neta_ebitda": 1.39,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MIN.AX",
+    "nombre": "MINERALRES FPO [MIN]",
+    "indice": "ASX 200",
+    "roe": 28.68,
+    "fcf_musd": 540.8,
+    "deuda_neta_ebitda": 1.74,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "N91.L",
+    "nombre": "NINETY ONE PLC",
+    "indice": "FTSE 250",
+    "roe": 28.53,
+    "fcf_musd": 157.3,
+    "deuda_neta_ebitda": -1.61,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "EXPN.L",
+    "nombre": "EXPERIAN PLC ORD USD0.10",
+    "indice": "FTSE 100",
+    "roe": 28.26,
+    "fcf_musd": 911.2,
+    "deuda_neta_ebitda": 2.07,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "DCI",
+    "nombre": "Donaldson Company, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 28.21,
+    "fcf_musd": 347.0,
+    "deuda_neta_ebitda": 1.5,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MEGP.L",
+    "nombre": "ME GROUP INTERNATIONAL PLC ORD ",
+    "indice": "FTSE 250",
+    "roe": 28.17,
+    "fcf_musd": 15.6,
+    "deuda_neta_ebitda": 0.02,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "NXPI",
+    "nombre": "NXP Semiconductors N.V.",
+    "indice": "S&P 500",
+    "roe": 27.92,
+    "fcf_musd": 3555.0,
+    "deuda_neta_ebitda": 1.53,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "LDOS",
+    "nombre": "Leidos Holdings, Inc.",
+    "indice": "S&P 500",
+    "roe": 27.78,
+    "fcf_musd": 1146.6,
+    "deuda_neta_ebitda": 2.45,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SHC",
+    "nombre": "Sotera Health Company",
+    "indice": "S&P MidCap 400",
+    "roe": 27.78,
+    "fcf_musd": 154.0,
+    "deuda_neta_ebitda": 3.31,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "ENR.DE",
+    "nombre": "Siemens Energy AG             N",
+    "indice": "DAX 40",
+    "roe": 27.75,
+    "fcf_musd": 6204.6,
+    "deuda_neta_ebitda": -1.76,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "TXRH",
+    "nombre": "Texas Roadhouse, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 27.71,
+    "fcf_musd": 235.9,
+    "deuda_neta_ebitda": 1.25,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BJ",
+    "nombre": "BJ's Wholesale Club Holdings, I",
+    "indice": "S&P MidCap 400",
+    "roe": 27.67,
+    "fcf_musd": 246.7,
+    "deuda_neta_ebitda": 2.36,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "VLO",
+    "nombre": "Valero Energy Corporation",
+    "indice": "S&P 500",
+    "roe": 27.64,
+    "fcf_musd": 8416.4,
+    "deuda_neta_ebitda": 0.26,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "SEIC",
+    "nombre": "SEI Investments Company",
+    "indice": "S&P MidCap 400",
+    "roe": 27.59,
+    "fcf_musd": 377.5,
+    "deuda_neta_ebitda": -0.47,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "CCK",
+    "nombre": "Crown Holdings, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 27.37,
+    "fcf_musd": 853.9,
+    "deuda_neta_ebitda": 2.66,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "EVN.AX",
+    "nombre": "EVOLUTION FPO [EVN]",
+    "indice": "ASX 200",
+    "roe": 27.35,
+    "fcf_musd": 1164.7,
+    "deuda_neta_ebitda": 0.03,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CSCO",
+    "nombre": "Cisco Systems, Inc.",
+    "indice": "S&P 500",
+    "roe": 27.32,
+    "fcf_musd": 11568.0,
+    "deuda_neta_ebitda": 0.73,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "HEXA-B.ST",
+    "nombre": "Hexagon AB ser. B",
+    "indice": "OMXS30",
+    "roe": 27.29,
+    "fcf_musd": 683.7,
+    "deuda_neta_ebitda": 0.38,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "INVE-B.ST",
+    "nombre": "Investor AB ser. B",
+    "indice": "OMXS30",
+    "roe": 27.25,
+    "fcf_musd": 166005.4,
+    "deuda_neta_ebitda": 0.39,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "NXT",
+    "nombre": "Nextpower Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 27.22,
+    "fcf_musd": 324.1,
+    "deuda_neta_ebitda": -1.57,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "FDS",
+    "nombre": "FactSet Research Systems Inc.",
+    "indice": "S&P 500",
+    "roe": 27.03,
+    "fcf_musd": 621.2,
+    "deuda_neta_ebitda": 1.36,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "EXP",
+    "nombre": "Eagle Materials Inc",
+    "indice": "S&P MidCap 400",
+    "roe": 27.03,
+    "fcf_musd": 25.3,
+    "deuda_neta_ebitda": 2.22,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ABX.TO",
+    "nombre": "BARRICK MINING CORPORATION",
+    "indice": "TSX 60",
+    "roe": 27.01,
+    "fcf_musd": 5088.6,
+    "deuda_neta_ebitda": -0.1,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CPG.L",
+    "nombre": "COMPASS GROUP PLC ORD 11 1/20P",
+    "indice": "FTSE 100",
+    "roe": 26.88,
+    "fcf_musd": 1974.1,
+    "deuda_neta_ebitda": 2.26,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ASM.AS",
+    "nombre": "ASM International N.V.",
+    "indice": "AEX",
+    "roe": 26.8,
+    "fcf_musd": 235.3,
+    "deuda_neta_ebitda": -0.96,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BC.MI",
+    "nombre": "BRUNELLO CUCINELLI",
+    "indice": "FTSE MIB",
+    "roe": 26.79,
+    "fcf_musd": 169.7,
+    "deuda_neta_ebitda": 3.43,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BAM.TO",
+    "nombre": "BROOKFIELD ASSET MANAGEMENT LTD",
+    "indice": "TSX 60",
+    "roe": 26.77,
+    "fcf_musd": 2674.4,
+    "deuda_neta_ebitda": 0.68,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "EVO.ST",
+    "nombre": "Evolution AB",
+    "indice": "OMXS30",
+    "roe": 26.68,
+    "fcf_musd": 915.4,
+    "deuda_neta_ebitda": -0.85,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "CNQ.TO",
+    "nombre": "CDN NATURAL RES",
+    "indice": "TSX 60",
+    "roe": 26.68,
+    "fcf_musd": 7420.1,
+    "deuda_neta_ebitda": 0.92,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "APA",
+    "nombre": "APA Corporation",
+    "indice": "S&P 500",
+    "roe": 26.66,
+    "fcf_musd": 2146.7,
+    "deuda_neta_ebitda": 0.6,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "AMS.MC",
+    "nombre": "AMADEUS IT GROUP, S.A.",
+    "indice": "IBEX 35",
+    "roe": 26.47,
+    "fcf_musd": 2912.3,
+    "deuda_neta_ebitda": 1.06,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AAF.L",
+    "nombre": "AIRTEL AFRICA PLC ORD USD0.50",
+    "indice": "FTSE 100",
+    "roe": 26.41,
+    "fcf_musd": 1327.4,
+    "deuda_neta_ebitda": 1.93,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "TGT",
+    "nombre": "Target Corporation",
+    "indice": "S&P 500",
+    "roe": 26.41,
+    "fcf_musd": 3433.0,
+    "deuda_neta_ebitda": 1.6,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "IDCC",
+    "nombre": "InterDigital, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 26.4,
+    "fcf_musd": 600.8,
+    "deuda_neta_ebitda": -1.67,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MLI",
+    "nombre": "Mueller Industries, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 26.32,
+    "fcf_musd": 524.9,
+    "deuda_neta_ebitda": -1.28,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CBOE",
+    "nombre": "Cboe Global Markets, Inc.",
+    "indice": "S&P 500",
+    "roe": 26.3,
+    "fcf_musd": 678.2,
+    "deuda_neta_ebitda": -0.4,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "KPN.AS",
+    "nombre": "KPN KON",
+    "indice": "AEX",
+    "roe": 26.11,
+    "fcf_musd": 794.5,
+    "deuda_neta_ebitda": 2.85,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ERIC-B.ST",
+    "nombre": "Ericsson, Telefonab. L M ser. B",
+    "indice": "OMXS30",
+    "roe": 26.08,
+    "fcf_musd": 30705.9,
+    "deuda_neta_ebitda": -0.41,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CCH.L",
+    "nombre": "COCA-COLA HBC AG ORD CHF6.70 (C",
+    "indice": "FTSE 100",
+    "roe": 25.96,
+    "fcf_musd": 729.7,
+    "deuda_neta_ebitda": 1.28,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "EXLS",
+    "nombre": "ExlService Holdings, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 25.94,
+    "fcf_musd": 262.3,
+    "deuda_neta_ebitda": 0.54,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CRS",
+    "nombre": "Carpenter Technology Corporatio",
+    "indice": "S&P MidCap 400",
+    "roe": 25.75,
+    "fcf_musd": 238.8,
+    "deuda_neta_ebitda": 0.4,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "JNJ",
+    "nombre": "Johnson & Johnson",
+    "indice": "S&P 500",
+    "roe": 25.74,
+    "fcf_musd": 16885.1,
+    "deuda_neta_ebitda": 0.81,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "SAIC",
+    "nombre": "Science Applications Internatio",
+    "indice": "S&P MidCap 400",
+    "roe": 25.74,
+    "fcf_musd": 513.5,
+    "deuda_neta_ebitda": 3.37,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "ATI",
+    "nombre": "ATI Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 25.36,
+    "fcf_musd": 346.7,
+    "deuda_neta_ebitda": 1.54,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "YETI",
+    "nombre": "YETI Holdings, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 25.32,
+    "fcf_musd": 127.4,
+    "deuda_neta_ebitda": 0.67,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "KLR.L",
+    "nombre": "KELLER GROUP PLC ORD 10P",
+    "indice": "FTSE 250",
+    "roe": 25.26,
+    "fcf_musd": 189.6,
+    "deuda_neta_ebitda": 0.34,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "LWDB.L",
+    "nombre": "LAW DEBENTURE CORPORATION PLC O",
+    "indice": "FTSE 250",
+    "roe": 25.22,
+    "fcf_musd": 179.4,
+    "deuda_neta_ebitda": 0.57,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "TOST",
+    "nombre": "Toast, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 25.16,
+    "fcf_musd": 474.2,
+    "deuda_neta_ebitda": -3.59,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PH",
+    "nombre": "Parker-Hannifin Corporation",
+    "indice": "S&P 500",
+    "roe": 25.08,
+    "fcf_musd": 2961.8,
+    "deuda_neta_ebitda": 1.45,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "EHC",
+    "nombre": "Encompass Health Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 24.97,
+    "fcf_musd": 229.9,
+    "deuda_neta_ebitda": 1.87,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "REC.MI",
+    "nombre": "RECORDATI ORD",
+    "indice": "FTSE MIB",
+    "roe": 24.85,
+    "fcf_musd": 541.0,
+    "deuda_neta_ebitda": 1.9,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "ODFL",
+    "nombre": "Old Dominion Freight Line, Inc.",
+    "indice": "S&P 500",
+    "roe": 24.82,
+    "fcf_musd": 970.8,
+    "deuda_neta_ebitda": -0.15,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ERIE",
+    "nombre": "Erie Indemnity Company",
+    "indice": "S&P 500",
+    "roe": 24.81,
+    "fcf_musd": 481.2,
+    "deuda_neta_ebitda": -0.29,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MKC",
+    "nombre": "McCormick & Company, Incorporat",
+    "indice": "S&P 500",
+    "roe": 24.73,
+    "fcf_musd": 714.0,
+    "deuda_neta_ebitda": 3.17,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BSY",
+    "nombre": "Bentley Systems, Incorporated",
+    "indice": "S&P MidCap 400",
+    "roe": 24.52,
+    "fcf_musd": 398.0,
+    "deuda_neta_ebitda": 2.4,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PYPL",
+    "nombre": "PayPal Holdings, Inc.",
+    "indice": "S&P 500",
+    "roe": 24.5,
+    "fcf_musd": 4423.1,
+    "deuda_neta_ebitda": 0.46,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "L.TO",
+    "nombre": "LOBLAW CO",
+    "indice": "TSX 60",
+    "roe": 24.48,
+    "fcf_musd": 4921.4,
+    "deuda_neta_ebitda": 2.69,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "HUBB",
+    "nombre": "Hubbell Inc",
+    "indice": "S&P 500",
+    "roe": 24.44,
+    "fcf_musd": 495.8,
+    "deuda_neta_ebitda": 3.41,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ACN",
+    "nombre": "Accenture plc",
+    "indice": "S&P 500",
+    "roe": 24.41,
+    "fcf_musd": 12089.4,
+    "deuda_neta_ebitda": -0.14,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ADS.DE",
+    "nombre": "adidas AG                     N",
+    "indice": "DAX 40",
+    "roe": 24.32,
+    "fcf_musd": 952.3,
+    "deuda_neta_ebitda": 1.66,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "TTEK",
+    "nombre": "Tetra Tech, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 24.3,
+    "fcf_musd": 396.6,
+    "deuda_neta_ebitda": 1.21,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "RMD",
+    "nombre": "ResMed Inc.",
+    "indice": "S&P 500",
+    "roe": 24.27,
+    "fcf_musd": 939.2,
+    "deuda_neta_ebitda": -0.31,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "RMD.AX",
+    "nombre": "RESMED CDI 10:1 [RMD]",
+    "indice": "ASX 200",
+    "roe": 24.27,
+    "fcf_musd": 939.2,
+    "deuda_neta_ebitda": -0.31,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "JKHY",
+    "nombre": "Jack Henry & Associates, Inc.",
+    "indice": "S&P 500",
+    "roe": 24.04,
+    "fcf_musd": 352.2,
+    "deuda_neta_ebitda": 0.09,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BHP.AX",
+    "nombre": "BHP GROUP FPO [BHP]",
+    "indice": "ASX 200",
+    "roe": 24.0,
+    "fcf_musd": 9592.4,
+    "deuda_neta_ebitda": 0.33,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "HWDN.L",
+    "nombre": "HOWDEN JOINERY GROUP PLC ORD 10",
+    "indice": "FTSE 100",
+    "roe": 23.94,
+    "fcf_musd": 228.2,
+    "deuda_neta_ebitda": 0.93,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "TTC",
+    "nombre": "Toro Company (The)",
+    "indice": "S&P MidCap 400",
+    "roe": 23.89,
+    "fcf_musd": 670.5,
+    "deuda_neta_ebitda": 1.42,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "MND.AX",
+    "nombre": "MONADEL FPO [MND]",
+    "indice": "ASX 200",
+    "roe": 23.86,
+    "fcf_musd": 203.8,
+    "deuda_neta_ebitda": -1.18,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SMTC",
+    "nombre": "Semtech Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 23.66,
+    "fcf_musd": 132.7,
+    "deuda_neta_ebitda": 1.79,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "INTU",
+    "nombre": "Intuit Inc.",
+    "indice": "S&P 500",
+    "roe": 23.6,
+    "fcf_musd": 6438.6,
+    "deuda_neta_ebitda": 0.17,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "NWH.AX",
+    "nombre": "NRWHOLDLTD FPO [NWH]",
+    "indice": "ASX 200",
+    "roe": 23.6,
+    "fcf_musd": 211.0,
+    "deuda_neta_ebitda": 0.62,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "VRTX",
+    "nombre": "Vertex Pharmaceuticals Incorpor",
+    "indice": "S&P 500",
+    "roe": 23.54,
+    "fcf_musd": 2627.9,
+    "deuda_neta_ebitda": -1.15,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "PSX",
+    "nombre": "Phillips 66",
+    "indice": "S&P 500",
+    "roe": 23.45,
+    "fcf_musd": 4545.4,
+    "deuda_neta_ebitda": 1.66,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "FPH.AX",
+    "nombre": "F&P HEALTH FPO NZX [FPH]",
+    "indice": "ASX 200",
+    "roe": 23.39,
+    "fcf_musd": 399.4,
+    "deuda_neta_ebitda": -0.41,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "TEL",
+    "nombre": "TE Connectivity plc",
+    "indice": "S&P 500",
+    "roe": 23.29,
+    "fcf_musd": 2336.9,
+    "deuda_neta_ebitda": 0.92,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CSU.TO",
+    "nombre": "CONSTELLATION SOFTWARE INC.",
+    "indice": "TSX 60",
+    "roe": 23.28,
+    "fcf_musd": 2794.9,
+    "deuda_neta_ebitda": 1.27,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "UAL",
+    "nombre": "United Airlines Holdings, Inc.",
+    "indice": "S&P 500",
+    "roe": 23.25,
+    "fcf_musd": 910.1,
+    "deuda_neta_ebitda": 2.4,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CDNS",
+    "nombre": "Cadence Design Systems, Inc.",
+    "indice": "S&P 500",
+    "roe": 23.23,
+    "fcf_musd": 1609.7,
+    "deuda_neta_ebitda": 0.52,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PBF",
+    "nombre": "PBF Energy Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 23.23,
+    "fcf_musd": 78.5,
+    "deuda_neta_ebitda": 1.67,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "AIR.PA",
+    "nombre": "AIRBUS SE",
+    "indice": "CAC 40",
+    "roe": 23.19,
+    "fcf_musd": 3128.8,
+    "deuda_neta_ebitda": 0.13,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AEM.TO",
+    "nombre": "AGNICO EAGLE MINES LIMITED",
+    "indice": "TSX 60",
+    "roe": 22.97,
+    "fcf_musd": 4282.3,
+    "deuda_neta_ebitda": -0.31,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "NTGY.MC",
+    "nombre": "NATURGY ENERGY GROUP, S.A.",
+    "indice": "IBEX 35",
+    "roe": 22.85,
+    "fcf_musd": 1768.7,
+    "deuda_neta_ebitda": 2.36,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "G24.DE",
+    "nombre": "Scout24 SE                    N",
+    "indice": "DAX 40",
+    "roe": 22.82,
+    "fcf_musd": 262.3,
+    "deuda_neta_ebitda": 1.78,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "WFRD",
+    "nombre": "Weatherford International plc",
+    "indice": "S&P MidCap 400",
+    "roe": 22.79,
+    "fcf_musd": 558.0,
+    "deuda_neta_ebitda": 0.56,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MTX.DE",
+    "nombre": "MTU Aero Engines AG           N",
+    "indice": "DAX 40",
+    "roe": 22.64,
+    "fcf_musd": 314.4,
+    "deuda_neta_ebitda": 0.01,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "EOG",
+    "nombre": "EOG Resources, Inc.",
+    "indice": "S&P 500",
+    "roe": 22.51,
+    "fcf_musd": 4478.8,
+    "deuda_neta_ebitda": 0.23,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "G",
+    "nombre": "Genpact Limited",
+    "indice": "S&P MidCap 400",
+    "roe": 22.45,
+    "fcf_musd": 479.4,
+    "deuda_neta_ebitda": 1.02,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AO.L",
+    "nombre": "AO WORLD PLC ORD 0.25P",
+    "indice": "FTSE 250",
+    "roe": 22.44,
+    "fcf_musd": 82.7,
+    "deuda_neta_ebitda": -0.27,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AIT",
+    "nombre": "Applied Industrial Technologies",
+    "indice": "S&P MidCap 400",
+    "roe": 22.37,
+    "fcf_musd": 362.8,
+    "deuda_neta_ebitda": 0.58,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PRY.MI",
+    "nombre": "PRYSMIAN",
+    "indice": "FTSE MIB",
+    "roe": 22.36,
+    "fcf_musd": 716.9,
+    "deuda_neta_ebitda": 1.59,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "WWD",
+    "nombre": "Woodward, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 22.34,
+    "fcf_musd": 187.2,
+    "deuda_neta_ebitda": 1.13,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "COA.L",
+    "nombre": "COATS GROUP PLC ORD 5P",
+    "indice": "FTSE 250",
+    "roe": 22.32,
+    "fcf_musd": 181.5,
+    "deuda_neta_ebitda": 2.73,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "WMT",
+    "nombre": "Walmart Inc.",
+    "indice": "S&P 500",
+    "roe": 22.31,
+    "fcf_musd": 7127.6,
+    "deuda_neta_ebitda": 1.44,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "HL",
+    "nombre": "Hecla Mining Company",
+    "indice": "S&P MidCap 400",
+    "roe": 22.17,
+    "fcf_musd": 342.3,
+    "deuda_neta_ebitda": -0.48,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "NBIX",
+    "nombre": "Neurocrine Biosciences, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 22.09,
+    "fcf_musd": 638.2,
+    "deuda_neta_ebitda": 0.08,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ALL.AX",
+    "nombre": "ARISTOCRAT FPO [ALL]",
+    "indice": "ASX 200",
+    "roe": 22.03,
+    "fcf_musd": 913.6,
+    "deuda_neta_ebitda": 0.54,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MPWR",
+    "nombre": "Monolithic Power Systems, Inc.",
+    "indice": "S&P 500",
+    "roe": 21.98,
+    "fcf_musd": 444.3,
+    "deuda_neta_ebitda": -1.39,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PCTY",
+    "nombre": "Paylocity Holding Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 21.97,
+    "fcf_musd": 359.9,
+    "deuda_neta_ebitda": -0.32,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AZN.L",
+    "nombre": "ASTRAZENECA PLC ORD SHS $0.25",
+    "indice": "FTSE 100",
+    "roe": 21.96,
+    "fcf_musd": 4905.4,
+    "deuda_neta_ebitda": 1.38,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AZN.ST",
+    "nombre": "AstraZeneca PLC",
+    "indice": "OMXS30",
+    "roe": 21.96,
+    "fcf_musd": 4905.4,
+    "deuda_neta_ebitda": 1.38,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GRMN",
+    "nombre": "Garmin Ltd.",
+    "indice": "S&P 500",
+    "roe": 21.89,
+    "fcf_musd": 1043.7,
+    "deuda_neta_ebitda": -1.06,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ROR.L",
+    "nombre": "ROTORK PLC ORD 0.5P",
+    "indice": "FTSE 250",
+    "roe": 21.84,
+    "fcf_musd": 106.8,
+    "deuda_neta_ebitda": -0.13,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "CINF",
+    "nombre": "Cincinnati Financial Corporatio",
+    "indice": "S&P 500",
+    "roe": 21.48,
+    "fcf_musd": 2984.9,
+    "deuda_neta_ebitda": -0.23,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ALQ.AX",
+    "nombre": "ALS FPO [ALQ]",
+    "indice": "ASX 200",
+    "roe": 21.45,
+    "fcf_musd": 324.9,
+    "deuda_neta_ebitda": 2.01,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "RPM",
+    "nombre": "RPM International Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 21.37,
+    "fcf_musd": 480.1,
+    "deuda_neta_ebitda": 2.2,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CNX",
+    "nombre": "CNX Resources Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 21.25,
+    "fcf_musd": 437.1,
+    "deuda_neta_ebitda": 1.3,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CMI",
+    "nombre": "Cummins Inc.",
+    "indice": "S&P 500",
+    "roe": 21.11,
+    "fcf_musd": 2229.4,
+    "deuda_neta_ebitda": 0.87,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "UHS",
+    "nombre": "Universal Health Services, Inc.",
+    "indice": "S&P 500",
+    "roe": 20.95,
+    "fcf_musd": 498.3,
+    "deuda_neta_ebitda": 1.9,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CVE.TO",
+    "nombre": "CENOVUS ENERGY INC.",
+    "indice": "TSX 60",
+    "roe": 20.93,
+    "fcf_musd": 5475.1,
+    "deuda_neta_ebitda": 0.59,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "KEYS",
+    "nombre": "Keysight Technologies Inc.",
+    "indice": "S&P 500",
+    "roe": 20.9,
+    "fcf_musd": 1923.4,
+    "deuda_neta_ebitda": 0.08,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PRU.AX",
+    "nombre": "PERSEUS FPO [PRU]",
+    "indice": "ASX 200",
+    "roe": 20.57,
+    "fcf_musd": 143.6,
+    "deuda_neta_ebitda": -1.11,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "DB1.DE",
+    "nombre": "DEUTSCHE BOERSE AG            N",
+    "indice": "DAX 40",
+    "roe": 20.41,
+    "fcf_musd": 2181.1,
+    "deuda_neta_ebitda": 1.32,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "AFG",
+    "nombre": "American Financial Group, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 20.41,
+    "fcf_musd": 142.2,
+    "deuda_neta_ebitda": 0.37,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "WRB",
+    "nombre": "W.R. Berkley Corporation",
+    "indice": "S&P 500",
+    "roe": 20.21,
+    "fcf_musd": 3045.5,
+    "deuda_neta_ebitda": -0.31,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "LIFCO-B.ST",
+    "nombre": "Lifco AB ser.B",
+    "indice": "OMXS30",
+    "roe": 20.18,
+    "fcf_musd": 4165.8,
+    "deuda_neta_ebitda": 1.48,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "VICR",
+    "nombre": "Vicor Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 20.13,
+    "fcf_musd": 0.3,
+    "deuda_neta_ebitda": -3.88,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "DAL",
+    "nombre": "Delta Air Lines, Inc.",
+    "indice": "S&P 500",
+    "roe": 20.12,
+    "fcf_musd": 2817.4,
+    "deuda_neta_ebitda": 2.19,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "KRYS",
+    "nombre": "Krystal Biotech, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 20.12,
+    "fcf_musd": 151.7,
+    "deuda_neta_ebitda": -4.2,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "WGX.AX",
+    "nombre": "WESTGOLD FPO [WGX]",
+    "indice": "ASX 200",
+    "roe": 20.09,
+    "fcf_musd": 560.5,
+    "deuda_neta_ebitda": -0.57,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ATD.TO",
+    "nombre": "ALIMENTATION COUCHE-TARD INC",
+    "indice": "TSX 60",
+    "roe": 20.06,
+    "fcf_musd": 2356.3,
+    "deuda_neta_ebitda": 0.88,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "WTW",
+    "nombre": "Willis Towers Watson Public Lim",
+    "indice": "S&P 500",
+    "roe": 19.76,
+    "fcf_musd": 1415.6,
+    "deuda_neta_ebitda": 1.93,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "CW",
+    "nombre": "Curtiss-Wright Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 19.75,
+    "fcf_musd": 553.0,
+    "deuda_neta_ebitda": 0.8,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "NYT",
+    "nombre": "New York Times Company (The)",
+    "indice": "S&P MidCap 400",
+    "roe": 19.72,
+    "fcf_musd": 459.9,
+    "deuda_neta_ebitda": -1.19,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ETN",
+    "nombre": "Eaton Corporation, PLC",
+    "indice": "S&P 500",
+    "roe": 19.68,
+    "fcf_musd": 3106.1,
+    "deuda_neta_ebitda": 3.11,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ALV.DE",
+    "nombre": "Allianz SE                    v",
+    "indice": "DAX 40",
+    "roe": 19.61,
+    "fcf_musd": 9307.1,
+    "deuda_neta_ebitda": -4.77,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "DINO",
+    "nombre": "HF Sinclair Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 19.5,
+    "fcf_musd": 2035.6,
+    "deuda_neta_ebitda": 0.34,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "RRC",
+    "nombre": "Range Resources Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 19.48,
+    "fcf_musd": 454.5,
+    "deuda_neta_ebitda": 0.63,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "TROW",
+    "nombre": "T. Rowe Price Group, Inc.",
+    "indice": "S&P 500",
+    "roe": 19.4,
+    "fcf_musd": 2023.9,
+    "deuda_neta_ebitda": -0.94,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GEHC",
+    "nombre": "GE HealthCare Technologies Inc.",
+    "indice": "S&P 500",
+    "roe": 19.38,
+    "fcf_musd": 1573.1,
+    "deuda_neta_ebitda": 2.36,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CRM",
+    "nombre": "Salesforce, Inc.",
+    "indice": "S&P 500",
+    "roe": 19.38,
+    "fcf_musd": 17731.9,
+    "deuda_neta_ebitda": 2.4,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "HO.PA",
+    "nombre": "THALES",
+    "indice": "CAC 40",
+    "roe": 19.35,
+    "fcf_musd": 4252.8,
+    "deuda_neta_ebitda": 0.17,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "UTHR",
+    "nombre": "United Therapeutics Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 19.31,
+    "fcf_musd": 557.1,
+    "deuda_neta_ebitda": -1.78,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PPG",
+    "nombre": "PPG Industries, Inc.",
+    "indice": "S&P 500",
+    "roe": 19.3,
+    "fcf_musd": 1104.6,
+    "deuda_neta_ebitda": 2.17,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "QBE.AX",
+    "nombre": "QBE INSUR. FPO [QBE]",
+    "indice": "ASX 200",
+    "roe": 19.29,
+    "fcf_musd": 3445.0,
+    "deuda_neta_ebitda": -0.51,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SU.TO",
+    "nombre": "SUNCOR ENERGY INC.",
+    "indice": "TSX 60",
+    "roe": 19.25,
+    "fcf_musd": 9229.4,
+    "deuda_neta_ebitda": 0.48,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "CASY",
+    "nombre": "Caseys General Stores, Inc.",
+    "indice": "S&P 500",
+    "roe": 19.15,
+    "fcf_musd": 550.9,
+    "deuda_neta_ebitda": 1.6,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "III.L",
+    "nombre": "3I GROUP PLC ORD 73 19/22P",
+    "indice": "FTSE 100",
+    "roe": 19.08,
+    "fcf_musd": 3390.4,
+    "deuda_neta_ebitda": 0.11,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ALFA.ST",
+    "nombre": "Alfa Laval AB",
+    "indice": "OMXS30",
+    "roe": 19.06,
+    "fcf_musd": 4882.0,
+    "deuda_neta_ebitda": 1.16,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "MTO.L",
+    "nombre": "MITIE GROUP PLC ORD 2.5P",
+    "indice": "FTSE 250",
+    "roe": 18.8,
+    "fcf_musd": 233.2,
+    "deuda_neta_ebitda": 1.57,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "PRU.L",
+    "nombre": "PRUDENTIAL PLC ORD 5P",
+    "indice": "FTSE 100",
+    "roe": 18.74,
+    "fcf_musd": 4138.9,
+    "deuda_neta_ebitda": 0.01,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SSD",
+    "nombre": "Simpson Manufacturing Company, ",
+    "indice": "S&P MidCap 400",
+    "roe": 18.72,
+    "fcf_musd": 446.4,
+    "deuda_neta_ebitda": -0.01,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BDC",
+    "nombre": "Belden Inc",
+    "indice": "S&P MidCap 400",
+    "roe": 18.64,
+    "fcf_musd": 108.2,
+    "deuda_neta_ebitda": 2.12,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BA.L",
+    "nombre": "BAE SYSTEMS PLC ORD 2.5P",
+    "indice": "FTSE 100",
+    "roe": 18.63,
+    "fcf_musd": 2938.4,
+    "deuda_neta_ebitda": 1.32,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ORI",
+    "nombre": "Old Republic International Corp",
+    "indice": "S&P MidCap 400",
+    "roe": 18.57,
+    "fcf_musd": 1418.7,
+    "deuda_neta_ebitda": -0.24,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "G1A.DE",
+    "nombre": "GEA Group AG                  I",
+    "indice": "DAX 40",
+    "roe": 18.45,
+    "fcf_musd": 288.7,
+    "deuda_neta_ebitda": -0.1,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "JBHT",
+    "nombre": "J.B. Hunt Transport Services, I",
+    "indice": "S&P 500",
+    "roe": 18.45,
+    "fcf_musd": 903.0,
+    "deuda_neta_ebitda": 0.84,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "LIN",
+    "nombre": "Linde plc",
+    "indice": "S&P 500",
+    "roe": 18.4,
+    "fcf_musd": 4160.8,
+    "deuda_neta_ebitda": 1.67,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "FLEX",
+    "nombre": "Flex Ltd.",
+    "indice": "S&P 500",
+    "roe": 18.38,
+    "fcf_musd": 625.8,
+    "deuda_neta_ebitda": 1.46,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ENS",
+    "nombre": "EnerSys",
+    "indice": "S&P MidCap 400",
+    "roe": 18.36,
+    "fcf_musd": 614.7,
+    "deuda_neta_ebitda": 0.93,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "T",
+    "nombre": "AT&T Inc.",
+    "indice": "S&P 500",
+    "roe": 18.34,
+    "fcf_musd": 10142.0,
+    "deuda_neta_ebitda": 3.3,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SAP.DE",
+    "nombre": "SAP SE                        I",
+    "indice": "DAX 40",
+    "roe": 18.32,
+    "fcf_musd": 9090.6,
+    "deuda_neta_ebitda": -0.14,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CCC.L",
+    "nombre": "COMPUTACENTER PLC ORD 7 5/9P",
+    "indice": "FTSE 100",
+    "roe": 18.3,
+    "fcf_musd": 221.9,
+    "deuda_neta_ebitda": -1.44,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "QQ.L",
+    "nombre": "QINETIQ GROUP PLC ORD 1P",
+    "indice": "FTSE 250",
+    "roe": 18.23,
+    "fcf_musd": 153.1,
+    "deuda_neta_ebitda": 0.52,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AA",
+    "nombre": "Alcoa Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 18.23,
+    "fcf_musd": 960.8,
+    "deuda_neta_ebitda": 0.38,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AAI.AX",
+    "nombre": "ALCOA CORP CDI 1:1 [AAI]",
+    "indice": "ASX 200",
+    "roe": 18.23,
+    "fcf_musd": 960.8,
+    "deuda_neta_ebitda": 0.38,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "LR.PA",
+    "nombre": "LEGRAND",
+    "indice": "CAC 40",
+    "roe": 18.21,
+    "fcf_musd": 1031.0,
+    "deuda_neta_ebitda": 2.59,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "RSG",
+    "nombre": "Republic Services, Inc.",
+    "indice": "S&P 500",
+    "roe": 18.15,
+    "fcf_musd": 1942.6,
+    "deuda_neta_ebitda": 2.7,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "DHL.DE",
+    "nombre": "DEUTSCHE POST AG              N",
+    "indice": "DAX 40",
+    "roe": 18.09,
+    "fcf_musd": 5425.4,
+    "deuda_neta_ebitda": 2.82,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "ANTO.L",
+    "nombre": "ANTOFAGASTA PLC ORD 5P",
+    "indice": "FTSE 100",
+    "roe": 17.85,
+    "fcf_musd": 574.7,
+    "deuda_neta_ebitda": 0.73,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "TREX",
+    "nombre": "Trex Company, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 17.74,
+    "fcf_musd": 69.7,
+    "deuda_neta_ebitda": 0.95,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SFR.AX",
+    "nombre": "SANDFIRE FPO [SFR]",
+    "indice": "ASX 200",
+    "roe": 17.74,
+    "fcf_musd": 411.6,
+    "deuda_neta_ebitda": -0.38,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "CPRT",
+    "nombre": "Copart, Inc.",
+    "indice": "S&P 500",
+    "roe": 17.61,
+    "fcf_musd": 1000.0,
+    "deuda_neta_ebitda": -2.09,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SRP.L",
+    "nombre": "SERCO GROUP PLC ORD 2P",
+    "indice": "FTSE 250",
+    "roe": 17.58,
+    "fcf_musd": 361.2,
+    "deuda_neta_ebitda": 2.7,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "STLD",
+    "nombre": "Steel Dynamics, Inc.",
+    "indice": "S&P 500",
+    "roe": 17.57,
+    "fcf_musd": 234.2,
+    "deuda_neta_ebitda": 1.43,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AYI",
+    "nombre": "Acuity Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 17.38,
+    "fcf_musd": 467.3,
+    "deuda_neta_ebitda": 0.53,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MTSI",
+    "nombre": "MACOM Technology Solutions Hold",
+    "indice": "S&P MidCap 400",
+    "roe": 17.18,
+    "fcf_musd": 104.4,
+    "deuda_neta_ebitda": -0.9,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GAMA.L",
+    "nombre": "GAMMA COMMUNICATIONS PLC ORD 0.",
+    "indice": "FTSE 250",
+    "roe": 17.16,
+    "fcf_musd": 87.6,
+    "deuda_neta_ebitda": 0.22,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "RCP.L",
+    "nombre": "\"RIT Capital Partners\"",
+    "indice": "FTSE 250",
+    "roe": 17.14,
+    "fcf_musd": 529.3,
+    "deuda_neta_ebitda": 0.19,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "PNI.AX",
+    "nombre": "PINNACLE FPO [PNI]",
+    "indice": "ASX 200",
+    "roe": 17.04,
+    "fcf_musd": 26.4,
+    "deuda_neta_ebitda": -0.27,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ENSG",
+    "nombre": "The Ensign Group, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 16.97,
+    "fcf_musd": 280.6,
+    "deuda_neta_ebitda": 3.31,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "WOSG.L",
+    "nombre": "WATCHES OF SWITZERLAND GROUP PL",
+    "indice": "FTSE 250",
+    "roe": 16.95,
+    "fcf_musd": 105.3,
+    "deuda_neta_ebitda": 2.16,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "UNI.MI",
+    "nombre": "UNIPOL",
+    "indice": "FTSE MIB",
+    "roe": 16.94,
+    "fcf_musd": 2047.4,
+    "deuda_neta_ebitda": 0.78,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "FLS",
+    "nombre": "Flowserve Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 16.94,
+    "fcf_musd": 428.3,
+    "deuda_neta_ebitda": 2.21,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AFL",
+    "nombre": "AFLAC Incorporated",
+    "indice": "S&P 500",
+    "roe": 16.91,
+    "fcf_musd": 5152.2,
+    "deuda_neta_ebitda": 1.19,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GLW",
+    "nombre": "Corning Incorporated",
+    "indice": "S&P 500",
+    "roe": 16.81,
+    "fcf_musd": 734.5,
+    "deuda_neta_ebitda": 1.68,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "IMO.TO",
+    "nombre": "IMPERIAL OIL",
+    "indice": "TSX 60",
+    "roe": 16.8,
+    "fcf_musd": 4595.0,
+    "deuda_neta_ebitda": 0.17,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "BOL.ST",
+    "nombre": "Boliden AB",
+    "indice": "OMXS30",
+    "roe": 16.78,
+    "fcf_musd": 1669.8,
+    "deuda_neta_ebitda": 0.7,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MTS.AX",
+    "nombre": "METCASHLTD FPO [MTS]",
+    "indice": "ASX 200",
+    "roe": 16.72,
+    "fcf_musd": 340.2,
+    "deuda_neta_ebitda": 3.37,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "R",
+    "nombre": "Ryder System, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 16.7,
+    "fcf_musd": 949.2,
+    "deuda_neta_ebitda": 2.96,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "FGP.L",
+    "nombre": "FIRSTGROUP PLC ORD 5P",
+    "indice": "FTSE 250",
+    "roe": 16.68,
+    "fcf_musd": 302.8,
+    "deuda_neta_ebitda": 2.61,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SPX.L",
+    "nombre": "SPIRAX GROUP PLC ORD 26 12/13P",
+    "indice": "FTSE 100",
+    "roe": 16.62,
+    "fcf_musd": 162.8,
+    "deuda_neta_ebitda": 1.83,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "RDX.AX",
+    "nombre": "REDOX LTD FPO [RDX]",
+    "indice": "ASX 200",
+    "roe": 16.61,
+    "fcf_musd": 63.6,
+    "deuda_neta_ebitda": -0.62,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "A2M.AX",
+    "nombre": "A2 MILK FPO NZ [A2M]",
+    "indice": "ASX 200",
+    "roe": 16.57,
+    "fcf_musd": 339.8,
+    "deuda_neta_ebitda": -2.51,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MRVL",
+    "nombre": "Marvell Technology, Inc.",
+    "indice": "S&P 500",
+    "roe": 16.52,
+    "fcf_musd": 2408.0,
+    "deuda_neta_ebitda": 0.47,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "NDAQ",
+    "nombre": "Nasdaq, Inc.",
+    "indice": "S&P 500",
+    "roe": 16.52,
+    "fcf_musd": 1691.5,
+    "deuda_neta_ebitda": 2.61,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "CR",
+    "nombre": "Crane Company",
+    "indice": "S&P MidCap 400",
+    "roe": 16.52,
+    "fcf_musd": 363.8,
+    "deuda_neta_ebitda": 1.02,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "HSX.L",
+    "nombre": "HISCOX LTD ORD 6.5P (DI)",
+    "indice": "FTSE 100",
+    "roe": 16.51,
+    "fcf_musd": 448.9,
+    "deuda_neta_ebitda": -0.32,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "SYK",
+    "nombre": "Stryker Corporation",
+    "indice": "S&P 500",
+    "roe": 16.51,
+    "fcf_musd": 4107.6,
+    "deuda_neta_ebitda": 1.62,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "FFH.TO",
+    "nombre": "FAIRFAX FINANCIAL HOLDINGS LTD.",
+    "indice": "TSX 60",
+    "roe": 16.48,
+    "fcf_musd": 4770.9,
+    "deuda_neta_ebitda": 0.78,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BNZL.L",
+    "nombre": "BUNZL PLC ORD 32 1/7P",
+    "indice": "FTSE 100",
+    "roe": 16.47,
+    "fcf_musd": 622.8,
+    "deuda_neta_ebitda": 2.54,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "DOCU",
+    "nombre": "DocuSign, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 16.44,
+    "fcf_musd": 1250.4,
+    "deuda_neta_ebitda": -1.63,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "USFD",
+    "nombre": "US Foods Holding Corp.",
+    "indice": "S&P MidCap 400",
+    "roe": 16.35,
+    "fcf_musd": 805.1,
+    "deuda_neta_ebitda": 3.0,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "AEIS",
+    "nombre": "Advanced Energy Industries, Inc",
+    "indice": "S&P MidCap 400",
+    "roe": 16.27,
+    "fcf_musd": 34.2,
+    "deuda_neta_ebitda": -0.06,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PUB.PA",
+    "nombre": "PUBLICIS GROUPE SA",
+    "indice": "CAC 40",
+    "roe": 16.18,
+    "fcf_musd": 2018.6,
+    "deuda_neta_ebitda": 1.14,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "IFC.TO",
+    "nombre": "INTACT FINANCIAL CORPORATION",
+    "indice": "TSX 60",
+    "roe": 16.09,
+    "fcf_musd": 5278.0,
+    "deuda_neta_ebitda": 0.31,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SIKA.SW",
+    "nombre": "SIKA N",
+    "indice": "SMI",
+    "roe": 16.04,
+    "fcf_musd": 1024.2,
+    "deuda_neta_ebitda": 2.81,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "GLEN.L",
+    "nombre": "GLENCORE PLC ORD USD0.01",
+    "indice": "FTSE 100",
+    "roe": 16.04,
+    "fcf_musd": 3196.5,
+    "deuda_neta_ebitda": 3.32,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "WDAY",
+    "nombre": "Workday, Inc.",
+    "indice": "S&P 500",
+    "roe": 16.01,
+    "fcf_musd": 3046.4,
+    "deuda_neta_ebitda": 0.23,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CART",
+    "nombre": "Maplebear Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 16.0,
+    "fcf_musd": 917.9,
+    "deuda_neta_ebitda": -1.31,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "OPCH",
+    "nombre": "Option Care Health, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 16.0,
+    "fcf_musd": 256.1,
+    "deuda_neta_ebitda": 2.64,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SAAB-B.ST",
+    "nombre": "SAAB AB ser. B",
+    "indice": "OMXS30",
+    "roe": 15.86,
+    "fcf_musd": 7511.0,
+    "deuda_neta_ebitda": 0.15,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MKSI",
+    "nombre": "MKS Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 15.85,
+    "fcf_musd": 480.4,
+    "deuda_neta_ebitda": 3.38,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BCG.L",
+    "nombre": "BALTIC CLASSIFIEDS GROUP PLC OR",
+    "indice": "FTSE 250",
+    "roe": 15.81,
+    "fcf_musd": 51.4,
+    "deuda_neta_ebitda": 0.62,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CME",
+    "nombre": "CME Group Inc.",
+    "indice": "S&P 500",
+    "roe": 15.8,
+    "fcf_musd": 2909.0,
+    "deuda_neta_ebitda": 0.33,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SDR.L",
+    "nombre": "SCHRODERS PLC ORD 20P",
+    "indice": "FTSE 100",
+    "roe": 15.76,
+    "fcf_musd": 619.6,
+    "deuda_neta_ebitda": -4.67,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "NVT",
+    "nombre": "nVent Electric plc",
+    "indice": "S&P MidCap 400",
+    "roe": 15.75,
+    "fcf_musd": 452.6,
+    "deuda_neta_ebitda": 1.31,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SUL.AX",
+    "nombre": "SUPARETAIL FPO [SUL]",
+    "indice": "ASX 200",
+    "roe": 15.71,
+    "fcf_musd": 397.2,
+    "deuda_neta_ebitda": 2.89,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "FCN",
+    "nombre": "FTI Consulting, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 15.63,
+    "fcf_musd": 289.7,
+    "deuda_neta_ebitda": 2.46,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "TRU",
+    "nombre": "TransUnion",
+    "indice": "S&P MidCap 400",
+    "roe": 15.63,
+    "fcf_musd": 808.6,
+    "deuda_neta_ebitda": 3.16,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PUIG.MC",
+    "nombre": "PUIG BRANDS, S.A. CLASE B",
+    "indice": "IBEX 35",
+    "roe": 15.61,
+    "fcf_musd": 502.6,
+    "deuda_neta_ebitda": 1.63,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "ASSA-B.ST",
+    "nombre": "ASSA ABLOY AB ser. B",
+    "indice": "OMXS30",
+    "roe": 15.57,
+    "fcf_musd": 18395.1,
+    "deuda_neta_ebitda": 2.33,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "IAG.AX",
+    "nombre": "INSUR.AUST FPO [IAG]",
+    "indice": "ASX 200",
+    "roe": 15.57,
+    "fcf_musd": 653.9,
+    "deuda_neta_ebitda": 0.6,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "HST",
+    "nombre": "Host Hotels & Resorts, Inc.",
+    "indice": "S&P 500",
+    "roe": 15.56,
+    "fcf_musd": 1692.4,
+    "deuda_neta_ebitda": 2.18,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CLH",
+    "nombre": "Clean Harbors, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 15.56,
+    "fcf_musd": 383.8,
+    "deuda_neta_ebitda": 2.28,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "SHOP.TO",
+    "nombre": "SHOPIFY INC",
+    "indice": "TSX 60",
+    "roe": 15.54,
+    "fcf_musd": 1587.8,
+    "deuda_neta_ebitda": -1.99,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "FRAS.L",
+    "nombre": "FRASERS GROUP PLC ORD 10P",
+    "indice": "FTSE 250",
+    "roe": 15.48,
+    "fcf_musd": 57.1,
+    "deuda_neta_ebitda": 2.56,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "CIEN",
+    "nombre": "Ciena Corporation",
+    "indice": "S&P 500",
+    "roe": 15.46,
+    "fcf_musd": 700.9,
+    "deuda_neta_ebitda": 0.48,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "HIK.L",
+    "nombre": "HIKMA PHARMACEUTICALS PLC ORD S",
+    "indice": "FTSE 250",
+    "roe": 15.41,
+    "fcf_musd": 14.4,
+    "deuda_neta_ebitda": 1.9,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PWR",
+    "nombre": "Quanta Services, Inc.",
+    "indice": "S&P 500",
+    "roe": 15.34,
+    "fcf_musd": 1955.5,
+    "deuda_neta_ebitda": 2.0,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ZBRA",
+    "nombre": "Zebra Technologies Corporation",
+    "indice": "S&P 500",
+    "roe": 15.29,
+    "fcf_musd": 576.8,
+    "deuda_neta_ebitda": 2.37,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CKN.L",
+    "nombre": "CLARKSON PLC ORD 25P",
+    "indice": "FTSE 250",
+    "roe": 15.28,
+    "fcf_musd": 102.7,
+    "deuda_neta_ebitda": -2.55,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "COST.L",
+    "nombre": "COSTAIN GROUP PLC ORD 1P",
+    "indice": "FTSE 250",
+    "roe": 15.16,
+    "fcf_musd": 49.6,
+    "deuda_neta_ebitda": -2.71,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "AEP.L",
+    "nombre": "AEP PLANTATIONS PLC ORD 2.5P",
+    "indice": "FTSE 250",
+    "roe": 15.1,
+    "fcf_musd": 76.0,
+    "deuda_neta_ebitda": -1.94,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "DSY.PA",
+    "nombre": "DASSAULT SYSTEMES",
+    "indice": "CAC 40",
+    "roe": 15.09,
+    "fcf_musd": 1267.1,
+    "deuda_neta_ebitda": -1.36,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "DTE.DE",
+    "nombre": "DEUTSCHE TELEKOM AG           N",
+    "indice": "DAX 40",
+    "roe": 15.06,
+    "fcf_musd": 17394.6,
+    "deuda_neta_ebitda": 3.31,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "DGE.L",
+    "nombre": "DIAGEO PLC ORD 28 101/108P",
+    "indice": "FTSE 100",
+    "roe": 14.99,
+    "fcf_musd": 2568.5,
+    "deuda_neta_ebitda": 3.18,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "LSTR",
+    "nombre": "Landstar System, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 14.98,
+    "fcf_musd": 96.7,
+    "deuda_neta_ebitda": -0.85,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CTSH",
+    "nombre": "Cognizant Technology Solutions ",
+    "indice": "S&P 500",
+    "roe": 14.92,
+    "fcf_musd": 2215.5,
+    "deuda_neta_ebitda": 0.26,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "HAL",
+    "nombre": "Halliburton Company",
+    "indice": "S&P 500",
+    "roe": 14.92,
+    "fcf_musd": 2052.2,
+    "deuda_neta_ebitda": 1.49,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "DOV",
+    "nombre": "Dover Corporation",
+    "indice": "S&P 500",
+    "roe": 14.91,
+    "fcf_musd": 906.5,
+    "deuda_neta_ebitda": 0.79,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PHM",
+    "nombre": "PulteGroup, Inc.",
+    "indice": "S&P 500",
+    "roe": 14.9,
+    "fcf_musd": 1078.5,
+    "deuda_neta_ebitda": 0.42,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "EXE",
+    "nombre": "Expand Energy Corporation",
+    "indice": "S&P 500",
+    "roe": 14.89,
+    "fcf_musd": 1466.2,
+    "deuda_neta_ebitda": 0.46,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PKG",
+    "nombre": "Packaging Corporation of Americ",
+    "indice": "S&P 500",
+    "roe": 14.89,
+    "fcf_musd": 433.0,
+    "deuda_neta_ebitda": 1.91,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "FDX",
+    "nombre": "FedEx Corporation",
+    "indice": "S&P 500",
+    "roe": 14.85,
+    "fcf_musd": 5656.6,
+    "deuda_neta_ebitda": 2.48,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "XPS.L",
+    "nombre": "XPS PENSIONS GROUP PLC ORD GBP0",
+    "indice": "FTSE 250",
+    "roe": 14.74,
+    "fcf_musd": 35.3,
+    "deuda_neta_ebitda": 0.99,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "DGX",
+    "nombre": "Quest Diagnostics Incorporated",
+    "indice": "S&P 500",
+    "roe": 14.6,
+    "fcf_musd": 909.6,
+    "deuda_neta_ebitda": 2.55,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "AME",
+    "nombre": "AMETEK, Inc.",
+    "indice": "S&P 500",
+    "roe": 14.56,
+    "fcf_musd": 1492.2,
+    "deuda_neta_ebitda": 0.73,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ASHM.L",
+    "nombre": "ASHMORE GROUP PLC ORD 0.01P",
+    "indice": "FTSE 250",
+    "roe": 14.53,
+    "fcf_musd": 116.7,
+    "deuda_neta_ebitda": -20.99,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PPC",
+    "nombre": "Pilgrim's Pride Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 14.52,
+    "fcf_musd": 508.5,
+    "deuda_neta_ebitda": 1.54,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "TTE.PA",
+    "nombre": "TOTALENERGIES",
+    "indice": "CAC 40",
+    "roe": 14.48,
+    "fcf_musd": 13531.4,
+    "deuda_neta_ebitda": 0.79,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "TOL",
+    "nombre": "Toll Brothers, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 14.39,
+    "fcf_musd": 557.7,
+    "deuda_neta_ebitda": 1.1,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "M",
+    "nombre": "Macy's Inc",
+    "indice": "S&P MidCap 400",
+    "roe": 14.36,
+    "fcf_musd": 748.9,
+    "deuda_neta_ebitda": 2.71,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SHELL.AS",
+    "nombre": "SHELL PLC",
+    "indice": "AEX",
+    "roe": 14.34,
+    "fcf_musd": 21458.4,
+    "deuda_neta_ebitda": 0.72,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "SHEL.L",
+    "nombre": "SHELL PLC ORD EUR0.07",
+    "indice": "FTSE 100",
+    "roe": 14.34,
+    "fcf_musd": 21458.4,
+    "deuda_neta_ebitda": 0.72,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "JCI",
+    "nombre": "Johnson Controls International ",
+    "indice": "S&P 500",
+    "roe": 14.33,
+    "fcf_musd": 2984.1,
+    "deuda_neta_ebitda": 2.04,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "FOXA",
+    "nombre": "Fox Corporation",
+    "indice": "S&P 500",
+    "roe": 14.29,
+    "fcf_musd": 555.4,
+    "deuda_neta_ebitda": 0.87,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "EFX",
+    "nombre": "Equifax, Inc.",
+    "indice": "S&P 500",
+    "roe": 14.27,
+    "fcf_musd": 947.5,
+    "deuda_neta_ebitda": 2.75,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SPGI",
+    "nombre": "S&P Global Inc.",
+    "indice": "S&P 500",
+    "roe": 14.26,
+    "fcf_musd": 5448.2,
+    "deuda_neta_ebitda": 1.43,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "NOW",
+    "nombre": "ServiceNow, Inc.",
+    "indice": "S&P 500",
+    "roe": 14.24,
+    "fcf_musd": 5149.4,
+    "deuda_neta_ebitda": 1.31,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "COP",
+    "nombre": "ConocoPhillips",
+    "indice": "S&P 500",
+    "roe": 14.18,
+    "fcf_musd": 7691.4,
+    "deuda_neta_ebitda": 0.58,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "TRI.TO",
+    "nombre": "THOMSON REUTERS CORPORATION",
+    "indice": "TSX 60",
+    "roe": 14.17,
+    "fcf_musd": 2108.5,
+    "deuda_neta_ebitda": 1.1,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "REGN",
+    "nombre": "Regeneron Pharmaceuticals, Inc.",
+    "indice": "S&P 500",
+    "roe": 14.04,
+    "fcf_musd": 3065.3,
+    "deuda_neta_ebitda": -1.12,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "AI.PA",
+    "nombre": "AIR LIQUIDE",
+    "indice": "CAC 40",
+    "roe": 13.97,
+    "fcf_musd": 243.3,
+    "deuda_neta_ebitda": 1.99,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "ESSITY-B.ST",
+    "nombre": "Essity AB ser. B",
+    "indice": "OMXS30",
+    "roe": 13.96,
+    "fcf_musd": 8978.6,
+    "deuda_neta_ebitda": 1.46,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "WEIR.L",
+    "nombre": "WEIR PLC ORD 12.5P",
+    "indice": "FTSE 100",
+    "roe": 13.93,
+    "fcf_musd": 124.0,
+    "deuda_neta_ebitda": 2.78,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MTG",
+    "nombre": "MGIC Investment Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 13.92,
+    "fcf_musd": 518.9,
+    "deuda_neta_ebitda": 0.48,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "EQT.ST",
+    "nombre": "EQT AB",
+    "indice": "OMXS30",
+    "roe": 13.89,
+    "fcf_musd": 1399.4,
+    "deuda_neta_ebitda": -2.26,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PLS.AX",
+    "nombre": "PLSGROUP FPO [PLS]",
+    "indice": "ASX 200",
+    "roe": 13.81,
+    "fcf_musd": 800.2,
+    "deuda_neta_ebitda": -1.0,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CMC",
+    "nombre": "Commercial Metals Company",
+    "indice": "S&P MidCap 400",
+    "roe": 13.79,
+    "fcf_musd": 134.1,
+    "deuda_neta_ebitda": 2.54,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "JD.L",
+    "nombre": "JD SPORTS FASHION PLC ORD 0.05P",
+    "indice": "FTSE 100",
+    "roe": 13.74,
+    "fcf_musd": 830.0,
+    "deuda_neta_ebitda": 2.11,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "INGR",
+    "nombre": "Ingredion Incorporated",
+    "indice": "S&P MidCap 400",
+    "roe": 13.69,
+    "fcf_musd": 457.2,
+    "deuda_neta_ebitda": 0.72,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BRG.AX",
+    "nombre": "BREVILLE FPO [BRG]",
+    "indice": "ASX 200",
+    "roe": 13.59,
+    "fcf_musd": 122.5,
+    "deuda_neta_ebitda": -0.17,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "TWLO",
+    "nombre": "Twilio Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 13.5,
+    "fcf_musd": 954.7,
+    "deuda_neta_ebitda": -3.18,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ATR",
+    "nombre": "AptarGroup, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 13.46,
+    "fcf_musd": 266.0,
+    "deuda_neta_ebitda": 1.52,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "VAU.AX",
+    "nombre": "VLTMINLTD FPO [VAU]",
+    "indice": "ASX 200",
+    "roe": 13.46,
+    "fcf_musd": 415.6,
+    "deuda_neta_ebitda": -0.79,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "BATS.L",
+    "nombre": "BRITISH AMERICAN TOBACCO PLC OR",
+    "indice": "FTSE 100",
+    "roe": 13.42,
+    "fcf_musd": 3525.4,
+    "deuda_neta_ebitda": 2.9,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CBT",
+    "nombre": "Cabot Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 13.35,
+    "fcf_musd": 258.2,
+    "deuda_neta_ebitda": 1.41,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "REP.MC",
+    "nombre": "REPSOL,  S.A.",
+    "indice": "IBEX 35",
+    "roe": 13.34,
+    "fcf_musd": 301.4,
+    "deuda_neta_ebitda": 0.6,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "SNX",
+    "nombre": "TD SYNNEX Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 13.14,
+    "fcf_musd": 304.9,
+    "deuda_neta_ebitda": 1.63,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ROKU",
+    "nombre": "Roku, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 13.12,
+    "fcf_musd": 836.6,
+    "deuda_neta_ebitda": -3.6,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "ROP",
+    "nombre": "Roper Technologies, Inc.",
+    "indice": "S&P 500",
+    "roe": 13.07,
+    "fcf_musd": 2265.7,
+    "deuda_neta_ebitda": 3.38,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BTSG",
+    "nombre": "BrightSpring Health Services, I",
+    "indice": "S&P MidCap 400",
+    "roe": 13.04,
+    "fcf_musd": 1028.4,
+    "deuda_neta_ebitda": 2.93,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SLB",
+    "nombre": "SLB Limited",
+    "indice": "S&P 500",
+    "roe": 12.91,
+    "fcf_musd": 2955.1,
+    "deuda_neta_ebitda": 1.18,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "FLT.AX",
+    "nombre": "FLIGHT CTR FPO [FLT]",
+    "indice": "ASX 200",
+    "roe": 12.86,
+    "fcf_musd": 130.7,
+    "deuda_neta_ebitda": 2.86,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CDE",
+    "nombre": "Coeur Mining, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 12.85,
+    "fcf_musd": 796.7,
+    "deuda_neta_ebitda": -0.21,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "EMR",
+    "nombre": "Emerson Electric Company",
+    "indice": "S&P 500",
+    "roe": 12.8,
+    "fcf_musd": 3706.2,
+    "deuda_neta_ebitda": 1.92,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PCAR",
+    "nombre": "PACCAR Inc.",
+    "indice": "S&P 500",
+    "roe": 12.76,
+    "fcf_musd": 1943.7,
+    "deuda_neta_ebitda": 1.88,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "JSG.L",
+    "nombre": "JOHNSON SERVICE GROUP PLC ORD 1",
+    "indice": "FTSE 250",
+    "roe": 12.72,
+    "fcf_musd": 27.4,
+    "deuda_neta_ebitda": 1.0,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "COLM",
+    "nombre": "Columbia Sportswear Company",
+    "indice": "S&P MidCap 400",
+    "roe": 12.66,
+    "fcf_musd": 255.1,
+    "deuda_neta_ebitda": -0.48,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "XOM",
+    "nombre": "ExxonMobil Holdings Corporation",
+    "indice": "S&P 500",
+    "roe": 12.58,
+    "fcf_musd": 20671.0,
+    "deuda_neta_ebitda": 0.47,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "SIE.DE",
+    "nombre": "SIEMENS AG                    N",
+    "indice": "DAX 40",
+    "roe": 12.47,
+    "fcf_musd": 6503.8,
+    "deuda_neta_ebitda": 3.12,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "OXIG.L",
+    "nombre": "OXFORD INSTRUMENTS PLC ORD 5P",
+    "indice": "FTSE 250",
+    "roe": 12.43,
+    "fcf_musd": 71.5,
+    "deuda_neta_ebitda": -0.76,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "OSK",
+    "nombre": "Oshkosh Corporation (Holding Co",
+    "indice": "S&P MidCap 400",
+    "roe": 12.39,
+    "fcf_musd": 734.0,
+    "deuda_neta_ebitda": 0.67,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SDF.AX",
+    "nombre": "STEADFAST FPO [SDF]",
+    "indice": "ASX 200",
+    "roe": 12.36,
+    "fcf_musd": 275.4,
+    "deuda_neta_ebitda": 2.17,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ASRNL.AS",
+    "nombre": "ASR NEDERLAND",
+    "indice": "AEX",
+    "roe": 12.23,
+    "fcf_musd": 5933.6,
+    "deuda_neta_ebitda": -9.46,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "ADI",
+    "nombre": "Analog Devices, Inc.",
+    "indice": "S&P 500",
+    "roe": 12.23,
+    "fcf_musd": 4147.3,
+    "deuda_neta_ebitda": 0.99,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CVX",
+    "nombre": "Chevron Corporation",
+    "indice": "S&P 500",
+    "roe": 12.23,
+    "fcf_musd": 21934.0,
+    "deuda_neta_ebitda": 0.56,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "CAP.PA",
+    "nombre": "CAPGEMINI",
+    "indice": "CAC 40",
+    "roe": 12.2,
+    "fcf_musd": 1901.9,
+    "deuda_neta_ebitda": 2.56,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SHL.DE",
+    "nombre": "Siemens Healthineers AG       N",
+    "indice": "DAX 40",
+    "roe": 12.15,
+    "fcf_musd": 2145.4,
+    "deuda_neta_ebitda": 3.14,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "IMD.AX",
+    "nombre": "IMDEX FPO [IMD]",
+    "indice": "ASX 200",
+    "roe": 12.1,
+    "fcf_musd": 69.3,
+    "deuda_neta_ebitda": 1.89,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "LEA",
+    "nombre": "Lear Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 12.09,
+    "fcf_musd": 859.0,
+    "deuda_neta_ebitda": 1.48,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ARW",
+    "nombre": "Arrow Electronics, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 12.04,
+    "fcf_musd": 732.9,
+    "deuda_neta_ebitda": 1.31,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "JUP.L",
+    "nombre": "JUPITER FUND MANAGEMENT PLC ORD",
+    "indice": "FTSE 250",
+    "roe": 12.03,
+    "fcf_musd": 150.4,
+    "deuda_neta_ebitda": -2.58,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ESNT",
+    "nombre": "Essent Group Ltd.",
+    "indice": "S&P MidCap 400",
+    "roe": 12.01,
+    "fcf_musd": 690.2,
+    "deuda_neta_ebitda": -0.24,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "QIA.DE",
+    "nombre": "Qiagen N.V.                   A",
+    "indice": "DAX 40",
+    "roe": 11.93,
+    "fcf_musd": 372.9,
+    "deuda_neta_ebitda": 1.17,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GWRE",
+    "nombre": "Guidewire Software, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 11.93,
+    "fcf_musd": 283.2,
+    "deuda_neta_ebitda": -0.35,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "KIE.L",
+    "nombre": "KIER GROUP PLC ORD 1P",
+    "indice": "FTSE 250",
+    "roe": 11.92,
+    "fcf_musd": 193.4,
+    "deuda_neta_ebitda": 0.49,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "LDO.MI",
+    "nombre": "LEONARDO",
+    "indice": "FTSE MIB",
+    "roe": 11.89,
+    "fcf_musd": 1092.4,
+    "deuda_neta_ebitda": 1.51,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GHC",
+    "nombre": "Graham Holdings Company",
+    "indice": "S&P MidCap 400",
+    "roe": 11.87,
+    "fcf_musd": 267.7,
+    "deuda_neta_ebitda": 0.32,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AGCO",
+    "nombre": "AGCO Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 11.83,
+    "fcf_musd": 450.3,
+    "deuda_neta_ebitda": 2.29,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GMED",
+    "nombre": "Globus Medical, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 11.81,
+    "fcf_musd": 554.2,
+    "deuda_neta_ebitda": -0.48,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "LH",
+    "nombre": "Labcorp Holdings Inc.",
+    "indice": "S&P 500",
+    "roe": 11.73,
+    "fcf_musd": 892.0,
+    "deuda_neta_ebitda": 2.88,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "RS1.L",
+    "nombre": "RS GROUP PLC ORD 10P",
+    "indice": "FTSE 250",
+    "roe": 11.7,
+    "fcf_musd": 168.0,
+    "deuda_neta_ebitda": 1.23,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "RGA",
+    "nombre": "Reinsurance Group of America, I",
+    "indice": "S&P MidCap 400",
+    "roe": 11.69,
+    "fcf_musd": 9836.5,
+    "deuda_neta_ebitda": 0.02,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "TEN.MI",
+    "nombre": "TENARIS",
+    "indice": "FTSE MIB",
+    "roe": 11.58,
+    "fcf_musd": 865.1,
+    "deuda_neta_ebitda": -0.85,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ITT",
+    "nombre": "ITT Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 11.57,
+    "fcf_musd": 275.1,
+    "deuda_neta_ebitda": 3.46,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "GMG.AX",
+    "nombre": "GOOD GROUP STAPLED [GMG]",
+    "indice": "ASX 200",
+    "roe": 11.52,
+    "fcf_musd": 2988.8,
+    "deuda_neta_ebitda": 0.84,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CMCSA",
+    "nombre": "Comcast Corporation",
+    "indice": "S&P 500",
+    "roe": 11.49,
+    "fcf_musd": 12697.6,
+    "deuda_neta_ebitda": 2.43,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CXT",
+    "nombre": "Crane NXT, Co.",
+    "indice": "S&P MidCap 400",
+    "roe": 11.48,
+    "fcf_musd": 239.8,
+    "deuda_neta_ebitda": 2.87,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PR",
+    "nombre": "Permian Resources Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 11.4,
+    "fcf_musd": 458.4,
+    "deuda_neta_ebitda": 0.71,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "STE",
+    "nombre": "STERIS plc (Ireland)",
+    "indice": "S&P 500",
+    "roe": 11.39,
+    "fcf_musd": 798.9,
+    "deuda_neta_ebitda": 0.95,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "PEN",
+    "nombre": "Penumbra, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 11.37,
+    "fcf_musd": 161.1,
+    "deuda_neta_ebitda": -2.18,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CAR.AX",
+    "nombre": "CAR GROUP FPO [CAR]",
+    "indice": "ASX 200",
+    "roe": 11.34,
+    "fcf_musd": 399.9,
+    "deuda_neta_ebitda": 2.23,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ERF.PA",
+    "nombre": "EUROFINS SCIENT.",
+    "indice": "CAC 40",
+    "roe": 11.33,
+    "fcf_musd": 339.6,
+    "deuda_neta_ebitda": 2.51,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "IMCD.AS",
+    "nombre": "IMCD",
+    "indice": "AEX",
+    "roe": 11.22,
+    "fcf_musd": 266.9,
+    "deuda_neta_ebitda": 3.02,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "CGNX",
+    "nombre": "Cognex Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 11.15,
+    "fcf_musd": 195.7,
+    "deuda_neta_ebitda": -1.24,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SKA-B.ST",
+    "nombre": "Skanska AB ser. B",
+    "indice": "OMXS30",
+    "roe": 11.12,
+    "fcf_musd": 2031.4,
+    "deuda_neta_ebitda": -0.06,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "EQT",
+    "nombre": "EQT Corporation",
+    "indice": "S&P 500",
+    "roe": 11.08,
+    "fcf_musd": 2460.9,
+    "deuda_neta_ebitda": 0.79,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SGO.PA",
+    "nombre": "SAINT GOBAIN",
+    "indice": "CAC 40",
+    "roe": 11.04,
+    "fcf_musd": 3101.6,
+    "deuda_neta_ebitda": 1.75,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "MIDD",
+    "nombre": "The Middleby Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 10.97,
+    "fcf_musd": 604.1,
+    "deuda_neta_ebitda": 2.62,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CNO",
+    "nombre": "CNO Financial Group, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 10.93,
+    "fcf_musd": 996.1,
+    "deuda_neta_ebitda": 3.03,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "BEI.DE",
+    "nombre": "BEIERSDORF AG                 I",
+    "indice": "DAX 40",
+    "roe": 10.89,
+    "fcf_musd": 559.8,
+    "deuda_neta_ebitda": -1.73,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "NST.AX",
+    "nombre": "NTH STAR FPO [NST]",
+    "indice": "ASX 200",
+    "roe": 10.88,
+    "fcf_musd": 385.0,
+    "deuda_neta_ebitda": 0.17,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SAIA",
+    "nombre": "Saia, Inc.",
+    "indice": "S&P MidCap 400",
+    "roe": 10.77,
+    "fcf_musd": 135.7,
+    "deuda_neta_ebitda": 0.3,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "HXL",
+    "nombre": "Hexcel Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 10.76,
+    "fcf_musd": 253.0,
+    "deuda_neta_ebitda": 2.31,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ABT",
+    "nombre": "Abbott Laboratories",
+    "indice": "S&P 500",
+    "roe": 10.58,
+    "fcf_musd": 7209.1,
+    "deuda_neta_ebitda": 2.32,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "TELIA.ST",
+    "nombre": "Telia Company AB",
+    "indice": "OMXS30",
+    "roe": 10.56,
+    "fcf_musd": 21041.0,
+    "deuda_neta_ebitda": 2.99,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "AVON.L",
+    "nombre": "AVON TECHNOLOGIES PLC ORD #1",
+    "indice": "FTSE 250",
+    "roe": 10.53,
+    "fcf_musd": 7.2,
+    "deuda_neta_ebitda": 1.98,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ANN.AX",
+    "nombre": "ANSELL FPO [ANN]",
+    "indice": "ASX 200",
+    "roe": 10.47,
+    "fcf_musd": 207.1,
+    "deuda_neta_ebitda": 1.36,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "DCC.L",
+    "nombre": "DCC ENERGY PLC ORD EUR0.25 (CDI",
+    "indice": "FTSE 100",
+    "roe": 10.38,
+    "fcf_musd": 1308.7,
+    "deuda_neta_ebitda": 1.56,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "APG",
+    "nombre": "APi Group Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 10.35,
+    "fcf_musd": 648.6,
+    "deuda_neta_ebitda": 2.77,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "CHRD",
+    "nombre": "Chord Energy Corporation",
+    "indice": "S&P MidCap 400",
+    "roe": 10.31,
+    "fcf_musd": 961.2,
+    "deuda_neta_ebitda": 0.33,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "AMD",
+    "nombre": "Advanced Micro Devices, Inc.",
+    "indice": "S&P 500",
+    "roe": 10.2,
+    "fcf_musd": 8841.5,
+    "deuda_neta_ebitda": -0.92,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ITH.L",
+    "nombre": "ITHACA ENERGY PLC ORD 1P",
+    "indice": "FTSE 250",
+    "roe": 10.17,
+    "fcf_musd": 960.9,
+    "deuda_neta_ebitda": 0.61,
+    "senales": [
+      "RRA"
+    ]
+  },
+  {
+    "ticker": "PHIA.AS",
+    "nombre": "KON.PHILIPS N.V.",
+    "indice": "AEX",
+    "roe": 10.15,
+    "fcf_musd": 1527.5,
+    "deuda_neta_ebitda": 2.35,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "ALGN",
+    "nombre": "Align Technology, Inc.",
+    "indice": "S&P 500",
+    "roe": 10.15,
+    "fcf_musd": 584.4,
+    "deuda_neta_ebitda": -1.08,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "SUN.AX",
+    "nombre": "SUNCORP FPO [SUN]",
+    "indice": "ASX 200",
+    "roe": 10.14,
+    "fcf_musd": 1676.7,
+    "deuda_neta_ebitda": 0.96,
+    "senales": [
+      "LT"
+    ]
+  },
+  {
+    "ticker": "BRO",
+    "nombre": "Brown & Brown, Inc.",
+    "indice": "S&P 500",
+    "roe": 10.02,
+    "fcf_musd": 1642.7,
+    "deuda_neta_ebitda": 2.47,
+    "senales": [
+      "LT"
+    ]
+  }
+]

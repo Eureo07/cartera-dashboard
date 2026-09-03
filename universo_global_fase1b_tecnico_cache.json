@@ -1,0 +1,2426 @@
+{
+  "AMS.MC": [
+    "LT",
+    "MA"
+  ],
+  "AENA.MC": [
+    "MA"
+  ],
+  "ELE.MC": [
+    "RRA"
+  ],
+  "FDR.MC": [
+    "PER"
+  ],
+  "IAG.MC": [
+    "LT",
+    "MA"
+  ],
+  "IDR.MC": [],
+  "NTGY.MC": [
+    "RRA",
+    "MA"
+  ],
+  "PUIG.MC": [
+    "RRA"
+  ],
+  "REP.MC": [
+    "RRA"
+  ],
+  "ROVI.MC": [],
+  "AI.PA": [
+    "RRA",
+    "MA"
+  ],
+  "AIR.PA": [
+    "LT",
+    "MA"
+  ],
+  "CAP.PA": [
+    "LT",
+    "MA"
+  ],
+  "BN.PA": [
+    "PER"
+  ],
+  "DSY.PA": [
+    "LT"
+  ],
+  "ERF.PA": [
+    "RRA"
+  ],
+  "RMS.PA": [
+    "PER"
+  ],
+  "OR.PA": [
+    "PER",
+    "MA"
+  ],
+  "LR.PA": [
+    "LT",
+    "PER",
+    "MA"
+  ],
+  "MC.PA": [
+    "PER"
+  ],
+  "PUB.PA": [
+    "RRA"
+  ],
+  "SGO.PA": [
+    "LT",
+    "MA"
+  ],
+  "SU.PA": [
+    "MA"
+  ],
+  "TEP.PA": [],
+  "HO.PA": [
+    "LT",
+    "MA"
+  ],
+  "TTE.PA": [
+    "RRA"
+  ],
+  "DG.PA": [
+    "PER"
+  ],
+  "ADS.DE": [
+    "LT"
+  ],
+  "ALV.DE": [
+    "RRA"
+  ],
+  "BEI.DE": [
+    "LT",
+    "MA"
+  ],
+  "DB1.DE": [
+    "RRA"
+  ],
+  "DHL.DE": [
+    "RRA",
+    "MA"
+  ],
+  "DTE.DE": [
+    "LT",
+    "MA"
+  ],
+  "G1A.DE": [
+    "RRA"
+  ],
+  "HNR1.DE": [
+    "MA"
+  ],
+  "HEI.DE": [
+    "PER"
+  ],
+  "MTX.DE": [
+    "LT",
+    "MA"
+  ],
+  "QIA.DE": [
+    "LT",
+    "MA"
+  ],
+  "RHM.DE": [],
+  "SAP.DE": [
+    "LT"
+  ],
+  "G24.DE": [
+    "LT",
+    "MA"
+  ],
+  "SIE.DE": [
+    "RRA",
+    "MA"
+  ],
+  "ENR.DE": [
+    "LT"
+  ],
+  "SHL.DE": [
+    "LT",
+    "MA"
+  ],
+  "AZM.MI": [
+    "RRA",
+    "MA"
+  ],
+  "BC.MI": [
+    "LT",
+    "MA"
+  ],
+  "BZU.MI": [
+    "PER"
+  ],
+  "RACE.MI": [
+    "LT"
+  ],
+  "FCT.MI": [],
+  "HER.MI": [
+    "PER"
+  ],
+  "LDO.MI": [
+    "LT"
+  ],
+  "LTMC.MI": [
+    "LT",
+    "MA"
+  ],
+  "MONC.MI": [
+    "PER"
+  ],
+  "PRY.MI": [
+    "LT"
+  ],
+  "REC.MI": [
+    "RRA",
+    "MA"
+  ],
+  "SPM.MI": [],
+  "TEN.MI": [
+    "LT",
+    "MA"
+  ],
+  "UNI.MI": [
+    "RRA"
+  ],
+  "AD.AS": [
+    "PER"
+  ],
+  "AKZA.AS": [
+    "MA"
+  ],
+  "ASM.AS": [
+    "LT"
+  ],
+  "ASML.AS": [
+    "LT",
+    "MA"
+  ],
+  "ASRNL.AS": [
+    "RRA"
+  ],
+  "BESI.AS": [
+    "LT"
+  ],
+  "HEIA.AS": [
+    "MA"
+  ],
+  "IMCD.AS": [
+    "RRA"
+  ],
+  "KPN.AS": [
+    "LT",
+    "PER",
+    "MA"
+  ],
+  "PHIA.AS": [
+    "LT",
+    "PER",
+    "MA"
+  ],
+  "PRX.AS": [
+    "PER"
+  ],
+  "REN.AS": [
+    "LT",
+    "MA"
+  ],
+  "SHELL.AS": [
+    "RRA"
+  ],
+  "UNA.AS": [
+    "LT",
+    "MA"
+  ],
+  "WKL.AS": [
+    "LT",
+    "MA"
+  ],
+  "NOVN.SW": [
+    "RRA"
+  ],
+  "ROP.SW": [
+    "MA"
+  ],
+  "NESN.SW": [
+    "MA"
+  ],
+  "ABBN.SW": [
+    "LT",
+    "MA"
+  ],
+  "CFR.SW": [
+    "MA"
+  ],
+  "SREN.SW": [],
+  "GIVN.SW": [
+    "MA"
+  ],
+  "SIKA.SW": [
+    "RRA"
+  ],
+  "KNIN.SW": [
+    "RRA"
+  ],
+  "GEBN.SW": [
+    "LT",
+    "MA"
+  ],
+  "PGHN.SW": [
+    "PER"
+  ],
+  "LOGN.SW": [
+    "LT",
+    "MA"
+  ],
+  "III.L": [
+    "LT",
+    "MA"
+  ],
+  "AAF.L": [
+    "LT",
+    "MA"
+  ],
+  "ANTO.L": [
+    "LT",
+    "MA"
+  ],
+  "AZN.L": [
+    "LT",
+    "PER"
+  ],
+  "AUTO.L": [
+    "LT",
+    "MA"
+  ],
+  "BAB.L": [],
+  "BA.L": [
+    "LT",
+    "MA"
+  ],
+  "BATS.L": [
+    "LT",
+    "MA"
+  ],
+  "BNZL.L": [
+    "RRA",
+    "MA"
+  ],
+  "CNA.L": [
+    "PER"
+  ],
+  "CCEP.L": [
+    "MA"
+  ],
+  "CCH.L": [
+    "LT",
+    "MA"
+  ],
+  "CPG.L": [
+    "LT",
+    "MA"
+  ],
+  "CCC.L": [
+    "RRA"
+  ],
+  "DCC.L": [
+    "RRA"
+  ],
+  "DGE.L": [
+    "LT",
+    "MA"
+  ],
+  "DPLM.L": [
+    "MA"
+  ],
+  "EDV.L": [
+    "LT"
+  ],
+  "EXPN.L": [
+    "LT"
+  ],
+  "FRES.L": [
+    "LT",
+    "MA"
+  ],
+  "GAW.L": [
+    "LT",
+    "MA"
+  ],
+  "GLEN.L": [
+    "RRA"
+  ],
+  "GSK.L": [
+    "LT",
+    "MA"
+  ],
+  "HLN.L": [
+    "MA"
+  ],
+  "HLMA.L": [
+    "PER"
+  ],
+  "HSX.L": [
+    "RRA"
+  ],
+  "HWDN.L": [
+    "LT",
+    "PER",
+    "MA"
+  ],
+  "IMI.L": [
+    "RRA",
+    "MA"
+  ],
+  "IMB.L": [
+    "PER"
+  ],
+  "IAG.L": [
+    "LT",
+    "MA"
+  ],
+  "ITRK.L": [
+    "RRA"
+  ],
+  "JD.L": [
+    "LT",
+    "MA"
+  ],
+  "NXT.L": [
+    "RRA"
+  ],
+  "PRU.L": [
+    "LT",
+    "PER",
+    "MA"
+  ],
+  "RKT.L": [
+    "LT",
+    "MA"
+  ],
+  "REL.L": [
+    "LT",
+    "MA"
+  ],
+  "RIO.L": [
+    "MA"
+  ],
+  "RR.L": [
+    "MA"
+  ],
+  "SGE.L": [],
+  "SDR.L": [
+    "RRA",
+    "MA"
+  ],
+  "SHEL.L": [
+    "RRA"
+  ],
+  "SN.L": [
+    "PER"
+  ],
+  "SPX.L": [
+    "LT",
+    "PER",
+    "MA"
+  ],
+  "STJ.L": [
+    "LT",
+    "MA"
+  ],
+  "TSCO.L": [
+    "MA"
+  ],
+  "ULVR.L": [
+    "LT",
+    "MA"
+  ],
+  "WEIR.L": [
+    "LT",
+    "MA"
+  ],
+  "FOUR.L": [
+    "LT"
+  ],
+  "AEP.L": [
+    "LT"
+  ],
+  "ALFA.L": [
+    "LT",
+    "MA"
+  ],
+  "AO.L": [
+    "LT",
+    "MA"
+  ],
+  "APN.L": [],
+  "ASHM.L": [
+    "LT",
+    "MA"
+  ],
+  "ATYM.L": [],
+  "AVON.L": [
+    "LT",
+    "MA"
+  ],
+  "BBY.L": [
+    "MA"
+  ],
+  "BCG.L": [
+    "LT"
+  ],
+  "BAG.L": [
+    "PER"
+  ],
+  "BMY.L": [
+    "MA"
+  ],
+  "BYIT.L": [
+    "RRA"
+  ],
+  "CKN.L": [
+    "RRA"
+  ],
+  "COA.L": [
+    "LT",
+    "PER",
+    "MA"
+  ],
+  "COST.L": [
+    "RRA"
+  ],
+  "CWK.L": [
+    "MA"
+  ],
+  "DNLM.L": [
+    "LT",
+    "MA"
+  ],
+  "ELM.L": [
+    "MA"
+  ],
+  "FGP.L": [
+    "LT",
+    "MA"
+  ],
+  "FSG.L": [
+    "RRA"
+  ],
+  "FRAS.L": [
+    "RRA"
+  ],
+  "GFRD.L": [
+    "RRA"
+  ],
+  "GAMA.L": [
+    "RRA"
+  ],
+  "DATA.L": [],
+  "GRG.L": [],
+  "HIK.L": [
+    "LT",
+    "MA"
+  ],
+  "HILS.L": [
+    "MA"
+  ],
+  "HOC.L": [
+    "LT"
+  ],
+  "BOWL.L": [
+    "MA"
+  ],
+  "IHP.L": [
+    "RRA"
+  ],
+  "ITH.L": [
+    "RRA"
+  ],
+  "ITV.L": [
+    "PER"
+  ],
+  "JSG.L": [
+    "LT",
+    "MA"
+  ],
+  "JUP.L": [
+    "LT",
+    "MA"
+  ],
+  "KNOS.L": [
+    "RRA"
+  ],
+  "KLR.L": [
+    "LT"
+  ],
+  "KIE.L": [
+    "RRA"
+  ],
+  "LRE.L": [
+    "MA"
+  ],
+  "LWDB.L": [
+    "RRA",
+    "MA"
+  ],
+  "MEGP.L": [
+    "LT",
+    "MA"
+  ],
+  "MTO.L": [
+    "RRA"
+  ],
+  "MONY.L": [
+    "MA"
+  ],
+  "MGNS.L": [
+    "PER"
+  ],
+  "N91.L": [
+    "LT",
+    "MA"
+  ],
+  "OXIG.L": [
+    "LT",
+    "MA"
+  ],
+  "PAF.L": [
+    "LT"
+  ],
+  "QQ.L": [
+    "LT",
+    "MA"
+  ],
+  "RMV.L": [
+    "LT"
+  ],
+  "RCP.L": [
+    "RRA",
+    "MA"
+  ],
+  "ROR.L": [
+    "RRA"
+  ],
+  "RS1.L": [
+    "RRA"
+  ],
+  "SRP.L": [
+    "LT",
+    "MA"
+  ],
+  "SCT.L": [
+    "RRA"
+  ],
+  "TEP.L": [],
+  "TRN.L": [
+    "PER"
+  ],
+  "TRST.L": [],
+  "FAN.L": [
+    "MA"
+  ],
+  "WOSG.L": [
+    "LT",
+    "MA"
+  ],
+  "XPS.L": [
+    "LT",
+    "PER",
+    "MA"
+  ],
+  "ABB.ST": [
+    "LT",
+    "MA"
+  ],
+  "ADDT-B.ST": [
+    "MA"
+  ],
+  "ALFA.ST": [
+    "RRA",
+    "MA"
+  ],
+  "ASSA-B.ST": [
+    "LT",
+    "MA"
+  ],
+  "AZN.ST": [
+    "LT"
+  ],
+  "ATCO-A.ST": [
+    "MA"
+  ],
+  "BOL.ST": [
+    "LT",
+    "MA"
+  ],
+  "EPI-A.ST": [
+    "MA"
+  ],
+  "EQT.ST": [
+    "LT",
+    "MA"
+  ],
+  "ERIC-B.ST": [
+    "LT"
+  ],
+  "ESSITY-B.ST": [
+    "RRA",
+    "MA"
+  ],
+  "EVO.ST": [
+    "RRA"
+  ],
+  "HM-B.ST": [
+    "LT",
+    "MA"
+  ],
+  "HEXA-B.ST": [
+    "LT"
+  ],
+  "INDU-C.ST": [
+    "MA"
+  ],
+  "INVE-B.ST": [
+    "RRA",
+    "MA"
+  ],
+  "LIFCO-B.ST": [
+    "LT",
+    "MA"
+  ],
+  "SAAB-B.ST": [
+    "LT",
+    "MA"
+  ],
+  "SAND.ST": [
+    "MA"
+  ],
+  "SKA-B.ST": [
+    "RRA",
+    "MA"
+  ],
+  "TEL2-B.ST": [
+    "LT",
+    "MA"
+  ],
+  "TELIA.ST": [
+    "LT",
+    "MA"
+  ],
+  "MMM": [
+    "MA"
+  ],
+  "AOS": [
+    "PER"
+  ],
+  "ABT": [
+    "LT"
+  ],
+  "ACN": [
+    "LT"
+  ],
+  "ADBE": [
+    "LT"
+  ],
+  "AMD": [
+    "LT",
+    "MA"
+  ],
+  "AFL": [
+    "LT",
+    "PER",
+    "MA"
+  ],
+  "A": [],
+  "ABNB": [
+    "RRA"
+  ],
+  "ALGN": [
+    "LT"
+  ],
+  "ALLE": [
+    "LT",
+    "MA"
+  ],
+  "ALL": [],
+  "GOOG": [
+    "LT",
+    "MA"
+  ],
+  "AMZN": [
+    "LT",
+    "MA"
+  ],
+  "AME": [
+    "LT",
+    "MA"
+  ],
+  "AMGN": [
+    "RRA"
+  ],
+  "APH": [],
+  "ADI": [
+    "LT"
+  ],
+  "AON": [
+    "LT",
+    "PER"
+  ],
+  "APA": [
+    "RRA"
+  ],
+  "AAPL": [
+    "RRA"
+  ],
+  "AMAT": [
+    "LT"
+  ],
+  "APP": [
+    "PER"
+  ],
+  "ACGL": [
+    "MA"
+  ],
+  "ANET": [
+    "LT"
+  ],
+  "AIZ": [],
+  "T": [
+    "LT"
+  ],
+  "ADSK": [
+    "LT",
+    "MA"
+  ],
+  "ADP": [],
+  "AVY": [
+    "LT",
+    "MA"
+  ],
+  "BKR": [
+    "MA"
+  ],
+  "BALL": [
+    "MA"
+  ],
+  "BBY": [],
+  "BLK": [
+    "MA"
+  ],
+  "BA": [
+    "LT"
+  ],
+  "BSX": [],
+  "BMY": [
+    "RRA"
+  ],
+  "AVGO": [
+    "LT",
+    "MA"
+  ],
+  "BR": [
+    "LT"
+  ],
+  "BRO": [
+    "LT"
+  ],
+  "CHRW": [
+    "LT"
+  ],
+  "CDNS": [
+    "LT"
+  ],
+  "CCL": [
+    "PER"
+  ],
+  "CVNA": [
+    "LT",
+    "MA"
+  ],
+  "CASY": [
+    "LT",
+    "MA"
+  ],
+  "CAT": [
+    "LT"
+  ],
+  "CBOE": [
+    "LT",
+    "MA"
+  ],
+  "CDW": [
+    "LT"
+  ],
+  "COR": [
+    "LT"
+  ],
+  "CF": [
+    "RRA"
+  ],
+  "CVX": [
+    "RRA"
+  ],
+  "CMG": [
+    "LT"
+  ],
+  "CB": [
+    "MA"
+  ],
+  "CHD": [
+    "MA"
+  ],
+  "CIEN": [
+    "LT"
+  ],
+  "CI": [
+    "MA"
+  ],
+  "CINF": [
+    "LT",
+    "MA"
+  ],
+  "CTAS": [
+    "MA"
+  ],
+  "CSCO": [
+    "LT",
+    "MA"
+  ],
+  "CME": [
+    "LT"
+  ],
+  "KO": [
+    "RRA"
+  ],
+  "CTSH": [
+    "LT"
+  ],
+  "CL": [
+    "MA"
+  ],
+  "CMCSA": [
+    "LT",
+    "MA"
+  ],
+  "FIX": [
+    "LT"
+  ],
+  "COP": [
+    "RRA"
+  ],
+  "STZ": [
+    "PER"
+  ],
+  "CPRT": [
+    "LT",
+    "MA"
+  ],
+  "GLW": [
+    "LT"
+  ],
+  "CPAY": [
+    "RRA"
+  ],
+  "COST": [
+    "LT",
+    "MA"
+  ],
+  "CRH": [
+    "PER"
+  ],
+  "CSX": [
+    "MA"
+  ],
+  "CMI": [
+    "LT"
+  ],
+  "DECK": [
+    "PER"
+  ],
+  "DAL": [
+    "LT"
+  ],
+  "DVN": [],
+  "DXCM": [
+    "RRA"
+  ],
+  "DLTR": [],
+  "DOV": [
+    "LT"
+  ],
+  "DHI": [
+    "PER"
+  ],
+  "ETN": [
+    "LT",
+    "MA"
+  ],
+  "EBAY": [
+    "LT",
+    "MA"
+  ],
+  "ECL": [
+    "MA"
+  ],
+  "ELV": [
+    "MA"
+  ],
+  "EME": [
+    "LT"
+  ],
+  "EMR": [
+    "LT",
+    "MA"
+  ],
+  "EOG": [
+    "RRA"
+  ],
+  "EQT": [
+    "LT",
+    "MA"
+  ],
+  "EFX": [
+    "LT",
+    "MA"
+  ],
+  "ERIE": [
+    "LT",
+    "MA"
+  ],
+  "EXE": [
+    "LT",
+    "MA"
+  ],
+  "EXPE": [
+    "LT"
+  ],
+  "EXPD": [
+    "RRA"
+  ],
+  "XOM": [
+    "RRA"
+  ],
+  "FFIV": [
+    "MA"
+  ],
+  "FDS": [
+    "LT"
+  ],
+  "FAST": [
+    "MA"
+  ],
+  "FDX": [
+    "RRA",
+    "MA"
+  ],
+  "FSLR": [
+    "PER"
+  ],
+  "FLEX": [
+    "LT"
+  ],
+  "FTNT": [],
+  "FOXA": [
+    "LT"
+  ],
+  "FOX": [
+    "LT"
+  ],
+  "FCX": [],
+  "GRMN": [
+    "LT",
+    "MA"
+  ],
+  "IT": [
+    "LT"
+  ],
+  "GE": [
+    "LT",
+    "MA"
+  ],
+  "GEHC": [
+    "LT",
+    "MA"
+  ],
+  "GEV": [
+    "LT"
+  ],
+  "GEN": [
+    "RRA"
+  ],
+  "GD": [
+    "MA"
+  ],
+  "GL": [
+    "MA"
+  ],
+  "GDDY": [
+    "LT"
+  ],
+  "HAL": [
+    "LT",
+    "MA"
+  ],
+  "HIG": [
+    "MA"
+  ],
+  "HAS": [
+    "LT",
+    "MA"
+  ],
+  "HSY": [
+    "PER"
+  ],
+  "HD": [
+    "PER"
+  ],
+  "HON": [
+    "LT",
+    "PER"
+  ],
+  "HST": [
+    "LT",
+    "MA"
+  ],
+  "HWM": [
+    "LT",
+    "MA"
+  ],
+  "HUBB": [
+    "LT",
+    "PER"
+  ],
+  "IBM": [
+    "LT"
+  ],
+  "IEX": [
+    "MA"
+  ],
+  "IDXX": [
+    "PER"
+  ],
+  "ITW": [
+    "MA"
+  ],
+  "INCY": [
+    "RRA"
+  ],
+  "PODD": [],
+  "ICE": [],
+  "INTU": [
+    "LT",
+    "MA"
+  ],
+  "ISRG": [],
+  "JBHT": [
+    "LT",
+    "MA"
+  ],
+  "JBL": [
+    "LT"
+  ],
+  "JKHY": [
+    "LT"
+  ],
+  "JNJ": [
+    "RRA"
+  ],
+  "JCI": [
+    "LT",
+    "MA"
+  ],
+  "KVUE": [
+    "MA"
+  ],
+  "KEYS": [
+    "LT",
+    "MA"
+  ],
+  "KMB": [
+    "LT",
+    "MA"
+  ],
+  "KLAC": [
+    "LT"
+  ],
+  "KR": [
+    "PER"
+  ],
+  "LH": [
+    "RRA"
+  ],
+  "LRCX": [
+    "LT",
+    "MA"
+  ],
+  "LVS": [
+    "PER"
+  ],
+  "LDOS": [
+    "LT",
+    "MA"
+  ],
+  "LII": [
+    "PER"
+  ],
+  "LLY": [
+    "MA"
+  ],
+  "LIN": [
+    "LT",
+    "MA"
+  ],
+  "LYV": [
+    "MA"
+  ],
+  "LMT": [
+    "LT",
+    "MA"
+  ],
+  "LULU": [],
+  "MPC": [
+    "RRA"
+  ],
+  "MRSH": [
+    "MA"
+  ],
+  "MRVL": [
+    "LT",
+    "MA"
+  ],
+  "MAS": [
+    "LT",
+    "MA"
+  ],
+  "MA": [
+    "RRA"
+  ],
+  "MKC": [
+    "LT",
+    "MA"
+  ],
+  "META": [
+    "LT",
+    "MA"
+  ],
+  "MU": [
+    "LT"
+  ],
+  "MSFT": [],
+  "MDLZ": [
+    "MA"
+  ],
+  "MPWR": [
+    "LT"
+  ],
+  "MNST": [
+    "PER"
+  ],
+  "MCO": [
+    "MA"
+  ],
+  "MSI": [
+    "RRA"
+  ],
+  "NDAQ": [
+    "RRA"
+  ],
+  "NTAP": [
+    "LT"
+  ],
+  "NFLX": [
+    "LT",
+    "MA"
+  ],
+  "NEM": [],
+  "NKE": [
+    "PER"
+  ],
+  "NDSN": [],
+  "NSC": [
+    "MA"
+  ],
+  "NOC": [
+    "PER"
+  ],
+  "NUE": [],
+  "NVDA": [
+    "MA"
+  ],
+  "NVR": [
+    "LT",
+    "MA"
+  ],
+  "NXPI": [
+    "LT"
+  ],
+  "OXY": [],
+  "ODFL": [
+    "LT"
+  ],
+  "PCAR": [
+    "LT",
+    "MA"
+  ],
+  "PKG": [
+    "LT",
+    "MA"
+  ],
+  "PLTR": [
+    "LT"
+  ],
+  "PH": [
+    "LT",
+    "MA"
+  ],
+  "PYPL": [
+    "LT",
+    "MA"
+  ],
+  "PNR": [
+    "PER"
+  ],
+  "PEP": [
+    "PER"
+  ],
+  "PSX": [
+    "RRA"
+  ],
+  "PPG": [
+    "LT",
+    "MA"
+  ],
+  "PFG": [
+    "MA"
+  ],
+  "PG": [
+    "LT",
+    "PER",
+    "MA"
+  ],
+  "PGR": [
+    "LT",
+    "MA"
+  ],
+  "PRU": [
+    "MA"
+  ],
+  "PTC": [
+    "LT"
+  ],
+  "PSA": [
+    "MA"
+  ],
+  "PHM": [
+    "LT",
+    "MA"
+  ],
+  "PWR": [
+    "LT",
+    "MA"
+  ],
+  "QCOM": [
+    "LT",
+    "MA"
+  ],
+  "DGX": [
+    "RRA"
+  ],
+  "RL": [
+    "LT"
+  ],
+  "RDDT": [],
+  "RTX": [
+    "MA"
+  ],
+  "REGN": [
+    "RRA"
+  ],
+  "RSG": [
+    "RRA",
+    "MA"
+  ],
+  "RMD": [
+    "LT"
+  ],
+  "ROK": [
+    "LT"
+  ],
+  "ROL": [
+    "PER"
+  ],
+  "ROP": [
+    "LT"
+  ],
+  "ROST": [
+    "LT",
+    "MA"
+  ],
+  "SPGI": [
+    "LT",
+    "MA"
+  ],
+  "CRM": [
+    "RRA"
+  ],
+  "SNDK": [
+    "LT"
+  ],
+  "SLB": [
+    "RRA"
+  ],
+  "STX": [
+    "LT",
+    "MA"
+  ],
+  "NOW": [
+    "LT"
+  ],
+  "SHW": [
+    "LT",
+    "MA"
+  ],
+  "SNA": [
+    "MA"
+  ],
+  "STLD": [
+    "LT",
+    "MA"
+  ],
+  "STE": [
+    "LT",
+    "MA"
+  ],
+  "SYK": [
+    "LT",
+    "MA"
+  ],
+  "SYY": [
+    "MA"
+  ],
+  "TMUS": [
+    "PER"
+  ],
+  "TROW": [
+    "LT",
+    "MA"
+  ],
+  "TPR": [
+    "LT"
+  ],
+  "TGT": [
+    "RRA"
+  ],
+  "TEL": [
+    "LT",
+    "PER",
+    "MA"
+  ],
+  "TER": [
+    "LT"
+  ],
+  "TXN": [
+    "LT"
+  ],
+  "TXT": [
+    "PER"
+  ],
+  "TMO": [],
+  "TJX": [
+    "PER"
+  ],
+  "TTD": [
+    "PER"
+  ],
+  "TSCO": [],
+  "TT": [
+    "LT",
+    "MA"
+  ],
+  "TRV": [],
+  "UBER": [
+    "LT",
+    "MA"
+  ],
+  "ULTA": [
+    "LT"
+  ],
+  "UNP": [
+    "MA"
+  ],
+  "UAL": [
+    "LT"
+  ],
+  "UPS": [
+    "LT",
+    "MA"
+  ],
+  "URI": [
+    "LT",
+    "MA"
+  ],
+  "UNH": [
+    "MA"
+  ],
+  "UHS": [
+    "LT",
+    "MA"
+  ],
+  "VLO": [
+    "RRA"
+  ],
+  "VEEV": [],
+  "VLTO": [
+    "LT",
+    "MA"
+  ],
+  "VRTX": [
+    "RRA"
+  ],
+  "VRT": [
+    "LT"
+  ],
+  "V": [
+    "RRA"
+  ],
+  "VST": [
+    "PER"
+  ],
+  "VMC": [
+    "PER"
+  ],
+  "WRB": [
+    "LT",
+    "PER",
+    "MA"
+  ],
+  "GWW": [
+    "MA"
+  ],
+  "WAB": [
+    "MA"
+  ],
+  "WMT": [
+    "LT",
+    "PER"
+  ],
+  "WM": [
+    "LT",
+    "MA"
+  ],
+  "WST": [
+    "MA"
+  ],
+  "WDC": [
+    "LT",
+    "MA"
+  ],
+  "WSM": [
+    "LT",
+    "MA"
+  ],
+  "WTW": [
+    "RRA"
+  ],
+  "WDAY": [
+    "LT"
+  ],
+  "ZBRA": [
+    "LT"
+  ],
+  "ZTS": [
+    "PER"
+  ],
+  "AA": [
+    "LT"
+  ],
+  "ACM": [
+    "PER"
+  ],
+  "AEIS": [
+    "LT"
+  ],
+  "AFG": [
+    "RRA",
+    "MA"
+  ],
+  "AGCO": [
+    "LT"
+  ],
+  "AIT": [
+    "LT",
+    "MA"
+  ],
+  "ALSN": [
+    "MA"
+  ],
+  "ALV": [
+    "MA"
+  ],
+  "ANF": [],
+  "APG": [
+    "LT"
+  ],
+  "APPF": [
+    "LT"
+  ],
+  "ARW": [
+    "LT",
+    "MA"
+  ],
+  "ATI": [
+    "LT"
+  ],
+  "ATR": [
+    "LT",
+    "MA"
+  ],
+  "AXTA": [
+    "MA"
+  ],
+  "AYI": [
+    "LT",
+    "MA"
+  ],
+  "BAH": [
+    "LT",
+    "MA"
+  ],
+  "BCO": [
+    "LT",
+    "MA"
+  ],
+  "BDC": [
+    "LT",
+    "MA"
+  ],
+  "BJ": [
+    "LT",
+    "PER",
+    "MA"
+  ],
+  "BROS": [
+    "PER"
+  ],
+  "BSY": [
+    "LT",
+    "MA"
+  ],
+  "BTSG": [
+    "LT",
+    "MA"
+  ],
+  "BWXT": [
+    "PER"
+  ],
+  "BYD": [
+    "PER"
+  ],
+  "CART": [
+    "RRA"
+  ],
+  "CBT": [
+    "LT",
+    "MA"
+  ],
+  "CCK": [
+    "RRA",
+    "MA"
+  ],
+  "CDE": [
+    "LT"
+  ],
+  "CGNX": [
+    "LT",
+    "MA"
+  ],
+  "CHE": [],
+  "CHRD": [
+    "RRA"
+  ],
+  "CHWY": [
+    "LT",
+    "MA"
+  ],
+  "CLH": [
+    "RRA",
+    "MA"
+  ],
+  "CMC": [
+    "LT",
+    "MA"
+  ],
+  "CNM": [
+    "PER"
+  ],
+  "CNO": [
+    "RRA"
+  ],
+  "CNX": [
+    "LT"
+  ],
+  "COKE": [
+    "LT",
+    "MA"
+  ],
+  "COLM": [
+    "LT"
+  ],
+  "CR": [
+    "LT",
+    "MA"
+  ],
+  "CROX": [
+    "LT",
+    "MA"
+  ],
+  "CRS": [
+    "LT"
+  ],
+  "CRUS": [
+    "PER"
+  ],
+  "CSL": [
+    "LT"
+  ],
+  "CVLT": [
+    "LT",
+    "MA"
+  ],
+  "CW": [
+    "LT"
+  ],
+  "CXT": [
+    "LT",
+    "MA"
+  ],
+  "DCI": [
+    "LT",
+    "MA"
+  ],
+  "DINO": [
+    "RRA"
+  ],
+  "DOCS": [],
+  "DOCU": [
+    "LT"
+  ],
+  "DUOL": [
+    "LT"
+  ],
+  "DY": [],
+  "EEFT": [
+    "PER"
+  ],
+  "EHC": [
+    "RRA"
+  ],
+  "ENS": [
+    "LT"
+  ],
+  "ENSG": [
+    "LT",
+    "MA"
+  ],
+  "ESNT": [
+    "RRA",
+    "MA"
+  ],
+  "EXEL": [
+    "RRA"
+  ],
+  "EXLS": [
+    "LT"
+  ],
+  "EXP": [
+    "LT"
+  ],
+  "EXPO": [
+    "LT"
+  ],
+  "FAF": [
+    "MA"
+  ],
+  "FCFS": [
+    "MA"
+  ],
+  "FCN": [
+    "LT",
+    "PER",
+    "MA"
+  ],
+  "FHI": [
+    "RRA",
+    "MA"
+  ],
+  "FIVE": [],
+  "FLS": [
+    "LT",
+    "MA"
+  ],
+  "FNF": [
+    "PER"
+  ],
+  "FTI": [
+    "RRA"
+  ],
+  "G": [
+    "LT"
+  ],
+  "GAP": [
+    "LT",
+    "MA"
+  ],
+  "GGG": [
+    "PER"
+  ],
+  "GHC": [
+    "LT",
+    "MA"
+  ],
+  "GMED": [
+    "LT",
+    "MA"
+  ],
+  "GNTX": [
+    "PER"
+  ],
+  "GWRE": [
+    "LT"
+  ],
+  "HAE": [],
+  "HALO": [
+    "RRA"
+  ],
+  "HL": [
+    "LT"
+  ],
+  "HLNE": [
+    "LT"
+  ],
+  "HQY": [
+    "MA"
+  ],
+  "HRB": [],
+  "HXL": [
+    "LT",
+    "MA"
+  ],
+  "IDCC": [
+    "LT",
+    "MA"
+  ],
+  "IESC": [
+    "PER"
+  ],
+  "ILMN": [],
+  "INGR": [
+    "LT",
+    "MA"
+  ],
+  "ITT": [
+    "LT",
+    "MA"
+  ],
+  "JAZZ": [
+    "MA"
+  ],
+  "JLL": [
+    "MA"
+  ],
+  "KEX": [
+    "MA"
+  ],
+  "KNSL": [
+    "LT",
+    "MA"
+  ],
+  "KRYS": [
+    "RRA"
+  ],
+  "LEA": [
+    "LT",
+    "MA"
+  ],
+  "LECO": [
+    "LT",
+    "MA"
+  ],
+  "LIVN": [
+    "MA"
+  ],
+  "LNTH": [
+    "MA"
+  ],
+  "LOPE": [
+    "PER"
+  ],
+  "LSTR": [
+    "LT"
+  ],
+  "M": [
+    "LT",
+    "MA"
+  ],
+  "MANH": [
+    "RRA"
+  ],
+  "MAT": [],
+  "MEDP": [],
+  "MIDD": [
+    "LT"
+  ],
+  "MKSI": [
+    "LT"
+  ],
+  "MLI": [
+    "LT",
+    "MA"
+  ],
+  "MMS": [
+    "PER"
+  ],
+  "MORN": [
+    "LT"
+  ],
+  "MSA": [
+    "MA"
+  ],
+  "MSM": [
+    "MA"
+  ],
+  "MTG": [
+    "RRA"
+  ],
+  "MTSI": [
+    "LT"
+  ],
+  "MUSA": [
+    "LT",
+    "MA"
+  ],
+  "MZTI": [
+    "PER"
+  ],
+  "NBIX": [
+    "LT",
+    "MA"
+  ],
+  "NEU": [],
+  "NTNX": [
+    "LT"
+  ],
+  "NVT": [
+    "LT",
+    "MA"
+  ],
+  "NXT": [
+    "LT"
+  ],
+  "NYT": [
+    "LT"
+  ],
+  "OLED": [
+    "PER"
+  ],
+  "OLLI": [],
+  "OPCH": [
+    "LT",
+    "MA"
+  ],
+  "ORI": [
+    "LT",
+    "MA"
+  ],
+  "OSK": [
+    "LT",
+    "MA"
+  ],
+  "PATH": [],
+  "PBF": [
+    "RRA"
+  ],
+  "PCTY": [
+    "LT"
+  ],
+  "PEGA": [
+    "LT",
+    "MA"
+  ],
+  "PEN": [
+    "LT",
+    "MA"
+  ],
+  "PPC": [
+    "LT",
+    "MA"
+  ],
+  "PR": [
+    "RRA"
+  ],
+  "PRI": [
+    "LT",
+    "MA"
+  ],
+  "QLYS": [],
+  "R": [
+    "LT",
+    "MA"
+  ],
+  "RGA": [
+    "RRA"
+  ],
+  "RLI": [
+    "MA"
+  ],
+  "RMBS": [],
+  "ROKU": [
+    "RRA"
+  ],
+  "RPM": [
+    "LT",
+    "PER"
+  ],
+  "RRC": [
+    "LT"
+  ],
+  "RS": [
+    "MA"
+  ],
+  "SAIA": [
+    "LT"
+  ],
+  "SAIC": [
+    "RRA"
+  ],
+  "SARO": [
+    "PER"
+  ],
+  "SEIC": [
+    "RRA"
+  ],
+  "SFM": [
+    "LT",
+    "MA"
+  ],
+  "SHC": [
+    "RRA"
+  ],
+  "SIGI": [
+    "MA"
+  ],
+  "SMTC": [
+    "LT",
+    "MA"
+  ],
+  "SN": [],
+  "SNX": [
+    "LT",
+    "MA"
+  ],
+  "SPXC": [
+    "PER"
+  ],
+  "SSD": [
+    "LT"
+  ],
+  "STRL": [
+    "LT"
+  ],
+  "THC": [],
+  "TOL": [
+    "LT",
+    "MA"
+  ],
+  "TOST": [
+    "LT"
+  ],
+  "TREX": [
+    "LT",
+    "MA"
+  ],
+  "TRU": [
+    "LT"
+  ],
+  "TTC": [
+    "RRA",
+    "MA"
+  ],
+  "TTEK": [
+    "LT"
+  ],
+  "TWLO": [
+    "LT"
+  ],
+  "TXRH": [
+    "LT",
+    "MA"
+  ],
+  "ULS": [
+    "LT"
+  ],
+  "USFD": [
+    "RRA"
+  ],
+  "UTHR": [
+    "LT",
+    "MA"
+  ],
+  "VAL": [
+    "LT",
+    "MA"
+  ],
+  "VFC": [
+    "PER"
+  ],
+  "VICR": [
+    "LT"
+  ],
+  "VMI": [
+    "LT"
+  ],
+  "VNT": [
+    "LT",
+    "MA"
+  ],
+  "WEX": [],
+  "WFRD": [
+    "LT",
+    "MA"
+  ],
+  "WMG": [
+    "LT",
+    "MA"
+  ],
+  "WMS": [
+    "PER"
+  ],
+  "WSO": [
+    "PER"
+  ],
+  "WTS": [
+    "MA"
+  ],
+  "WWD": [
+    "LT"
+  ],
+  "YETI": [
+    "LT"
+  ],
+  "AEM.TO": [
+    "LT"
+  ],
+  "ATD.TO": [
+    "LT",
+    "MA"
+  ],
+  "ABX.TO": [
+    "LT",
+    "MA"
+  ],
+  "BAM.TO": [
+    "LT",
+    "MA"
+  ],
+  "CNR.TO": [
+    "MA"
+  ],
+  "CNQ.TO": [
+    "RRA"
+  ],
+  "CLS.TO": [
+    "LT"
+  ],
+  "CVE.TO": [
+    "RRA"
+  ],
+  "CSU.TO": [
+    "LT",
+    "MA"
+  ],
+  "DOL.TO": [
+    "LT",
+    "PER",
+    "MA"
+  ],
+  "FFH.TO": [
+    "LT",
+    "PER",
+    "MA"
+  ],
+  "FSV.TO": [],
+  "FNV.TO": [],
+  "WN.TO": [
+    "MA"
+  ],
+  "IMO.TO": [
+    "RRA"
+  ],
+  "IFC.TO": [
+    "LT",
+    "MA"
+  ],
+  "K.TO": [
+    "LT",
+    "MA"
+  ],
+  "L.TO": [
+    "LT",
+    "MA"
+  ],
+  "MFC.TO": [
+    "MA"
+  ],
+  "MRU.TO": [
+    "PER"
+  ],
+  "OTEX.TO": [],
+  "SAP.TO": [
+    "MA"
+  ],
+  "SHOP.TO": [
+    "LT"
+  ],
+  "SU.TO": [
+    "RRA"
+  ],
+  "TRI.TO": [
+    "LT"
+  ],
+  "WCN.TO": [
+    "MA"
+  ],
+  "A2M.AX": [
+    "LT"
+  ],
+  "AAI.AX": [
+    "LT"
+  ],
+  "ALK.AX": [
+    "RRA"
+  ],
+  "ALL.AX": [
+    "LT",
+    "MA"
+  ],
+  "ALQ.AX": [
+    "LT",
+    "MA"
+  ],
+  "ANN.AX": [
+    "RRA"
+  ],
+  "ARB.AX": [],
+  "BHP.AX": [
+    "RRA"
+  ],
+  "BRG.AX": [
+    "RRA"
+  ],
+  "BXB.AX": [
+    "LT",
+    "MA"
+  ],
+  "CAR.AX": [
+    "LT",
+    "MA"
+  ],
+  "CDA.AX": [
+    "RRA"
+  ],
+  "CEN.AX": [
+    "PER"
+  ],
+  "CHC.AX": [
+    "PER"
+  ],
+  "CMM.AX": [],
+  "CPU.AX": [],
+  "CSC.AX": [],
+  "CYL.AX": [
+    "LT"
+  ],
+  "DOW.AX": [
+    "PER"
+  ],
+  "DRR.AX": [
+    "LT",
+    "MA"
+  ],
+  "EMR.AX": [
+    "LT"
+  ],
+  "EVN.AX": [
+    "LT"
+  ],
+  "FLT.AX": [
+    "LT",
+    "MA"
+  ],
+  "FMG.AX": [
+    "PER"
+  ],
+  "FPH.AX": [
+    "RRA"
+  ],
+  "FRW.AX": [
+    "MA"
+  ],
+  "GGP.AX": [
+    "LT",
+    "MA"
+  ],
+  "GMD.AX": [
+    "RRA"
+  ],
+  "GMG.AX": [
+    "LT",
+    "PER"
+  ],
+  "GQG.AX": [
+    "PER"
+  ],
+  "HVN.AX": [
+    "PER"
+  ],
+  "IAG.AX": [
+    "LT",
+    "MA"
+  ],
+  "IMD.AX": [
+    "LT"
+  ],
+  "JBH.AX": [
+    "PER"
+  ],
+  "L1G.AX": [
+    "RRA"
+  ],
+  "LOV.AX": [
+    "LT",
+    "MA"
+  ],
+  "MIN.AX": [
+    "LT",
+    "MA"
+  ],
+  "MND.AX": [
+    "LT",
+    "MA"
+  ],
+  "MPL.AX": [
+    "MA"
+  ],
+  "MTS.AX": [
+    "LT",
+    "MA"
+  ],
+  "NEM.AX": [],
+  "NHF.AX": [
+    "MA"
+  ],
+  "NST.AX": [
+    "LT"
+  ],
+  "NWH.AX": [
+    "RRA"
+  ],
+  "NWL.AX": [
+    "PER"
+  ],
+  "OBM.AX": [],
+  "ORG.AX": [
+    "MA"
+  ],
+  "PLS.AX": [
+    "LT"
+  ],
+  "PME.AX": [
+    "LT",
+    "MA"
+  ],
+  "PMV.AX": [
+    "PER"
+  ],
+  "PNI.AX": [
+    "LT"
+  ],
+  "PRU.AX": [
+    "RRA"
+  ],
+  "QBE.AX": [
+    "LT",
+    "MA"
+  ],
+  "RDX.AX": [
+    "LT",
+    "MA"
+  ],
+  "REA.AX": [
+    "LT",
+    "MA"
+  ],
+  "RIO.AX": [
+    "MA"
+  ],
+  "RMD.AX": [
+    "LT"
+  ],
+  "RRL.AX": [
+    "LT"
+  ],
+  "RSG.AX": [
+    "LT"
+  ],
+  "SDF.AX": [
+    "LT"
+  ],
+  "SFR.AX": [
+    "RRA"
+  ],
+  "SIG.AX": [
+    "PER"
+  ],
+  "SOL.AX": [
+    "MA"
+  ],
+  "SPK.AX": [
+    "LT"
+  ],
+  "SUL.AX": [
+    "LT",
+    "MA"
+  ],
+  "SUN.AX": [
+    "LT",
+    "MA"
+  ],
+  "TLC.AX": [
+    "PER"
+  ],
+  "TLS.AX": [
+    "PER"
+  ],
+  "TNE.AX": [
+    "LT"
+  ],
+  "VAU.AX": [
+    "RRA"
+  ],
+  "VNT.AX": [
+    "LT",
+    "PER"
+  ],
+  "WAF.AX": [
+    "RRA"
+  ],
+  "WES.AX": [
+    "LT",
+    "PER"
+  ],
+  "WGX.AX": [
+    "LT"
+  ]
+}

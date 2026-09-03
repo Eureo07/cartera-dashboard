@@ -1,0 +1,107 @@
+[2026-09-01T23:00:04] === INICIO ESCANEO UNIVERSO GLOBAL - FASE 1 ===
+[2026-09-01T23:00:04] IBEX 35: 35 tickers extraidos, 35 nuevos (total acumulado 35)
+[2026-09-01T23:00:05] CAC 40: 40 tickers extraidos, 40 nuevos (total acumulado 75)
+[2026-09-01T23:00:05] DAX 40: 40 tickers extraidos, 40 nuevos (total acumulado 115)
+[2026-09-01T23:00:06] FTSE MIB: 40 tickers extraidos, 40 nuevos (total acumulado 155)
+[2026-09-01T23:00:06] AEX: 25 tickers extraidos, 25 nuevos (total acumulado 180)
+[2026-09-01T23:00:06] BEL 20: 0 tickers extraidos, 0 nuevos (total acumulado 180)
+[2026-09-01T23:00:07] SMI: 20 tickers extraidos, 20 nuevos (total acumulado 200)
+[2026-09-01T23:00:07] FTSE 100: 100 tickers extraidos, 100 nuevos (total acumulado 300)
+[2026-09-01T23:00:08] FTSE 250: 250 tickers extraidos, 250 nuevos (total acumulado 550)
+[2026-09-01T23:00:08] OMXS30: 30 tickers extraidos, 30 nuevos (total acumulado 580)
+[2026-09-01T23:00:08] WIG20: 0 tickers extraidos, 0 nuevos (total acumulado 580)
+[2026-09-01T23:00:09]   ERROR scraping https://en.wikipedia.org/wiki/ATX_(index): 404 Client Error: Not Found for url: https://en.wikipedia.org/wiki/ATX_(index)
+[2026-09-01T23:00:09] ATX: 0 tickers extraidos, 0 nuevos (total acumulado 580)
+[2026-09-01T23:00:09] ATHEX Composite: 0 tickers extraidos, 0 nuevos (total acumulado 580)
+[2026-09-01T23:00:10] S&P 500: 503 tickers extraidos, 503 nuevos (total acumulado 1083)
+[2026-09-01T23:00:10] S&P MidCap 400: 400 tickers extraidos, 400 nuevos (total acumulado 1483)
+[2026-09-01T23:00:11] Nasdaq 100: 0 tickers extraidos, 0 nuevos (total acumulado 1483)
+[2026-09-01T23:00:11] Dow Jones 30: 0 tickers extraidos, 0 nuevos (total acumulado 1483)
+[2026-09-01T23:00:11] TSX 60: 59 tickers extraidos, 59 nuevos (total acumulado 1542)
+[2026-09-01T23:00:12]   ERROR scraping https://en.wikipedia.org/wiki/List_of_companies_listed_on_the_S%C3%A3o_Paulo_Stock_Exchange: 404 Client Error: Not Found for url: https://en.wikipedia.org/wiki/List_of_companies_listed_on_the_S%C3%A3o_Paulo_Stock_Exchange
+[2026-09-01T23:00:12] IBOVESPA: 0 tickers extraidos, 0 nuevos (total acumulado 1542)
+[2026-09-01T23:00:12]   ERROR scraping https://en.wikipedia.org/wiki/S%26P_IPSA: 404 Client Error: Not Found for url: https://en.wikipedia.org/wiki/S%26P_IPSA
+[2026-09-01T23:00:12] IPSA: 0 tickers extraidos, 0 nuevos (total acumulado 1542)
+[2026-09-01T23:00:13] Nikkei 225: 0 tickers extraidos, 0 nuevos (total acumulado 1542)
+[2026-09-01T23:00:13] ASX 200: 200 tickers extraidos, 200 nuevos (total acumulado 1742)
+[2026-09-01T23:00:13] STI: 0 tickers extraidos, 0 nuevos (total acumulado 1742)
+[2026-09-01T23:00:14]   ERROR scraping https://en.wikipedia.org/wiki/KOSPI200: 404 Client Error: Not Found for url: https://en.wikipedia.org/wiki/KOSPI200
+[2026-09-01T23:00:14] KOSPI 200: 0 tickers extraidos, 0 nuevos (total acumulado 1742)
+[2026-09-01T23:00:14]   ERROR scraping https://en.wikipedia.org/wiki/Tadawul_All_Share_Index: 404 Client Error: Not Found for url: https://en.wikipedia.org/wiki/Tadawul_All_Share_Index
+[2026-09-01T23:00:14] TASI (Arabia Saudi): 0 tickers extraidos, 0 nuevos (total acumulado 1742)
+[2026-09-01T23:00:14] TA-35: 0 tickers extraidos, 0 nuevos (total acumulado 1742)
+[2026-09-01T23:00:15] BIST 100: 0 tickers extraidos, 0 nuevos (total acumulado 1742)
+[2026-09-01T23:00:15]   ERROR scraping https://en.wikipedia.org/wiki/FTSE/JSE_Africa_Index_Series: 404 Client Error: Not Found for url: https://en.wikipedia.org/wiki/FTSE/JSE_Africa_Index_Series
+[2026-09-01T23:00:15] JSE Top 40: 0 tickers extraidos, 0 nuevos (total acumulado 1742)
+[2026-09-01T23:00:15] Universo total construido (excluyendo ya conocidos): 1737 tickers
+[2026-09-01T23:00:15] Pendientes de evaluar (no en cache o con error previo): 1737
+[2026-09-01T23:00:44]   progreso: 25/1737 procesados, 10 pasan Fase 1 hasta ahora
+[2026-09-01T23:01:12]   progreso: 50/1737 procesados, 20 pasan Fase 1 hasta ahora
+[2026-09-01T23:01:38]   progreso: 75/1737 procesados, 36 pasan Fase 1 hasta ahora
+[2026-09-01T23:02:07]   progreso: 100/1737 procesados, 52 pasan Fase 1 hasta ahora
+[2026-09-01T23:02:37]   progreso: 125/1737 procesados, 68 pasan Fase 1 hasta ahora
+[2026-09-01T23:03:04]   progreso: 150/1737 procesados, 80 pasan Fase 1 hasta ahora
+[2026-09-01T23:03:33]   progreso: 175/1737 procesados, 96 pasan Fase 1 hasta ahora
+[2026-09-01T23:04:01]   progreso: 200/1737 procesados, 116 pasan Fase 1 hasta ahora
+[2026-09-01T23:04:31]   progreso: 225/1737 procesados, 134 pasan Fase 1 hasta ahora
+[2026-09-01T23:05:01]   progreso: 250/1737 procesados, 154 pasan Fase 1 hasta ahora
+[2026-09-01T23:05:32]   progreso: 275/1737 procesados, 167 pasan Fase 1 hasta ahora
+[2026-09-01T23:06:03]   progreso: 300/1737 procesados, 181 pasan Fase 1 hasta ahora
+[2026-09-01T23:06:33]   progreso: 325/1737 procesados, 198 pasan Fase 1 hasta ahora
+[2026-09-01T23:07:00]   progreso: 350/1737 procesados, 214 pasan Fase 1 hasta ahora
+[2026-09-01T23:07:30]   progreso: 375/1737 procesados, 231 pasan Fase 1 hasta ahora
+[2026-09-01T23:07:59]   progreso: 400/1737 procesados, 248 pasan Fase 1 hasta ahora
+[2026-09-01T23:08:30]   progreso: 425/1737 procesados, 265 pasan Fase 1 hasta ahora
+[2026-09-01T23:08:57]   progreso: 450/1737 procesados, 284 pasan Fase 1 hasta ahora
+[2026-09-01T23:09:25]   progreso: 475/1737 procesados, 297 pasan Fase 1 hasta ahora
+[2026-09-01T23:09:52]   progreso: 500/1737 procesados, 314 pasan Fase 1 hasta ahora
+[2026-09-01T23:10:21]   progreso: 525/1737 procesados, 322 pasan Fase 1 hasta ahora
+[2026-09-01T23:10:53]   progreso: 550/1737 procesados, 337 pasan Fase 1 hasta ahora
+[2026-09-01T23:11:19]   progreso: 575/1737 procesados, 357 pasan Fase 1 hasta ahora
+[2026-09-01T23:11:46]   progreso: 600/1737 procesados, 375 pasan Fase 1 hasta ahora
+[2026-09-01T23:12:12]   progreso: 625/1737 procesados, 393 pasan Fase 1 hasta ahora
+[2026-09-01T23:12:41]   progreso: 650/1737 procesados, 408 pasan Fase 1 hasta ahora
+[2026-09-01T23:13:11]   progreso: 675/1737 procesados, 420 pasan Fase 1 hasta ahora
+[2026-09-01T23:13:42]   progreso: 700/1737 procesados, 437 pasan Fase 1 hasta ahora
+[2026-09-01T23:14:13]   progreso: 725/1737 procesados, 457 pasan Fase 1 hasta ahora
+[2026-09-01T23:14:44]   progreso: 750/1737 procesados, 473 pasan Fase 1 hasta ahora
+[2026-09-01T23:15:14]   progreso: 775/1737 procesados, 485 pasan Fase 1 hasta ahora
+[2026-09-01T23:15:44]   progreso: 800/1737 procesados, 503 pasan Fase 1 hasta ahora
+[2026-09-01T23:16:13]   progreso: 825/1737 procesados, 521 pasan Fase 1 hasta ahora
+[2026-09-01T23:16:42]   progreso: 850/1737 procesados, 534 pasan Fase 1 hasta ahora
+[2026-09-01T23:17:11]   progreso: 875/1737 procesados, 550 pasan Fase 1 hasta ahora
+[2026-09-01T23:17:38]   progreso: 900/1737 procesados, 565 pasan Fase 1 hasta ahora
+[2026-09-01T23:18:06]   progreso: 925/1737 procesados, 583 pasan Fase 1 hasta ahora
+[2026-09-01T23:18:34]   progreso: 950/1737 procesados, 598 pasan Fase 1 hasta ahora
+[2026-09-01T23:19:04]   progreso: 975/1737 procesados, 616 pasan Fase 1 hasta ahora
+[2026-09-01T23:19:31]   progreso: 1000/1737 procesados, 632 pasan Fase 1 hasta ahora
+[2026-09-01T23:19:59]   progreso: 1025/1737 procesados, 652 pasan Fase 1 hasta ahora
+[2026-09-01T23:20:26]   progreso: 1050/1737 procesados, 668 pasan Fase 1 hasta ahora
+[2026-09-01T23:20:54]   progreso: 1075/1737 procesados, 683 pasan Fase 1 hasta ahora
+[2026-09-01T23:21:24]   progreso: 1100/1737 procesados, 697 pasan Fase 1 hasta ahora
+[2026-09-01T23:21:51]   progreso: 1125/1737 procesados, 713 pasan Fase 1 hasta ahora
+[2026-09-01T23:22:17]   progreso: 1150/1737 procesados, 727 pasan Fase 1 hasta ahora
+[2026-09-01T23:22:45]   progreso: 1175/1737 procesados, 743 pasan Fase 1 hasta ahora
+[2026-09-01T23:23:15]   progreso: 1200/1737 procesados, 761 pasan Fase 1 hasta ahora
+[2026-09-01T23:23:43]   progreso: 1225/1737 procesados, 775 pasan Fase 1 hasta ahora
+[2026-09-01T23:24:11]   progreso: 1250/1737 procesados, 787 pasan Fase 1 hasta ahora
+[2026-09-01T23:24:38]   progreso: 1275/1737 procesados, 803 pasan Fase 1 hasta ahora
+[2026-09-01T23:25:05]   progreso: 1300/1737 procesados, 821 pasan Fase 1 hasta ahora
+[2026-09-01T23:25:32]   progreso: 1325/1737 procesados, 837 pasan Fase 1 hasta ahora
+[2026-09-01T23:26:00]   progreso: 1350/1737 procesados, 850 pasan Fase 1 hasta ahora
+[2026-09-01T23:26:28]   progreso: 1375/1737 procesados, 865 pasan Fase 1 hasta ahora
+[2026-09-01T23:26:56]   progreso: 1400/1737 procesados, 882 pasan Fase 1 hasta ahora
+[2026-09-01T23:27:23]   progreso: 1425/1737 procesados, 895 pasan Fase 1 hasta ahora
+[2026-09-01T23:27:51]   progreso: 1450/1737 procesados, 912 pasan Fase 1 hasta ahora
+[2026-09-01T23:28:20]   progreso: 1475/1737 procesados, 926 pasan Fase 1 hasta ahora
+[2026-09-01T23:28:47]   progreso: 1500/1737 procesados, 940 pasan Fase 1 hasta ahora
+[2026-09-01T23:29:14]   progreso: 1525/1737 procesados, 955 pasan Fase 1 hasta ahora
+[2026-09-01T23:36:30]   progreso: 1550/1737 procesados, 966 pasan Fase 1 hasta ahora
+[2026-09-01T23:36:56]   progreso: 1575/1737 procesados, 978 pasan Fase 1 hasta ahora
+[2026-09-01T23:37:22]   progreso: 1600/1737 procesados, 993 pasan Fase 1 hasta ahora
+[2026-09-01T23:37:49]   progreso: 1625/1737 procesados, 1010 pasan Fase 1 hasta ahora
+[2026-09-01T23:38:17]   progreso: 1650/1737 procesados, 1026 pasan Fase 1 hasta ahora
+[2026-09-01T23:38:45]   progreso: 1675/1737 procesados, 1043 pasan Fase 1 hasta ahora
+[2026-09-01T23:39:12]   progreso: 1700/1737 procesados, 1060 pasan Fase 1 hasta ahora
+[2026-09-01T23:39:40]   progreso: 1725/1737 procesados, 1076 pasan Fase 1 hasta ahora
+[2026-09-01T23:39:54] === FIN FASE 1: 1737 procesados, 1083 pasan el filtro ===

@@ -1,0 +1,202 @@
+[
+  {
+    "ticker":"SPK.AX",
+    "nombre":"SPARK NZ FPO NZX [SPK]",
+    "indice":"ASX 200",
+    "roe":30.69,
+    "eva_pct_mc":12.9,
+    "fcf_pct_mc":28.91,
+    "peg":null,
+    "score":0.7601345679
+  },
+  {
+    "ticker":"STJ.L",
+    "nombre":"ST. JAMES'S PLACE PLC ORD 15P",
+    "indice":"FTSE 100",
+    "roe":38.46,
+    "eva_pct_mc":15.64,
+    "fcf_pct_mc":23.91,
+    "peg":0.7097170861,
+    "score":0.6960651611
+  },
+  {
+    "ticker":"ZAL.DE",
+    "nombre":"Zalando SE                    I",
+    "indice":"DAX 40",
+    "roe":3.45,
+    "eva_pct_mc":2.05,
+    "fcf_pct_mc":26.15,
+    "peg":null,
+    "score":0.6216085046
+  },
+  {
+    "ticker":"WHC.AX",
+    "nombre":"WHITEHAVEN FPO [WHC]",
+    "indice":"ASX 200",
+    "roe":6.63,
+    "eva_pct_mc":5.28,
+    "fcf_pct_mc":23.3,
+    "peg":null,
+    "score":0.5941285318
+  },
+  {
+    "ticker":"ITH.L",
+    "nombre":"ITHACA ENERGY PLC ORD 1P",
+    "indice":"FTSE 250",
+    "roe":10.17,
+    "eva_pct_mc":11.22,
+    "fcf_pct_mc":20.35,
+    "peg":0.4402106081,
+    "score":0.5816994762
+  },
+  {
+    "ticker":"RMV.L",
+    "nombre":"RIGHTMOVE PLC ORD 0.1P",
+    "indice":"FTSE 250",
+    "roe":282.36,
+    "eva_pct_mc":5.97,
+    "fcf_pct_mc":5.42,
+    "peg":3.3049411628,
+    "score":0.5295081244
+  },
+  {
+    "ticker":"L1G.AX",
+    "nombre":"L1 GROUP FPO [L1G]",
+    "indice":"ASX 200",
+    "roe":102.73,
+    "eva_pct_mc":15.51,
+    "fcf_pct_mc":10.69,
+    "peg":0.0627563612,
+    "score":0.5205876463
+  },
+  {
+    "ticker":"DRR.AX",
+    "nombre":"DETERRA RE FPO [DRR]",
+    "indice":"ASX 200",
+    "roe":122.86,
+    "eva_pct_mc":7.26,
+    "fcf_pct_mc":11.92,
+    "peg":null,
+    "score":0.5098141297
+  },
+  {
+    "ticker":"JUP.L",
+    "nombre":"JUPITER FUND MANAGEMENT PLC ORD",
+    "indice":"FTSE 250",
+    "roe":12.03,
+    "eva_pct_mc":4.45,
+    "fcf_pct_mc":18.32,
+    "peg":0.6791625325,
+    "score":0.5065924212
+  },
+  {
+    "ticker":"KIE.L",
+    "nombre":"KIER GROUP PLC ORD 1P",
+    "indice":"FTSE 250",
+    "roe":11.92,
+    "eva_pct_mc":5.55,
+    "fcf_pct_mc":17.9,
+    "peg":0.4618251982,
+    "score":0.50582519
+  },
+  {
+    "ticker":"EDV.L",
+    "nombre":"ENDEAVOUR MINING PLC ORD USD0.0",
+    "indice":"FTSE 100",
+    "roe":31.34,
+    "eva_pct_mc":5.9,
+    "fcf_pct_mc":16.02,
+    "peg":null,
+    "score":0.4922293997
+  },
+  {
+    "ticker":"AO.L",
+    "nombre":"AO WORLD PLC ORD 0.25P",
+    "indice":"FTSE 250",
+    "roe":22.44,
+    "eva_pct_mc":4.84,
+    "fcf_pct_mc":16.39,
+    "peg":null,
+    "score":0.4843729637
+  },
+  {
+    "ticker":"BP.L",
+    "nombre":"BP PLC $0.25",
+    "indice":"FTSE 100",
+    "roe":8.87,
+    "eva_pct_mc":7.98,
+    "fcf_pct_mc":15.36,
+    "peg":0.0768287113,
+    "score":0.4733867099
+  },
+  {
+    "ticker":"KGF.L",
+    "nombre":"KINGFISHER PLC ORD 15 5\/7P",
+    "indice":"FTSE 100",
+    "roe":3.92,
+    "eva_pct_mc":-5.29,
+    "fcf_pct_mc":20.16,
+    "peg":null,
+    "score":0.472400915
+  },
+  {
+    "ticker":"APA",
+    "nombre":"APA Corporation",
+    "indice":"S&P 500",
+    "roe":26.66,
+    "eva_pct_mc":7.97,
+    "fcf_pct_mc":13.71,
+    "peg":0.4057758935,
+    "score":0.460186384
+  },
+  {
+    "ticker":"RRL.AX",
+    "nombre":"REGIS FPO [RRL]",
+    "indice":"ASX 200",
+    "roe":37.67,
+    "eva_pct_mc":9.7,
+    "fcf_pct_mc":11.43,
+    "peg":0.0583249161,
+    "score":0.4405160065
+  },
+  {
+    "ticker":"APTV",
+    "nombre":"Aptiv PLC",
+    "indice":"S&P 500",
+    "roe":5.16,
+    "eva_pct_mc":-2.75,
+    "fcf_pct_mc":17.28,
+    "peg":null,
+    "score":0.4384775702
+  },
+  {
+    "ticker":"RNK.L",
+    "nombre":"RANK GROUP PLC ORD 13 8\/9P",
+    "indice":"FTSE 250",
+    "roe":7.83,
+    "eva_pct_mc":1.17,
+    "fcf_pct_mc":15.77,
+    "peg":null,
+    "score":0.4382264255
+  },
+  {
+    "ticker":"GNE.AX",
+    "nombre":"GENESIS NZ FPO NZX [GNE]",
+    "indice":"ASX 200",
+    "roe":2.83,
+    "eva_pct_mc":1.34,
+    "fcf_pct_mc":15.96,
+    "peg":null,
+    "score":0.4381559632
+  },
+  {
+    "ticker":"EEFT",
+    "nombre":"Euronet Worldwide, Inc.",
+    "indice":"S&P MidCap 400",
+    "roe":22.37,
+    "eva_pct_mc":9.41,
+    "fcf_pct_mc":11.42,
+    "peg":null,
+    "score":0.4250076394
+  }
+]
