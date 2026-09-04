@@ -1,31 +1,31 @@
 {
   "ACS.MC": {
     "deuda_neta_ebitda": 0.2,
-    "fecha_actualizacion": "2026-09-04T10:02:31.133472"
+    "fecha_actualizacion": "2026-09-04T13:57:17.715606"
   },
   "GOOGL": {
     "deuda_neta_ebitda": -0.7,
-    "fecha_actualizacion": "2026-09-04T10:02:31.133472"
+    "fecha_actualizacion": "2026-09-04T13:57:17.715606"
   },
   "ITX.MC": {
     "deuda_neta_ebitda": -0.5,
-    "fecha_actualizacion": "2026-09-04T10:02:31.133472"
+    "fecha_actualizacion": "2026-09-04T13:57:17.715606"
   },
   "SAF.PA": {
     "deuda_neta_ebitda": -0.26,
-    "fecha_actualizacion": "2026-09-04T10:02:31.133472"
+    "fecha_actualizacion": "2026-09-04T13:57:17.715606"
   },
   "THEON.AS": {
     "deuda_neta_ebitda": -1.09,
-    "fecha_actualizacion": "2026-09-04T10:02:31.133472"
+    "fecha_actualizacion": "2026-09-04T13:57:17.715606"
   },
   "XPO": {
     "deuda_neta_ebitda": 2.71,
-    "fecha_actualizacion": "2026-09-04T10:02:31.133472"
+    "fecha_actualizacion": "2026-09-04T13:57:17.715606"
   },
   "RRU.DE": {
     "deuda_neta_ebitda": -0.41,
-    "fecha_actualizacion": "2026-09-04T10:02:31.133472"
+    "fecha_actualizacion": "2026-09-04T13:57:17.715606"
   },
   "AAPL": {
     "deuda_neta_ebitda": 0.13,
@@ -37,11 +37,11 @@
   },
   "ITH.L": {
     "deuda_neta_ebitda": 0.61,
-    "fecha_actualizacion": "2026-09-04T10:02:31.133472"
+    "fecha_actualizacion": "2026-09-04T13:57:17.715606"
   },
   "L1G.AX": {
     "deuda_neta_ebitda": -0.23,
-    "fecha_actualizacion": "2026-09-04T10:02:31.133472"
+    "fecha_actualizacion": "2026-09-04T13:57:17.715606"
   },
   "RGA": {
     "deuda_neta_ebitda": 0.02,
@@ -49,22 +49,22 @@
   },
   "APA": {
     "deuda_neta_ebitda": 0.6,
-    "fecha_actualizacion": "2026-09-04T10:02:31.133472"
+    "fecha_actualizacion": "2026-09-04T13:57:17.715606"
   },
   "EDV.L": {
     "deuda_neta_ebitda": -0.06,
-    "fecha_actualizacion": "2026-09-04T10:02:31.133472"
+    "fecha_actualizacion": "2026-09-04T13:57:17.715606"
   },
   "GNE.AX": {
     "deuda_neta_ebitda": 1.96,
-    "fecha_actualizacion": "2026-09-04T10:02:31.133472"
+    "fecha_actualizacion": "2026-09-04T13:57:17.715606"
   },
   "KIE.L": {
     "deuda_neta_ebitda": 0.49,
-    "fecha_actualizacion": "2026-09-04T10:02:31.133472"
+    "fecha_actualizacion": "2026-09-04T13:57:17.715606"
   },
   "RRL.AX": {
     "deuda_neta_ebitda": -0.85,
-    "fecha_actualizacion": "2026-09-04T10:02:31.133472"
+    "fecha_actualizacion": "2026-09-04T13:57:17.715606"
   }
 }

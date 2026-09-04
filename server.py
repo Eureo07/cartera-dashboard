@@ -279,6 +279,18 @@ def _save_live_prices(data):
 _WL_CACHE = {"data": None, "updated": None}
 _WL_TTL = 300  # 5 min
 
+# Cache de /api/candidatos -- antes se recalculaba en cada request (mismo
+# patron que /api/alertas), pero con 20 tickers eso significa ~20 fetches
+# secuenciales de yfinance/pandas por peticion, sospechoso de causar OOM en
+# el plan free de Render (502 instantaneo, sin log de la peticion, memoria
+# no verificable directamente sin plan de pago). n8n solo lo consulta una
+# vez por semana, asi que una ventana de 30 min de posible desfase en
+# "alertado"/distancia_pct es aceptable a cambio de no recalcular en cada
+# hit. Independiente de /api/alertas (aviso de proximidad ATR): esa ruta
+# sigue sin cache, sin cambios, no comparte este objeto de cache.
+_CANDIDATOS_CACHE = {"data": None, "updated": None}
+_CANDIDATOS_TTL = 1800  # 30 min
+
 # Cache de calcular_trendline_lta()/calcular_media_movil_entrada() por ticker,
 # compartida entre _compute_alertas, _compute_candidatos y _compute_watchlist_study.
 # TTL largo porque ninguna de las dos cambia intradia -- evita descargar
@@ -604,10 +616,17 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         if self.path.split("?")[0] == "/api/alertas":
             self._send_json(self._compute_alertas())
             return
-        # API: Candidatos que cumplen el modelo, para n8n (watchlist.json + alertas_state.json
-        # en caliente, no cache — mismo patron que /api/alertas)
+        # API: Candidatos que cumplen el modelo, para n8n. Con cache (30 min,
+        # ?refresh=1 para forzar) -- ver nota junto a _CANDIDATOS_CACHE sobre
+        # por que se dejo de recalcular en cada request. /api/alertas sigue
+        # sin cache, independiente de esto.
         if self.path.split("?")[0] == "/api/candidatos":
-            self._send_json(self._compute_candidatos())
+            qs = self.path.split("?", 1)[1] if "?" in self.path else ""
+            params = dict(p.split("=", 1) for p in qs.split("&") if "=" in p) if qs else {}
+            if "refresh" in params:
+                _CANDIDATOS_CACHE["data"] = None
+                _CANDIDATOS_CACHE["updated"] = None
+            self._send_json_cache(_CANDIDATOS_CACHE, _CANDIDATOS_TTL, self._compute_candidatos)
             return
         # API: Fondos indexados (JSON local, sin fuentes externas)
         if self.path.startswith("/api/fondos"):
@@ -1173,7 +1192,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         Deuda neta/EBITDA solo se lee de deuda_ebitda_cache.json (nunca se
         recalcula aqui: yfinance .info esta bloqueado en Render, el cache
         se rellena en local via generate_dashboard.py)."""
-        from screener import get_entry_types, calcular_soporte_resistencia, obtener_fundamentales, get_valuation, normalized_score
+        from screener import get_entry_types, calcular_soporte_resistencia, obtener_fundamentales, get_valuation, normalized_score, get_1y_return_and_hist
+        import gc
         from position_sizing import calcular_tamano_posicion
         from deuda_ebitda import get_deuda_neta_ebitda_cacheada
         try:
@@ -1214,6 +1234,23 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     pass
                 distancia_pct = ((cur_price - entry_level) / entry_level) * 100 if (cur_price and entry_level) else None
 
+                # get_entry_types() ya descarga y cachea (en memoria, sin TTL,
+                # por ticker) el historico de 1y via get_1y_return_and_hist() --
+                # se llama primero para poder reutilizar ese mismo historico en
+                # calcular_soporte_resistencia() cuando haga falta, en vez de
+                # que cada funcion descargue el suyo por separado (reduce el
+                # pico de memoria/red por ticker, sin tocar ninguna funcion
+                # protegida -- ambas siguen igual, solo se les pasa un dato ya
+                # descargado).
+                try:
+                    detected_types = get_entry_types(tk)
+                except Exception:
+                    detected_types = []
+                try:
+                    _, cached_hist_1y = get_1y_return_and_hist(tk)
+                except Exception:
+                    cached_hist_1y = None
+
                 support_val = item.get("support")
                 if support_val is not None:
                     try:
@@ -1222,7 +1259,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         support_val = None
                 if support_val is None:
                     try:
-                        sv, _, _, sok = calcular_soporte_resistencia(tk)
+                        sv, _, _, sok = calcular_soporte_resistencia(tk, hist_data=cached_hist_1y)
                         support_val = sv if sok else None
                     except Exception:
                         support_val = None
@@ -1240,10 +1277,6 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 if stop_val is None:
                     stop_val = support_val
 
-                try:
-                    detected_types = get_entry_types(tk)
-                except Exception:
-                    detected_types = []
                 signal_active = entry_signal in detected_types
 
                 fund = obtener_fundamentales(tk) or {}
@@ -1311,6 +1344,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     "alertado": bool(st.get("alertado", False)),
                     "fecha_ultima_alerta": st.get("fecha_ultima_alerta"),
                 })
+                if len(items) % 5 == 0:
+                    gc.collect()
 
             # Score Eurekers (ROE 50% / EVA 25% / FCF 25%) relativo dentro de la
             # watchlist, reutilizando normalized_score() de screener.py — no es
