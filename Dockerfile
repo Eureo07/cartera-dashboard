@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt && pip install --upgrade --no
 COPY config.json config_loader.py generate_dashboard.py server.py screener.py start.sh dashboard.html per_futuro.py per_futuro_manual.json ./
 COPY fondos_indexados.json cuenta_remunerada.json fondos_comparativa.json cuenta_remunerada_myinvestor.json alertas_state.json ./
 COPY fin_data_final.xlsx tickers_universo.json price_history.csv watchlist.json ./
-COPY ipc_ine.py ipc_cache.json expectancy.py position_sizing.py regimen_mercado.py alertas.py ./
+COPY ipc_ine.py ipc_cache.json expectancy.py position_sizing.py regimen_mercado.py alertas.py deuda_ebitda.py deuda_ebitda_cache.json ./
 
 RUN chmod +x start.sh
 
