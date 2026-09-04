@@ -1,11 +1,12 @@
 {
   "entidad": "Trade Republic",
-  "saldo_actual": 30089.33,
+  "saldo_actual": 30211.64,
   "tae_actual": 2.25,
   "tae_anterior": 3.0,
   "tae_efectiva_desde": "2026-08-27",
   "historico_saldos": [
-    {"fecha": "2026-07-03", "saldo": 30089.33}
+    {"fecha": "2026-07-03", "saldo": 30089.33},
+    {"fecha": "2026-08-31", "saldo": 30211.64, "nota": "Saldo real observado directamente, sustituye estimación previa basada en +60,21€ de interés — diferencia de 62,10€ sin desglosar por falta de histórico de movimientos en esta cuenta."}
   ],
   "intereses_acumulados_periodo": 89.33,
   "fecha_inicio_tracking": "2026-07-03"
