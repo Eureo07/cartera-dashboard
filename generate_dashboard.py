@@ -249,7 +249,7 @@ for p in portfolio:
         p["pos_resistance"] = None
         p["dynamic_stop"] = None
 # Override support values with hardcoded correct values
-support_overrides = {"ENR.DE": 133.85, "NVD.DE": 144.54, "RRU.DE": 12.48, "DANR.MI": 47.84}
+support_overrides = {"ENR.DE": 133.85, "NVD.DE": 166.20, "RRU.DE": 12.48, "DANR.MI": 47.84}
 for p in portfolio:
     if p["ticker"] in support_overrides:
         p["pos_support"] = support_overrides[p["ticker"]]

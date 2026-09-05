@@ -1,7 +1,7 @@
 {
     "base_dir": ".",
     "portfolio": [
-        {"ticker": "NVD.DE", "db_ticker": "NVDA", "name": "NVIDIA", "shares": 5, "entry": 182.34, "commission": 3.90, "stop": 140.20, "entry_date": "27/04/2026", "tema_exposicion": "Ciclo IA/Industrial"},
+        {"ticker": "NVD.DE", "db_ticker": "NVDA", "name": "NVIDIA", "shares": 5, "entry": 182.34, "commission": 3.90, "stop": 161.21, "entry_date": "27/04/2026", "tema_exposicion": "Ciclo IA/Industrial"},
         {"ticker": "DANR.MI", "db_ticker": null, "name": "Danieli", "shares": 18, "entry": 48.72, "commission": 4.90, "stop": 38.82, "entry_date": "06/05/2026", "tema_exposicion": "Ciclo IA/Industrial"}
     ],
     "email": {
