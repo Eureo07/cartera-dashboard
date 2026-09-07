@@ -46,10 +46,28 @@
     },
     "indices_referencia": {
         "mapeo": {
-            "NVD.DE": {"simbolo": "^GSPC", "nombre": "S&P 500"},
-            "RRU.DE": {"simbolo": "^FTSE", "nombre": "FTSE 100"},
-            "DANR.MI": {"simbolo": "FTSEMIB.MI", "nombre": "FTSE MIB"},
-            "ITX.MC": {"simbolo": "^IBEX", "nombre": "IBEX 35"}
+            "NVD.DE": {"simbolo": "^GSPC", "nombre": "S&P 500", "pais_siblis": "United States"},
+            "RRU.DE": {"simbolo": "^FTSE", "nombre": "FTSE 100", "pais_siblis": "United Kingdom"},
+            "DANR.MI": {"simbolo": "FTSEMIB.MI", "nombre": "FTSE MIB", "pais_siblis": "Italy"},
+            "ITX.MC": {"simbolo": "^IBEX", "nombre": "IBEX 35", "pais_siblis": "Spain"},
+            "ACS.MC": {"simbolo": "^IBEX", "nombre": "IBEX 35", "pais_siblis": "Spain"},
+            "APA": {"simbolo": "^GSPC", "nombre": "S&P 500", "pais_siblis": "United States"},
+            "GOOGL": {"simbolo": "^GSPC", "nombre": "S&P 500", "pais_siblis": "United States"},
+            "SAF.PA": {"simbolo": "^FCHI", "nombre": "CAC 40", "pais_siblis": "France"},
+            "THEON.AS": {"simbolo": "^AEX", "nombre": "AEX (Países Bajos)"},
+            "EDV.L": {"simbolo": "^FTSE", "nombre": "FTSE 100", "pais_siblis": "United Kingdom"},
+            "ITH.L": {"simbolo": "^FTSE", "nombre": "FTSE 100 (aprox., FTSE 250 no cubierto)", "pais_siblis": "United Kingdom"},
+            "KIE.L": {"simbolo": "^FTSE", "nombre": "FTSE 100 (aprox., FTSE 250 no cubierto)", "pais_siblis": "United Kingdom"},
+            "L1G.AX": {"simbolo": "^AORD", "nombre": "All Ordinaries (Australia)", "pais_siblis": "Australia"},
+            "RRL.AX": {"simbolo": "^AORD", "nombre": "All Ordinaries (Australia)", "pais_siblis": "Australia"},
+            "GNE.AX": {"simbolo": "^AORD", "nombre": "All Ordinaries (Australia)", "pais_siblis": "Australia"},
+            "XTN": {"simbolo": "^GSPC", "nombre": "S&P 500 (aprox.)", "pais_siblis": "United States"},
+            "XPO": {"simbolo": "^GSPC", "nombre": "S&P 500 (aprox.)", "pais_siblis": "United States"},
+            "XSMO": {"simbolo": "^GSPC", "nombre": "S&P 500 (aprox.)", "pais_siblis": "United States"},
+            "XNTK": {"simbolo": "^GSPC", "nombre": "S&P 500 (aprox.)", "pais_siblis": "United States"},
+            "XSD": {"simbolo": "^GSPC", "nombre": "S&P 500 (aprox.)", "pais_siblis": "United States"},
+            "XMMO": {"simbolo": "^GSPC", "nombre": "S&P 500 (aprox.)", "pais_siblis": "United States"},
+            "XNAS.DE": {"simbolo": "^GSPC", "nombre": "S&P 500 (aprox., no hay CAPE específico de Nasdaq-100)", "pais_siblis": "United States"}
         },
         "default": {"simbolo": "^STOXX50E", "nombre": "Euro Stoxx 50 (aprox.)"}
     },

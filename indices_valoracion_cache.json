@@ -1,0 +1,86 @@
+{
+  "Germany": {
+    "per_indice": 17.72,
+    "cape_indice": 23.28,
+    "fecha_actualizacion": "2026-09-07T12:33:57.585005+00:00",
+    "fuente": "Siblis Research (siblisresearch.com)"
+  },
+  "India": {
+    "per_indice": 19.94,
+    "cape_indice": 29.64,
+    "fecha_actualizacion": "2026-09-07T12:33:57.585005+00:00",
+    "fuente": "Siblis Research (siblisresearch.com)"
+  },
+  "United States": {
+    "per_indice": 25.49,
+    "cape_indice": 35.82,
+    "fecha_actualizacion": "2026-09-07T12:33:57.585005+00:00",
+    "fuente": "Siblis Research (siblisresearch.com)"
+  },
+  "Taiwan": {
+    "per_indice": 30.9,
+    "cape_indice": 46.44,
+    "fecha_actualizacion": "2026-09-07T12:33:57.585005+00:00",
+    "fuente": "Siblis Research (siblisresearch.com)"
+  },
+  "Australia": {
+    "per_indice": 23.56,
+    "cape_indice": 20.44,
+    "fecha_actualizacion": "2026-09-07T12:33:57.585005+00:00",
+    "fuente": "Siblis Research (siblisresearch.com)"
+  },
+  "China": {
+    "per_indice": 19.56,
+    "cape_indice": 18.18,
+    "fecha_actualizacion": "2026-09-07T12:33:57.585005+00:00",
+    "fuente": "Siblis Research (siblisresearch.com)"
+  },
+  "Canada": {
+    "per_indice": 21.57,
+    "cape_indice": 27.24,
+    "fecha_actualizacion": "2026-09-07T12:33:57.585005+00:00",
+    "fuente": "Siblis Research (siblisresearch.com)"
+  },
+  "Spain": {
+    "per_indice": null,
+    "cape_indice": 25.33,
+    "fecha_actualizacion": "2026-09-07T12:33:57.585005+00:00",
+    "fuente": "Siblis Research (siblisresearch.com)"
+  },
+  "Italy": {
+    "per_indice": 15.56,
+    "cape_indice": 21.5,
+    "fecha_actualizacion": "2026-09-07T12:33:57.585005+00:00",
+    "fuente": "Siblis Research (siblisresearch.com)"
+  },
+  "France": {
+    "per_indice": 19.35,
+    "cape_indice": 20.91,
+    "fecha_actualizacion": "2026-09-07T12:33:57.585005+00:00",
+    "fuente": "Siblis Research (siblisresearch.com)"
+  },
+  "Japan": {
+    "per_indice": 22.09,
+    "cape_indice": 38.59,
+    "fecha_actualizacion": "2026-09-07T12:33:57.585005+00:00",
+    "fuente": "Siblis Research (siblisresearch.com)"
+  },
+  "Hong Kong": {
+    "per_indice": 11.84,
+    "cape_indice": 9.49,
+    "fecha_actualizacion": "2026-09-07T12:33:57.585005+00:00",
+    "fuente": "Siblis Research (siblisresearch.com)"
+  },
+  "United Kingdom": {
+    "per_indice": 15.89,
+    "cape_indice": 20.07,
+    "fecha_actualizacion": "2026-09-07T12:33:57.585005+00:00",
+    "fuente": "Siblis Research (siblisresearch.com)"
+  },
+  "South Korea": {
+    "per_indice": 22.95,
+    "cape_indice": 40.76,
+    "fecha_actualizacion": "2026-09-07T12:33:57.585005+00:00",
+    "fuente": "Siblis Research (siblisresearch.com)"
+  }
+}

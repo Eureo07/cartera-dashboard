@@ -1196,6 +1196,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         import gc
         from position_sizing import calcular_tamano_posicion
         from deuda_ebitda import get_deuda_neta_ebitda_cacheada
+        from indices_valoracion import get_valoracion_pais
+        from gordon_growth import get_gordon_cacheado
         try:
             wl_path = os.path.join(DIR, "watchlist.json")
             if not os.path.exists(wl_path):
@@ -1206,6 +1208,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
 
             SECTOR_TO_THEME = CFG.get("temas_exposicion", {}).get("sector_to_theme", {})
             THEMES_CFG = CFG.get("temas_exposicion", {}).get("themes", {})
+            INDICES_REF_MAPEO = CFG.get("indices_referencia", {}).get("mapeo", {})
+            INDICES_REF_DEFAULT = CFG.get("indices_referencia", {}).get("default", {"simbolo": "^STOXX50E", "nombre": "Euro Stoxx 50 (aprox.)"})
             portfolio_theme_counts = {}
             for p in CFG.get("portfolio", []):
                 tema = p.get("tema_exposicion", "N/D")
@@ -1295,6 +1299,13 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 deuda_cache = get_deuda_neta_ebitda_cacheada(tk)
                 deuda_ratio = deuda_cache.get("deuda_neta_ebitda") if deuda_cache else None
 
+                ref_idx = INDICES_REF_MAPEO.get(tk, INDICES_REF_DEFAULT)
+                val_idx = get_valoracion_pais(ref_idx.get("pais_siblis"))
+                per_indice = val_idx.get("per_indice")
+                cape_indice = val_idx.get("cape_indice")
+                per_vs_indice_delta = round(per_ttm - per_indice, 2) if (per_ttm is not None and per_indice is not None) else None
+                gordon = get_gordon_cacheado(tk) or {}
+
                 if entry_level and stop_val:
                     tamano = calcular_tamano_posicion(entry_level, stop_val, capital_sistema=10000)
                 else:
@@ -1339,6 +1350,15 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     "_score_inputs_ok": roe is not None and eva is not None and fcf is not None,
                     "per_ttm": per_ttm, "per_futuro": pfu.get("fwd_per"), "peg": peg, "pb": pb,
                     "deuda_neta_ebitda": deuda_ratio,
+                    "indice_referencia": ref_idx.get("nombre"),
+                    "per_indice": per_indice,
+                    "per_vs_indice_delta": per_vs_indice_delta,
+                    "cape_indice": cape_indice,
+                    "gordon_valor": gordon.get("valor_gordon"),
+                    "gordon_estado": gordon.get("estado"),
+                    "gordon_motivo": gordon.get("motivo_no_elegible") or gordon.get("motivo_estado"),
+                    "gordon_k_pct": gordon.get("k_pct"),
+                    "gordon_g_pct": gordon.get("g_pct"),
                     "tamano_sugerido": tamano,
                     "warnings": warnings,
                     "alertado": bool(st.get("alertado", False)),

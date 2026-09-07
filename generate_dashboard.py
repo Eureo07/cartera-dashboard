@@ -16,6 +16,8 @@ from expectancy import cargar_cartera_cerrada, calcular_expectancy
 from position_sizing import calcular_tamano_posicion
 from regimen_mercado import obtener_regimen_combinado
 from ipc_ine import inflacion_acumulada, inflacion_interanual, obtener_ipc_mensual, inflacion_interanual_rolling, _fmt_mes_es
+from indices_valoracion import actualizar_cache as actualizar_cache_indices_valoracion, get_valoracion_pais
+from gordon_growth import actualizar_cache as actualizar_cache_gordon, get_gordon_cacheado
 
 _YF_SESSION = requests.Session()
 _YF_SESSION.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
@@ -877,6 +879,17 @@ for p in portfolio:
     except Exception as e:
         log.warning(f"  Indice referencia {p['ticker']} ({simbolo}): error - {e}")
 
+# ========== PER/CAPE DEL INDICE DE REFERENCIA (manual->scraper, informativo) ==========
+# Loop independiente del de retorno-vs-indice de arriba: ese solo se rellena
+# si la descarga de historico desde la fecha de entrada tiene exito, pero
+# PER/CAPE del indice no depende de eso -- no deben acoplarse.
+valoracion_indice_por_ticker = {}
+for p in portfolio:
+    ref = INDICES_REF_MAPEO.get(p["ticker"], INDICES_REF_DEFAULT)
+    pais_siblis = ref.get("pais_siblis")
+    val_idx = get_valoracion_pais(pais_siblis)
+    valoracion_indice_por_ticker[p["ticker"]] = {"nombre": ref["nombre"], "pais_siblis": pais_siblis, **val_idx}
+
 # ========== CORRELATION MATRIX ==========
 log.info("Computing correlation matrix...")
 corr_tickers = [p["ticker"] for p in portfolio if p["ticker"]]
@@ -1200,6 +1213,30 @@ for blk_nombre, blk_d in bloques_data.items():
       <div class="rb-tickers">{"".join(f'<span class="rb-tk">{t["nombre"]} (<span class="rb-tk-w">{t["peso"]:.1f}%</span>)</span>' for t in blk_d["tickers"])}</div>
     </div>
 """
+# ========== VALORACION DE INDICES (Siblis Research) + GORDON GROWTH ==========
+# A diferencia de deuda_ebitda (que se refresca despues de escribir el
+# HTML), estos dos caches deben estar listos ANTES del loop de tarjetas
+# de abajo, porque sus valores se renderizan en esta misma ejecucion.
+try:
+    log.info("Actualizando cache de valoracion de indices (Siblis Research)...")
+    actualizar_cache_indices_valoracion()
+    log.info("Cache de valoracion de indices actualizado.")
+except Exception as e:
+    log.warning(f"No se pudo actualizar cache de valoracion de indices: {e}")
+
+try:
+    _wl_path_gordon = os.path.join(CFG["base_dir"], "watchlist.json")
+    _gordon_wl_tickers = []
+    if os.path.exists(_wl_path_gordon):
+        with open(_wl_path_gordon, "r", encoding="utf-8") as _f:
+            _gordon_wl_tickers = sorted(set(str(i.get("ticker")) for i in json.load(_f) if i.get("ticker")))
+    _gordon_tickers = sorted(set([p["ticker"] for p in portfolio] + _gordon_wl_tickers))
+    log.info(f"Actualizando cache Gordon Growth para {len(_gordon_tickers)} tickers...")
+    actualizar_cache_gordon(_gordon_tickers)
+    log.info("Cache Gordon Growth actualizada.")
+except Exception as e:
+    log.warning(f"No se pudo actualizar cache Gordon Growth: {e}")
+
 html += """  </div>
 
   <div class="section-title">An\u00e1lisis por posici\u00f3n</div>
@@ -1226,6 +1263,13 @@ for i, p in enumerate(portfolio):
     per = v.get("per")
     pb_val = v.get("pb")
     idx_ref = indice_ref_por_posicion.get(tk)
+    idx_val = valoracion_indice_por_ticker.get(tk)
+    gordon = get_gordon_cacheado(tk) or {}
+    per_indice_val = idx_val.get("per_indice") if idx_val else None
+    cape_indice_val = idx_val.get("cape_indice") if idx_val else None
+    per_vs_indice_delta = round(per - per_indice_val, 1) if (per is not None and per_indice_val is not None) else None
+    gordon_estado = gordon.get("estado")
+    gordon_valor = gordon.get("valor_gordon")
     fwd_per = v.get("fwd_per")
     peg_val = v.get("peg")
     beta_val = v.get("beta")
@@ -1403,6 +1447,9 @@ for i, p in enumerate(portfolio):
         <div class="metric-row"><span class="ml">P/B{desc("Precio respecto al valor contable. &lt;1 infravalorado")}</span><span class="mv {"warn" if (pb_val or 99) > 5 else ("pos" if pb_val and pb_val <= 3 else "")}">{f"{pb_val:.2f}" if pb_val else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">vs {idx_ref['nombre'] if idx_ref else 'índice'}{desc("Retorno de la posición desde su entrada frente al retorno de su índice de referencia en el mismo periodo")}</span><span class="mv {"pos" if idx_ref and (p["pnl_pct"] - idx_ref["retorno_pct"]) >= 0 else ("neg" if idx_ref else "")}">{f"{(p['pnl_pct'] - idx_ref['retorno_pct']):+.2f}pp" if idx_ref else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">vs {idx_ref['nombre'] if idx_ref else 'índice'} (anualizado){desc("Mismo retorno pero anualizado por separado (posición e índice) antes de restar — permite comparar el ritmo entre posiciones con distinta antigüedad. Solo a partir de 30 días en posición, mismo umbral que el CAGR")}</span><span class="mv {"pos" if idx_ref and idx_ref.get("delta_anualizado_pp") is not None and idx_ref["delta_anualizado_pp"] >= 0 else ("neg" if idx_ref and idx_ref.get("delta_anualizado_pp") is not None else "")}">{f"{idx_ref['delta_anualizado_pp']:+.2f}pp" if idx_ref and idx_ref.get("delta_anualizado_pp") is not None else "N/D (<30d)"}</span></div>
+        <div class="metric-row"><span class="ml">PER vs {idx_val['nombre'] if idx_val else 'índice'}{desc("PER de la acción frente al PER del índice de referencia (Siblis Research, actualización periódica)")}</span><span class="mv {"pos" if per_vs_indice_delta is not None and per_vs_indice_delta < 0 else ("warn" if per_vs_indice_delta is not None else "")}">{f"{per:.1f}x vs {per_indice_val:.1f}x ({per_vs_indice_delta:+.1f}x)" if per_vs_indice_delta is not None else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">CAPE {idx_val['nombre'] if idx_val else 'índice'}{desc("Shiller PE del índice de referencia — contexto de valoración de mercado a largo plazo, no aplica directamente a la acción")}</span><span class="mv">{f"{cape_indice_val:.1f}x" if cape_indice_val is not None else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">Valor Gordon (DDM){desc("P = D1/(k-g). Solo aplicable a pagadores de dividendo maduros y estables con historial de al menos 5 años")}</span><span class="mv {"pos" if gordon_estado == "ok" and gordon_valor and gordon_valor >= p["current"] else ("warn" if gordon_estado == "ok" else "")}">{f"{gordon_valor:.2f} €" if gordon_estado == "ok" and gordon_valor is not None else "No aplicable"}{f' <span style="color:#6b7280;font-size:9px;margin-left:4px" title="{(gordon.get("motivo_no_elegible") or gordon.get("motivo_estado") or "")}">(?)</span>' if gordon_estado != "ok" else ""}</span></div>
         <div class="metric-row"><span class="ml">Beta{desc(beta_desc)}</span><span class="mv {beta_cls}">{beta_str}</span></div>
         <div class="metric-row"><span class="ml">ROE 2026{desc("Rentabilidad sobre fondos propios")}</span><span class="mv {"pos" if (roe_val or 0) >= 15 else ("warn" if (roe_val or 0) >= 5 else "neg")}">{f"{roe_val:.1f}%" if roe_val else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">FCF 2026{desc("Caja generada tras inversiones")}</span><span class="mv {fcf_cls}">{f"{fcf_val/1_000_000:,.0f}M \u20ac" if fcf_val else "N/D"}</span></div>
