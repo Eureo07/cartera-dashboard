@@ -13,6 +13,7 @@ COPY config.json config_loader.py generate_dashboard.py server.py screener.py st
 COPY fondos_indexados.json cuenta_remunerada.json fondos_comparativa.json cuenta_remunerada_myinvestor.json alertas_state.json ./
 COPY fin_data_final.xlsx tickers_universo.json price_history.csv watchlist.json ./
 COPY ipc_ine.py ipc_cache.json expectancy.py position_sizing.py regimen_mercado.py alertas.py deuda_ebitda.py deuda_ebitda_cache.json ./
+COPY indices_valoracion.py indices_valoracion_cache.json gordon_growth.py gordon_growth_cache.json escaneo_universo_fase2_wacc_score.py ./
 
 RUN chmod +x start.sh
 
