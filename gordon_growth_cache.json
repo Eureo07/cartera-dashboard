@@ -35,13 +35,13 @@
     "g_pct": 5.4,
     "g_capped": false,
     "d1": 2.1196,
-    "k_pct": 6.65,
+    "k_pct": 6.69,
     "k_fuente": "evaluar_wacc_eva (CAPM)",
-    "spread_pct": 1.25,
+    "spread_pct": 1.29,
     "estado": "inestable",
     "valor_gordon": null,
-    "motivo_estado": "Spread k-g (1.25pp) por debajo del floor (2.0pp)",
-    "fecha_actualizacion": "2026-09-08T05:27:56.056908+00:00",
+    "motivo_estado": "Spread k-g (1.29pp) por debajo del floor (2.0pp)",
+    "fecha_actualizacion": "2026-09-08T12:50:01.546831+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "APA": {
@@ -106,7 +106,7 @@
     "estado": "inestable",
     "valor_gordon": null,
     "motivo_estado": "Spread k-g (1.47pp) por debajo del floor (2.0pp)",
-    "fecha_actualizacion": "2026-09-08T05:28:01.270545+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:05.905488+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "DANR.MI": {
@@ -167,24 +167,24 @@
     "quote_type": "EQUITY",
     "n_years_completos": 5,
     "dividendos_anuales": {
-      "2021": 48.008352,
-      "2022": 50.224121,
-      "2023": 59.82579,
-      "2024": 60.56438,
-      "2025": 87.89221
+      "2021": 47.952450999999996,
+      "2022": 50.165641,
+      "2023": 59.756132,
+      "2024": 60.493862,
+      "2025": 87.78987000000001
     },
     "recorte_max_yoy_pct": 0.0,
     "hueco_detectado": false,
     "g_pct": 8.0,
     "g_capped": true,
-    "d1": 94.9236,
+    "d1": 94.8131,
     "k_pct": 9.44,
     "k_fuente": "evaluar_wacc_eva (CAPM)",
     "spread_pct": 1.44,
     "estado": "inestable",
     "valor_gordon": null,
     "motivo_estado": "Spread k-g (1.44pp) por debajo del floor (2.0pp)",
-    "fecha_actualizacion": "2026-09-08T05:28:05.598041+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:08.475929+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "GNE.AX": {
@@ -237,7 +237,7 @@
     "estado": "no_elegible",
     "valor_gordon": null,
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-08T05:28:06.838796+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:09.958125+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "ITH.L": {
@@ -261,7 +261,7 @@
     "estado": "no_elegible",
     "valor_gordon": null,
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-08T05:28:07.433098+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:10.715389+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "ITX.MC": {
@@ -270,13 +270,13 @@
     "quote_type": "EQUITY",
     "n_years_completos": 5,
     "dividendos_anuales": {
-      "2002": 0.049675555999999996,
+      "2002": 0.049621731,
       "2003": 0.028,
       "2004": 0.101457,
-      "2005": 0.104302663,
-      "2006": 0.14577111399999998,
-      "2007": 0.18040811399999998,
-      "2008": 0.216918889,
+      "2005": 0.104286515,
+      "2006": 0.145748238,
+      "2007": 0.180385238,
+      "2008": 0.21690543299999998,
       "2009": 0.21000000000000002,
       "2010": 0.2562,
       "2011": 0.32,
@@ -306,7 +306,7 @@
     "estado": "error_ke",
     "valor_gordon": null,
     "motivo_estado": "No se pudo calcular Ke (CAPM): datos insuficientes para WACC (marketCap/EBIT/debt/equity)",
-    "fecha_actualizacion": "2026-09-08T05:28:08.261582+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:11.538952+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "KIE.L": {
@@ -352,7 +352,7 @@
     "estado": "no_elegible",
     "valor_gordon": null,
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-08T05:28:09.850347+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:13.364306+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "L1G.AX": {
@@ -372,7 +372,7 @@
     "estado": "no_elegible",
     "valor_gordon": null,
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-08T05:28:10.453961+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:14.131156+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "NVD.DE": {
@@ -392,7 +392,7 @@
     "estado": "no_elegible",
     "valor_gordon": null,
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-08T05:28:10.760985+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:14.553642+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "RRL.AX": {
@@ -423,7 +423,7 @@
     "estado": "no_elegible",
     "valor_gordon": null,
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-08T05:28:11.571550+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:15.482358+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "RRU.DE": {
@@ -432,7 +432,7 @@
     "quote_type": "EQUITY",
     "n_years_completos": 1,
     "dividendos_anuales": {
-      "2025": 0.12224099499999999
+      "2025": 0.122430002
     },
     "recorte_max_yoy_pct": null,
     "hueco_detectado": false,
@@ -445,7 +445,7 @@
     "estado": "no_elegible",
     "valor_gordon": null,
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-08T05:28:12.406763+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:16.178273+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "SAF.PA": {
@@ -485,13 +485,13 @@
     "g_pct": 8.0,
     "g_capped": true,
     "d1": 3.132,
-    "k_pct": 8.61,
+    "k_pct": 8.65,
     "k_fuente": "evaluar_wacc_eva (CAPM)",
-    "spread_pct": 0.61,
+    "spread_pct": 0.65,
     "estado": "inestable",
     "valor_gordon": null,
-    "motivo_estado": "Spread k-g (0.61pp) por debajo del floor (2.0pp)",
-    "fecha_actualizacion": "2026-09-08T05:28:13.205594+00:00",
+    "motivo_estado": "Spread k-g (0.65pp) por debajo del floor (2.0pp)",
+    "fecha_actualizacion": "2026-09-08T12:50:17.204667+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "THEON.AS": {
@@ -514,7 +514,7 @@
     "estado": "no_elegible",
     "valor_gordon": null,
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-08T05:28:14.655155+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:18.991561+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "XMMO": {
@@ -534,7 +534,7 @@
     "estado": "no_elegible",
     "valor_gordon": null,
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-08T05:28:15.384036+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:19.541767+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "XNAS.DE": {
@@ -554,7 +554,7 @@
     "estado": "no_elegible",
     "valor_gordon": null,
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-08T05:28:15.837248+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:20.189494+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "XNTK": {
@@ -574,7 +574,7 @@
     "estado": "no_elegible",
     "valor_gordon": null,
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-08T05:28:16.288410+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:20.654328+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "XPO": {
@@ -594,7 +594,7 @@
     "estado": "no_elegible",
     "valor_gordon": null,
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-08T05:28:17.759982+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:21.493354+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "XSD": {
@@ -614,7 +614,7 @@
     "estado": "no_elegible",
     "valor_gordon": null,
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-08T05:28:18.541960+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:22.158235+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "XSMO": {
@@ -634,7 +634,7 @@
     "estado": "no_elegible",
     "valor_gordon": null,
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-08T05:28:19.012270+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:22.675962+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   },
   "XTN": {
@@ -654,7 +654,7 @@
     "estado": "no_elegible",
     "valor_gordon": null,
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-08T05:28:19.470111+00:00",
+    "fecha_actualizacion": "2026-09-08T12:50:23.242020+00:00",
     "fuente": "yfinance.dividends + evaluar_wacc_eva (CAPM)"
   }
 }

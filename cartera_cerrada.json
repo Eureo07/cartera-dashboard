@@ -96,5 +96,21 @@
     "fecha_entrada": "2026-08-19",
     "fecha_cierre": "2026-08-20",
     "regimen_entrada": null
+  },
+  {
+    "ticker": "DANR.MI",
+    "operacion": "Danieli",
+    "entrada": 48.72,
+    "acciones": 18,
+    "coste": 882.86,
+    "venta": 37.66,
+    "pnl_eur": -209.88,
+    "pnl_pct": -23.77,
+    "precio_soporte_entrada": 38.82,
+    "motivo_cierre": "Stop-loss ejecutado a 37,66€ (nivel predefinido, venta disciplinada)",
+    "fecha_entrada": "2026-05-06",
+    "fecha_cierre": "2026-09-08",
+    "regimen_entrada": null,
+    "costes_transaccion": -4.90
   }
 ]
