@@ -756,6 +756,15 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         state = _load_alertas_state()
         now_iso = datetime.now().isoformat()
         entry = state.get(ticker, {}) if isinstance(state, dict) else {}
+        # Invalida el cache de 30 min de /api/candidatos: sin esto, un GET
+        # posterior dentro de esa ventana seguia devolviendo "alertado":false
+        # aunque el marcado ya se hubiera guardado, causando reenvios
+        # duplicados desde n8n (bug real detectado: dos ejecuciones dentro de
+        # la misma ventana de 30 min re-enviaron los 7 candidatos dos veces).
+        # /api/alertas no tiene este problema porque nunca tuvo cache de
+        # respuesta -- solo esta ruta lo necesita.
+        _CANDIDATOS_CACHE["data"] = None
+        _CANDIDATOS_CACHE["updated"] = None
         if tipo == "vigilancia":
             entry["vigilando"] = True
             entry["fecha_ultima_vigilancia"] = now_iso

@@ -189,18 +189,5 @@
     "origen": "escaneo_automatico",
     "fecha_deteccion": "2026-09-03",
     "requiere_cierre_semanal_manual": true
-  },
-  {
-    "ticker": "GNE.AX",
-    "name": "GENESIS NZ FPO NZX [GNE]",
-    "entry_level": 2.26,
-    "entry_signal": "RRA",
-    "support": 2.15,
-    "stop": 2.15,
-    "theme": "Utilities",
-    "notes": "Candidato del escaneo global (indice origen: ASX 200). ROE=2.83%, ROIC=5.11%, FCF/BeneficioNeto=5.61, PEG=None.",
-    "origen": "escaneo_automatico",
-    "fecha_deteccion": "2026-09-03",
-    "requiere_cierre_semanal_manual": false
   }
 ]
