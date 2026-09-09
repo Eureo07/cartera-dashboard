@@ -21,6 +21,7 @@ from datetime import datetime
 import yfinance as yf
 import requests
 from per_futuro import _get_yf_info  # reutiliza cache en memoria de .info si ya se llamo
+from criterios_fundamentales import evaluar_criterio2_roic_roe, evaluar_criterio3_fcf_ni, evaluar_criterio4_declive
 
 _YF_SESSION = requests.Session()
 _YF_SESSION.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
@@ -93,20 +94,16 @@ def evaluar_ticker(tk, roe_pct):
             if invested_capital and invested_capital > 0:
                 roic = round((ebit * (1 - tax_rate)) / invested_capital * 100, 2)
 
-        declive_ingresos = None
-        if revenue_hist and len(revenue_hist) >= 3:
-            declive_ingresos = revenue_hist[0] < revenue_hist[1] and revenue_hist[0] < revenue_hist[2]
+        declive_ingresos = evaluar_criterio4_declive(revenue_hist)
 
         fcf_sobre_ni = None
         if fcf is not None and net_income not in (None, 0):
             fcf_sobre_ni = round(fcf / net_income, 2)
 
-        # Criterio 2: ROIC << ROE (marcado si ROIC < 50% del ROE, mismo umbral que ya usa /api/candidatos)
-        c2_ok = None
-        if roic is not None and roe_pct is not None and roe_pct > 0:
-            c2_ok = (roic / roe_pct) >= 0.5
-        # Criterio 3: FCF/Beneficio Neto >= 0.5
-        c3_ok = fcf_sobre_ni is not None and fcf_sobre_ni >= 0.5
+        # Criterios 2/3: formulas y umbrales unicos en criterios_fundamentales.py
+        # (fuente compartida con server.py y el resto del escaneo).
+        c2_ok, _ratio_roic_roe = evaluar_criterio2_roic_roe(roic, roe_pct)
+        c3_ok, _ratio_fcf_ni = evaluar_criterio3_fcf_ni(fcf, net_income)
         # Criterio 4: sin declive sostenido
         c4_ok = declive_ingresos is not None and not declive_ingresos
 

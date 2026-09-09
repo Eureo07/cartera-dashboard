@@ -35,18 +35,12 @@ _YF_SESSION.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) A
 CACHE_FILE = os.path.join(_PROJ_DIR, "universo_global_fase1_cache.json")
 LOG_FILE = os.path.join(_PROJ_DIR, "universo_global_scan.log")
 
-# Umbral de deuda neta/EBITDA (criterio 1, bloqueante) -- especificacion
-# original: <2x sano, hasta <3.5x SOLO si el sector es intensivo en capital
-# (mineria, petroleo, utilities -- son los ejemplos que da la propia
-# especificacion). No existia ya en el repo ningun listado de "sectores
-# intensivos en capital" que reutilizar (confirmado por busqueda explicita)
-# -- se define aqui usando el mismo vocabulario GICS/yfinance que ya fluye
-# por el sistema en info.get("sector") (ej. "Energy", "Basic Materials",
-# "Utilities" -- los mismos strings que ya aparecen en
-# universo_global_fase1_cache.json para EDV.L/RRL.AX/APA/GNE.AX).
-SECTORES_INTENSIVOS_CAPITAL = {"Energy", "Basic Materials", "Utilities"}
-DEUDA_UMBRAL_NORMAL = 2.0
-DEUDA_UMBRAL_CAPITAL_INTENSIVO = 3.5
+# Criterio 1 (deuda neta/EBITDA): umbral y deteccion de sector intensivo en
+# capital viven en criterios_fundamentales.py -- fuente unica compartida
+# con server.py y el resto del escaneo, para que un cambio de umbral no
+# pueda quedar desincronizado entre sitios (bug real ya detectado una vez
+# con el score, no se repite aqui).
+from criterios_fundamentales import evaluar_criterio1_deuda
 
 # Tickers ya cubiertos por el sistema actual (watchlist + cartera) -- se
 # excluyen del escaneo, el objetivo es encontrar candidatos NUEVOS.
@@ -210,14 +204,8 @@ def ejecutar_fase1():
         datos["fecha"] = datetime.now().isoformat()
         if "error" not in datos:
             roe, fcf, deuda = datos.get("roe"), datos.get("fcf"), datos.get("deuda_neta_ebitda")
-            # Umbral segun sector: 3.5x solo si es explicitamente intensivo en
-            # capital, 2.0x en el resto. Un dato ausente EXCLUYE (no se
-            # cuenta como aprobado) -- especificacion original de Fase 1,
-            # violada antes por "deuda is None or deuda <= 4" (aprobaba sin
-            # dato real y con un umbral mas laxo de lo especificado).
-            deuda_umbral = DEUDA_UMBRAL_CAPITAL_INTENSIVO if datos.get("sector") in SECTORES_INTENSIVOS_CAPITAL else DEUDA_UMBRAL_NORMAL
-            pasa = (roe is not None and roe > 0) and (fcf is not None and fcf > 0) and \
-                   (deuda is not None and deuda <= deuda_umbral)
+            deuda_ok, deuda_umbral = evaluar_criterio1_deuda(deuda, datos.get("sector"))
+            pasa = (roe is not None and roe > 0) and (fcf is not None and fcf > 0) and deuda_ok
             datos["pasa_fase1"] = pasa
             datos["deuda_umbral_aplicado"] = deuda_umbral
             if pasa:

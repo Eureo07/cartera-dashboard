@@ -1,0 +1,12 @@
+{
+  "roe_min": 0.47,
+  "roe_max": 282.36,
+  "eva_pct_mc_min": -25.46,
+  "eva_pct_mc_max": 15.64,
+  "fcf_pct_mc_min": 0.38,
+  "fcf_pct_mc_max": 28.91,
+  "percentil90": 0.3572253793,
+  "n_cohorte": 401,
+  "fuente": "universo_global_scores_finales.json",
+  "fecha_actualizacion": "2026-09-09T12:03:36.382622+00:00"
+}

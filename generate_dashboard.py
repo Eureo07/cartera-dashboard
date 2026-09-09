@@ -2490,6 +2490,24 @@ try:
 except Exception as e:
     log.warning(f"No se pudo actualizar cache deuda neta/EBITDA: {e}")
 
+# ========== FUNDAMENTALES UNIFICADOS (ROE/EVA/FCF/ROIC, cache para /api/candidatos) ==========
+# Mismo motivo que deuda_ebitda: yfinance esta bloqueado en Render. El CSV
+# de Eurekers (fuente primaria, sin red) no cubre los tickers del escaneo
+# automatico (verificado: L1G.AX/EDV.L/RRL.AX/APA/ITH.L/KIE.L devuelven
+# None) -- este cache tapa ese hueco solo para los tickers que Eurekers no
+# tiene, via el mismo metodo yfinance que ya usa el escaneo de universo.
+try:
+    from criterios_fundamentales import actualizar_cache_fundamentales, construir_referencia_cohorte
+    if os.path.exists(_wl_path):
+        log.info(f"Actualizando cache de fundamentales unificados para {len(_wl_tickers)} tickers de watchlist...")
+        actualizar_cache_fundamentales(_wl_tickers)
+        log.info("Cache de fundamentales unificados actualizada.")
+    log.info("Actualizando referencia de score fundamental (criterio 5)...")
+    construir_referencia_cohorte()
+    log.info("Referencia de score fundamental actualizada.")
+except Exception as e:
+    log.warning(f"No se pudo actualizar cache de fundamentales unificados: {e}")
+
 # ========== RUN SCREENER ==========
 if not any("skip_screener" in a for a in sys.argv):
     try:

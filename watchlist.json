@@ -113,19 +113,6 @@
     "notes": "Señal MA (EMA20 semanal) — alternativa a LT para tendencia muy vertical que puede no retroceder hasta la línea de pivots. Exclusión mutua con la entrada LT vía alertas_state.json (mismo ticker)."
   },
   {
-    "ticker": "L1G.AX",
-    "name": "L1 GROUP FPO [L1G]",
-    "entry_level": 1.185,
-    "entry_signal": "LT",
-    "support": 1.185,
-    "stop": 1.185,
-    "theme": "Financial Services",
-    "notes": "Candidato del escaneo global (indice origen: ASX 200). ROE=102.73%, ROIC=85.31%, FCF/BeneficioNeto=2.33, PEG=0.06275636116768499.",
-    "origen": "escaneo_automatico",
-    "fecha_deteccion": "2026-09-03",
-    "requiere_cierre_semanal_manual": true
-  },
-  {
     "ticker": "ITH.L",
     "name": "ITHACA ENERGY PLC ORD 1P",
     "entry_level": 286.6,
@@ -176,18 +163,5 @@
     "origen": "escaneo_automatico",
     "fecha_deteccion": "2026-09-03",
     "requiere_cierre_semanal_manual": false
-  },
-  {
-    "ticker": "RRL.AX",
-    "name": "REGIS FPO [RRL]",
-    "entry_level": 5.335,
-    "entry_signal": "LT",
-    "support": 5.335,
-    "stop": 5.335,
-    "theme": "Basic Materials",
-    "notes": "Candidato del escaneo global (indice origen: ASX 200). ROE=37.67%, ROIC=63.11%, FCF/BeneficioNeto=0.99, PEG=0.05832491605301914.",
-    "origen": "escaneo_automatico",
-    "fecha_deteccion": "2026-09-03",
-    "requiere_cierre_semanal_manual": true
   }
 ]

@@ -1201,12 +1201,17 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         Deuda neta/EBITDA solo se lee de deuda_ebitda_cache.json (nunca se
         recalcula aqui: yfinance .info esta bloqueado en Render, el cache
         se rellena en local via generate_dashboard.py)."""
-        from screener import get_entry_types, calcular_soporte_resistencia, obtener_fundamentales, get_valuation, normalized_score, get_1y_return_and_hist
+        from screener import get_entry_types, calcular_soporte_resistencia, get_valuation, get_1y_return_and_hist
         import gc
         from position_sizing import calcular_tamano_posicion
         from deuda_ebitda import get_deuda_neta_ebitda_cacheada
         from indices_valoracion import get_valoracion_pais
         from gordon_growth import get_gordon_cacheado
+        from criterios_fundamentales import (
+            obtener_fundamentales_unificado, evaluar_criterio1_deuda, evaluar_criterio2_roic_roe,
+            evaluar_distorsion_capital, calcular_score_fundamental, construir_referencia_cohorte,
+            DEUDA_UMBRAL_NORMAL, DEUDA_UMBRAL_CAPITAL_INTENSIVO,
+        )
         try:
             wl_path = os.path.join(DIR, "watchlist.json")
             if not os.path.exists(wl_path):
@@ -1214,6 +1219,13 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             with open(wl_path, "r", encoding="utf-8") as f:
                 watchlist = json.load(f)
             state = _load_alertas_state()
+            # Referencia de score cargada UNA vez por request (no por ticker) --
+            # misma fuente unica que usa escaneo_universo_fase3_tecnico_watchlist.py
+            # para el criterio 5 bloqueante, para que /api/candidatos (y por tanto
+            # el email de n8n, que solo muestra estos mismos campos) nunca pueda
+            # divergir de la formula real usada para decidir que entra en watchlist.
+            from criterios_fundamentales import _read_json as _cf_read_json, SCORE_REFERENCIA_FILE as _CF_SCORE_REF_FILE
+            score_referencia = _cf_read_json(_CF_SCORE_REF_FILE, None) or construir_referencia_cohorte()
 
             SECTOR_TO_THEME = CFG.get("temas_exposicion", {}).get("sector_to_theme", {})
             THEMES_CFG = CFG.get("temas_exposicion", {}).get("themes", {})
@@ -1292,16 +1304,18 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
 
                 signal_active = entry_signal in detected_types
 
-                fund = obtener_fundamentales(tk) or {}
-                roe, eva, fcf, roic = fund.get("roe"), fund.get("eva"), fund.get("fcf"), fund.get("roi")
+                fund = obtener_fundamentales_unificado(tk)
+                roe, eva, fcf, roic = fund.get("roe"), fund.get("eva"), fund.get("fcf"), fund.get("roic")
 
                 try:
                     valuation = get_valuation(tk)
                     per_ttm = valuation.get("per")
                     pb = valuation.get("pb")
+                    market_cap = valuation.get("mcap")
                 except Exception:
                     per_ttm = None
                     pb = None
+                    market_cap = None
                 pfu = get_per_futuro(tk)
                 peg = pfu.get("peg")
 
@@ -1323,12 +1337,18 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 warnings = []
                 if deuda_ratio is None:
                     warnings.append("Deuda neta/EBITDA no disponible (solo se calcula en la generación local del dashboard)")
-                elif deuda_ratio > 3.5:
-                    warnings.append(f"Deuda neta/EBITDA en zona de precaución ({deuda_ratio}x)")
-                elif deuda_ratio > 2:
-                    warnings.append(f"Deuda neta/EBITDA a vigilar ({deuda_ratio}x)")
-                if roic is not None and roe is not None and roe > 0 and (roic / roe) < 0.5:
-                    warnings.append(f"ROIC ({roic}%) muy por debajo de ROE ({roe}%) — posible apalancamiento")
+                else:
+                    deuda_ok, deuda_umbral_aplicado = evaluar_criterio1_deuda(deuda_ratio, fund.get("sector"))
+                    if not deuda_ok:
+                        warnings.append(f"Deuda neta/EBITDA por encima del umbral ({deuda_ratio}x > {deuda_umbral_aplicado}x)")
+                    elif deuda_ratio > DEUDA_UMBRAL_NORMAL:
+                        warnings.append(f"Deuda neta/EBITDA a vigilar ({deuda_ratio}x, tolerado por sector intensivo en capital hasta {DEUDA_UMBRAL_CAPITAL_INTENSIVO}x)")
+                roic_roe_ok, roic_roe_ratio = evaluar_criterio2_roic_roe(roic, roe)
+                if roic_roe_ok is False:
+                    warnings.append(f"ROIC ({roic}%) muy por debajo de ROE ({roe}%) — ratio {roic_roe_ratio}, posible apalancamiento")
+                distorsion, motivo_distorsion = evaluar_distorsion_capital(roe, roic)
+                if distorsion:
+                    warnings.append(motivo_distorsion)
                 if peg is not None and peg > 2:
                     warnings.append(f"PEG caro ({peg}x)")
                 if pb is not None and pb > 5:
@@ -1341,6 +1361,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         warnings.append(f'Concentración temática: ya hay {count} posiciones en "{tema_candidato}"')
                 if item.get("notes"):
                     warnings.append(item["notes"])
+
+                score, score_umbral, score_ok = calcular_score_fundamental(roe, eva, fcf, market_cap, referencia=score_referencia)
 
                 st = state.get(tk, {}) if isinstance(state, dict) else {}
                 items.append({
@@ -1356,7 +1378,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     "signal_active": signal_active,
                     "detected_types": detected_types,
                     "roe": roe, "eva": eva, "fcf": fcf, "roic": roic,
-                    "_score_inputs_ok": roe is not None and eva is not None and fcf is not None,
+                    "score_watchlist": score, "score_umbral": score_umbral, "score_supera_umbral": score_ok,
                     "per_ttm": per_ttm, "per_futuro": pfu.get("fwd_per"), "peg": peg, "pb": pb,
                     "deuda_neta_ebitda": deuda_ratio,
                     "indice_referencia": ref_idx.get("nombre"),
@@ -1375,20 +1397,6 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 })
                 if len(items) % 5 == 0:
                     gc.collect()
-
-            # Score Eurekers (ROE 50% / EVA 25% / FCF 25%) relativo dentro de la
-            # watchlist, reutilizando normalized_score() de screener.py — no es
-            # comparable con el score del radar de universo completo.
-            validos = [it for it in items if it["_score_inputs_ok"]]
-            if validos:
-                n_roe = normalized_score(pd.Series([it["roe"] for it in validos]))
-                n_eva = normalized_score(pd.Series([it["eva"] for it in validos]))
-                n_fcf = normalized_score(pd.Series([it["fcf"] for it in validos]))
-                for it, r, e, fcv in zip(validos, n_roe, n_eva, n_fcf):
-                    it["score_watchlist"] = round(float(r * 0.5 + e * 0.25 + fcv * 0.25), 3)
-            for it in items:
-                it.setdefault("score_watchlist", None)
-                del it["_score_inputs_ok"]
 
             items.sort(key=lambda it: (it["distancia_pct"] is None, abs(it["distancia_pct"]) if it["distancia_pct"] is not None else 0))
             return {"items": items, "updated": datetime.now().isoformat()}
