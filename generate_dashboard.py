@@ -10,7 +10,7 @@ import requests
 import json, math, statistics
 from datetime import datetime, date, timedelta
 from config_loader import CFG, logger, get_logger
-from screener import calcular_soporte_resistencia, calcular_peg_desde_info
+from screener import calcular_soporte_resistencia, calcular_peg_desde_info, calcular_volatilidad, calcular_max_drawdown
 from per_futuro import get_per_futuro
 from expectancy import cargar_cartera_cerrada, calcular_expectancy
 from position_sizing import calcular_tamano_posicion
@@ -18,6 +18,7 @@ from regimen_mercado import obtener_regimen_combinado
 from ipc_ine import inflacion_acumulada, inflacion_interanual, obtener_ipc_mensual, inflacion_interanual_rolling, _fmt_mes_es
 from indices_valoracion import actualizar_cache as actualizar_cache_indices_valoracion, get_valoracion_pais
 from gordon_growth import actualizar_cache as actualizar_cache_gordon, get_gordon_cacheado
+from dcf_valuation import actualizar_cache as actualizar_cache_dcf, get_dcf_cacheado
 
 _YF_SESSION = requests.Session()
 _YF_SESSION.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
@@ -1237,6 +1238,13 @@ try:
 except Exception as e:
     log.warning(f"No se pudo actualizar cache Gordon Growth: {e}")
 
+try:
+    log.info(f"Actualizando cache DCF/MOS para {len(_gordon_tickers)} tickers...")
+    actualizar_cache_dcf(_gordon_tickers)
+    log.info("Cache DCF/MOS actualizada.")
+except Exception as e:
+    log.warning(f"No se pudo actualizar cache DCF/MOS: {e}")
+
 html += """  </div>
 
   <div class="section-title">An\u00e1lisis por posici\u00f3n</div>
@@ -1265,6 +1273,7 @@ for i, p in enumerate(portfolio):
     idx_ref = indice_ref_por_posicion.get(tk)
     idx_val = valoracion_indice_por_ticker.get(tk)
     gordon = get_gordon_cacheado(tk) or {}
+    dcf_data = get_dcf_cacheado(tk) or {}
     per_indice_val = idx_val.get("per_indice") if idx_val else None
     cape_indice_val = idx_val.get("cape_indice") if idx_val else None
     per_vs_indice_delta = round(per - per_indice_val, 1) if (per is not None and per_indice_val is not None) else None
@@ -1273,6 +1282,11 @@ for i, p in enumerate(portfolio):
     fwd_per = v.get("fwd_per")
     peg_val = v.get("peg")
     beta_val = v.get("beta")
+    # Volatilidad/Max Drawdown: informativos, reutilizan el historico de 1y
+    # ya descargado en full_hist (mismo dict que usa el grafico de la posicion
+    # mas abajo), cero coste de red extra.
+    volatilidad_val = calcular_volatilidad(tk, hist_data=full_hist.get(tk))
+    max_drawdown_val = calcular_max_drawdown(tk, hist_data=full_hist.get(tk))
     # PER futuro / PEG / rev_growth con jerarquia AV -> yfinance -> manual
     pfu = get_per_futuro(tk)
     fwd_per_fuente = pfu.get("fuente_per")
@@ -1450,7 +1464,10 @@ for i, p in enumerate(portfolio):
         <div class="metric-row"><span class="ml">PER vs {idx_val['nombre'] if idx_val else 'índice'}{desc("PER de la acción frente al PER del índice de referencia (Siblis Research, actualización periódica)")}</span><span class="mv {"pos" if per_vs_indice_delta is not None and per_vs_indice_delta < 0 else ("warn" if per_vs_indice_delta is not None else "")}">{f"{per:.1f}x vs {per_indice_val:.1f}x ({per_vs_indice_delta:+.1f}x)" if per_vs_indice_delta is not None else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">CAPE {idx_val['nombre'] if idx_val else 'índice'}{desc("Shiller PE del índice de referencia — contexto de valoración de mercado a largo plazo, no aplica directamente a la acción")}</span><span class="mv">{f"{cape_indice_val:.1f}x" if cape_indice_val is not None else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">Valor Gordon (DDM){desc("P = D1/(k-g). Solo aplicable a pagadores de dividendo maduros y estables con historial de al menos 5 años")}</span><span class="mv {"pos" if gordon_estado == "ok" and gordon_valor and gordon_valor >= p["current"] else ("warn" if gordon_estado == "ok" else "")}">{f"{gordon_valor:.2f} €" if gordon_estado == "ok" and gordon_valor is not None else "No aplicable"}{f' <span style="color:#6b7280;font-size:9px;margin-left:4px" title="{(gordon.get("motivo_no_elegible") or gordon.get("motivo_estado") or "")}">(?)</span>' if gordon_estado != "ok" else ""}</span></div>
+        <div class="metric-row"><span class="ml">Valor DCF{desc("Descuento de flujos de caja a 5 años + valor terminal, dividido entre acciones en circulación. Informativo, no sustituye al modelo técnico/fundamental")}</span><span class="mv {"pos" if dcf_data.get("estado") == "ok" and dcf_data.get("mos_pct") and dcf_data["mos_pct"] >= 0 else ("warn" if dcf_data.get("estado") == "ok" else "")}">{f"{dcf_data['valor_intrinseco_por_accion']:.2f} (MOS {dcf_data['mos_pct']:+.1f}%)" if dcf_data.get("estado") == "ok" else "No aplicable"}{f' <span style="color:#6b7280;font-size:9px;margin-left:4px" title="{dcf_data.get("motivo_estado") or ""}">(?)</span>' if dcf_data.get("estado") not in ("ok", None) else ""}</span></div>
         <div class="metric-row"><span class="ml">Beta{desc(beta_desc)}</span><span class="mv {beta_cls}">{beta_str}</span></div>
+        <div class="metric-row"><span class="ml">Volatilidad (anualizada){desc("Desviación estándar de los retornos diarios del último año, anualizada")}</span><span class="mv">{f"{volatilidad_val:.1f}%" if volatilidad_val is not None else "N/D"}</span></div>
+        <div class="metric-row"><span class="ml">Max Drawdown (1A){desc("Mayor caída desde un máximo previo hasta el mínimo posterior en el último año")}</span><span class="mv neg">{f"{max_drawdown_val:.1f}%" if max_drawdown_val is not None else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">ROE 2026{desc("Rentabilidad sobre fondos propios")}</span><span class="mv {"pos" if (roe_val or 0) >= 15 else ("warn" if (roe_val or 0) >= 5 else "neg")}">{f"{roe_val:.1f}%" if roe_val else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">FCF 2026{desc("Caja generada tras inversiones")}</span><span class="mv {fcf_cls}">{f"{fcf_val/1_000_000:,.0f}M \u20ac" if fcf_val else "N/D"}</span></div>
         <div class="metric-row"><span class="ml">Rev. Crec.{desc("Crecimiento estimado de ingresos (YoY)")}</span><span class="mv {rev_cls}">{rev_str}{_manual_badge(rev_fuente)}</span></div>

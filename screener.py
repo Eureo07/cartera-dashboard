@@ -104,6 +104,9 @@ def get_valuation(t):
         try:
             stock = yf.Ticker(t, session=_YF_SESSION)
             info = stock.info
+            beta_v = info.get("beta")
+            if beta_v is not None and (beta_v < 0 or beta_v > 5):
+                beta_v = None
             result = {
                 "per": info.get("trailingPE"),
                 "fwd_per": info.get("forwardPE"),
@@ -111,6 +114,7 @@ def get_valuation(t):
                 "pb": info.get("priceToBook"),
                 "mcap": info.get("marketCap"),
                 "div_yield": info.get("dividendYield"),
+                "beta": beta_v,
             }
             _yf_cache[t] = result
             return result
@@ -374,6 +378,51 @@ def validar_filtros_tecnicos(ticker, entry_types):
     except Exception as e:
         log.warning(f"  Filtro semanal {ticker}: error - {e}")
         return False
+
+# ========== VOLATILIDAD / MAX DRAWDOWN (informativos, nunca bloqueantes) ==========
+def calcular_volatilidad(ticker, hist_data=None, periodo='1y'):
+    """Volatilidad anualizada (%): desviacion estandar de los retornos
+    diarios x sqrt(252), sobre el mismo historico OHLC diario que ya usan
+    calcular_soporte_resistencia()/calcular_trendline_lta() -- pasar
+    hist_data reutiliza ese mismo fetch, evita una descarga nueva.
+    Columna informativa, no forma parte de ningun criterio bloqueante.
+    Devuelve float o None si no hay suficientes datos."""
+    try:
+        hist = hist_data
+        if hist is None:
+            stock = yf.Ticker(ticker, session=_YF_SESSION)
+            hist = stock.history(period=periodo, auto_adjust=False)
+        if hist is None or hist.empty or len(hist) < 20:
+            return None
+        rets = hist["Close"].dropna().pct_change().dropna()
+        if rets.empty:
+            return None
+        return round(float(rets.std() * (252 ** 0.5) * 100), 2)
+    except Exception:
+        return None
+
+
+def calcular_max_drawdown(ticker, hist_data=None, periodo='1y'):
+    """Max drawdown (%): mayor caida desde un maximo previo hasta el
+    minimo posterior dentro del periodo, sobre el mismo historico diario.
+    Columna informativa, no forma parte de ningun criterio bloqueante.
+    Devuelve un float <=0 (ej. -23.4) o None si no hay suficientes datos."""
+    try:
+        hist = hist_data
+        if hist is None:
+            stock = yf.Ticker(ticker, session=_YF_SESSION)
+            hist = stock.history(period=periodo, auto_adjust=False)
+        if hist is None or hist.empty or len(hist) < 20:
+            return None
+        closes = hist["Close"].dropna()
+        if closes.empty:
+            return None
+        max_previo = closes.cummax()
+        drawdown = (closes - max_previo) / max_previo
+        return round(float(drawdown.min() * 100), 2)
+    except Exception:
+        return None
+
 
 # ========== SUPPORT & RESISTANCE ==========
 def calcular_soporte_resistencia(ticker, hist_data=None, periodo='1y'):

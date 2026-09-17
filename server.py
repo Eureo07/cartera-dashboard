@@ -1201,12 +1201,13 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         Deuda neta/EBITDA solo se lee de deuda_ebitda_cache.json (nunca se
         recalcula aqui: yfinance .info esta bloqueado en Render, el cache
         se rellena en local via generate_dashboard.py)."""
-        from screener import get_entry_types, calcular_soporte_resistencia, get_valuation, get_1y_return_and_hist
+        from screener import get_entry_types, calcular_soporte_resistencia, get_valuation, get_1y_return_and_hist, calcular_volatilidad, calcular_max_drawdown
         import gc
         from position_sizing import calcular_tamano_posicion
         from deuda_ebitda import get_deuda_neta_ebitda_cacheada
         from indices_valoracion import get_valoracion_pais
         from gordon_growth import get_gordon_cacheado
+        from dcf_valuation import get_dcf_cacheado
         from criterios_fundamentales import (
             obtener_fundamentales_unificado, evaluar_criterio1_deuda, evaluar_criterio2_roic_roe,
             evaluar_distorsion_capital, calcular_score_fundamental, construir_referencia_cohorte,
@@ -1276,6 +1277,11 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 except Exception:
                     cached_hist_1y = None
 
+                # Volatilidad/Max Drawdown: informativos, reutilizan el mismo
+                # historico de 1y ya descargado arriba, cero coste de red extra.
+                volatilidad_pct = calcular_volatilidad(tk, hist_data=cached_hist_1y)
+                max_drawdown_pct = calcular_max_drawdown(tk, hist_data=cached_hist_1y)
+
                 support_val = item.get("support")
                 if support_val is not None:
                     try:
@@ -1312,10 +1318,12 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     per_ttm = valuation.get("per")
                     pb = valuation.get("pb")
                     market_cap = valuation.get("mcap")
+                    beta_val = valuation.get("beta")
                 except Exception:
                     per_ttm = None
                     pb = None
                     market_cap = None
+                    beta_val = None
                 pfu = get_per_futuro(tk)
                 peg = pfu.get("peg")
 
@@ -1328,6 +1336,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 cape_indice = val_idx.get("cape_indice")
                 per_vs_indice_delta = round(per_ttm - per_indice, 2) if (per_ttm is not None and per_indice is not None) else None
                 gordon = get_gordon_cacheado(tk) or {}
+                dcf_data = get_dcf_cacheado(tk) or {}
 
                 if entry_level and stop_val:
                     tamano = calcular_tamano_posicion(entry_level, stop_val, capital_sistema=10000)
@@ -1379,6 +1388,11 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     "detected_types": detected_types,
                     "roe": roe, "eva": eva, "fcf": fcf, "roic": roic,
                     "score_watchlist": score, "score_umbral": score_umbral, "score_supera_umbral": score_ok,
+                    "beta": beta_val, "volatilidad_pct": volatilidad_pct, "max_drawdown_pct": max_drawdown_pct,
+                    "dcf_valor_por_accion": dcf_data.get("valor_intrinseco_por_accion"),
+                    "dcf_mos_pct": dcf_data.get("mos_pct"),
+                    "dcf_estado": dcf_data.get("estado"),
+                    "dcf_motivo": dcf_data.get("motivo_estado"),
                     "per_ttm": per_ttm, "per_futuro": pfu.get("fwd_per"), "peg": peg, "pb": pb,
                     "deuda_neta_ebitda": deuda_ratio,
                     "indice_referencia": ref_idx.get("nombre"),
