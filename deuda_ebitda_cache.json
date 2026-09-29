@@ -1,31 +1,31 @@
 {
   "ACS.MC": {
     "deuda_neta_ebitda": 0.2,
-    "fecha_actualizacion": "2026-09-29T09:28:45.699445"
+    "fecha_actualizacion": "2026-09-29T14:53:34.568822"
   },
   "GOOGL": {
     "deuda_neta_ebitda": -0.7,
-    "fecha_actualizacion": "2026-09-29T09:28:45.699445"
+    "fecha_actualizacion": "2026-09-29T14:53:34.568822"
   },
   "ITX.MC": {
     "deuda_neta_ebitda": -0.43,
-    "fecha_actualizacion": "2026-09-29T09:28:45.699445"
+    "fecha_actualizacion": "2026-09-29T14:53:34.568822"
   },
   "SAF.PA": {
     "deuda_neta_ebitda": -0.26,
-    "fecha_actualizacion": "2026-09-29T09:28:45.699445"
+    "fecha_actualizacion": "2026-09-29T14:53:34.568822"
   },
   "THEON.AS": {
     "deuda_neta_ebitda": 1.68,
-    "fecha_actualizacion": "2026-09-29T09:28:45.699445"
+    "fecha_actualizacion": "2026-09-29T14:53:34.568822"
   },
   "XPO": {
     "deuda_neta_ebitda": 2.71,
-    "fecha_actualizacion": "2026-09-29T09:28:45.699445"
+    "fecha_actualizacion": "2026-09-29T14:53:34.568822"
   },
   "RRU.DE": {
     "deuda_neta_ebitda": -0.41,
-    "fecha_actualizacion": "2026-09-29T09:28:45.699445"
+    "fecha_actualizacion": "2026-09-29T14:53:34.568822"
   },
   "AAPL": {
     "deuda_neta_ebitda": 0.13,
@@ -37,7 +37,7 @@
   },
   "ITH.L": {
     "deuda_neta_ebitda": 0.61,
-    "fecha_actualizacion": "2026-09-29T09:28:45.699445"
+    "fecha_actualizacion": "2026-09-29T14:53:34.568822"
   },
   "L1G.AX": {
     "deuda_neta_ebitda": -0.23,
@@ -49,11 +49,11 @@
   },
   "APA": {
     "deuda_neta_ebitda": 0.6,
-    "fecha_actualizacion": "2026-09-29T09:28:45.699445"
+    "fecha_actualizacion": "2026-09-29T14:53:34.568822"
   },
   "EDV.L": {
     "deuda_neta_ebitda": -0.06,
-    "fecha_actualizacion": "2026-09-29T09:28:45.699445"
+    "fecha_actualizacion": "2026-09-29T14:53:34.568822"
   },
   "GNE.AX": {
     "deuda_neta_ebitda": 1.96,
@@ -61,7 +61,7 @@
   },
   "KIE.L": {
     "deuda_neta_ebitda": -0.41,
-    "fecha_actualizacion": "2026-09-29T09:28:45.699445"
+    "fecha_actualizacion": "2026-09-29T14:53:34.568822"
   },
   "RRL.AX": {
     "deuda_neta_ebitda": -0.85,

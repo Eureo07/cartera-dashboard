@@ -16,7 +16,7 @@
       11075000000.0
     ],
     "fuente": "yfinance_cache_local",
-    "fecha_actualizacion": "2026-09-29T07:29:11.756091+00:00"
+    "fecha_actualizacion": "2026-09-29T12:53:43.493648+00:00"
   },
   "EDV.L": {
     "name": "ENDEAVOUR MINING PLC ORD USD0.0",
@@ -25,8 +25,8 @@
     "fcf": 1763975040,
     "net_income": 839900032,
     "roic": 28.93,
-    "eva": 639391934.61,
-    "market_cap": 10575003648,
+    "eva": 639398571.25,
+    "market_cap": 10544875520,
     "deuda_neta_ebitda": -0.06,
     "revenue_hist": [
       4233900000.0,
@@ -35,7 +35,7 @@
       2069000000.0
     ],
     "fuente": "yfinance_cache_local",
-    "fecha_actualizacion": "2026-09-29T07:29:12.941408+00:00"
+    "fecha_actualizacion": "2026-09-29T12:53:44.360884+00:00"
   },
   "ITH.L": {
     "name": "ITHACA ENERGY PLC ORD 1P",
@@ -44,8 +44,8 @@
     "fcf": 960899968,
     "net_income": 260400000,
     "roic": 18.45,
-    "eva": 527510124.06,
-    "market_cap": 4624981504,
+    "eva": 527181962.23,
+    "market_cap": 4499535872,
     "deuda_neta_ebitda": 0.61,
     "revenue_hist": [
       2946500000.0,
@@ -54,7 +54,7 @@
       2598482000.0
     ],
     "fuente": "yfinance_cache_local",
-    "fecha_actualizacion": "2026-09-29T07:29:13.604251+00:00"
+    "fecha_actualizacion": "2026-09-29T12:53:45.360597+00:00"
   },
   "KIE.L": {
     "name": "KIER GROUP PLC ORD 1P",
@@ -63,8 +63,8 @@
     "fcf": 140000000,
     "net_income": 61700000,
     "roic": 15.55,
-    "eva": 58220437.55,
-    "market_cap": 1362671872,
+    "eva": 58369998.38,
+    "market_cap": 1335901952,
     "deuda_neta_ebitda": -0.41,
     "revenue_hist": [
       3905100000.0,
@@ -72,7 +72,7 @@
       3143900000.0
     ],
     "fuente": "yfinance_cache_local",
-    "fecha_actualizacion": "2026-09-29T07:29:14.367927+00:00"
+    "fecha_actualizacion": "2026-09-29T12:53:46.316909+00:00"
   },
   "RRU.DE": {
     "name": "Rolls Royce Holdings PLC      R",
@@ -81,8 +81,8 @@
     "fcf": 4602500096,
     "net_income": 3038000128,
     "roic": 631.76,
-    "eva": 5993489631.39,
-    "market_cap": 141682589696,
+    "eva": 5993322560.18,
+    "market_cap": 143115075584,
     "deuda_neta_ebitda": -0.41,
     "revenue_hist": [
       21207000000.0,
@@ -91,7 +91,7 @@
       13520000000.0
     ],
     "fuente": "yfinance_cache_local",
-    "fecha_actualizacion": "2026-09-29T07:29:15.306572+00:00"
+    "fecha_actualizacion": "2026-09-29T12:53:47.238269+00:00"
   },
   "THEON.AS": {
     "name": "THEON INTERNATIONAL PLC",
@@ -100,8 +100,8 @@
     "fcf": 6548599,
     "net_income": 120961088,
     "roic": 32.93,
-    "eva": 52095441.5,
-    "market_cap": 2251706880,
+    "eva": 52059907.87,
+    "market_cap": 2262569728,
     "deuda_neta_ebitda": 1.68,
     "revenue_hist": [
       352364019.0,
@@ -110,7 +110,7 @@
       80557820.0
     ],
     "fuente": "yfinance_cache_local",
-    "fecha_actualizacion": "2026-09-29T07:29:16.462040+00:00"
+    "fecha_actualizacion": "2026-09-29T12:53:48.135823+00:00"
   },
   "XMMO": {
     "name": "Invesco S&P MidCap Momentum ETF",
@@ -124,7 +124,7 @@
     "deuda_neta_ebitda": null,
     "revenue_hist": null,
     "fuente": "yfinance_cache_local",
-    "fecha_actualizacion": "2026-09-29T07:29:17.203431+00:00"
+    "fecha_actualizacion": "2026-09-29T12:53:48.760551+00:00"
   },
   "XNAS.DE": {
     "name": "Xtr.IE)Xtr.NASDAQ 100 ETF     R",
@@ -138,7 +138,7 @@
     "deuda_neta_ebitda": null,
     "revenue_hist": null,
     "fuente": "yfinance_cache_local",
-    "fecha_actualizacion": "2026-09-29T07:29:17.766180+00:00"
+    "fecha_actualizacion": "2026-09-29T12:53:49.469126+00:00"
   },
   "XNTK": {
     "name": "State Street SPDR NYSE Technolo",
@@ -152,7 +152,7 @@
     "deuda_neta_ebitda": null,
     "revenue_hist": null,
     "fuente": "yfinance_cache_local",
-    "fecha_actualizacion": "2026-09-29T07:29:18.502301+00:00"
+    "fecha_actualizacion": "2026-09-29T12:53:50.223854+00:00"
   },
   "XPO": {
     "name": "XPO, Inc.",
@@ -171,7 +171,7 @@
       7718000000.0
     ],
     "fuente": "yfinance_cache_local",
-    "fecha_actualizacion": "2026-09-29T07:29:19.675402+00:00"
+    "fecha_actualizacion": "2026-09-29T12:53:51.471853+00:00"
   },
   "XSD": {
     "name": "State Street SPDR S&P Semicondu",
@@ -185,7 +185,7 @@
     "deuda_neta_ebitda": null,
     "revenue_hist": null,
     "fuente": "yfinance_cache_local",
-    "fecha_actualizacion": "2026-09-29T07:29:20.322503+00:00"
+    "fecha_actualizacion": "2026-09-29T12:53:52.280393+00:00"
   },
   "XSMO": {
     "name": "Invesco S&P SmallCap Momentum E",
@@ -199,7 +199,7 @@
     "deuda_neta_ebitda": null,
     "revenue_hist": null,
     "fuente": "yfinance_cache_local",
-    "fecha_actualizacion": "2026-09-29T07:29:21.034921+00:00"
+    "fecha_actualizacion": "2026-09-29T12:53:52.921088+00:00"
   },
   "XTN": {
     "name": "State Street SPDR S&P Transport",
@@ -213,6 +213,6 @@
     "deuda_neta_ebitda": null,
     "revenue_hist": null,
     "fuente": "yfinance_cache_local",
-    "fecha_actualizacion": "2026-09-29T07:29:21.650170+00:00"
+    "fecha_actualizacion": "2026-09-29T12:53:53.772083+00:00"
   }
 }

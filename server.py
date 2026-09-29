@@ -1210,8 +1210,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         from dcf_valuation import get_dcf_cacheado
         from criterios_fundamentales import (
             obtener_fundamentales_unificado, evaluar_criterio1_deuda, evaluar_criterio2_roic_roe,
-            evaluar_distorsion_capital, calcular_score_fundamental, construir_referencia_cohorte,
-            DEUDA_UMBRAL_NORMAL, DEUDA_UMBRAL_CAPITAL_INTENSIVO,
+            evaluar_criterio3_fcf_ni, evaluar_distorsion_capital, calcular_score_fundamental,
+            construir_referencia_cohorte, DEUDA_UMBRAL_NORMAL, DEUDA_UMBRAL_CAPITAL_INTENSIVO,
         )
         try:
             wl_path = os.path.join(DIR, "watchlist.json")
@@ -1220,6 +1220,30 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             with open(wl_path, "r", encoding="utf-8") as f:
                 watchlist = json.load(f)
             state = _load_alertas_state()
+            # Cartera_cerrada.json: para distinguir "candidato nuevo" de
+            # "reentrada sobre algo ya vendido antes" (informativo, nunca
+            # excluye nada -- ni esto ni estar en config.json.portfolio).
+            # Entradas antiguas no tienen campo "ticker" (solo "operacion"
+            # con el nombre) -- se cruza tambien por nombre como fallback,
+            # sin tocar el fichero historico.
+            cartera_cerrada = []
+            try:
+                cc_path = os.path.join(DIR, "cartera_cerrada.json")
+                if os.path.exists(cc_path):
+                    with open(cc_path, "r", encoding="utf-8") as f:
+                        cartera_cerrada = json.load(f)
+            except Exception:
+                cartera_cerrada = []
+            cerradas_por_ticker = {}
+            for c in cartera_cerrada:
+                claves = set()
+                if c.get("ticker"):
+                    claves.add(str(c["ticker"]).strip())
+                if c.get("operacion"):
+                    claves.add(str(c["operacion"]).strip().lower())
+                for k in claves:
+                    if k not in cerradas_por_ticker:
+                        cerradas_por_ticker[k] = c
             # Referencia de score cargada UNA vez por request (no por ticker) --
             # misma fuente unica que usa escaneo_universo_fase3_tecnico_watchlist.py
             # para el criterio 5 bloqueante, para que /api/candidatos (y por tanto
@@ -1247,6 +1271,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                 entry_level_detectado = item.get("entry_level")
 
                 cur_price = None
+                tipo_instrumento = None
                 try:
                     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{tk}?interval=1d&range=1d"
                     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"})
@@ -1256,6 +1281,10 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     cur_price = meta.get("regularMarketPrice")
                     if cur_price is not None:
                         cur_price = float(cur_price)
+                    # Tipo de instrumento (Accion/ETF/etc): viaja gratis en la
+                    # misma respuesta de la Chart API v8 ya consultada para el
+                    # precio -- cero llamadas nuevas.
+                    tipo_instrumento = meta.get("instrumentType")
                 except Exception:
                     pass
                 distancia_pct = ((cur_price - entry_level) / entry_level) * 100 if (cur_price and entry_level) else None
@@ -1312,6 +1341,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
 
                 fund = obtener_fundamentales_unificado(tk)
                 roe, eva, fcf, roic = fund.get("roe"), fund.get("eva"), fund.get("fcf"), fund.get("roic")
+                net_income = fund.get("net_income")
+                _fcf_ni_ok, fcf_sobre_ni = evaluar_criterio3_fcf_ni(fcf, net_income)
 
                 try:
                     valuation = get_valuation(tk)
@@ -1362,16 +1393,60 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     warnings.append(f"PEG caro ({peg}x)")
                 if pb is not None and pb > 5:
                     warnings.append(f"P/B elevado ({pb:.2f}x)")
+                # Beta como aviso informativo (nunca bloqueante, mismo criterio
+                # que PEG/P-B/distorsion) -- el dato ya se obtenia para Ke en
+                # WACC, esto solo lo hace visible como riesgo aparte.
+                if beta_val is not None and beta_val > 1.5:
+                    warnings.append(f"Beta alta ({beta_val:.2f}) — más volátil que el mercado")
                 tema_candidato = SECTOR_TO_THEME.get(fund.get("sector", ""))
                 if tema_candidato:
                     count = portfolio_theme_counts.get(tema_candidato, 0)
                     thresh = THEMES_CFG.get(tema_candidato, {}).get("umbral_concentracion", 2)
                     if count >= thresh:
                         warnings.append(f'Concentración temática: ya hay {count} posiciones en "{tema_candidato}"')
-                if item.get("notes"):
+
+                # Nota del candidato: si viene del escaneo automatico, se
+                # reconstruye EN VIVO con los mismos roe/roic/fcf_sobre_ni/peg
+                # ya calculados arriba, en vez de repetir el texto congelado
+                # que escaneo_universo_fase3_tecnico_watchlist.py escribio una
+                # sola vez en "notes" (bug real detectado: dos valores de PEG
+                # distintos en el mismo email, uno en vivo y uno de hace
+                # semanas). Notas manuales (tickers no auto-escaneados) se
+                # dejan tal cual, no son el mismo problema.
+                if item.get("origen") == "escaneo_automatico":
+                    warnings.append(
+                        f"Candidato del escaneo global (indice origen: {item.get('theme', 'N/D')}). "
+                        f"ROE={roe}%, ROIC={roic}%, FCF/BeneficioNeto={fcf_sobre_ni}, PEG={peg} (en vivo)."
+                    )
+                elif item.get("notes"):
                     warnings.append(item["notes"])
 
                 score, score_umbral, score_ok = calcular_score_fundamental(roe, eva, fcf, market_cap, referencia=score_referencia)
+                # Score: aviso, NUNCA bloqueo -- el criterio 5 solo se aplica
+                # una vez al entrar en watchlist (escaneo_universo_fase3...py),
+                # aqui solo se informa si ya no lo superaria hoy. Los pesos
+                # 25/25/50 (criterios_fundamentales.py) estan pendientes de
+                # revision aparte, no se tocan en este cambio.
+                if score is None:
+                    warnings.append("Sin datos fundamentales disponibles")
+                elif score_ok is False:
+                    warnings.append(f"Score por debajo del umbral desde que entró en watchlist (hoy: {score:.4f}, umbral: {score_umbral:.4f})")
+
+                # Reentrada: informativo, nunca excluye nada (ni esto ni estar
+                # en config.json.portfolio). Cruza por ticker y, para entradas
+                # historicas sin ese campo, por nombre.
+                cierre_previo = cerradas_por_ticker.get(tk) or cerradas_por_ticker.get(str(item.get("name", "")).strip().lower())
+                reentrada = cierre_previo is not None
+                reentrada_info = None
+                if cierre_previo:
+                    fc = cierre_previo.get("fecha_cierre")
+                    fc_fmt = fc
+                    try:
+                        fc_fmt = datetime.strptime(fc, "%Y-%m-%d").strftime("%d-%m-%Y")
+                    except Exception:
+                        pass
+                    pnl_pct_prev = cierre_previo.get("pnl_pct")
+                    reentrada_info = f"Cerrado {fc_fmt}, {pnl_pct_prev:+.2f}%" if pnl_pct_prev is not None else f"Cerrado {fc_fmt}"
 
                 st = state.get(tk, {}) if isinstance(state, dict) else {}
                 items.append({
@@ -1386,7 +1461,9 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                     "distancia_pct": round(distancia_pct, 2) if distancia_pct is not None else None,
                     "signal_active": signal_active,
                     "detected_types": detected_types,
-                    "roe": roe, "eva": eva, "fcf": fcf, "roic": roic,
+                    "roe": roe, "eva": eva, "fcf": fcf, "roic": roic, "fcf_sobre_ni": fcf_sobre_ni,
+                    "tipo_instrumento": tipo_instrumento,
+                    "reentrada": reentrada, "reentrada_info": reentrada_info,
                     "score_watchlist": score, "score_umbral": score_umbral, "score_supera_umbral": score_ok,
                     "beta": beta_val, "volatilidad_pct": volatilidad_pct, "max_drawdown_pct": max_drawdown_pct,
                     "dcf_valor_por_accion": dcf_data.get("valor_intrinseco_por_accion"),

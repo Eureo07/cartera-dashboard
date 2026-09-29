@@ -9,17 +9,17 @@
     "n_anos_fcf": 4,
     "g_proyeccion_pct": 15.0,
     "g_capped": true,
-    "wacc_pct": 5.57,
+    "wacc_pct": 5.59,
     "g_terminal_pct": 2.5,
-    "spread_pct": 3.07,
-    "valor_intrinseco_total": 132935243331.08,
+    "spread_pct": 3.09,
+    "valor_intrinseco_total": 132051933397.58,
     "shares_outstanding": 260832656,
-    "valor_intrinseco_por_accion": 509.6572,
-    "precio_actual": 92.3,
-    "mos_pct": 81.89,
+    "valor_intrinseco_por_accion": 506.2707,
+    "precio_actual": 93.15,
+    "mos_pct": 81.6,
     "estado": "ok",
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-29T07:28:16.481712+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:09.822649+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   },
   "APA": {
@@ -42,7 +42,7 @@
     "mos_pct": 39.49,
     "estado": "ok",
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-29T07:28:18.285530+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:11.179477+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   },
   "EDV.L": {
@@ -65,7 +65,7 @@
     "mos_pct": null,
     "estado": "no_aplicable",
     "motivo_estado": "Moneda de cotización (GBp) distinta de la moneda de los estados financieros (USD) -- requeriría conversión FX no implementada, MOS no fiable sin ella",
-    "fecha_actualizacion": "2026-09-29T07:28:19.154061+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:12.028163+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   },
   "GOOGL": {
@@ -88,7 +88,7 @@
     "mos_pct": -107.37,
     "estado": "ok",
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-29T07:28:19.970730+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:12.614677+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   },
   "ITH.L": {
@@ -101,17 +101,17 @@
     "n_anos_fcf": 4,
     "g_proyeccion_pct": -13.77,
     "g_capped": false,
-    "wacc_pct": 5.05,
+    "wacc_pct": 5.06,
     "g_terminal_pct": 2.5,
-    "spread_pct": 2.55,
-    "valor_intrinseco_total": 15375142836.63,
+    "spread_pct": 2.56,
+    "valor_intrinseco_total": 15318022612.94,
     "shares_outstanding": null,
     "valor_intrinseco_por_accion": null,
     "precio_actual": null,
     "mos_pct": null,
     "estado": "no_aplicable",
     "motivo_estado": "Moneda de cotización (GBp) distinta de la moneda de los estados financieros (USD) -- requeriría conversión FX no implementada, MOS no fiable sin ella",
-    "fecha_actualizacion": "2026-09-29T07:28:21.225945+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:13.812902+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   },
   "ITX.MC": {
@@ -124,17 +124,17 @@
     "n_anos_fcf": 4,
     "g_proyeccion_pct": 7.43,
     "g_capped": false,
-    "wacc_pct": 8.45,
+    "wacc_pct": 8.47,
     "g_terminal_pct": 2.5,
-    "spread_pct": 5.95,
-    "valor_intrinseco_total": 138811791429.88,
+    "spread_pct": 5.97,
+    "valor_intrinseco_total": 138337117541.1,
     "shares_outstanding": 3115009210,
-    "valor_intrinseco_por_accion": 44.5622,
-    "precio_actual": 53.42,
-    "mos_pct": -19.88,
+    "valor_intrinseco_por_accion": 44.4099,
+    "precio_actual": 53.68,
+    "mos_pct": -20.87,
     "estado": "ok",
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-29T07:28:22.418231+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:14.788369+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   },
   "KIE.L": {
@@ -146,17 +146,17 @@
     "n_anos_fcf": 3,
     "g_proyeccion_pct": 15.0,
     "g_capped": true,
-    "wacc_pct": 4.62,
+    "wacc_pct": 4.59,
     "g_terminal_pct": 2.5,
-    "spread_pct": 2.12,
-    "valor_intrinseco_total": 17835760167.36,
+    "spread_pct": 2.09,
+    "valor_intrinseco_total": 18096619767.04,
     "shares_outstanding": 431771815,
-    "valor_intrinseco_por_accion": 41.3083,
-    "precio_actual": 3.158,
-    "mos_pct": 92.36,
+    "valor_intrinseco_por_accion": 41.9125,
+    "precio_actual": 3.094,
+    "mos_pct": 92.62,
     "estado": "ok",
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-29T07:28:23.428081+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:15.423405+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   },
   "NVD.DE": {
@@ -169,17 +169,17 @@
     "n_anos_fcf": 4,
     "g_proyeccion_pct": 15.0,
     "g_capped": true,
-    "wacc_pct": 15.78,
+    "wacc_pct": 15.79,
     "g_terminal_pct": 2.5,
-    "spread_pct": 13.28,
-    "valor_intrinseco_total": 1195080901732.82,
+    "spread_pct": 13.29,
+    "valor_intrinseco_total": 1194104720414.76,
     "shares_outstanding": null,
     "valor_intrinseco_por_accion": null,
     "precio_actual": null,
     "mos_pct": null,
     "estado": "no_aplicable",
     "motivo_estado": "Moneda de cotización (EUR) distinta de la moneda de los estados financieros (USD) -- requeriría conversión FX no implementada, MOS no fiable sin ella",
-    "fecha_actualizacion": "2026-09-29T07:28:24.512526+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:16.376692+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   },
   "RRU.DE": {
@@ -192,17 +192,17 @@
     "n_anos_fcf": 4,
     "g_proyeccion_pct": 15.0,
     "g_capped": true,
-    "wacc_pct": 10.03,
+    "wacc_pct": 10.04,
     "g_terminal_pct": 2.5,
-    "spread_pct": 7.53,
-    "valor_intrinseco_total": 81254606189.98,
+    "spread_pct": 7.54,
+    "valor_intrinseco_total": 81140678193.1,
     "shares_outstanding": null,
     "valor_intrinseco_por_accion": null,
     "precio_actual": null,
     "mos_pct": null,
     "estado": "no_aplicable",
     "motivo_estado": "Moneda de cotización (EUR) distinta de la moneda de los estados financieros (GBP) -- requeriría conversión FX no implementada, MOS no fiable sin ella",
-    "fecha_actualizacion": "2026-09-29T07:28:25.598617+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:17.510430+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   },
   "SAF.PA": {
@@ -215,17 +215,17 @@
     "n_anos_fcf": 4,
     "g_proyeccion_pct": 13.72,
     "g_capped": false,
-    "wacc_pct": 8.61,
+    "wacc_pct": 8.63,
     "g_terminal_pct": 2.5,
-    "spread_pct": 6.11,
-    "valor_intrinseco_total": 105339682935.2,
+    "spread_pct": 6.13,
+    "valor_intrinseco_total": 104980812758.14,
     "shares_outstanding": 414375800,
-    "valor_intrinseco_por_accion": 254.2129,
-    "precio_actual": 332.2,
-    "mos_pct": -30.68,
+    "valor_intrinseco_por_accion": 253.3469,
+    "precio_actual": 337.1,
+    "mos_pct": -33.06,
     "estado": "ok",
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-29T07:28:26.848675+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:18.464509+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   },
   "THEON.AS": {
@@ -248,7 +248,7 @@
     "mos_pct": null,
     "estado": "sin_datos",
     "motivo_estado": "FCF inicial o de referencia no positivo, no se puede proyectar un CAGR fiable",
-    "fecha_actualizacion": "2026-09-29T07:28:27.797793+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:19.147575+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   },
   "XMMO": {
@@ -266,7 +266,7 @@
     "mos_pct": null,
     "estado": "sin_datos",
     "motivo_estado": "sin fila 'Free Cash Flow' en el estado de flujos de caja",
-    "fecha_actualizacion": "2026-09-29T07:28:28.168024+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:19.375971+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   },
   "XNAS.DE": {
@@ -284,7 +284,7 @@
     "mos_pct": null,
     "estado": "sin_datos",
     "motivo_estado": "sin fila 'Free Cash Flow' en el estado de flujos de caja",
-    "fecha_actualizacion": "2026-09-29T07:28:28.297036+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:19.525803+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   },
   "XNTK": {
@@ -302,7 +302,7 @@
     "mos_pct": null,
     "estado": "sin_datos",
     "motivo_estado": "sin fila 'Free Cash Flow' en el estado de flujos de caja",
-    "fecha_actualizacion": "2026-09-29T07:28:28.436021+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:19.668966+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   },
   "XPO": {
@@ -325,7 +325,7 @@
     "mos_pct": -546.33,
     "estado": "ok",
     "motivo_estado": null,
-    "fecha_actualizacion": "2026-09-29T07:28:28.598976+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:19.819539+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   },
   "XSD": {
@@ -343,7 +343,7 @@
     "mos_pct": null,
     "estado": "sin_datos",
     "motivo_estado": "sin fila 'Free Cash Flow' en el estado de flujos de caja",
-    "fecha_actualizacion": "2026-09-29T07:28:29.871355+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:20.781228+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   },
   "XSMO": {
@@ -361,7 +361,7 @@
     "mos_pct": null,
     "estado": "sin_datos",
     "motivo_estado": "sin fila 'Free Cash Flow' en el estado de flujos de caja",
-    "fecha_actualizacion": "2026-09-29T07:28:30.012627+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:20.910431+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   },
   "XTN": {
@@ -379,7 +379,7 @@
     "mos_pct": null,
     "estado": "sin_datos",
     "motivo_estado": "sin fila 'Free Cash Flow' en el estado de flujos de caja",
-    "fecha_actualizacion": "2026-09-29T07:28:30.225660+00:00",
+    "fecha_actualizacion": "2026-09-29T12:53:21.047689+00:00",
     "fuente": "yfinance.cash_flow (FCF anual real) + evaluar_wacc_eva (CAPM)"
   }
 }
